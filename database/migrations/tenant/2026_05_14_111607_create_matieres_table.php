@@ -23,24 +23,10 @@ return new class extends Migration
             $table->index('is_active');
         });
 
-        // Table pivot : une matière peut être dans plusieurs classes
-        // avec un coefficient différent par classe
-        Schema::create('classe_matiere', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
-            $table->foreignId('matiere_id')->constrained('matieres')->cascadeOnDelete();
-            $table->foreignId('enseignant_id')->nullable()->constrained('enseignants')->nullOnDelete();
-            $table->decimal('coefficient', 4, 2)->default(1);  // coefficient de la matière dans la classe
-            $table->timestamps();
-
-            $table->unique(['classe_id', 'matiere_id']);        // pas de doublon
-            $table->index(['classe_id', 'enseignant_id']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('classe_matiere');
         Schema::dropIfExists('matieres');
     }
 };

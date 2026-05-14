@@ -24,7 +24,6 @@ return new class extends Migration
             $table->timestamp('token_expire_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->index(['nom', 'prenoms']);
             $table->index('statut');
         });
