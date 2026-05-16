@@ -5,9 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/debug-host', function () {
-    return request()->getHost();
-});
+
 // ─── Auth centrale ────────────────────────────────────────────────────
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
 Route::post('/logout', function () {

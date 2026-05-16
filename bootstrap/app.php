@@ -12,6 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
 
         then: function () {
+            // Route::middleware('web')
+            //     ->group(base_path('routes/tenant.php'));
+
+            foreach (config('tenancy.central_domains') as $domain) {
+
+                Route::middleware('web')
+                    ->domain($domain)
+                    ->group(base_path('routes/web.php'));
+            }
+
             Route::middleware('web')
                 ->group(base_path('routes/tenant.php'));
         },
