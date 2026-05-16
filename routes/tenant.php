@@ -2,28 +2,59 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Auth\TenantLogin;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
-
-/*
-|--------------------------------------------------------------------------
-| Tenant Routes
-|--------------------------------------------------------------------------
-|
-| Here you can register the tenant routes for your application.
-| These routes are loaded by the TenantRouteServiceProvider.
-|
-| Feel free to customize them however you want. Good luck!
-|
-*/
 
 Route::middleware([
     'web',
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
-    Route::get('/', function () {
-        return 'This is your multi-tenant application. The id of the current tenant is ' . tenant('id');
+
+    // ─── Auth ─────────────────────────────────────────────────────────
+    Route::get('/login', TenantLogin::class)->name('login')->middleware('guest');
+    Route::post('/logout', function () {
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $user()->logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('login');
+    })->name('logout')->middleware('auth');
+
+    // ─── Pages authentifiées ──────────────────────────────────────────
+    Route::middleware('auth')->group(function () {
+
+        // Dashboard
+        Route::get('/', function () {
+            return view('welcome'); // sera remplacé par le composant Dashboard
+        })->name('dashboard');
+
+        // ── Directeur ─────────────────────────────────────────────────
+        Route::middleware('role:directeur')->prefix('admin')->name('admin.')->group(function () {
+            // sera rempli au fur et à mesure
+        });
+
+        // ── Enseignant ────────────────────────────────────────────────
+        Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {
+            // sera rempli au fur et à mesure
+        });
+
+        // ── Tuteur ────────────────────────────────────────────────────
+        Route::middleware('role:tuteur')->prefix('tutor')->name('tutor.')->group(function () {
+            // sera rempli au fur et à mesure
+        });
+
+        // ── Élève ─────────────────────────────────────────────────────
+        Route::middleware('role:eleve')->prefix('student')->name('student.')->group(function () {
+            // sera rempli au fur et à mesure
+        });
+
     });
+
 });
