@@ -65,12 +65,12 @@ class Classe extends Model
         return $this->belongsTo(Promotion::class, 'promotion_id');
     }
 
-    public function filiere(): BelongsTo
+    public function filiar(): BelongsTo
     {
         return $this->belongsTo(Filiar::class, 'filiar_id');
     }
 
-    public function serie(): BelongsTo
+    public function serial(): BelongsTo
     {
         return $this->belongsTo(Serial::class, 'serial_id');
     }
@@ -82,28 +82,26 @@ class Classe extends Model
     }
 
     // Responsables (élèves)
-    public function responsable1(): BelongsTo
+    public function respo1(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'respo_1_id');
     }
 
-    public function responsable2(): BelongsTo
+    public function respo2(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'respo_2_id');
     }
 
     // Élèves inscrits dans cette classe
-    public function eleves(): BelongsToMany
+    public function students(): HasMany
     {
-        return $this->belongsToMany(Student::class, 'class_students', 'class_id', 'student_id')
-                    ->withPivot(['school_year_id', 'status', 'date_inscription', 'reason'])
-                    ->withTimestamps();
+        return $this->hasMany(YearlyClasseStudent::class, 'classe_id');
     }
 
     // Élèves actifs uniquement
-    public function elevesActifs(): BelongsToMany
+    public function activesStudents(): hasMany
     {
-        return $this->eleves()->wherePivot('status', 'actif');
+        return $this->students()->where('is_active', true);
     }
 
     // Matières de la classe (via pivot)
@@ -113,7 +111,7 @@ class Classe extends Model
     }
 
     // Matières actives (enseignant actuel, pas de remplacement en cours)
-    public function subjectsActifs(): HasMany
+    public function activesSubjects(): HasMany
     {
         return $this->subjects()
                     ->whereNull('ended_at')
@@ -217,7 +215,7 @@ class Classe extends Model
     // Nombre d'élèves actifs
     public function effectif(): int
     {
-        return $this->elevesActifs()->count();
+        return $this->activesStudents()->count();
     }
 
     // Vérifie si la classe est pleine

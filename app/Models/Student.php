@@ -45,13 +45,11 @@ class Student extends Model
     /**
      * Get all classes this student has been enrolled in (all years).
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function classes(): BelongsToMany
+    public function classes(): HasMany
     {
-        return $this->belongsToMany(Classe::class, 'class_students', 'student_id', 'class_id')
-                    ->withPivot(['school_year_id', 'status', 'date_inscription', 'reason'])
-                    ->withTimestamps();
+        return $this->hasMany(YearlyClasseStudent::class, 'student_id');
     }
 
     /**
