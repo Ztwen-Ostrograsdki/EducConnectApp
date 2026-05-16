@@ -16,8 +16,11 @@ Route::middleware([
 
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest');
+    
+    
     Route::post('/logout', function () {
 
+        // Vérifier que c'est bien le super admin
         /** @var \App\Models\User $user */
         $user = Auth::user();
 

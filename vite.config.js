@@ -1,24 +1,29 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
-import tailwindcss from '@tailwindcss/vite';
+// vite.config.js
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import fullReload from "vite-plugin-full-reload";
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ["resources/css/app.css", "resources/js/app.js"],
             refresh: true,
-            fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
-            ],
         }),
         tailwindcss(),
+
+        // Rechargement complet quand les fichiers Livewire changent
+        fullReload(["app/Livewire/**/*.php", "routes/**/*.php"]),
     ],
+
     server: {
         watch: {
-            ignored: ['**/storage/framework/views/**'],
+            ignored: ["**/storage/framework/views/**"],
         },
+    },
+
+    // Pré-bundler Motion et Alpine pour accélérer le dev
+    optimizeDeps: {
+        include: ["motion", "alpinejs"],
     },
 });

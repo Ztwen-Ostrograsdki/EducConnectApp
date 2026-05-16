@@ -95,7 +95,7 @@
                        duration-200 focus:outline-none focus:ring-2
                        focus:ring-primary-500 focus:ring-offset-2
                        focus:ring-offset-gray-800
-                       disabled:opacity-60 disabled:cursor-not-allowed"
+                       disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
                 <span wire:loading.remove>Accéder à l'administration</span>
                 <span wire:loading class="flex items-center gap-2">

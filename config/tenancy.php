@@ -19,7 +19,8 @@ return [
     'central_domains' => [
         '127.0.0.1',
         'localhost',
-        'educconnect.test', // pour plus tard en production
+        'central.test',
+        // 'educconnect.test', // pour plus tard en production
     ],
 
     /**

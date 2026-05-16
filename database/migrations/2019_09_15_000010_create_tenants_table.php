@@ -20,6 +20,18 @@ class CreateTenantsTable extends Migration
 
             // your custom columns may go here
 
+            $table->string('name');
+            $table->string('slug')->nullable();
+            $table->string('type_enseignement')->default('general');
+            $table->enum('type_periode', ['semestre', 'trimestre'])->default('semestre');
+            $table->enum('statut', ['pending', 'active', 'suspended', 'cancelled'])->default('pending');
+            $table->string('email')->nullable();
+            $table->string('devise')->nullable();
+            $table->string('contacts')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('logo')->nullable();
+            $table->timestamp('date_expiration_abonnement')->nullable();
+
             $table->timestamps();
             $table->json('data')->nullable();
         });

@@ -1,0 +1,649 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Exam Results | Scholarly Editorial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e2e8f0", // Light text for dark mode prominence
+              "primary-container": "#1e293b", // Deep slate
+              surface: "#020617", // Rich black-slate
+              "surface-container": "#0f172a", // Slate 900
+              "surface-container-low": "#1e293b", // Slate 800
+              "surface-container-lowest": "#020617",
+              "on-surface": "#f1f5f9",
+              "on-surface-variant": "#94a3b8",
+              secondary: "#94a3b8",
+              outline: "#334155",
+              accent: "#38bdf8", // Sky blue accent
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            fontFamily: {
+              headline: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+              label: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .glass-header {
+        background: rgba(2, 6, 23, 0.8);
+        backdrop-filter: blur(12px);
+      }
+      .accent-bar {
+        width: 4px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      /* Custom scrollbar for dark mode */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="bg-surface font-body text-on-surface flex min-h-screen">
+    <!-- SideNavBar -->
+    <aside
+      class="hidden lg:flex flex-col sticky top-0 h-screen w-64 border-r border-slate-800 bg-surface-container z-50"
+    >
+      <div class="p-6">
+        <h1 class="font-headline font-bold text-accent text-xl">
+          Scholarly Editorial
+        </h1>
+        <p
+          class="font-headline uppercase tracking-wider text-[10px] font-semibold text-slate-500 mt-1"
+        >
+          The Modern Archivist
+        </p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 mt-4">
+        <div
+          class="flex items-center px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors cursor-pointer group"
+        >
+          <span
+            class="material-symbols-outlined mr-3 text-slate-500 group-hover:text-accent"
+            >dashboard</span
+          >
+          <span
+            class="font-headline uppercase tracking-wider text-xs font-semibold"
+            >Dashboard</span
+          >
+        </div>
+        <div
+          class="flex items-center px-4 py-3 rounded-lg text-white bg-slate-800/80 border-l-2 border-accent transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined mr-3 text-accent">school</span>
+          <span
+            class="font-headline uppercase tracking-wider text-xs font-semibold"
+            >Students</span
+          >
+        </div>
+        <div
+          class="flex items-center px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors cursor-pointer group"
+        >
+          <span
+            class="material-symbols-outlined mr-3 text-slate-500 group-hover:text-accent"
+            >badge</span
+          >
+          <span
+            class="font-headline uppercase tracking-wider text-xs font-semibold"
+            >Faculty</span
+          >
+        </div>
+        <div
+          class="flex items-center px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors cursor-pointer group"
+        >
+          <span
+            class="material-symbols-outlined mr-3 text-slate-500 group-hover:text-accent"
+            >calendar_month</span
+          >
+          <span
+            class="font-headline uppercase tracking-wider text-xs font-semibold"
+            >Curriculum</span
+          >
+        </div>
+      </nav>
+      <div class="px-4 pb-8 space-y-1">
+        <div
+          class="flex items-center px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined mr-3">settings</span>
+          <span
+            class="font-headline uppercase tracking-wider text-xs font-semibold"
+            >Settings</span
+          >
+        </div>
+      </div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0">
+      <!-- TopNavBar -->
+      <header
+        class="flex justify-between items-center px-4 md:px-8 py-4 w-full sticky top-0 z-40 glass-header border-b border-slate-800"
+      >
+        <div class="flex items-center gap-4 md:gap-8">
+          <button class="lg:hidden text-slate-400">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="relative hidden sm:block">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              >search</span
+            >
+            <input
+              class="bg-slate-900 border border-slate-700 rounded-lg py-1.5 pl-10 pr-4 text-xs w-48 md:w-64 focus:ring-1 focus:ring-accent outline-none text-slate-200"
+              placeholder="Search records..."
+              type="text"
+            />
+          </div>
+          <nav class="hidden md:flex gap-6">
+            <span
+              class="font-headline font-medium text-xs text-accent border-b border-accent pb-1 cursor-pointer uppercase tracking-tight"
+              >2023-24 Academic</span
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-3 md:gap-4">
+          <button
+            class="p-2 text-slate-400 hover:bg-slate-800 rounded-full transition-colors relative"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            <span
+              class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-surface"
+            ></span>
+          </button>
+          <div
+            class="h-8 w-8 rounded-full border border-slate-700 p-0.5 overflow-hidden"
+          >
+            <img
+              alt="Admin Profile"
+              class="w-full h-full object-cover rounded-full"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU8Ds34sLZl4o6E7qEkIC4j6Ieg_FD5q0MHT8nGvpmDllsNAcV_Gl2A0uyB3lr5tflfePrAo_iKfL6Djz-xepLrsEzxJgNosg8-bQUPEjyhO-WROUvyUXkqks0lR335YfDd70GAyI6Vlm3qcBtgvDhZlV-b-KYCJD4BPJoB1alBimxJWld5OlIraSBdH6ifrw5MUNnbUd4CMfxAg11y3z08OZahDQgOJQ6qsv873_4d122ZscfboCdJfZyuggCVW9kaDJJxsCwmYY"
+            />
+          </div>
+        </div>
+      </header>
+      <!-- Content Canvas -->
+      <div class="p-4 md:p-8 space-y-6 md:space-y-8 overflow-y-auto">
+        <!-- Student Summary Header -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div
+            class="lg:col-span-2 relative bg-surface-container p-6 md:p-8 rounded-2xl border border-slate-800"
+          >
+            <div class="accent-bar bg-accent"></div>
+            <div
+              class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left"
+            >
+              <img
+                class="w-24 h-24 rounded-2xl object-cover ring-4 ring-slate-800"
+                data-alt="student portrait"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuADdJNUIMd8wmFWlKRauSU4W-WQfwf9v5fDzOIcv5kXi54bvA6w79GSIggf6oZOq7reqVxe3LP8A-FAA6f3u2171WqbwfO9c4ZWX8SZKxmnXe3ximrYnjn3ZYiFfo2caoWR5dOGNRtXLhWEUst3BTRgPX5ZXGXNyiWyePJZT_LskHw8cg0ZMwo5tWYBuowomkrkTX5T_zUiedZBLF6uKCMr5p-vCi171uoeJxVj8Ab6gsfh8-lxz8DZh4knnk1hcNHYrJenjeXnv1w"
+              />
+              <div class="space-y-1">
+                <span
+                  class="text-accent font-headline text-[10px] font-bold uppercase tracking-[0.2em]"
+                  >Student Record</span
+                >
+                <h2
+                  class="text-3xl md:text-4xl font-headline font-extrabold text-white tracking-tight"
+                >
+                  Alexander J. Sterling
+                </h2>
+                <p class="text-slate-400 font-medium text-sm">
+                  Grade 11-B • ID: #SCH-2024-8812
+                </p>
+                <div
+                  class="flex flex-wrap justify-center sm:justify-start gap-4 mt-4"
+                >
+                  <div
+                    class="bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700/50"
+                  >
+                    <p
+                      class="text-[9px] uppercase font-bold text-slate-500 tracking-wider"
+                    >
+                      Attendance
+                    </p>
+                    <p class="font-headline font-bold text-white">98.2%</p>
+                  </div>
+                  <div
+                    class="bg-slate-800/50 px-4 py-2 rounded-lg border border-slate-700/50"
+                  >
+                    <p
+                      class="text-[9px] uppercase font-bold text-slate-500 tracking-wider"
+                    >
+                      Rank
+                    </p>
+                    <p class="font-headline font-bold text-white">03 / 42</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="relative bg-accent/10 border border-accent/20 text-accent p-8 rounded-2xl flex flex-col justify-between overflow-hidden"
+          >
+            <div class="absolute -right-8 -bottom-8 opacity-5">
+              <span
+                class="material-symbols-outlined text-[160px]"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >workspace_premium</span
+              >
+            </div>
+            <div>
+              <span
+                class="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-400"
+                >Term Average</span
+              >
+              <h3 class="text-6xl font-headline font-extrabold mt-2 text-white">
+                17.42<span class="text-2xl font-normal text-slate-500"
+                  >/20</span
+                >
+              </h3>
+            </div>
+            <div class="mt-4">
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-accent text-[10px] font-bold uppercase tracking-widest border border-accent/30"
+              >
+                Honors: Magna Cum Laude
+              </span>
+            </div>
+          </div>
+        </section>
+        <!-- Detailed Results Table Section -->
+        <section class="space-y-6">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4"
+          >
+            <div>
+              <h3
+                class="text-2xl font-headline font-extrabold text-white tracking-tight"
+              >
+                Examination Results
+              </h3>
+              <p class="text-slate-400 text-sm">
+                Official assessment for Term II Academic Period
+              </p>
+            </div>
+            <button
+              class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-lg font-bold text-xs shadow-lg hover:bg-slate-200 transition-colors uppercase tracking-wider"
+            >
+              <span class="material-symbols-outlined text-sm">download</span>
+              Download Transcript
+            </button>
+          </div>
+          <div
+            class="bg-surface-container rounded-2xl border border-slate-800 overflow-hidden"
+          >
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse min-w-[800px]">
+                <thead class="bg-slate-900/50 border-b border-slate-800">
+                  <tr>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em]"
+                    >
+                      Subject
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em]"
+                    >
+                      CA (40%)
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em]"
+                    >
+                      Exam (60%)
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em]"
+                    >
+                      Total /20
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em] text-center"
+                    >
+                      Coeff.
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em] text-center"
+                    >
+                      Rank
+                    </th>
+                    <th
+                      class="px-6 py-4 font-headline text-[10px] uppercase font-bold text-slate-500 tracking-[0.1em]"
+                    >
+                      Observation
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-5 font-bold text-slate-200">
+                      Advanced Mathematics
+                    </td>
+                    <td class="px-6 py-5 text-slate-400">18.5</td>
+                    <td class="px-6 py-5 text-slate-400">19.0</td>
+                    <td class="px-6 py-5 font-headline font-bold text-accent">
+                      18.80
+                    </td>
+                    <td class="px-6 py-5 text-center text-slate-400">5</td>
+                    <td
+                      class="px-6 py-5 text-center font-medium text-slate-200"
+                    >
+                      1st
+                    </td>
+                    <td class="px-6 py-5 text-xs text-slate-500 italic">
+                      Exceptional analytical skills.
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-5 font-bold text-slate-200">
+                      Theoretical Physics
+                    </td>
+                    <td class="px-6 py-5 text-slate-400">16.0</td>
+                    <td class="px-6 py-5 text-slate-400">17.5</td>
+                    <td class="px-6 py-5 font-headline font-bold text-accent">
+                      16.90
+                    </td>
+                    <td class="px-6 py-5 text-center text-slate-400">4</td>
+                    <td
+                      class="px-6 py-5 text-center font-medium text-slate-200"
+                    >
+                      4th
+                    </td>
+                    <td class="px-6 py-5 text-xs text-slate-500 italic">
+                      Consistently strong performance.
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-5 font-bold text-slate-200">
+                      Computer Science
+                    </td>
+                    <td class="px-6 py-5 text-slate-400">19.5</td>
+                    <td class="px-6 py-5 text-slate-400">20.0</td>
+                    <td class="px-6 py-5 font-headline font-bold text-accent">
+                      19.80
+                    </td>
+                    <td class="px-6 py-5 text-center text-slate-400">4</td>
+                    <td
+                      class="px-6 py-5 text-center font-medium text-slate-200"
+                    >
+                      1st
+                    </td>
+                    <td class="px-6 py-5 text-xs text-slate-500 italic">
+                      Outstanding programming.
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-5 font-bold text-slate-200">
+                      World Literature
+                    </td>
+                    <td class="px-6 py-5 text-slate-400">14.0</td>
+                    <td class="px-6 py-5 text-slate-400">15.0</td>
+                    <td class="px-6 py-5 font-headline font-bold text-accent">
+                      14.60
+                    </td>
+                    <td class="px-6 py-5 text-center text-slate-400">3</td>
+                    <td
+                      class="px-6 py-5 text-center font-medium text-slate-200"
+                    >
+                      12th
+                    </td>
+                    <td class="px-6 py-5 text-xs text-slate-500 italic">
+                      Good structure.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="md:hidden p-4 bg-slate-900/50 text-center">
+              <span
+                class="text-[10px] text-slate-500 uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >swipe_left</span
+                >
+                Scroll to view all subjects
+              </span>
+            </div>
+          </div>
+        </section>
+        <!-- Visual Charts & Analytics Bento Grid -->
+        <section
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12"
+        >
+          <!-- Subject Competency Radar -->
+          <div
+            class="bg-surface-container p-6 md:p-8 rounded-2xl border border-slate-800 flex flex-col items-center"
+          >
+            <div class="w-full flex justify-between items-start mb-6">
+              <h4
+                class="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em]"
+              >
+                Competency Radar
+              </h4>
+              <span class="material-symbols-outlined text-slate-700"
+                >insights</span
+              >
+            </div>
+            <div
+              class="w-44 h-44 md:w-48 md:h-48 relative flex items-center justify-center"
+            >
+              <div
+                class="absolute inset-0 border border-slate-800 rounded-full"
+              ></div>
+              <div
+                class="absolute inset-8 border border-slate-800 rounded-full"
+              ></div>
+              <div
+                class="absolute inset-16 border border-slate-800 rounded-full"
+              ></div>
+              <!-- Decorative Visual -->
+              <div
+                class="absolute inset-4 bg-accent/5 rounded-full animate-pulse"
+              ></div>
+              <div
+                class="w-32 h-32 bg-accent/10 rounded-lg rotate-45 flex items-center justify-center border border-accent/20"
+              >
+                <div
+                  class="w-24 h-24 bg-accent/20 rounded-lg flex items-center justify-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-accent text-4xl"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >hexagon</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              class="grid grid-cols-2 gap-x-8 gap-y-3 mt-8 w-full border-t border-slate-800 pt-6"
+            >
+              <div class="flex flex-col">
+                <span class="text-[10px] text-slate-500 uppercase font-bold"
+                  >STEM</span
+                >
+                <span class="text-white font-bold text-lg">98%</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-slate-500 uppercase font-bold"
+                  >Arts</span
+                >
+                <span class="text-white font-bold text-lg">91%</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-slate-500 uppercase font-bold"
+                  >Humanities</span
+                >
+                <span class="text-white font-bold text-lg">82%</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] text-slate-500 uppercase font-bold"
+                  >Languages</span
+                >
+                <span class="text-white font-bold text-lg">75%</span>
+              </div>
+            </div>
+          </div>
+          <!-- Grade Distribution -->
+          <div
+            class="bg-surface-container p-6 md:p-8 rounded-2xl border border-slate-800 flex flex-col"
+          >
+            <div class="w-full flex justify-between items-start mb-10">
+              <h4
+                class="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em]"
+              >
+                Grade Distribution
+              </h4>
+              <span class="material-symbols-outlined text-slate-700"
+                >bar_chart</span
+              >
+            </div>
+            <div class="flex items-end justify-between h-40 gap-3 px-2">
+              <div
+                class="w-full bg-slate-800 rounded-t-lg h-[20%] transition-all hover:bg-slate-700"
+              ></div>
+              <div
+                class="w-full bg-slate-800 rounded-t-lg h-[35%] transition-all hover:bg-slate-700"
+              ></div>
+              <div
+                class="w-full bg-slate-700/50 rounded-t-lg h-[60%] transition-all hover:bg-accent/40"
+              ></div>
+              <div
+                class="w-full bg-slate-700/50 rounded-t-lg h-[85%] transition-all hover:bg-accent/60"
+              ></div>
+              <div
+                class="w-full bg-accent rounded-t-lg h-[95%] shadow-[0_-8px_16px_rgba(56,189,248,0.2)]"
+              ></div>
+            </div>
+            <div
+              class="flex justify-between mt-4 text-[9px] font-bold text-slate-600 uppercase tracking-widest"
+            >
+              <span>&lt;10</span>
+              <span>10-12</span>
+              <span>12-14</span>
+              <span>14-16</span>
+              <span>16+</span>
+            </div>
+            <div class="mt-auto pt-6">
+              <div
+                class="bg-slate-900/50 p-4 rounded-xl border border-slate-800"
+              >
+                <p
+                  class="text-[11px] text-slate-400 leading-relaxed text-center italic"
+                >
+                  "Your performance is within the top 5th percentile of the
+                  regional cohort."
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Council Decision Card -->
+          <div
+            class="bg-slate-900 p-6 md:p-8 rounded-2xl flex flex-col border border-slate-800 shadow-xl"
+          >
+            <div class="mb-6">
+              <h4
+                class="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em] mb-3"
+              >
+                Academic Council Decision
+              </h4>
+              <div class="flex items-center gap-3">
+                <div
+                  class="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-accent text-2xl"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >verified</span
+                  >
+                </div>
+                <span
+                  class="text-3xl font-headline font-extrabold text-white tracking-tight"
+                  >PROMOTED</span
+                >
+              </div>
+            </div>
+            <div class="space-y-4 mb-8">
+              <div
+                class="flex justify-between items-end border-b border-slate-800 pb-2"
+              >
+                <span class="text-xs font-medium text-slate-500"
+                  >Academic Level</span
+                >
+                <span class="text-xs font-bold text-slate-200"
+                  >Grade 12 (Senior)</span
+                >
+              </div>
+              <div
+                class="flex justify-between items-end border-b border-slate-800 pb-2"
+              >
+                <span class="text-xs font-medium text-slate-500"
+                  >Major Focus</span
+                >
+                <span class="text-xs font-bold text-slate-200"
+                  >Scientific S1</span
+                >
+              </div>
+            </div>
+            <div
+              class="p-5 bg-surface-container rounded-xl border border-slate-800 relative"
+            >
+              <div
+                class="absolute -top-3 left-4 bg-slate-900 px-2 py-0.5 border border-slate-800 rounded"
+              >
+                <span
+                  class="text-[9px] uppercase font-bold text-accent tracking-widest"
+                  >Principal's Note</span
+                >
+              </div>
+              <p
+                class="text-xs text-slate-300 font-medium leading-relaxed italic"
+              >
+                "Alexander continues to demonstrate exemplary academic rigor.
+                His focus on computer science and math is distinguished and sets
+                a high benchmark for peers."
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

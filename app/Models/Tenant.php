@@ -26,10 +26,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'type_periode',            // semestre | trimestre
             'statut',                  // pending | active | suspended | cancelled
             'email',                   // Email de contact de l'école
-            'telephone',               // Téléphone de l'école
+            'contacts',               // Téléphone de l'école
             'adresse',                 // Adresse physique
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
+            'devise'
         ];
     }
 
@@ -37,9 +38,10 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      * Valeurs par défaut
      */
     protected $attributes = [
-        'statut'           => 'pending',
-        'type_enseignement' => 'general',
-        'type_periode'     => 'semestre',
+        // 'statut'           => 'pending',
+        // 'type_enseignement' => 'general',
+        // 'type_periode'     => 'semestre',
+        'devise'     => 'Votre dévise',
     ];
 
     /**

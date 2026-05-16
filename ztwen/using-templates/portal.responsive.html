@@ -1,0 +1,834 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Portail de Communication | ScholarArchivist</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#7bd0ff",
+              "on-primary": "#00354b",
+              "primary-container": "#004d6a",
+              "on-primary-container": "#c4e7ff",
+              secondary: "#bdc7d8",
+              "on-secondary": "#273141",
+              background: "#0b1326",
+              surface: "#131b2e",
+              "on-surface": "#dae2fd",
+              "surface-variant": "#43474e",
+              "on-surface-variant": "#c3c7cf",
+              outline: "#8d9199",
+              "surface-container-low": "#1b2336",
+              "surface-container": "#222a3d",
+              "surface-container-high": "#2c3447",
+              "surface-container-highest": "#373f52",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "1rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"],
+              label: ["Manrope", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+      }
+      .font-serif {
+        font-family: "Newsreader", serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-surface antialiased flex min-h-screen">
+    <!-- SideNavBar Component -->
+    <aside
+      class="hidden md:flex flex-col h-screen w-72 bg-[#131b2e] sticky top-0 left-0 shrink-0 border-r border-[#45464d]/20 p-4 space-y-2"
+    >
+      <div class="px-4 py-6 mb-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center text-primary"
+          >
+            <span class="material-symbols-outlined" data-icon="school"
+              >school</span
+            >
+          </div>
+          <div>
+            <h1
+              class="font-serif text-xl text-[#dae2fd] tracking-tight leading-none"
+            >
+              The Academy
+            </h1>
+            <p
+              class="text-[10px] font-medium tracking-widest text-slate-400 uppercase mt-1"
+            >
+              System Admin
+            </p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="dashboard"
+            >dashboard</span
+          >
+          <span>Dashboard</span>
+        </a>
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="group">group</span>
+          <span>Students</span>
+        </a>
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="school"
+            >school</span
+          >
+          <span>Faculty</span>
+        </a>
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="menu_book"
+            >menu_book</span
+          >
+          <span>Curriculum</span>
+        </a>
+        <!-- ACTIVE -->
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#7bd0ff] bg-[#222a3d] rounded-xl font-medium text-sm tracking-wide uppercase transition-all"
+          href="#"
+        >
+          <span
+            class="material-symbols-outlined"
+            data-icon="chat_bubble"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >chat_bubble</span
+          >
+          <span>Communications</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-[#45464d]/20 space-y-1">
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="help_outline"
+            >help_outline</span
+          >
+          <span>Support</span>
+        </a>
+        <a
+          class="flex items-center gap-4 px-4 py-3 text-[#c6c6cd] hover:bg-[#222a3d]/50 hover:translate-x-1 transition-all duration-200 font-medium text-sm tracking-wide uppercase cursor-pointer active:scale-95"
+          href="#"
+        >
+          <span class="material-symbols-outlined" data-icon="logout"
+            >logout</span
+          >
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 pb-20 md:pb-0 overflow-x-hidden">
+      <!-- TopNavBar Component -->
+      <header
+        class="flex justify-between items-center px-6 py-4 w-full sticky top-0 z-50 bg-[#0b1326]/80 backdrop-blur-xl border-b border-[#45464d]/10"
+      >
+        <div class="flex items-center gap-4 md:gap-8">
+          <button class="md:hidden p-2 text-primary active:opacity-80">
+            <span class="material-symbols-outlined" data-icon="menu">menu</span>
+          </button>
+          <h2
+            class="font-serif italic font-medium text-[#7bd0ff] text-xl hidden sm:block"
+          >
+            Portail de Communication
+          </h2>
+          <div class="relative group hidden lg:block">
+            <span
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <span
+                class="material-symbols-outlined text-slate-500 text-sm"
+                data-icon="search"
+                >search</span
+              >
+            </span>
+            <input
+              class="pl-10 pr-4 py-1.5 bg-[#131b2e] border-none rounded-lg text-sm text-[#dae2fd] focus:ring-1 focus:ring-primary/40 w-48 xl:w-64 transition-all"
+              placeholder="Rechercher..."
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-2 md:gap-4">
+          <button
+            class="p-2 text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors duration-300 active:opacity-80"
+            onclick="document.documentElement.classList.toggle('dark')"
+          >
+            <span
+              class="material-symbols-outlined dark:hidden"
+              data-icon="dark_mode"
+              >dark_mode</span
+            >
+            <span
+              class="material-symbols-outlined hidden dark:block"
+              data-icon="light_mode"
+              >light_mode</span
+            >
+          </button>
+          <button
+            class="p-2 text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors duration-300 active:opacity-80 relative"
+          >
+            <span class="material-symbols-outlined" data-icon="notifications"
+              >notifications</span
+            >
+            <span
+              class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-[#0b1326]"
+            ></span>
+          </button>
+          <button
+            class="p-2 text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors duration-300 active:opacity-80 hidden sm:block"
+          >
+            <span class="material-symbols-outlined" data-icon="settings"
+              >settings</span
+            >
+          </button>
+          <button
+            class="flex items-center gap-2 p-1 pl-1 pr-3 hover:bg-[#222a3d]/50 rounded-full transition-all active:opacity-80 border border-[#45464d]/30"
+          >
+            <img
+              alt="Administrator Profile"
+              class="w-8 h-8 rounded-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7r1H-BJqoyZRHj7PBSocs1YyjrLE0yYTyVNxRyXlpce8loRugstS2cNS63gwkThBQv9zTsJ6S9MiSHlIcaxUJbegDe7PtUwhnGx2L44ejrM6ypjroAo3o_uNWX0-4ew8tYM7DBCmLw6gmmXfmqwyTpeFIhtNX7VGQ5xA3HdN2azTJONq_ZSChvGehHpaam_W9ZELD4yAkX4P2waZFGxr8c1aJqB5JlAXGola5tt21wUonNbXyo8dDs8AtQy-ELYba2IbrcxiImNo"
+            />
+            <span class="text-xs font-bold text-[#dae2fd] hidden xl:block"
+              >Admin</span
+            >
+          </button>
+        </div>
+      </header>
+      <!-- Page Content -->
+      <div class="p-4 md:p-8 space-y-6 md:space-y-8">
+        <div class="grid grid-cols-12 gap-6 md:gap-8">
+          <!-- 1. Compose Interface (Large Card) -->
+          <div
+            class="col-span-12 xl:col-span-8 bg-surface rounded-xl border border-[#45464d]/10 overflow-hidden flex flex-col"
+          >
+            <div
+              class="px-6 py-4 md:px-8 md:py-6 border-b border-[#45464d]/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0b1326]/30"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary"
+                    data-icon="edit_square"
+                    >edit_square</span
+                  >
+                </div>
+                <h3
+                  class="font-serif italic font-bold text-xl text-[#dae2fd] tracking-tight"
+                >
+                  Nouvelle Communication
+                </h3>
+              </div>
+              <div
+                class="flex gap-1 bg-surface-container-low p-1 rounded-lg self-end sm:self-auto"
+              >
+                <button
+                  class="px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-on-primary uppercase tracking-wider transition-all"
+                >
+                  Email
+                </button>
+                <button
+                  class="px-4 py-1.5 text-xs font-bold rounded-md text-[#c6c6cd] hover:text-[#dae2fd] uppercase tracking-wider transition-all"
+                >
+                  SMS
+                </button>
+              </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+              <!-- Recipient Selection -->
+              <div class="space-y-2">
+                <label
+                  class="text-[10px] font-bold uppercase tracking-widest text-primary block"
+                  >Destinataires</label
+                >
+                <div
+                  class="flex flex-wrap gap-2 p-3 bg-surface-container-low rounded-lg min-h-[48px] items-center border border-[#45464d]/10"
+                >
+                  <span
+                    class="flex items-center gap-1 bg-primary-container text-primary text-xs py-1 px-2.5 rounded-full border border-primary/20"
+                  >
+                    Classe 4A
+                    <button
+                      class="material-symbols-outlined text-xs"
+                      data-icon="close"
+                    >
+                      close
+                    </button>
+                  </span>
+                  <span
+                    class="flex items-center gap-1 bg-primary-container text-primary text-xs py-1 px-2.5 rounded-full border border-primary/20"
+                  >
+                    Parents (Lycée)
+                    <button
+                      class="material-symbols-outlined text-xs"
+                      data-icon="close"
+                    >
+                      close
+                    </button>
+                  </span>
+                  <button
+                    class="text-xs text-primary font-semibold flex items-center gap-1 ml-2 hover:underline"
+                  >
+                    <span
+                      class="material-symbols-outlined text-sm"
+                      data-icon="add_circle"
+                      >add_circle</span
+                    >
+                    Ajouter des destinataires
+                  </button>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-[10px] font-bold uppercase tracking-widest text-primary block"
+                  >Sujet du Message</label
+                >
+                <input
+                  class="w-full border-none bg-surface-container-low rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-slate-600"
+                  placeholder="Rappel: Réunion Parents-Professeurs"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-[10px] font-bold uppercase tracking-widest text-primary block"
+                  >Corps du Message</label
+                >
+                <div
+                  class="bg-surface-container-low rounded-lg border border-[#45464d]/10"
+                >
+                  <div
+                    class="px-4 py-2 border-b border-[#45464d]/10 flex gap-4 overflow-x-auto"
+                  >
+                    <button
+                      class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors"
+                      data-icon="format_bold"
+                    >
+                      format_bold
+                    </button>
+                    <button
+                      class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors"
+                      data-icon="format_italic"
+                    >
+                      format_italic
+                    </button>
+                    <button
+                      class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors"
+                      data-icon="format_list_bulleted"
+                    >
+                      format_list_bulleted
+                    </button>
+                    <button
+                      class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors"
+                      data-icon="link"
+                    >
+                      link
+                    </button>
+                    <button
+                      class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors ml-auto"
+                      data-icon="attachment"
+                    >
+                      attachment
+                    </button>
+                  </div>
+                  <textarea
+                    class="w-full border-none bg-transparent rounded-b-lg px-4 py-4 focus:ring-0 text-on-surface resize-none placeholder:text-slate-600"
+                    placeholder="Rédigez votre message ici..."
+                    rows="6"
+                  ></textarea>
+                </div>
+              </div>
+              <div
+                class="flex flex-col md:flex-row md:items-center justify-between pt-4 gap-6"
+              >
+                <div class="flex flex-wrap items-center gap-4">
+                  <label class="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      class="rounded border-[#45464d] bg-surface text-primary focus:ring-primary/20"
+                      type="checkbox"
+                    />
+                    <span
+                      class="text-xs text-[#c6c6cd] group-hover:text-primary transition-colors"
+                      >Programmer l'envoi</span
+                    >
+                  </label>
+                  <span class="hidden sm:block text-[#45464d]">|</span>
+                  <button
+                    class="text-xs text-[#c6c6cd] font-medium hover:text-primary transition-colors"
+                  >
+                    Enregistrer comme brouillon
+                  </button>
+                </div>
+                <button
+                  class="w-full md:w-auto bg-primary text-on-primary px-8 py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95"
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    data-icon="send"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >send</span
+                  >
+                  Envoyer le Message
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- 2. Templates Section -->
+          <div class="col-span-12 xl:col-span-4 space-y-6 md:space-y-8">
+            <div
+              class="bg-surface rounded-xl border border-[#45464d]/10 overflow-hidden flex flex-col"
+            >
+              <div
+                class="px-6 py-5 border-b border-[#45464d]/10 flex items-center justify-between"
+              >
+                <h3 class="font-serif italic font-bold text-lg text-[#dae2fd]">
+                  Modèles Prédéfinis
+                </h3>
+                <button
+                  class="text-primary material-symbols-outlined text-sm"
+                  data-icon="settings_suggest"
+                >
+                  settings_suggest
+                </button>
+              </div>
+              <div class="p-6 space-y-4">
+                <div
+                  class="group p-4 bg-surface-container-low rounded-lg hover:bg-[#222a3d] transition-all cursor-pointer border-l-4 border-primary border-r border-t border-b border-[#45464d]/10"
+                >
+                  <p
+                    class="text-[10px] font-bold text-primary mb-1 uppercase tracking-wider"
+                  >
+                    Alerte Absence
+                  </p>
+                  <p class="text-sm text-[#c6c6cd] line-clamp-2 italic">
+                    Nous vous informons de l'absence de votre enfant ce jour...
+                  </p>
+                </div>
+                <div
+                  class="group p-4 bg-surface-container-low hover:bg-[#222a3d] transition-all cursor-pointer border-l-4 border-[#45464d] rounded-lg border-r border-t border-b border-[#45464d]/10"
+                >
+                  <p
+                    class="text-[10px] font-bold text-slate-500 group-hover:text-primary mb-1 uppercase tracking-wider"
+                  >
+                    Réunion Parents
+                  </p>
+                  <p class="text-sm text-[#c6c6cd] line-clamp-2 italic">
+                    Invitation à la réunion trimestrielle de suivi
+                    pédagogique...
+                  </p>
+                </div>
+                <div
+                  class="group p-4 bg-surface-container-low hover:bg-[#222a3d] transition-all cursor-pointer border-l-4 border-[#45464d] rounded-lg border-r border-t border-b border-[#45464d]/10"
+                >
+                  <p
+                    class="text-[10px] font-bold text-slate-500 group-hover:text-primary mb-1 uppercase tracking-wider"
+                  >
+                    Retard Paiement
+                  </p>
+                  <p class="text-sm text-[#c6c6cd] line-clamp-2 italic">
+                    Rappel concernant les frais de scolarité du mois en cours...
+                  </p>
+                </div>
+              </div>
+              <button
+                class="mx-6 mb-6 py-3 border border-dashed border-[#45464d] rounded-lg text-[#c6c6cd] text-sm font-medium hover:bg-[#222a3d]/30 transition-colors"
+              >
+                + Créer un nouveau modèle
+              </button>
+            </div>
+            <!-- Stats Card -->
+            <div
+              class="bg-gradient-to-br from-[#1b2336] to-[#0b1326] text-[#dae2fd] rounded-xl p-8 border border-[#45464d]/30 relative overflow-hidden group"
+            >
+              <div class="relative z-10 space-y-6">
+                <h4 class="font-serif italic font-bold text-lg leading-tight">
+                  Activité Hebdomadaire
+                </h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p
+                      class="text-primary text-[10px] uppercase font-bold tracking-widest"
+                    >
+                      Emails Envoyés
+                    </p>
+                    <p class="text-3xl font-serif font-extrabold mt-1">1,284</p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-primary text-[10px] uppercase font-bold tracking-widest"
+                    >
+                      SMS Alertes
+                    </p>
+                    <p class="text-3xl font-serif font-extrabold mt-1">452</p>
+                  </div>
+                </div>
+                <div class="pt-4 border-t border-primary/20">
+                  <div class="flex justify-between items-end">
+                    <div>
+                      <p
+                        class="text-primary text-[10px] uppercase font-bold tracking-widest"
+                      >
+                        Taux de Délivrance
+                      </p>
+                      <p class="text-xl font-bold font-serif italic">99.2%</p>
+                    </div>
+                    <span
+                      class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform"
+                      data-icon="analytics"
+                      >analytics</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <!-- 3. Sent Notifications Log -->
+        <section
+          class="bg-surface rounded-xl border border-[#45464d]/10 overflow-hidden"
+        >
+          <div
+            class="px-6 py-5 md:px-8 md:py-6 border-b border-[#45464d]/10 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0b1326]/30"
+          >
+            <div>
+              <h3
+                class="font-serif italic font-bold text-xl text-[#dae2fd] tracking-tight"
+              >
+                Historique des Envois
+              </h3>
+              <p class="text-xs text-[#c6c6cd] font-medium mt-1">
+                Suivi en temps réel de vos communications institutionnelles
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                class="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-lg text-xs font-bold uppercase tracking-wider text-[#dae2fd] border border-[#45464d]/20 hover:bg-surface-container-high transition-colors"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="filter_list"
+                  >filter_list</span
+                >
+                Filtrer
+              </button>
+              <button
+                class="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-lg text-xs font-bold uppercase tracking-wider text-[#dae2fd] border border-[#45464d]/20 hover:bg-surface-container-high transition-colors"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="download"
+                  >download</span
+                >
+                Exporter
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr class="bg-surface-container-low/50">
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Date &amp; Heure
+                  </th>
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Sujet / Message
+                  </th>
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Type
+                  </th>
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Destinataires
+                  </th>
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Statut
+                  </th>
+                  <th
+                    class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-primary border-b border-[#45464d]/10"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#45464d]/10">
+                <tr class="hover:bg-[#222a3d]/30 transition-colors">
+                  <td class="px-8 py-5">
+                    <p class="text-sm font-bold text-[#dae2fd]">Aujourd'hui</p>
+                    <p class="text-xs text-slate-500">09:42 AM</p>
+                  </td>
+                  <td class="px-8 py-5 max-w-xs">
+                    <p class="text-sm font-semibold truncate text-[#dae2fd]">
+                      Rappel Examens Finaux - Juin 2024
+                    </p>
+                    <p class="text-xs text-slate-500 truncate italic">
+                      Veuillez noter le calendrier des examens...
+                    </p>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span
+                      class="flex items-center gap-2 text-xs font-medium text-[#c6c6cd]"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm"
+                        data-icon="mail"
+                        >mail</span
+                      >
+                      Email
+                    </span>
+                  </td>
+                  <td class="px-8 py-5">
+                    <p class="text-sm font-bold text-[#dae2fd]">428</p>
+                    <p
+                      class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter"
+                    >
+                      Parents / Élèves
+                    </p>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-[10px] font-bold uppercase border border-green-500/20"
+                    >
+                      <span class="w-1 h-1 bg-green-400 rounded-full"></span>
+                      Délivré
+                    </span>
+                  </td>
+                  <td class="px-8 py-5 text-right">
+                    <button
+                      class="material-symbols-outlined text-[#c6c6cd] hover:text-primary transition-colors"
+                      data-icon="visibility"
+                    >
+                      visibility
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-[#222a3d]/30 transition-colors">
+                  <td class="px-8 py-5">
+                    <p class="text-sm font-bold text-[#dae2fd]">12 Fév 2024</p>
+                    <p class="text-xs text-slate-500">08:00 AM</p>
+                  </td>
+                  <td class="px-8 py-5 max-w-xs">
+                    <p class="text-sm font-semibold truncate text-[#dae2fd]">
+                      Incident Connexion ENT
+                    </p>
+                    <p class="text-xs text-slate-500 truncate italic">
+                      Nos services techniques travaillent sur la panne...
+                    </p>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span
+                      class="flex items-center gap-2 text-xs font-medium text-[#c6c6cd]"
+                    >
+                      <span
+                        class="material-symbols-outlined text-sm"
+                        data-icon="campaign"
+                        >campaign</span
+                      >
+                      Push
+                    </span>
+                  </td>
+                  <td class="px-8 py-5">
+                    <p class="text-sm font-bold text-[#dae2fd]">1,850</p>
+                    <p
+                      class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter"
+                    >
+                      Tout l'établissement
+                    </p>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 rounded-full text-[10px] font-bold uppercase border border-amber-500/20"
+                    >
+                      <span class="w-1 h-1 bg-amber-400 rounded-full"></span> En
+                      cours
+                    </span>
+                  </td>
+                  <td class="px-8 py-5 text-right">
+                    <button
+                      class="material-symbols-outlined text-[#c6c6cd] hover:text-primary transition-colors"
+                      data-icon="visibility"
+                    >
+                      visibility
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="px-8 py-6 border-t border-[#45464d]/10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#0b1326]/30"
+          >
+            <p
+              class="text-[10px] text-[#c6c6cd] font-bold uppercase tracking-widest"
+            >
+              Affichage 1-10 sur 156
+            </p>
+            <div class="flex gap-1.5">
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-low border border-[#45464d]/20 text-[#c6c6cd] hover:text-primary hover:border-primary transition-all"
+              >
+                <span
+                  class="material-symbols-outlined text-lg"
+                  data-icon="chevron_left"
+                  >chevron_left</span
+                >
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-xs shadow-lg shadow-primary/20"
+              >
+                1
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-low border border-[#45464d]/20 text-[#c6c6cd] font-bold text-xs hover:text-primary transition-all"
+              >
+                2
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-low border border-[#45464d]/20 text-[#c6c6cd] font-bold text-xs hover:text-primary transition-all"
+              >
+                3
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-low border border-[#45464d]/20 text-[#c6c6cd] hover:text-primary hover:border-primary transition-all"
+              >
+                <span
+                  class="material-symbols-outlined text-lg"
+                  data-icon="chevron_right"
+                  >chevron_right</span
+                >
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <!-- BottomNavBar for Mobile (Handled by Components_9 logic) -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-2 pb-safe bg-[#0b1326]/90 backdrop-blur-lg border-t border-[#45464d]/20 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-[#c6c6cd] px-4 py-2 tap-highlight-transparent active:bg-[#222a3d]"
+        href="#"
+      >
+        <span class="material-symbols-outlined text-lg" data-icon="home"
+          >home</span
+        >
+        <span class="font-bold text-[10px] uppercase tracking-tighter mt-1"
+          >Home</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-[#c6c6cd] px-4 py-2 tap-highlight-transparent active:bg-[#222a3d]"
+        href="#"
+      >
+        <span class="material-symbols-outlined text-lg" data-icon="group"
+          >group</span
+        >
+        <span class="font-bold text-[10px] uppercase tracking-tighter mt-1"
+          >Students</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center bg-[#7bd0ff]/10 text-[#7bd0ff] rounded-2xl px-4 py-2 tap-highlight-transparent"
+        href="#"
+      >
+        <span
+          class="material-symbols-outlined text-lg"
+          data-icon="chat_bubble"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+          >chat_bubble</span
+        >
+        <span class="font-bold text-[10px] uppercase tracking-tighter mt-1"
+          >Chat</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-[#c6c6cd] px-4 py-2 tap-highlight-transparent active:bg-[#222a3d]"
+        href="#"
+      >
+        <span
+          class="material-symbols-outlined text-lg"
+          data-icon="account_circle"
+          >account_circle</span
+        >
+        <span class="font-bold text-[10px] uppercase tracking-tighter mt-1"
+          >Profile</span
+        >
+      </a>
+    </nav>
+    <!-- FAB: Critical Action accessible on mobile -->
+    <button
+      class="fixed bottom-20 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-[60]"
+    >
+      <span
+        class="material-symbols-outlined text-2xl font-bold"
+        data-icon="add"
+        style="font-variation-settings: &quot;FILL&quot; 1"
+        >add</span
+      >
+    </button>
+  </body>
+</html>

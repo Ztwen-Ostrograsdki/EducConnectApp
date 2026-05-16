@@ -1,0 +1,672 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profil Apprenant | Scholarly Editorial</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#d4dcff",
+              "surface-variant": "#434654",
+              "surface-container": "#1e2124",
+              "on-error": "#ffffff",
+              "surface-tint": "#b5c4ff",
+              "tertiary-container": "#ad3b00",
+              primary: "#b5c4ff",
+              outline: "#8e9099",
+              "primary-fixed": "#dbe1ff",
+              "on-secondary-fixed": "#121c28",
+              "secondary-fixed": "#d9e3f4",
+              background: "#111318",
+              "on-secondary-fixed-variant": "#3e4755",
+              "error-container": "#93000a",
+              "on-error-container": "#ffdad6",
+              "on-primary-fixed": "#00174d",
+              "inverse-surface": "#e1e3e4",
+              "surface-container-highest": "#333538",
+              "surface-dim": "#111318",
+              "on-surface-variant": "#c3c5d7",
+              "outline-variant": "#434654",
+              "primary-container": "#003fab",
+              error: "#ffb4ab",
+              "secondary-container": "#3e4755",
+              "on-primary-fixed-variant": "#003dab",
+              surface: "#111318",
+              "on-tertiary-container": "#ffd4c5",
+              secondary: "#bdc7d8",
+              "surface-container-lowest": "#0c0e12",
+              "inverse-on-surface": "#2e3132",
+              "surface-container-low": "#191c1d",
+              "tertiary-fixed-dim": "#ffb59a",
+              "on-tertiary-fixed-variant": "#802a00",
+              "on-secondary-container": "#d6e0f1",
+              "secondary-fixed-dim": "#bdc7d8",
+              "surface-bright": "#37393d",
+              "tertiary-fixed": "#ffdbcf",
+              "on-background": "#e1e3e4",
+              "on-primary": "#002d84",
+              "surface-container-high": "#282a2d",
+              "on-tertiary": "#ffffff",
+              "on-secondary": "#28313d",
+              "primary-fixed-dim": "#b5c4ff",
+              "on-tertiary-fixed": "#380d00",
+              "on-surface": "#e1e3e4",
+              "inverse-primary": "#1353d8",
+              tertiary: "#ffb59a",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .tonal-shift {
+        transition: background-color 0.3s ease;
+      }
+      .glass-nav {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      @media (max-width: 768px) {
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-background font-body flex min-h-screen">
+    <!-- SideNavBar -->
+    <aside
+      class="flex flex-col h-full sticky top-0 left-0 h-screen w-64 border-r border-outline-variant bg-surface-container-low tonal-shift hidden md:flex"
+    >
+      <div class="px-6 py-8">
+        <h1 class="font-manrope font-bold text-primary text-xl">
+          Scholarly Editorial
+        </h1>
+        <p
+          class="font-manrope uppercase tracking-wider text-[10px] font-bold text-outline mt-1"
+        >
+          Academic Portal
+        </p>
+      </div>
+      <nav class="flex-1 px-4 space-y-2">
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs text-primary font-bold bg-surface-container-highest rounded-lg border-r-4 border-primary"
+          href="#"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >school</span
+          >
+          Students
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">badge</span>
+          Faculty
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          Curriculum
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">chat_bubble</span>
+          Communications
+        </a>
+      </nav>
+      <div class="px-4 py-8 space-y-2 border-t border-outline-variant">
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          Settings
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 font-manrope uppercase tracking-wider text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors duration-200"
+          href="#"
+        >
+          <span class="material-symbols-outlined">help_center</span>
+          Support
+        </a>
+      </div>
+    </aside>
+    <!-- Main Canvas -->
+    <main class="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
+      <!-- TopNavBar -->
+      <header
+        class="flex justify-between items-center px-4 md:px-8 py-4 w-full sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant"
+      >
+        <div class="flex items-center gap-4 md:gap-8 flex-1">
+          <button
+            class="md:hidden p-2 text-on-surface hover:bg-surface-container-high rounded-full"
+          >
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div class="relative group flex-1 md:flex-none max-w-xs">
+            <span
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <span class="material-symbols-outlined text-outline text-sm"
+                >search</span
+              >
+            </span>
+            <input
+              class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary w-full md:w-64 transition-all placeholder:text-outline text-on-surface"
+              placeholder="Search records..."
+              type="text"
+            />
+          </div>
+          <nav class="hidden lg:flex items-center gap-6">
+            <a
+              class="font-manrope font-medium text-sm text-primary border-b-2 border-primary pb-1"
+              href="#"
+              >2023-2024 Year</a
+            >
+            <a
+              class="font-manrope font-medium text-sm text-outline hover:text-primary transition-all"
+              href="#"
+              >Campuses</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-2 md:gap-4">
+          <button
+            class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button
+            class="hidden sm:block p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all"
+          >
+            <span class="material-symbols-outlined">sms</span>
+          </button>
+          <div
+            class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container cursor-pointer hover:opacity-80 transition-all ml-2"
+          >
+            <span class="material-symbols-outlined">account_circle</span>
+          </div>
+        </div>
+      </header>
+      <!-- Content Area -->
+      <div class="p-4 md:p-8 space-y-8 md:space-y-12 max-w-7xl mx-auto w-full">
+        <!-- Page Header & Academic Selector -->
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6"
+        >
+          <div class="space-y-2">
+            <h2
+              class="text-3xl md:text-4xl font-extrabold font-headline tracking-tight text-on-surface"
+            >
+              Profil Apprenant
+            </h2>
+            <p class="text-on-surface-variant max-w-xl text-sm md:text-base">
+              Comprehensive academic record and financial standing for the
+              current enrollment period.
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-3 bg-surface-container p-1.5 rounded-xl self-start md:self-auto border border-outline-variant"
+          >
+            <span
+              class="text-[10px] font-bold uppercase tracking-widest text-primary px-3 hidden sm:inline"
+              >View Cycle</span
+            >
+            <select
+              class="bg-surface-container-high border-none rounded-lg text-sm font-semibold focus:ring-primary py-1.5 pr-10 text-on-surface"
+            >
+              <option>2023-2024 Academic Year</option>
+              <option>2022-2023 Academic Year</option>
+              <option>2021-2022 Academic Year</option>
+            </select>
+          </div>
+        </div>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Student Profile Card (4/12) -->
+          <div class="lg:col-span-4 space-y-6">
+            <div
+              class="bg-surface-container rounded-2xl overflow-hidden border border-outline-variant shadow-lg"
+            >
+              <div class="h-28 bg-primary-container opacity-40"></div>
+              <div class="px-6 pb-8 -mt-14 text-center">
+                <div class="relative inline-block">
+                  <img
+                    alt="Student Portrait"
+                    class="w-28 h-28 rounded-2xl object-cover border-4 border-surface-container shadow-2xl mx-auto"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvnCT9yayvNdxHvJMzGnVXP8Bx31q-wPbh1OUnBqzSJ6jDEiJUgZV5nbBQRsjoXxAllXBJAijaQl7G430_7biN00hIl13LnsvTviKUxgup9HZ509sWYyESbckc_WhM_OTqKvYLdTPObmCh5tIhX02x2q80AB0kasTsyHt2LplpenWpFgF2_oRQi490MQh9yCSsMrFlZOGhUnJhSoBsa5Ab3NFrn1Rf51RFpwpMgZ1LSHTHakkOfl9UUOHYtWPIpZGKnDv4lc6_Suw"
+                  />
+                  <div
+                    class="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-4 border-surface-container rounded-full"
+                  ></div>
+                </div>
+                <h3
+                  class="mt-4 text-2xl font-bold font-headline text-on-surface"
+                >
+                  Jean-Luc Moreau
+                </h3>
+                <p
+                  class="text-primary font-bold text-xs uppercase tracking-widest mt-1"
+                >
+                  #SCH-2023-8842
+                </p>
+                <div class="mt-8 grid grid-cols-2 gap-y-6 gap-x-4 text-left">
+                  <div class="space-y-1">
+                    <p
+                      class="text-[10px] uppercase font-bold tracking-widest text-outline"
+                    >
+                      Date of Birth
+                    </p>
+                    <p class="text-sm font-medium text-on-surface">
+                      14 March 2005
+                    </p>
+                  </div>
+                  <div class="space-y-1">
+                    <p
+                      class="text-[10px] uppercase font-bold tracking-widest text-outline"
+                    >
+                      Level
+                    </p>
+                    <p class="text-sm font-medium text-on-surface">
+                      L3 Business Admin
+                    </p>
+                  </div>
+                  <div class="space-y-1">
+                    <p
+                      class="text-[10px] uppercase font-bold tracking-widest text-outline"
+                    >
+                      Gender
+                    </p>
+                    <p class="text-sm font-medium text-on-surface">Male</p>
+                  </div>
+                  <div class="space-y-1">
+                    <p
+                      class="text-[10px] uppercase font-bold tracking-widest text-outline"
+                    >
+                      GPA
+                    </p>
+                    <p class="text-sm font-bold text-primary">3.8 / 4.0</p>
+                  </div>
+                </div>
+                <button
+                  class="w-full mt-8 py-3 bg-primary text-on-primary rounded-xl font-bold shadow-lg hover:opacity-90 transition-all active:scale-[0.98]"
+                >
+                  Download Academic File
+                </button>
+              </div>
+            </div>
+            <!-- Contact Details -->
+            <div
+              class="bg-surface-container-low rounded-2xl p-6 space-y-6 border border-outline-variant"
+            >
+              <h4
+                class="font-bold text-[10px] uppercase tracking-widest text-primary flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >contact_page</span
+                >
+                Contact Information
+              </h4>
+              <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"
+                  >
+                    <span class="material-symbols-outlined text-lg">mail</span>
+                  </div>
+                  <span class="text-sm font-medium text-on-surface truncate"
+                    >j.moreau@scholarly.edu</span
+                  >
+                </div>
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"
+                  >
+                    <span class="material-symbols-outlined text-lg">call</span>
+                  </div>
+                  <span class="text-sm font-medium text-on-surface"
+                    >+33 (0) 6 12 34 56 78</span
+                  >
+                </div>
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"
+                  >
+                    <span class="material-symbols-outlined text-lg"
+                      >location_on</span
+                    >
+                  </div>
+                  <span class="text-sm font-medium text-on-surface"
+                    >12 Avenue des Arts, Lyon</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Academic Content (8/12) -->
+          <div class="lg:col-span-8 space-y-8">
+            <!-- Grades & Results Table -->
+            <div
+              class="bg-surface-container rounded-2xl shadow-sm border border-outline-variant overflow-hidden"
+            >
+              <div
+                class="p-6 flex justify-between items-center border-b border-outline-variant"
+              >
+                <h4 class="font-bold font-headline text-lg text-on-surface">
+                  Current Semester Grades
+                </h4>
+                <span
+                  class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-widest"
+                  >Semester 1</span
+                >
+              </div>
+              <div class="overflow-x-auto hide-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                  <thead>
+                    <tr class="bg-surface-container-high/50">
+                      <th
+                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-outline"
+                      >
+                        Course Module
+                      </th>
+                      <th
+                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-outline"
+                      >
+                        Code
+                      </th>
+                      <th
+                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-outline"
+                      >
+                        Result
+                      </th>
+                      <th
+                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-outline"
+                      >
+                        Weight
+                      </th>
+                      <th
+                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-right"
+                      >
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-outline-variant/30">
+                    <tr
+                      class="hover:bg-surface-container-highest/50 transition-colors"
+                    >
+                      <td class="px-6 py-5">
+                        <div class="font-semibold text-sm text-on-surface">
+                          Strategic Management
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 text-sm text-outline">BA-301</td>
+                      <td class="px-6 py-5 font-bold text-primary">
+                        18.5 / 20
+                      </td>
+                      <td class="px-6 py-5 text-sm text-on-surface">6 ECTS</td>
+                      <td class="px-6 py-5 text-right">
+                        <span
+                          class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded-full uppercase"
+                          >Passed</span
+                        >
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-highest/50 transition-colors"
+                    >
+                      <td class="px-6 py-5">
+                        <div class="font-semibold text-sm text-on-surface">
+                          Advanced Econometrics
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 text-sm text-outline">BA-302</td>
+                      <td class="px-6 py-5 font-bold text-primary">
+                        14.0 / 20
+                      </td>
+                      <td class="px-6 py-5 text-sm text-on-surface">4 ECTS</td>
+                      <td class="px-6 py-5 text-right">
+                        <span
+                          class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded-full uppercase"
+                          >Passed</span
+                        >
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-highest/50 transition-colors"
+                    >
+                      <td class="px-6 py-5">
+                        <div class="font-semibold text-sm text-on-surface">
+                          Corporate Finance II
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 text-sm text-outline">BA-304</td>
+                      <td class="px-6 py-5 font-bold text-primary">
+                        16.2 / 20
+                      </td>
+                      <td class="px-6 py-5 text-sm text-on-surface">6 ECTS</td>
+                      <td class="px-6 py-5 text-right">
+                        <span
+                          class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded-full uppercase"
+                          >Passed</span
+                        >
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-highest/50 transition-colors"
+                    >
+                      <td class="px-6 py-5">
+                        <div class="font-semibold text-sm text-on-surface">
+                          International Trade Laws
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 text-sm text-outline">LAW-205</td>
+                      <td class="px-6 py-5 font-bold text-outline">-- / 20</td>
+                      <td class="px-6 py-5 text-sm text-on-surface">3 ECTS</td>
+                      <td class="px-6 py-5 text-right">
+                        <span
+                          class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase"
+                          >Pending</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Financial Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <!-- Payment Status -->
+              <div
+                class="bg-surface-container rounded-2xl p-6 border border-outline-variant flex flex-col justify-between shadow-sm"
+              >
+                <div class="space-y-4">
+                  <h4 class="font-bold font-headline text-lg text-on-surface">
+                    Fees Status
+                  </h4>
+                  <div class="flex items-baseline gap-2">
+                    <span
+                      class="text-4xl font-extrabold font-headline text-on-surface"
+                      >7.250€</span
+                    >
+                    <span
+                      class="text-outline text-xs uppercase tracking-widest font-bold"
+                      >Remaining</span
+                    >
+                  </div>
+                  <div class="space-y-2">
+                    <div
+                      class="w-full bg-surface-container-highest rounded-full h-2"
+                    >
+                      <div
+                        class="bg-primary h-2 rounded-full"
+                        style="width: 40%"
+                      ></div>
+                    </div>
+                    <p class="text-[10px] text-outline italic">
+                      Next installment due: November 15, 2023
+                    </p>
+                  </div>
+                </div>
+                <div class="mt-8 flex gap-3">
+                  <button
+                    class="flex-1 py-2.5 bg-surface-container-highest border border-outline-variant rounded-lg text-xs font-bold text-on-surface transition-all hover:bg-surface-variant"
+                  >
+                    History
+                  </button>
+                  <button
+                    class="flex-1 py-2.5 bg-primary text-on-primary rounded-lg text-xs font-bold transition-all hover:opacity-90"
+                  >
+                    Pay Now
+                  </button>
+                </div>
+              </div>
+              <!-- Payment History -->
+              <div
+                class="bg-surface-container rounded-2xl p-6 border border-outline-variant shadow-sm"
+              >
+                <h4
+                  class="font-bold font-headline text-lg text-on-surface mb-6"
+                >
+                  Recent Transactions
+                </h4>
+                <div class="space-y-5">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400"
+                      >
+                        <span class="material-symbols-outlined text-xl"
+                          >receipt_long</span
+                        >
+                      </div>
+                      <div>
+                        <p class="text-xs font-bold text-on-surface">
+                          Enrollment #1
+                        </p>
+                        <p class="text-[10px] text-outline">Sep 05, 2023</p>
+                      </div>
+                    </div>
+                    <p class="text-xs font-bold text-emerald-400">+4.500€</p>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-outline"
+                      >
+                        <span class="material-symbols-outlined text-xl"
+                          >library_books</span
+                        >
+                      </div>
+                      <div>
+                        <p class="text-xs font-bold text-on-surface">
+                          Library Fees
+                        </p>
+                        <p class="text-[10px] text-outline">Aug 28, 2023</p>
+                      </div>
+                    </div>
+                    <p class="text-xs font-bold text-on-surface">350€</p>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-outline"
+                      >
+                        <span class="material-symbols-outlined text-xl"
+                          >medical_services</span
+                        >
+                      </div>
+                      <div>
+                        <p class="text-xs font-bold text-on-surface">
+                          Student Health
+                        </p>
+                        <p class="text-[10px] text-outline">Aug 15, 2023</p>
+                      </div>
+                    </div>
+                    <p class="text-xs font-bold text-on-surface">120€</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Sticky Footer for Mobile -->
+      <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container border-t border-outline-variant flex justify-around py-3 z-50"
+      >
+        <a class="flex flex-col items-center gap-1 text-outline" href="#">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="text-[10px] font-bold">Home</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-primary" href="#">
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >school</span
+          >
+          <span class="text-[10px] font-bold">Student</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-outline" href="#">
+          <span class="material-symbols-outlined">chat_bubble</span>
+          <span class="text-[10px] font-bold">Chat</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-outline" href="#">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="text-[10px] font-bold">Profile</span>
+        </a>
+      </nav>
+    </main>
+  </body>
+</html>

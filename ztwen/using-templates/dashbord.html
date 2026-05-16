@@ -1,0 +1,679 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>The Modern Archivist - Tableau de Bord Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Manrope:wght@200..800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#dae2fd",
+              "inverse-on-surface": "#283044",
+              "on-secondary-container": "#a7b6cc",
+              "primary-container": "#001a27",
+              "primary-fixed-dim": "#7bd0ff",
+              "on-tertiary-fixed-variant": "#004d66",
+              "surface-container-lowest": "#060e20",
+              surface: "#0b1326",
+              "tertiary-fixed": "#c0e8ff",
+              "secondary-fixed-dim": "#b9c8de",
+              "on-tertiary-container": "#288ab0",
+              "on-error": "#690005",
+              "surface-dim": "#0b1326",
+              error: "#ffb4ab",
+              "surface-variant": "#2d3449",
+              "on-surface": "#dae2fd",
+              "on-primary-container": "#008abb",
+              "on-background": "#dae2fd",
+              "on-surface-variant": "#c6c6cd",
+              "primary-fixed": "#c4e7ff",
+              "on-primary-fixed-variant": "#004c69",
+              "tertiary-fixed-dim": "#7bd1fa",
+              "surface-tint": "#7bd0ff",
+              "surface-container-high": "#222a3d",
+              "error-container": "#93000a",
+              "on-secondary-fixed": "#0d1c2d",
+              "surface-container-highest": "#2d3449",
+              secondary: "#b9c8de",
+              "on-primary-fixed": "#001e2c",
+              primary: "#7bd0ff",
+              "on-primary": "#00354a",
+              "on-error-container": "#ffdad6",
+              "inverse-primary": "#00668a",
+              "surface-container-low": "#131b2e",
+              "surface-bright": "#31394d",
+              "surface-container": "#171f33",
+              "outline-variant": "#45464d",
+              "tertiary-container": "#001a25",
+              "on-tertiary": "#003547",
+              background: "#0b1326",
+              outline: "#909097",
+              "on-tertiary-fixed": "#001e2b",
+              "secondary-fixed": "#d4e4fa",
+              tertiary: "#7bd1fa",
+              "secondary-container": "#39485a",
+              "on-secondary": "#233143",
+              "on-secondary-fixed-variant": "#39485a",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"],
+              label: ["Manrope", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        background-color: #0b1326;
+        color: #dae2fd;
+      }
+      .newsreader-display {
+        font-family: "Newsreader", serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+    <!-- TopNavBar - Fixed with Glassmorphism -->
+    <header
+      class="fixed top-0 w-full z-50 bg-[#0b1326] backdrop-blur-xl bg-opacity-90 flex justify-between items-center px-8 py-3 w-full shadow-[0_4px_20px_rgba(123,208,255,0.05)]"
+    >
+      <div class="flex items-center gap-8 flex-1">
+        <div class="flex items-center gap-2">
+          <span
+            class="material-symbols-outlined text-[#7bd0ff]"
+            data-icon="search"
+            >search</span
+          >
+          <input
+            class="bg-transparent border-none focus:ring-0 text-sm font-label text-on-surface-variant placeholder-[#c6c6cd] w-48"
+            placeholder="Quick Search..."
+            type="text"
+          />
+        </div>
+        <div class="hidden md:flex gap-6">
+          <a
+            class="font-serif newsreader-display text-lg text-[#7bd0ff] font-bold border-b-2 border-[#7bd0ff]"
+            href="#"
+            >AY 2023-24</a
+          >
+          <a
+            class="font-serif newsreader-display text-lg text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors"
+            href="#"
+            >Quick Tools</a
+          >
+        </div>
+      </div>
+      <div class="font-serif text-2xl italic text-[#dae2fd] flex-none">
+        The Modern Archivist
+      </div>
+      <div class="flex items-center gap-6 flex-1 justify-end">
+        <button class="text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors">
+          <span class="material-symbols-outlined" data-icon="notifications"
+            >notifications</span
+          >
+        </button>
+        <button class="text-[#c6c6cd] hover:text-[#7bd0ff] transition-colors">
+          <span class="material-symbols-outlined" data-icon="settings"
+            >settings</span
+          >
+        </button>
+        <div
+          class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/20"
+        >
+          <img
+            alt="User profile curator"
+            class="h-full w-full object-cover"
+            data-alt="professional portrait of a curator in a dark library setting with soft dramatic lighting"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDpmL_xxArEbEpRZutVsbTyLyHsrMW1p9a21SzRHx3Z0c6PJQFcpNklk81Dt8BiIJPjV0GrOYpL2JccDJ5zdVtc-bh94Z3vJRLEo8DWUwCovDjVdVnLn21e0zx540g7fXSx_CcHB1PrPsQJrcudYy8jnWsFEL9Abz4fCuWIgfO2fUmJFCP_YIQ_HACgOssEhboYq9GBDpDuULVjeDsww39tQDb-5yjbqD2PUJ_Prnbe9jUbAr168aPEQax7_S3Vo7WUsAYl4CmUkQ"
+          />
+        </div>
+      </div>
+    </header>
+    <!-- SideNavBar - Sidebar Navigation -->
+    <aside
+      class="h-screen w-64 fixed left-0 top-0 pt-16 bg-[#131b2e] flex flex-col border-r border-[#222a3d] hidden lg:flex"
+    >
+      <div class="px-6 py-8">
+        <div class="flex items-center gap-3 mb-8">
+          <div
+            class="h-10 w-10 bg-surface-container-high rounded-lg flex items-center justify-center text-[#7bd0ff]"
+          >
+            <span class="material-symbols-outlined" data-icon="account_balance"
+              >account_balance</span
+            >
+          </div>
+          <div>
+            <h3
+              class="text-[#7bd0ff] font-black uppercase text-xs tracking-widest"
+            >
+              Main Repository
+            </h3>
+            <p
+              class="text-[10px] text-on-surface-variant uppercase tracking-tighter"
+            >
+              Central Access Point
+            </p>
+          </div>
+        </div>
+        <nav class="space-y-1">
+          <a
+            class="flex items-center gap-3 text-[#7bd0ff] bg-[#222a3d] rounded-r-full font-bold px-4 py-3 translate-x-1 duration-200"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="dashboard"
+              >dashboard</span
+            >
+            <span class="uppercase tracking-widest text-xs">Dashboard</span>
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-3 hover:bg-[#222a3d] hover:text-[#7bd0ff] transition-all"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="folder_open"
+              >folder_open</span
+            >
+            <span class="uppercase tracking-widest text-xs">Archives</span>
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-3 hover:bg-[#222a3d] hover:text-[#7bd0ff] transition-all"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="description"
+              >description</span
+            >
+            <span class="uppercase tracking-widest text-xs">Manuscripts</span>
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-3 hover:bg-[#222a3d] hover:text-[#7bd0ff] transition-all"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="science"
+              >science</span
+            >
+            <span class="uppercase tracking-widest text-xs">Research</span>
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-3 hover:bg-[#222a3d] hover:text-[#7bd0ff] transition-all"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="inventory_2"
+              >inventory_2</span
+            >
+            <span class="uppercase tracking-widest text-xs">Collections</span>
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-3 hover:bg-[#222a3d] hover:text-[#7bd0ff] transition-all"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="analytics"
+              >analytics</span
+            >
+            <span class="uppercase tracking-widest text-xs">Statistics</span>
+          </a>
+        </nav>
+      </div>
+      <div class="mt-auto px-6 pb-8 space-y-4">
+        <button
+          class="w-full bg-gradient-to-br from-primary to-on-primary-container text-on-primary py-3 rounded-xl font-label text-xs uppercase tracking-widest font-bold shadow-lg shadow-primary/10"
+        >
+          Add New Record
+        </button>
+        <div class="pt-4 border-t border-outline-variant/10">
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-2 hover:text-[#7bd0ff] text-xs uppercase tracking-widest"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-sm" data-icon="help"
+              >help</span
+            >
+            Support
+          </a>
+          <a
+            class="flex items-center gap-3 text-[#c6c6cd] px-4 py-2 hover:text-error text-xs uppercase tracking-widest"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-sm" data-icon="logout"
+              >logout</span
+            >
+            Sign Out
+          </a>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main class="pt-24 pb-12 lg:pl-72 px-8">
+      <header class="mb-12">
+        <h1 class="newsreader-display text-5xl italic text-on-surface mb-2">
+          Tableau de Bord Admin
+        </h1>
+        <p class="text-on-surface-variant font-body">
+          Overview of institutional performance and archival integrity.
+        </p>
+      </header>
+      <!-- Admin Summary Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div
+          class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between shadow-sm border border-outline-variant/10"
+        >
+          <span
+            class="material-symbols-outlined text-primary mb-4"
+            data-icon="groups"
+            >groups</span
+          >
+          <div>
+            <p
+              class="text-xs uppercase tracking-widest text-on-surface-variant mb-1"
+            >
+              Total Enrollments
+            </p>
+            <p class="text-3xl newsreader-display font-bold">12,482</p>
+          </div>
+          <div class="mt-4 flex items-center text-xs text-green-400">
+            <span
+              class="material-symbols-outlined text-sm mr-1"
+              data-icon="trending_up"
+              >trending_up</span
+            >
+            +8% from last cycle
+          </div>
+        </div>
+        <div
+          class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between shadow-sm border border-outline-variant/10"
+        >
+          <span
+            class="material-symbols-outlined text-tertiary mb-4"
+            data-icon="auto_stories"
+            >auto_stories</span
+          >
+          <div>
+            <p
+              class="text-xs uppercase tracking-widest text-on-surface-variant mb-1"
+            >
+              Active Research
+            </p>
+            <p class="text-3xl newsreader-display font-bold">342</p>
+          </div>
+          <div class="mt-4 flex items-center text-xs text-primary">
+            <span
+              class="material-symbols-outlined text-sm mr-1"
+              data-icon="update"
+              >update</span
+            >
+            12 pending review
+          </div>
+        </div>
+        <div
+          class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between shadow-sm border border-outline-variant/10"
+        >
+          <span
+            class="material-symbols-outlined text-secondary mb-4"
+            data-icon="storage"
+            >storage</span
+          >
+          <div>
+            <p
+              class="text-xs uppercase tracking-widest text-on-surface-variant mb-1"
+            >
+              Data Preserved
+            </p>
+            <p class="text-3xl newsreader-display font-bold">4.2 TB</p>
+          </div>
+          <div class="mt-4 flex items-center text-xs text-on-surface-variant">
+            <div
+              class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden"
+            >
+              <div class="bg-primary h-full w-[65%]"></div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-between shadow-sm border border-outline-variant/10"
+        >
+          <span
+            class="material-symbols-outlined text-primary mb-4"
+            data-icon="verified_user"
+            >verified_user</span
+          >
+          <div>
+            <p
+              class="text-xs uppercase tracking-widest text-on-surface-variant mb-1"
+            >
+              Compliance Score
+            </p>
+            <p class="text-3xl newsreader-display font-bold">98.4%</p>
+          </div>
+          <div class="mt-4 flex items-center text-xs text-primary font-bold">
+            PREMIUM ARCHIVIST STATUS
+          </div>
+        </div>
+      </div>
+      <!-- Main Insights Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+        <!-- Enrollment Trends Chart -->
+        <div
+          class="lg:col-span-2 bg-surface-container-high rounded-3xl p-8 shadow-xl border border-outline-variant/10 relative overflow-hidden"
+        >
+          <div class="flex justify-between items-center mb-8">
+            <h2 class="newsreader-display text-2xl font-bold italic">
+              Enrollment Trends
+            </h2>
+            <div class="flex gap-2">
+              <span
+                class="px-3 py-1 rounded-full bg-surface-container-lowest text-[10px] text-primary font-bold tracking-widest uppercase"
+                >Weekly</span
+              >
+              <span
+                class="px-3 py-1 rounded-full bg-primary/10 text-[10px] text-primary font-bold tracking-widest uppercase"
+                >Monthly</span
+              >
+            </div>
+          </div>
+          <div class="h-64 flex items-end justify-between gap-4">
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[40%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[55%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[45%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[70%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[85%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[60%] rounded-t-lg transition-all hover:opacity-80"
+            ></div>
+            <div
+              class="w-full bg-gradient-to-t from-primary/40 to-primary/10 h-[95%] rounded-t-lg transition-all hover:opacity-80 border-t-2 border-primary"
+            ></div>
+          </div>
+          <div
+            class="flex justify-between mt-4 text-[10px] text-on-surface-variant uppercase tracking-widest"
+          >
+            <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span
+            ><span>Feb</span><span>Mar</span><span>Apr</span>
+          </div>
+        </div>
+        <!-- Recent Activity List -->
+        <div
+          class="bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10"
+        >
+          <h2 class="newsreader-display text-2xl font-bold italic mb-6">
+            Recent Activity
+          </h2>
+          <div class="space-y-6">
+            <div class="flex gap-4">
+              <div
+                class="h-10 w-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="history_edu"
+                  >history_edu</span
+                >
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">
+                  Manuscript Authenticated
+                </p>
+                <p class="text-xs text-on-surface-variant">
+                  Central Archive • 2m ago
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div
+                class="h-10 w-10 shrink-0 rounded-full bg-secondary/10 flex items-center justify-center text-secondary"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="person_add"
+                  >person_add</span
+                >
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">
+                  New Curator Registered
+                </p>
+                <p class="text-xs text-on-surface-variant">
+                  Dept of Antiquities • 1h ago
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div
+                class="h-10 w-10 shrink-0 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="cloud_done"
+                  >cloud_done</span
+                >
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">
+                  Batch Upload Complete
+                </p>
+                <p class="text-xs text-on-surface-variant">System • 4h ago</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div
+                class="h-10 w-10 shrink-0 rounded-full bg-error/10 flex items-center justify-center text-error"
+              >
+                <span
+                  class="material-symbols-outlined text-sm"
+                  data-icon="warning"
+                  >warning</span
+                >
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">
+                  Access Log Exception
+                </p>
+                <p class="text-xs text-on-surface-variant">
+                  Server Node 04 • 6h ago
+                </p>
+              </div>
+            </div>
+          </div>
+          <button
+            class="w-full mt-8 text-center text-xs uppercase tracking-widest text-primary font-bold hover:underline"
+          >
+            View Audit Trail
+          </button>
+        </div>
+      </div>
+      <!-- Departmental Status Cards -->
+      <div class="mb-12">
+        <div class="flex justify-between items-end mb-8">
+          <h2 class="newsreader-display text-3xl italic">
+            Departmental Status
+          </h2>
+          <a
+            class="text-xs uppercase tracking-widest text-on-surface-variant border-b border-outline-variant/30 pb-1"
+            href="#"
+            >See All Collections</a
+          >
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dept Card 1 -->
+          <div
+            class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:shadow-primary/5 transition-all border border-outline-variant/10"
+          >
+            <div class="h-32 overflow-hidden relative">
+              <img
+                alt="Classical Library"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                data-alt="a majestic high-ceiling library with floor-to-ceiling wooden bookshelves and a soft ethereal light beam"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq5hRoQ2AmpLTyaZnsg_Be2ND5LZiOZf5NVgVrOD07McpmbB4RlODHiBARoQdbBm0d4iNhld9sKo-enrBfx4d_ILARhXe0WdbXOraDGi1pJAxNE4_Rm2-72KMtxAkf9GLKVdTT4pETAGBXVaQOUiEWAh8JvpF6x9UcvSM_IJZwrOe0Tq4L_Pm8vmedzTtg2jTY5_BjW0vw2X8BW0-y-cXVxCzE3mZlDuCsu6Ce8JtJzALNofUuLO1_mMJicuCMxaRIzgAzEcyxn-8"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-[#131b2e] to-transparent"
+              ></div>
+            </div>
+            <div class="p-6 relative -mt-8">
+              <div
+                class="bg-primary-container inline-block px-3 py-1 rounded-full text-[10px] font-bold text-primary tracking-widest uppercase mb-4"
+              >
+                On-Track
+              </div>
+              <h3 class="newsreader-display text-xl font-bold mb-2">
+                Classical Philology
+              </h3>
+              <div
+                class="flex justify-between items-center text-xs text-on-surface-variant"
+              >
+                <span>842 Files</span>
+                <span>92% Preservation</span>
+              </div>
+            </div>
+          </div>
+          <!-- Dept Card 2 -->
+          <div
+            class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:shadow-primary/5 transition-all border border-outline-variant/10"
+          >
+            <div class="h-32 overflow-hidden relative">
+              <img
+                alt="Archaeological Dig"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                data-alt="close up of ancient pottery shards being carefully dusted in an archaeological site with warm sandy tones"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT9fgxu90iVLaPnBamq3U4ZCRhz3jT1UnA8544nbTMShehd-noiYS_cUKADsAMyZ7ch3hamOOPOvJzBIgn3qA7vY6XT4qFHNPWqAbWFmwwGUJvjmYQZzCmADI16vEcNPjtrbU9I02OaaN23Ymr3n1qbNyHxnqTU8N4STJ9likBjpq4K6G3u77dl7WwyqkImdpCZW4M70Qcxl_AAQAnB5GzgTNLvdQ2uyA7qzeKNkb6IgvvyOWzbKTZbSFfhCaeiTawQ2NacMkRhDI"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-[#131b2e] to-transparent"
+              ></div>
+            </div>
+            <div class="p-6 relative -mt-8">
+              <div
+                class="bg-secondary-container inline-block px-3 py-1 rounded-full text-[10px] font-bold text-secondary tracking-widest uppercase mb-4"
+              >
+                In Review
+              </div>
+              <h3 class="newsreader-display text-xl font-bold mb-2">
+                Mediterranean Archaeology
+              </h3>
+              <div
+                class="flex justify-between items-center text-xs text-on-surface-variant"
+              >
+                <span>1,205 Files</span>
+                <span>78% Preservation</span>
+              </div>
+            </div>
+          </div>
+          <!-- Dept Card 3 -->
+          <div
+            class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg hover:shadow-primary/5 transition-all border border-outline-variant/10"
+          >
+            <div class="h-32 overflow-hidden relative">
+              <img
+                alt="Old Manuscript"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                data-alt="a macro shot of weathered vellum parchment with elegant dark ink handwriting under a warm soft light"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHz0B_JggkPs4b4Pqc9Bz66TBzSGEYcZt_kbSYWizorK6JTB4KxL9TufcE938sUuIxBv6i3QcK0CzB1Sahmrja5KX_nD-wi-bYtBlK7jbbVQYGIsJqfoUvQhzxLaObTILaSLBICuXJb0ESGsxrgkc8PM8ibQkhgXWL6nm-Tcw76I2M7IRpy6Ot-nxoQrxKBF_4bcdsk2oBveotyO7ir0xlbZf6EV7ijBMA2ZiyWFBGzoHleukrv9WR80BlYHnkogUBME4A23j0PHM"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-[#131b2e] to-transparent"
+              ></div>
+            </div>
+            <div class="p-6 relative -mt-8">
+              <div
+                class="bg-primary-container inline-block px-3 py-1 rounded-full text-[10px] font-bold text-primary tracking-widest uppercase mb-4"
+              >
+                On-Track
+              </div>
+              <h3 class="newsreader-display text-xl font-bold mb-2">
+                Medieval Paleography
+              </h3>
+              <div
+                class="flex justify-between items-center text-xs text-on-surface-variant"
+              >
+                <span>534 Files</span>
+                <span>95% Preservation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- BottomNavBar - Mobile Only -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0b1326] backdrop-blur-xl bg-opacity-95 flex justify-around items-center px-4 py-3 z-50 shadow-2xl"
+    >
+      <button class="flex flex-col items-center gap-1 text-[#7bd0ff]">
+        <span class="material-symbols-outlined" data-icon="dashboard"
+          >dashboard</span
+        >
+        <span class="text-[10px] uppercase font-bold tracking-widest"
+          >Dashboard</span
+        >
+      </button>
+      <button class="flex flex-col items-center gap-1 text-[#c6c6cd]">
+        <span class="material-symbols-outlined" data-icon="folder_open"
+          >folder_open</span
+        >
+        <span class="text-[10px] uppercase font-bold tracking-widest"
+          >Archives</span
+        >
+      </button>
+      <div class="relative -top-6">
+        <button
+          class="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-on-primary-container text-on-primary flex items-center justify-center shadow-lg shadow-primary/30"
+        >
+          <span class="material-symbols-outlined" data-icon="add">add</span>
+        </button>
+      </div>
+      <button class="flex flex-col items-center gap-1 text-[#c6c6cd]">
+        <span class="material-symbols-outlined" data-icon="analytics"
+          >analytics</span
+        >
+        <span class="text-[10px] uppercase font-bold tracking-widest"
+          >Stats</span
+        >
+      </button>
+      <button class="flex flex-col items-center gap-1 text-[#c6c6cd]">
+        <span class="material-symbols-outlined" data-icon="person">person</span>
+        <span class="text-[10px] uppercase font-bold tracking-widest"
+          >Profile</span
+        >
+      </button>
+    </nav>
+  </body>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Archivist EDU - Se connecter</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#7bd0ff",
+              "inverse-surface": "#dae2fd",
+              "error-container": "#93000a",
+              "on-secondary-fixed": "#0d1c2d",
+              outline: "#909097",
+              "on-tertiary-fixed-variant": "#004d66",
+              "secondary-container": "#39485a",
+              error: "#ffb4ab",
+              "on-primary": "#00354a",
+              "on-primary-fixed": "#001e2c",
+              "on-primary-container": "#008abb",
+              "surface-container-lowest": "#060e20",
+              "surface-container-highest": "#2d3449",
+              "on-surface": "#dae2fd",
+              surface: "#0b1326",
+              "on-error": "#690005",
+              "primary-fixed": "#c4e7ff",
+              "surface-bright": "#31394d",
+              "on-background": "#dae2fd",
+              "surface-variant": "#2d3449",
+              "tertiary-container": "#001a25",
+              secondary: "#b9c8de",
+              "on-primary-fixed-variant": "#004c69",
+              "tertiary-fixed-dim": "#7bd1fa",
+              "on-secondary-container": "#a7b6cc",
+              "inverse-on-surface": "#283044",
+              tertiary: "#7bd1fa",
+              "secondary-fixed": "#d4e4fa",
+              background: "#0b1326",
+              "on-error-container": "#ffdad6",
+              "surface-container-high": "#222a3d",
+              "on-tertiary": "#003547",
+              "tertiary-fixed": "#c0e8ff",
+              "outline-variant": "#45464d",
+              "surface-container": "#171f33",
+              "on-surface-variant": "#c6c6cd",
+              "primary-fixed-dim": "#7bd0ff",
+              primary: "#7bd0ff",
+              "on-secondary": "#233143",
+              "secondary-fixed-dim": "#b9c8de",
+              "on-tertiary-fixed": "#001e2b",
+              "on-secondary-fixed-variant": "#39485a",
+              "surface-dim": "#0b1326",
+              "on-tertiary-container": "#288ab0",
+              "primary-container": "#001a27",
+              "inverse-primary": "#00668a",
+              "surface-container-low": "#131b2e",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            fontFamily: {
+              headline: ["Newsreader", "serif"],
+              body: ["Manrope", "sans-serif"],
+              label: ["Manrope", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        font-family: "Manrope", sans-serif;
+        background-color: #0b1326;
+      }
+      .serif-text {
+        font-family: "Newsreader", serif;
+      }
+      .glass-texture {
+        background-image: radial-gradient(
+          circle at 2px 2px,
+          rgba(123, 208, 255, 0.05) 1px,
+          transparent 0
+        );
+        background-size: 32px 32px;
+      }
+    </style>
+  </head>
+  <body
+    class="text-on-background min-h-screen flex flex-col selection:bg-primary-container selection:text-primary"
+  >
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-container/20 blur-[120px]"
+      ></div>
+      <div class="absolute inset-0 glass-texture opacity-30"></div>
+    </div>
+    <main
+      class="relative z-10 flex-grow flex items-center justify-center px-6 py-12"
+    >
+      <div class="w-full max-w-md">
+        <div class="mb-12 text-center">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-surface-container-high mb-6"
+          >
+            <span
+              class="material-symbols-outlined text-primary text-4xl"
+              data-icon="inventory_2"
+              >inventory_2</span
+            >
+          </div>
+          <h1
+            class="serif-text text-4xl font-bold italic tracking-tight text-on-surface mb-2"
+          >
+            Archivist EDU
+          </h1>
+          <p
+            class="text-on-surface-variant font-body tracking-wide uppercase text-xs"
+          >
+            Le portail de gestion académique
+          </p>
+        </div>
+        <div
+          class="bg-surface-container-low rounded-xl p-8 md:p-10 border border-outline-variant/10 shadow-2xl"
+        >
+          <form class="space-y-6">
+            <div class="space-y-2">
+              <label
+                class="block text-xs font-semibold tracking-widest uppercase text-on-surface-variant ml-1"
+                for="username"
+                >Nom d'utilisateur / ID</label
+              >
+              <div class="relative group">
+                <input
+                  class="w-full bg-surface-container-highest border-none rounded-lg px-4 py-3.5 text-on-surface placeholder-on-surface-variant/40 focus:ring-0 focus:bg-surface-bright transition-all"
+                  id="username"
+                  name="username"
+                  placeholder="votre.nom@institution.edu"
+                  type="text"
+                />
+                <div
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-focus-within:w-full transition-all duration-300"
+                ></div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center px-1">
+                <label
+                  class="block text-xs font-semibold tracking-widest uppercase text-on-surface-variant"
+                  for="password"
+                  >Mot de passe</label
+                >
+                <a
+                  class="text-[10px] uppercase font-bold text-primary hover:text-on-primary-container transition-colors tracking-tighter"
+                  href="#"
+                  >Mot de passe oublié</a
+                >
+              </div>
+              <div class="relative group">
+                <input
+                  class="w-full bg-surface-container-highest border-none rounded-lg px-4 py-3.5 text-on-surface placeholder-on-surface-variant/40 focus:ring-0 focus:bg-surface-bright transition-all"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  type="password"
+                />
+                <div
+                  class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-focus-within:w-full transition-all duration-300"
+                ></div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3 px-1">
+              <div class="relative flex items-center">
+                <input
+                  class="w-4 h-4 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary focus:ring-offset-surface bg-opacity-50"
+                  id="remember"
+                  type="checkbox"
+                />
+              </div>
+              <label
+                class="text-sm text-on-surface-variant select-none"
+                for="remember"
+                >Rester connecté</label
+              >
+            </div>
+            <div class="pt-4">
+              <button
+                class="w-full py-4 bg-gradient-to-br from-primary to-on-primary-container text-on-primary font-bold uppercase tracking-widest text-xs rounded-xl shadow-lg shadow-primary/10 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                type="submit"
+              >
+                Se connecter
+              </button>
+            </div>
+          </form>
+          <div
+            class="mt-10 pt-8 border-t border-outline-variant/10 text-center"
+          >
+            <p class="text-sm text-on-surface-variant mb-2">
+              Pas encore de compte ?
+            </p>
+            <a
+              class="serif-text italic text-lg text-on-surface hover:text-primary transition-colors"
+              href="#"
+              >S'inscrire à l'institution</a
+            >
+          </div>
+        </div>
+        <footer class="mt-12 text-center space-y-4">
+          <div
+            class="flex justify-center space-x-6 text-xs font-semibold uppercase tracking-widest text-on-surface-variant/60"
+          >
+            <a class="hover:text-primary transition-colors" href="#">Support</a>
+            <span class="opacity-20">•</span>
+            <a class="hover:text-primary transition-colors" href="#"
+              >Confidentialité</a
+            >
+            <span class="opacity-20">•</span>
+            <a class="hover:text-primary transition-colors" href="#"
+              >Conditions</a
+            >
+          </div>
+          <p
+            class="text-[10px] text-on-surface-variant/40 uppercase tracking-[0.2em]"
+          >
+            © 2024 Academia Archival • Système de Conservation Numérique
+          </p>
+        </footer>
+      </div>
+    </main>
+    <div
+      class="hidden lg:block fixed top-1/2 -translate-y-1/2 right-12 w-64 space-y-8 opacity-40"
+    >
+      <div class="flex items-start space-x-4">
+        <span
+          class="material-symbols-outlined text-primary text-3xl"
+          data-icon="history_edu"
+          >history_edu</span
+        >
+        <div>
+          <h4 class="serif-text italic text-sm text-on-surface">
+            Registre Historique
+          </h4>
+          <p
+            class="text-[10px] text-on-surface-variant uppercase tracking-wider"
+          >
+            Accès aux archives scolaires
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start space-x-4">
+        <span
+          class="material-symbols-outlined text-primary text-3xl"
+          data-icon="account_balance"
+          >account_balance</span
+        >
+        <div>
+          <h4 class="serif-text italic text-sm text-on-surface">
+            Gestion Fiscale
+          </h4>
+          <p
+            class="text-[10px] text-on-surface-variant uppercase tracking-wider"
+          >
+            Portail de facturation sécurisé
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start space-x-4">
+        <span
+          class="material-symbols-outlined text-primary text-3xl"
+          data-icon="auto_stories"
+          >auto_stories</span
+        >
+        <div>
+          <h4 class="serif-text italic text-sm text-on-surface">
+            Curriculum Vitae
+          </h4>
+          <p
+            class="text-[10px] text-on-surface-variant uppercase tracking-wider"
+          >
+            Planification des cours académiques
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

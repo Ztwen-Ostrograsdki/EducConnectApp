@@ -1,0 +1,921 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Emplois du Temps - The Modern Archivist</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3B82F6", // Modern Archivist Blue
+              "primary-container": "#1E3A8A",
+              "on-primary-container": "#DBEAFE",
+              surface: "#0F172A", // Slate 900
+              "on-surface": "#F1F5F9",
+              "surface-container": "#1E293B", // Slate 800
+              "surface-container-low": "#111827", // Gray 900
+              "surface-container-high": "#334155", // Slate 700
+              "surface-container-highest": "#475569", // Slate 600
+              outline: "#64748B",
+              "outline-variant": "#475569",
+              secondary: "#94A3B8",
+              "secondary-container": "#1E293B",
+              "on-secondary-container": "#E2E8F0",
+              tertiary: "#F59E0B",
+              "tertiary-container": "#78350F",
+              "on-tertiary-container": "#FEF3C7",
+              background: "#020617", // Slate 950
+              error: "#EF4444",
+              "error-container": "#7F1D1D",
+              "on-error-container": "#FEE2E2",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "1rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+              label: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+        vertical-align: middle;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 10px;
+      }
+      .accent-bar {
+        width: 3px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      @media (max-width: 768px) {
+        .mobile-grid-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-surface font-body selection:bg-primary/30 selection:text-white"
+  >
+    <div class="flex flex-col lg:flex-row min-h-screen">
+      <!-- SideNavBar (Mobile Toggle Hidden for brevity, standard Sidebar) -->
+      <aside
+        class="hidden lg:flex bg-surface-container h-screen w-64 flex-col sticky top-0 left-0 border-r border-outline-variant/30 z-40"
+      >
+        <div class="p-8">
+          <div class="flex items-center gap-3">
+            <img
+              alt="Institution Logo"
+              class="w-8 h-8 brightness-110"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQZp5Qt4jKqx2wxpUr24pKGi4QNeAHOcJ8tNoaIDdoKWqTDM_GvO0KeuABXdTvVXxAGWdr-2eDGnvg3JCRjaEIHhgmV_BV-pO95ab_FpWnavScTBep6hP0kOUoKTJbwX-gy-l-jxFSX7q19oAu8IWUE23D-rjwWiIUJHFSt0QvHYmNYthwKCzT8WfSxqO70aEh7WGDYGCdq9WX0wEPBNA3KnxWM9hiHOWO-pLJuoixG5x9xN5Eam7gVZtFzlLZ1iwaDL_CTufyX6I"
+            />
+            <div>
+              <h1
+                class="font-manrope font-bold text-white text-xl leading-tight"
+              >
+                Scholarly
+              </h1>
+              <p
+                class="font-manrope uppercase tracking-wider text-[10px] font-semibold text-secondary"
+              >
+                Modern Archivist
+              </p>
+            </div>
+          </div>
+        </div>
+        <nav class="flex-1 px-4 space-y-1">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-white/5 transition-colors font-manrope uppercase tracking-wider text-xs font-semibold"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="dashboard"
+              >dashboard</span
+            >
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-white/5 transition-colors font-manrope uppercase tracking-wider text-xs font-semibold"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="school"
+              >school</span
+            >
+            Students
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-l-4 border-primary bg-primary/10 font-manrope uppercase tracking-wider text-xs"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="badge"
+              >badge</span
+            >
+            Faculty
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-white/5 transition-colors font-manrope uppercase tracking-wider text-xs font-semibold"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="calendar_month"
+              >calendar_month</span
+            >
+            Curriculum
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-white/5 transition-colors font-manrope uppercase tracking-wider text-xs font-semibold"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="chat_bubble"
+              >chat_bubble</span
+            >
+            Comms
+          </a>
+        </nav>
+        <div class="p-4 border-t border-outline-variant/30 space-y-1">
+          <a
+            class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-white/5 rounded-lg text-xs font-semibold uppercase tracking-wider"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="settings"
+              >settings</span
+            >
+            Settings
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-2 text-secondary hover:bg-white/5 rounded-lg text-xs font-semibold uppercase tracking-wider"
+            href="#"
+          >
+            <span class="material-symbols-outlined" data-icon="help_center"
+              >help_center</span
+            >
+            Support
+          </a>
+        </div>
+      </aside>
+      <main
+        class="flex-1 flex flex-col min-w-0 bg-background overflow-x-hidden"
+      >
+        <!-- TopNavBar -->
+        <header
+          class="flex justify-between items-center px-4 md:px-8 py-4 w-full sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/20"
+        >
+          <div class="flex items-center gap-4 lg:gap-8">
+            <button class="lg:hidden material-symbols-outlined text-secondary">
+              menu
+            </button>
+            <h2
+              class="font-manrope font-extrabold text-white text-base md:text-lg whitespace-nowrap"
+            >
+              Emplois du Temps
+            </h2>
+            <div class="hidden md:flex items-center gap-6">
+              <a
+                class="font-manrope font-medium text-sm text-primary border-b-2 border-primary pb-1"
+                href="#"
+                >23-24 Academic</a
+              >
+              <a
+                class="font-manrope font-medium text-sm text-secondary hover:text-white transition-all"
+                href="#"
+                >All Campuses</a
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-3 md:gap-6">
+            <div class="relative hidden sm:block">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm"
+                >search</span
+              >
+              <input
+                class="pl-10 pr-4 py-2 bg-surface-container-low rounded-full border border-outline-variant/30 focus:ring-1 focus:ring-primary text-sm w-48 lg:w-64 text-on-surface"
+                placeholder="Rechercher..."
+                type="text"
+              />
+            </div>
+            <div class="flex items-center gap-2 md:gap-4">
+              <button
+                class="material-symbols-outlined text-secondary hover:text-white transition-colors"
+                data-icon="notifications"
+              >
+                notifications
+              </button>
+              <button
+                class="material-symbols-outlined text-secondary hover:text-white transition-colors"
+                data-icon="account_circle"
+              >
+                account_circle
+              </button>
+            </div>
+          </div>
+        </header>
+        <!-- Page Content -->
+        <div class="p-4 md:p-8 space-y-6 md:space-y-8">
+          <!-- Header Section -->
+          <div
+            class="flex flex-col md:flex-row md:items-end justify-between gap-6"
+          >
+            <div>
+              <span
+                class="text-primary font-bold tracking-[0.2em] uppercase text-[10px] mb-2 block"
+                >Administration Management</span
+              >
+              <h1
+                class="text-3xl md:text-4xl font-headline font-extrabold tracking-tight text-white"
+              >
+                Curated Planning
+              </h1>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button
+                class="flex-1 md:flex-none bg-surface-container-highest text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all hover:brightness-110 active:scale-95"
+              >
+                Export PDF
+              </button>
+              <button
+                class="flex-1 md:flex-none bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2"
+              >
+                <span class="material-symbols-outlined text-sm">add</span> New
+                Assignment
+              </button>
+            </div>
+          </div>
+          <!-- Bento Grid Layout -->
+          <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- Left Column: Filters & Info -->
+            <div class="xl:col-span-1 space-y-6">
+              <!-- Filter Card -->
+              <div
+                class="bg-surface-container rounded-xl p-6 shadow-xl border border-outline-variant/20 relative overflow-hidden"
+              >
+                <div class="accent-bar bg-primary"></div>
+                <h3
+                  class="text-xs font-bold uppercase tracking-widest text-primary mb-6"
+                >
+                  Active Filters
+                </h3>
+                <div class="space-y-4">
+                  <div class="space-y-2">
+                    <label
+                      class="text-[11px] font-bold text-secondary uppercase tracking-wider"
+                      >Department</label
+                    >
+                    <select
+                      class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg text-sm py-2 px-3 text-on-surface focus:ring-1 focus:ring-primary outline-none"
+                    >
+                      <option>Pure Mathematics</option>
+                      <option>Theoretical Physics</option>
+                      <option>Classical Literature</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label
+                      class="text-[11px] font-bold text-secondary uppercase tracking-wider"
+                      >Faculty Status</label
+                    >
+                    <div class="flex flex-wrap gap-2">
+                      <span
+                        class="px-3 py-1 bg-primary text-white rounded-full text-[10px] font-bold cursor-pointer"
+                        >Full-Time</span
+                      >
+                      <span
+                        class="px-3 py-1 bg-surface-container-high text-secondary rounded-full text-[10px] font-bold cursor-pointer hover:text-white"
+                        >Adjunct</span
+                      >
+                      <span
+                        class="px-3 py-1 bg-surface-container-high text-secondary rounded-full text-[10px] font-bold cursor-pointer hover:text-white"
+                        >Research</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Capacity Card -->
+              <div
+                class="bg-surface-container rounded-xl p-6 shadow-xl border border-outline-variant/20 relative overflow-hidden"
+              >
+                <div class="accent-bar bg-tertiary"></div>
+                <p
+                  class="text-[11px] font-bold uppercase tracking-widest text-tertiary mb-1"
+                >
+                  Capacity Alert
+                </p>
+                <h4 class="text-3xl font-headline font-bold text-white mb-2">
+                  94%
+                </h4>
+                <p class="text-xs text-secondary leading-relaxed">
+                  Lecture halls are reaching peak occupancy for the Tuesday
+                  afternoon slot.
+                </p>
+              </div>
+            </div>
+            <!-- Right Column: Timetable -->
+            <div
+              class="xl:col-span-3 bg-surface-container rounded-xl shadow-2xl border border-outline-variant/20 overflow-hidden flex flex-col"
+            >
+              <div
+                class="p-4 md:p-6 border-b border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4"
+              >
+                <div class="flex items-center gap-4">
+                  <button
+                    class="p-2 hover:bg-white/5 rounded-lg transition-colors text-secondary"
+                  >
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  <h3
+                    class="font-headline font-bold text-lg text-white whitespace-nowrap"
+                  >
+                    Octobre 23 — 29
+                  </h3>
+                  <button
+                    class="p-2 hover:bg-white/5 rounded-lg transition-colors text-secondary"
+                  >
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+                <div
+                  class="flex bg-surface-container-low p-1 rounded-lg w-full sm:w-auto"
+                >
+                  <button
+                    class="flex-1 sm:flex-none px-6 py-1.5 rounded-md text-xs font-bold bg-primary text-white shadow-lg shadow-primary/20"
+                  >
+                    Week
+                  </button>
+                  <button
+                    class="flex-1 sm:flex-none px-6 py-1.5 rounded-md text-xs font-bold text-secondary hover:text-white"
+                  >
+                    Month
+                  </button>
+                </div>
+              </div>
+              <div class="mobile-grid-scroll custom-scrollbar">
+                <div class="min-w-[900px]">
+                  <!-- Grid Headers -->
+                  <div
+                    class="grid grid-cols-6 border-b border-outline-variant/20"
+                  >
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Time
+                    </div>
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Mon 23
+                    </div>
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Tue 24
+                    </div>
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Wed 25
+                    </div>
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Thu 26
+                    </div>
+                    <div
+                      class="p-4 bg-surface-container-low/50 text-[10px] font-bold uppercase tracking-widest text-secondary text-center"
+                    >
+                      Fri 27
+                    </div>
+                  </div>
+                  <!-- Schedule Grid Content -->
+                  <div
+                    class="relative h-[600px] overflow-y-auto custom-scrollbar"
+                  >
+                    <!-- Background Lines -->
+                    <div class="absolute inset-0 pointer-events-none">
+                      <div class="grid grid-cols-6 h-full">
+                        <div class="border-r border-outline-variant/10"></div>
+                        <div class="border-r border-outline-variant/10"></div>
+                        <div class="border-r border-outline-variant/10"></div>
+                        <div class="border-r border-outline-variant/10"></div>
+                        <div class="border-r border-outline-variant/10"></div>
+                        <div></div>
+                      </div>
+                      <!-- Horizontal Lines -->
+                      <div class="absolute top-0 w-full h-full">
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                        <div
+                          class="h-20 border-b border-outline-variant/10"
+                        ></div>
+                      </div>
+                    </div>
+                    <!-- Time Column -->
+                    <div class="flex flex-col w-full">
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          08:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          10:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          12:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          14:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          16:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                      <div class="flex">
+                        <div
+                          class="w-[16.66%] h-20 flex items-center justify-center text-[10px] font-medium text-secondary"
+                        >
+                          18:00
+                        </div>
+                        <div class="flex-1"></div>
+                      </div>
+                    </div>
+                    <!-- Dynamic Slots -->
+                    <!-- Mon 08:00 (Math) -->
+                    <div
+                      class="absolute top-0 left-[16.66%] w-[16.66%] p-1.5 h-32 group cursor-pointer"
+                    >
+                      <div
+                        class="h-full bg-primary/20 p-3 rounded-lg border-l-4 border-primary transition-all group-hover:bg-primary/30"
+                      >
+                        <p class="text-[10px] font-bold text-primary uppercase">
+                          MA-301
+                        </p>
+                        <p class="text-sm font-bold text-white mt-1">
+                          Advanced Calculus
+                        </p>
+                        <p class="text-[10px] text-secondary mt-2 font-medium">
+                          Room 402 • Thorne
+                        </p>
+                      </div>
+                    </div>
+                    <!-- Tue 10:30 (Physics) -->
+                    <div
+                      class="absolute top-24 left-[33.33%] w-[16.66%] p-1.5 h-28 group cursor-pointer"
+                    >
+                      <div
+                        class="h-full bg-tertiary/20 p-3 rounded-lg border-l-4 border-tertiary transition-all group-hover:bg-tertiary/30"
+                      >
+                        <p
+                          class="text-[10px] font-bold text-tertiary uppercase"
+                        >
+                          PH-102
+                        </p>
+                        <p class="text-sm font-bold text-white mt-1">
+                          Quantum Mech
+                        </p>
+                        <p class="text-[10px] text-secondary mt-2 font-medium">
+                          Lab A • Vance
+                        </p>
+                      </div>
+                    </div>
+                    <!-- Thu 14:00 (CS) -->
+                    <div
+                      class="absolute top-60 left-[66.66%] w-[16.66%] p-1.5 h-36 group cursor-pointer"
+                    >
+                      <div
+                        class="h-full bg-slate-500/20 p-3 rounded-lg border-l-4 border-slate-500 transition-all group-hover:bg-slate-500/30"
+                      >
+                        <p
+                          class="text-[10px] font-bold text-slate-400 uppercase"
+                        >
+                          CS-504
+                        </p>
+                        <p class="text-sm font-bold text-white mt-1">
+                          Arch Design
+                        </p>
+                        <p class="text-[10px] text-secondary mt-2 font-medium">
+                          Hall 1 • Sterling
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Faculty Roster Section -->
+          <section class="space-y-6">
+            <div class="flex items-center justify-between">
+              <h2 class="text-2xl font-headline font-bold text-white">
+                Faculty Assignments
+              </h2>
+              <div
+                class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest cursor-pointer group"
+              >
+                View Directory
+                <span
+                  class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform"
+                  >arrow_forward</span
+                >
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <!-- Teacher Card 1 -->
+              <div
+                class="bg-surface-container p-6 rounded-xl shadow-lg border border-outline-variant/20 hover:border-primary/50 transition-all group"
+              >
+                <div class="flex items-start gap-4">
+                  <img
+                    alt="Dr. Thorne"
+                    class="w-14 h-14 rounded-full bg-surface-container-high object-cover ring-2 ring-primary/20"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCckhj50LPw6nyy4FkXElNMTpACgxZhXgZcoAmK-r0s5qSu1a_GFMuGr2KArw-OcuEgxdyc7U6MzJELzg3ew1-tCC77CmkMf5p8-cF-9u4ULBJFsFzxOQ9lJOBar-al1bNkyfocDHLpskK2KEobg7ogIacqtAEUNro8RydV8Aw7Wv5dO0b0lEGWAAQ5teT9GlmIZNpQSDAYUEK5LwCTFGTCr8vq-6GnIs_h9wL73v08IC1rf-nRA4qkFa8N9dFdHC1ZD08GdbkzJw"
+                  />
+                  <div class="flex-1">
+                    <h4
+                      class="font-headline font-bold text-lg text-white group-hover:text-primary transition-colors"
+                    >
+                      Dr. Aris Thorne
+                    </h4>
+                    <p class="text-xs text-secondary font-medium">
+                      Senior Lecturer, Pure Math
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >Calculus III</span
+                      >
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >Linear Alg</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-6 pt-6 border-t border-outline-variant/10 flex justify-between items-center"
+                >
+                  <div class="flex flex-col">
+                    <span
+                      class="text-[10px] font-bold text-secondary uppercase tracking-widest"
+                      >Workload</span
+                    >
+                    <div class="flex items-center gap-2 mt-1">
+                      <div
+                        class="w-24 h-1.5 bg-surface-container-low rounded-full overflow-hidden"
+                      >
+                        <div class="w-4/5 h-full bg-primary"></div>
+                      </div>
+                      <span class="text-[10px] font-bold text-white"
+                        >18h/w</span
+                      >
+                    </div>
+                  </div>
+                  <button
+                    class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
+                  >
+                    <span class="material-symbols-outlined">sms</span>
+                  </button>
+                </div>
+              </div>
+              <!-- Teacher Card 2 -->
+              <div
+                class="bg-surface-container p-6 rounded-xl shadow-lg border border-outline-variant/20 hover:border-primary/50 transition-all group"
+              >
+                <div class="flex items-start gap-4">
+                  <img
+                    alt="Prof. Vance"
+                    class="w-14 h-14 rounded-full bg-surface-container-high object-cover ring-2 ring-primary/20"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC09sfQ_fjnrP5wIIjp5eG8bTX4_sINpwD1mmLZxkpIkAz9ARnnV5oVmBXHt2oozzP_dx7is2EE0oU72YLv8wMnQ8xYORg5VKsczbEa0K7MPTUVa8myaDW2FAWUL5klatEPec4YiB5ku2DuJFgzxcqMy_jT01g3YkGOrFvmSH9bfmbHnpbEXnQT7cAUXtMAFuDRbjYZ1Xd2buarAvZj59AtydXU25I_ID2oIn5qxSIRLhuM5AKfcjhuPUHcLoR9RoSdw-hPLjJ888c"
+                  />
+                  <div class="flex-1">
+                    <h4
+                      class="font-headline font-bold text-lg text-white group-hover:text-primary transition-colors"
+                    >
+                      Prof. Elena Vance
+                    </h4>
+                    <p class="text-xs text-secondary font-medium">
+                      Head, Theoretical Physics
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >Quantum I</span
+                      >
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >Astro</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-6 pt-6 border-t border-outline-variant/10 flex justify-between items-center"
+                >
+                  <div class="flex flex-col">
+                    <span
+                      class="text-[10px] font-bold text-secondary uppercase tracking-widest"
+                      >Workload</span
+                    >
+                    <div class="flex items-center gap-2 mt-1">
+                      <div
+                        class="w-24 h-1.5 bg-surface-container-low rounded-full overflow-hidden"
+                      >
+                        <div class="w-3/5 h-full bg-primary"></div>
+                      </div>
+                      <span class="text-[10px] font-bold text-white"
+                        >12h/w</span
+                      >
+                    </div>
+                  </div>
+                  <button
+                    class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
+                  >
+                    <span class="material-symbols-outlined">sms</span>
+                  </button>
+                </div>
+              </div>
+              <!-- Teacher Card 3 -->
+              <div
+                class="bg-surface-container p-6 rounded-xl shadow-lg border border-outline-variant/20 hover:border-primary/50 transition-all group"
+              >
+                <div class="flex items-start gap-4">
+                  <img
+                    alt="Dr. Sterling"
+                    class="w-14 h-14 rounded-full bg-surface-container-high object-cover ring-2 ring-primary/20"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSY4GuVFJFpQufBhpxPEwT6Tv8Af5PjQTqIhriL6RQLVZwvlye8Af4QyesxFuvuF1Fksv3OD67U7rNj5_hWPwdnHbA6lg2aSKsTFi7LxBMmg5BnI57gMGRVrUfjog9omgAQeoUlran77JfLRr6IsoprZgN51rQJ3PnnxkCbWO66K5d6oN9fdn39vk7E2J1jeghoTw-Bqj5nIgmwJ8KwGrp55hOGsY90n1dY8BCaQw1dbGqRY7Aoxc5x8VqFDNTMgYJH2DiPcYnQo4"
+                  />
+                  <div class="flex-1">
+                    <h4
+                      class="font-headline font-bold text-lg text-white group-hover:text-primary transition-colors"
+                    >
+                      Dr. Julian Sterling
+                    </h4>
+                    <p class="text-xs text-secondary font-medium">
+                      Lead Researcher, Computer Science
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >AI Systems</span
+                      >
+                      <span
+                        class="px-2 py-0.5 bg-surface-container-high rounded text-[9px] font-bold text-secondary uppercase tracking-tighter"
+                        >Data Structs</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-6 pt-6 border-t border-outline-variant/10 flex justify-between items-center"
+                >
+                  <div class="flex flex-col">
+                    <span
+                      class="text-[10px] font-bold text-secondary uppercase tracking-widest"
+                      >Workload</span
+                    >
+                    <div class="flex items-center gap-2 mt-1">
+                      <div
+                        class="w-24 h-1.5 bg-surface-container-low rounded-full overflow-hidden"
+                      >
+                        <div class="w-1/2 h-full bg-primary"></div>
+                      </div>
+                      <span class="text-[10px] font-bold text-white"
+                        >10h/w</span
+                      >
+                    </div>
+                  </div>
+                  <button
+                    class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
+                  >
+                    <span class="material-symbols-outlined">sms</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Data Analysis Table Section -->
+          <div
+            class="bg-surface-container rounded-xl p-4 md:p-8 space-y-6 overflow-hidden border border-outline-variant/20"
+          >
+            <div>
+              <h3 class="font-headline font-bold text-xl text-white">
+                Allocation Status
+              </h3>
+              <p class="text-sm text-secondary mt-1">
+                Real-time room and resource utilization metrics.
+              </p>
+            </div>
+            <div
+              class="bg-surface-container-low rounded-lg overflow-x-auto border border-outline-variant/10 custom-scrollbar"
+            >
+              <table class="w-full text-left border-collapse min-w-[700px]">
+                <thead>
+                  <tr class="bg-surface-container-high/50">
+                    <th
+                      class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary"
+                    >
+                      Location
+                    </th>
+                    <th
+                      class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary"
+                    >
+                      Daily Utilization
+                    </th>
+                    <th
+                      class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary"
+                    >
+                      Prime Slot Status
+                    </th>
+                    <th
+                      class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary text-right"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    class="border-b border-outline-variant/10 hover:bg-white/5 transition-colors"
+                  >
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center text-primary"
+                        >
+                          <span class="material-symbols-outlined text-sm"
+                            >meeting_room</span
+                          >
+                        </div>
+                        <span class="text-sm font-bold text-white"
+                          >Main Lecture Hall A</span
+                        >
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div
+                        class="w-32 h-2 bg-surface-container rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="w-[85%] h-full bg-primary rounded-full"
+                        ></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-error-container text-on-error-container"
+                        >CRITICAL</span
+                      >
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <button
+                        class="text-primary font-bold text-xs uppercase tracking-wider hover:underline"
+                      >
+                        Reschedule
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="w-8 h-8 rounded-md bg-primary/20 flex items-center justify-center text-primary"
+                        >
+                          <span class="material-symbols-outlined text-sm"
+                            >biotech</span
+                          >
+                        </div>
+                        <span class="text-sm font-bold text-white"
+                          >Physics Laboratory 02</span
+                        >
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div
+                        class="w-32 h-2 bg-surface-container rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="w-[45%] h-full bg-primary rounded-full"
+                        ></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-surface-container-highest text-secondary"
+                        >STABLE</span
+                      >
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <button
+                        class="text-primary font-bold text-xs uppercase tracking-wider hover:underline"
+                      >
+                        Reschedule
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Footer -->
+        <footer
+          class="mt-auto py-10 px-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-6"
+        >
+          <p class="text-xs text-secondary font-medium">
+            © 2023-2024 The Modern Archivist. All rights reserved.
+          </p>
+          <div class="flex flex-wrap justify-center gap-6 md:gap-8">
+            <a
+              class="text-xs font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors"
+              href="#"
+              >Compliance</a
+            >
+            <a
+              class="text-xs font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors"
+              href="#"
+              >Archives</a
+            >
+            <a
+              class="text-xs font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors"
+              href="#"
+              >Directory</a
+            >
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>
