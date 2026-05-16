@@ -26,8 +26,6 @@ return new class extends Migration
             $table->string('profession')->nullable();
             $table->text('adresse')->nullable();
             $table->enum('status', ['active', 'unactive'])->default('active');
-            $table->string('token_invitation')->nullable()->unique();
-            $table->timestamp('token_expire_at')->nullable();
             $table->boolean('blocked')->default(false);
             $table->text('blocked_reasons')->default("Non précisée");
             $table->timestamps();

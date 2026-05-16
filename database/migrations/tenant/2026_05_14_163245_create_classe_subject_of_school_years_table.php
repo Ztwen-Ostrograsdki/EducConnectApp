@@ -16,13 +16,23 @@ return new class extends Migration
             $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
             $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
-            $table->foreignId('school_year_id')->nullable()->constrained('school_years')->nullOnDelete();
-            $table->decimal('coefficient', 4, 2)->default(1);  // coefficient de la matière dans la classe
-            $table->timestamps();
+            $table->foreignId('school_year_id')->constrained('school_years')->cascadeOnDelete();
+            $table->decimal('coefficient', 4, 2)->default(1);
             $table->boolean('is_active')->default(true);
 
-            $table->unique(['classe_id', 'subject_id']);        // pas de doublon
-            $table->index(['classe_id', 'teacher_id']);
+            // ─── Remplacement ─────────────────────────────────────────
+            $table->timestamp('started_at')->nullable();    // début de l'enseignement
+            $table->timestamp('ended_at')->nullable();      // null = enseignant actuel
+            $table->text('replacement_reason')->nullable(); // motif du remplacement
+            $table->foreignId('replaced_by')->nullable()    // qui a enregistré le remplacement
+                ->constrained('users')->nullOnDelete();
+
+            $table->timestamps();
+
+            // Pas d'unique — géré par logique métier (ended_at = null = actuel)
+            $table->index(['classe_id', 'subject_id', 'school_year_id']);
+            $table->index(['teacher_id', 'school_year_id']);
+            $table->index('ended_at');                      // pour filtrer les actifs rapidement
         });
     }
 

@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('student_tutor_relations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sutudent_id')->constrained('sutudents')->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('tutor_id')->constrained('tutors')->cascadeOnDelete();
             $table->string('parent_relation')->default('tutor');
             $table->boolean('is_primary_contact')->default(false);
             $table->timestamps();
             $table->boolean('is_active')->default(true);
             $table->boolean('locked')->default(false);
-            $table->unique(['sutudent_id', 'tutor_id']);
+            $table->unique(['student_id', 'tutor_id']);
         });
     }
 

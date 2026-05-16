@@ -42,7 +42,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Deux classes ne peuvent pas avoir le même nom dans la même année
-            $table->unique(['school_year_id', 'nom']);
+            $table->unique(['school_year_id', 'name']);
             $table->index(['school_year_id', 'promotion_id']);
             $table->index('is_active');
         });
