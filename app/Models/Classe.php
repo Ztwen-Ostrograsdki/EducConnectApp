@@ -1,12 +1,144 @@
 <?php
-
 namespace App\Models;
 
 use App\Models\ClasseSubjectOfSchoolYear;
+use App\Models\Filiar;
+use App\Models\Mark;
+use App\Models\Payment;
+use App\Models\Presence;
+use App\Models\Promotion;
+use App\Models\SchoolYear;
+use App\Models\Serial;
+use App\Models\Student;
+use App\Models\Teacher;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
+
+    
 class Classe extends Model
 {
+
+    use SoftDeletes;
+
+    protected $table = 'classes';
+
+    protected $fillable = [
+        'uuid',
+        'school_year_id',
+        'promotion_id',
+        'filiar_id',
+        'serial_id',
+        'name',
+        'code',
+        'level',
+        'effectif_max',
+        'principal_id',
+        'respo_1_id',
+        'respo_2_id',
+        'is_active',
+        'is_locked',
+        'locked_for_teachers',
+    ];
+
+    protected $casts = [
+        'is_active'           => 'boolean',
+        'is_locked'           => 'boolean',
+        'locked_for_teachers' => 'array',
+        'effectif_max'        => 'integer',
+    ];
+
+
+     // ─── Relations ────────────────────────────────────────────────────
+
+    public function schoolYear(): BelongsTo
+    {
+        return $this->belongsTo(SchoolYear::class, 'school_year_id');
+    }
+
+    public function promotion(): BelongsTo
+    {
+        return $this->belongsTo(Promotion::class, 'promotion_id');
+    }
+
+    public function filiere(): BelongsTo
+    {
+        return $this->belongsTo(Filiar::class, 'filiar_id');
+    }
+
+    public function serie(): BelongsTo
+    {
+        return $this->belongsTo(Serial::class, 'serial_id');
+    }
+
+    // Professeur principal
+    public function principal(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'principal_id');
+    }
+
+    // Responsables (élèves)
+    public function responsable1(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'respo_1_id');
+    }
+
+    public function responsable2(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'respo_2_id');
+    }
+
+    // Élèves inscrits dans cette classe
+    public function eleves(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'class_students', 'class_id', 'student_id')
+                    ->withPivot(['school_year_id', 'status', 'date_inscription', 'reason'])
+                    ->withTimestamps();
+    }
+
+    // Élèves actifs uniquement
+    public function elevesActifs(): BelongsToMany
+    {
+        return $this->eleves()->wherePivot('status', 'actif');
+    }
+
+    // Matières de la classe (via pivot)
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(ClasseSubjectOfSchoolYear::class, 'classe_id');
+    }
+
+    // Matières actives (enseignant actuel, pas de remplacement en cours)
+    public function subjectsActifs(): HasMany
+    {
+        return $this->subjects()
+                    ->whereNull('ended_at')
+                    ->where('is_active', true);
+    }
+
+    // Notes de la classe
+    public function marks(): HasMany
+    {
+        return $this->hasMany(Mark::class, 'classe_id');
+    }
+
+    // Présences de la classe
+    public function presences(): HasMany
+    {
+        return $this->hasMany(Presence::class, 'classe_id');
+    }
+
+    // Paiements de la classe
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'classe_id');
+    }
+
+
     // Enseignant actuel d'une matière dans une classe
     public function getCurrentTeacherOfSubject(int $subjectId, int $yearId)
     {
@@ -40,4 +172,58 @@ class Classe extends Model
             ->orderBy('ended_at', 'desc')
             ->get();
     }
+
+       // ─── Scopes ───────────────────────────────────────────────────────
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeByYear(Builder $query, int $schoolYearId): Builder
+    {
+        return $query->where('school_year_id', $schoolYearId);
+    }
+
+    public function scopeByPromotion(Builder $query, int $promotionId): Builder
+    {
+        return $query->where('promotion_id', $promotionId);
+    }
+
+    public function scopeByLevel(Builder $query, string $level): Builder
+    {
+        return $query->where('level', $level);
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->is_locked;
+    }
+
+    // Vérifie si un enseignant est bloqué pour cette classe
+    public function isTeacherLocked(int $teacherId): bool
+    {
+        $locked = $this->locked_for_teachers ?? [];
+        return in_array($teacherId, $locked);
+    }
+
+    // Nombre d'élèves actifs
+    public function effectif(): int
+    {
+        return $this->elevesActifs()->count();
+    }
+
+    // Vérifie si la classe est pleine
+    public function isFull(): bool
+    {
+        return $this->effectif() >= $this->effectif_max;
+    }
+
 }
