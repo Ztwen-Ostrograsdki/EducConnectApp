@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->unique('slug');
             $table->index('is_active');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

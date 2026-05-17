@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('classe_subject_of_school_years', function (Blueprint $table) {
             $table->id();
             $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
@@ -23,17 +24,18 @@ return new class extends Migration
             // ─── Remplacement ─────────────────────────────────────────
             $table->timestamp('started_at')->nullable();    // début de l'enseignement
             $table->timestamp('ended_at')->nullable();      // null = enseignant actuel
-            $table->text('replacement_reason')->nullable(); // motif du remplacement
+            $table->string('replacement_reason')->nullable(); // motif du remplacement
             $table->foreignId('replaced_by')->nullable()    // qui a enregistré le remplacement
                 ->constrained('users')->nullOnDelete();
 
             $table->timestamps();
 
             // Pas d'unique — géré par logique métier (ended_at = null = actuel)
-            $table->index(['classe_id', 'subject_id', 'school_year_id']);
+            $table->index(['classe_id', 'subject_id', 'school_year_id'], 'cssy_classe_subject_year_idx');
             $table->index(['teacher_id', 'school_year_id']);
             $table->index('ended_at');                      // pour filtrer les actifs rapidement
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -41,6 +43,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('classe_subject_of_school_years');
+        Schema::enableForeignKeyConstraints();
     }
 };

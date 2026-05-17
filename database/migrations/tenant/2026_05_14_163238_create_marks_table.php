@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('marks', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
@@ -35,7 +36,7 @@ return new class extends Migration
                 'examen',
             ]);
             $table->decimal('value', 5, 2);                    // valeur de la note
-            $table->text('comments')->nullable();
+            $table->string('comments')->nullable();
             $table->boolean('editable')->default(true);     // devient false après délai
             $table->boolean('validated')->default(true);
             $table->timestamp('locked_at')->nullable();         // date de verrouillage
@@ -53,6 +54,7 @@ return new class extends Migration
             $table->index(['student_id', 'school_year_id', 'period']);
             $table->index(['classe_id', 'subject_id', 'period']);
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -60,6 +62,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('marks');
+        Schema::enableForeignKeyConstraints();
     }
 };

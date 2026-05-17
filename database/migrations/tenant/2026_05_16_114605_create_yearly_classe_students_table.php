@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('yearly_classe_students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('author_id')->constrained('users')->nullable()->nullOnDelete();
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
             $table->foreignId('school_year_id')->constrained('school_years');
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->timestamps();
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -31,6 +33,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('yearly_classe_students');
+        Schema::enableForeignKeyConstraints();
     }
 };

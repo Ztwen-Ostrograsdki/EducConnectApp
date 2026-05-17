@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('student_tutor_relations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->boolean('locked')->default(false);
             $table->unique(['student_id', 'tutor_id']);
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +31,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('student_tutor_relations');
+        Schema::enableForeignKeyConstraints();
     }
 };

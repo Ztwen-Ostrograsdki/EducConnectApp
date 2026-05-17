@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
@@ -19,7 +20,7 @@ return new class extends Migration
             $table->string('slug');
             $table->string('name');                              // ex: Mathématiques
             $table->string('code')->nullable();                 // ex: MATH
-            $table->text('description')->nullable();
+            $table->string('description')->nullable()->default(null);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->unique('name');
             $table->index('is_active');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -34,6 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('subjects');
+        Schema::enableForeignKeyConstraints();
     }
 };

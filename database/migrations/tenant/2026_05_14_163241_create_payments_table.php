@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
@@ -34,7 +35,7 @@ return new class extends Migration
             $table->enum('status', ['en_attente', 'partiel', 'complet'])->default('en_attente');
             $table->string('payment_mode')->nullable();
             $table->dateTime('payment_date')->nullable();
-            $table->text('observations')->nullable();
+            $table->string('observations')->nullable();
             $table->foreignId('registred_by')->nullable()
                   ->constrained('users')->nullOnDelete();
             $table->timestamps();
@@ -44,6 +45,7 @@ return new class extends Migration
             $table->index(['status', 'type']);
             $table->index('payment_date');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -51,6 +53,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('payments');
+        Schema::enableForeignKeyConstraints();
     }
 };

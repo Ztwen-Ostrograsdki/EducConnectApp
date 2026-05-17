@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('teacher_yearly_accesses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
@@ -33,7 +34,7 @@ return new class extends Migration
             ])->default('pending');
  
             // ─── Suspension ───────────────────────────────────────────
-            $table->text('suspension_reason')->nullable();          // motif de suspension
+            $table->string('suspension_reason')->nullable();          // motif de suspension
             $table->timestamp('suspended_at')->nullable();          // date de suspension
             $table->foreignId('suspended_by')->nullable()           // directeur qui a suspendu
                   ->constrained('users')->nullOnDelete();
@@ -47,6 +48,7 @@ return new class extends Migration
             $table->index('token');
             $table->index('token_expires_at');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -54,6 +56,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('teacher_yearly_accesses');
+        Schema::enableForeignKeyConstraints();
     }
 };

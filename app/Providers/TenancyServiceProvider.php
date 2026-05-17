@@ -119,7 +119,7 @@ class TenancyServiceProvider extends ServiceProvider
             if (file_exists(base_path('routes/tenant.php'))) {
                 Route::namespace(static::$controllerNamespace)
                     ->middleware([
-                        Middleware\InitializeTenancyBySubdomain::class,
+                        Middleware\InitializeTenancyByDomain::class,
                         Middleware\PreventAccessFromCentralDomains::class,
                     ])
                     ->group(base_path('routes/tenant.php'));

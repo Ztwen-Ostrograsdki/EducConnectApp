@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('mark_updateds_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mark_id')->constrained('marks')->cascadeOnDelete();
@@ -18,7 +19,7 @@ return new class extends Migration
                   ->constrained('users')->nullOnDelete();
             $table->decimal('old_value', 5, 2);           // valeur avant modification
             $table->decimal('new_value', 5, 2);           // valeur après modification
-            $table->text('reasons')->nullable()->default(null);                   // justification de la modification
+            $table->text('reasons')->nullable();                   // justification de la modification
             $table->boolean('authorized_by_director')->default(false);
             $table->foreignId('authorized_by')->nullable()  // directeur qui a autorisé
                   ->constrained('users')->nullOnDelete();
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->index(['mark_id', 'created_at']);
             $table->index('editor_id');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -35,6 +37,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('mark_updateds_histories');
+        Schema::enableForeignKeyConstraints();
     }
 };

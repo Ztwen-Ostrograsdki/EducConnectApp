@@ -54,7 +54,7 @@ class TenantLogin extends Component
 
         session()->regenerate();
 
-        $this->redirect(route('dashboard'), navigate: true);
+        // $this->redirect(route('dashboard'), navigate: true);
     }
 
     /**

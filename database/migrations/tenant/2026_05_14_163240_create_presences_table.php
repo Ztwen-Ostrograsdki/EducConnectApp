@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('presences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
@@ -20,7 +21,7 @@ return new class extends Migration
             $table->foreignId('subject_id')->nullable()->constrained('subjects')->nullOnDelete();
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'retard', 'excuse'])->default('present');
-            $table->text('reason')->nullable()->default(null);                  // motif absence/retard
+            $table->string('reason')->nullable()->default(null);                  // motif absence/retard
             $table->boolean('tutor_advised')->default(false);  // tuteur notifié ?
             $table->timestamp('tutor_advised_at')->nullable();
             $table->timestamps();
@@ -30,6 +31,7 @@ return new class extends Migration
             $table->index(['student_id', 'school_year_id']);
             $table->index('status');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -37,6 +39,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('presences');
+        Schema::enableForeignKeyConstraints();
     }
 };

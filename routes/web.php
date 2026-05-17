@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\Auth\CentralLogin;
-use App\Livewire\Test;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +13,7 @@ Route::get('/', function () {
 
 // ─── Auth centrale ────────────────────────────────────────────────────
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
+
 Route::post('/logout', function () {
     /** @var \App\Models\User $user */
     $user = Auth::user();
@@ -22,7 +22,7 @@ Route::post('/logout', function () {
     session()->invalidate();
     session()->regenerateToken();
     return redirect()->route('central.login');
-})->name('logout')->middleware('auth');
+})->name('central.logout')->middleware('auth');
 
 
 Route::get('/admin/dashboard', function () {

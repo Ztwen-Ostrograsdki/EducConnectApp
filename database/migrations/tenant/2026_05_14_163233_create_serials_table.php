@@ -12,13 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('serials', function (Blueprint $table) {
             $table->id();
             $table->string('slug'); 
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('name');                              // ex: A, B, C, D
             $table->string('code')->nullable();                 // ex: A, B, C
-            $table->text('description')->nullable();
+            $table->string('description')->nullable()->default(null);
             $table->boolean('is_active')->default(true);
             $table->unique('name');
             $table->index('is_active');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->softDeletes();
 
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -33,6 +35,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('serials');
+        Schema::enableForeignKeyConstraints();
     }
 };

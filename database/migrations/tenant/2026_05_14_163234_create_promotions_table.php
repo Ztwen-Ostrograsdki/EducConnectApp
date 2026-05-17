@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->string('slug');
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->unique('name');
             $table->index(['level', 'is_active']);
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -34,6 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('promotions');
+        Schema::enableForeignKeyConstraints();
     }
 };

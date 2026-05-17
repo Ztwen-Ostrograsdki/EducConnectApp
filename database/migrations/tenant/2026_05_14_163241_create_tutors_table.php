@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('tutors', function (Blueprint $table) {
            $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
@@ -23,16 +24,17 @@ return new class extends Migration
             $table->string('contacts')->nullable();
             $table->string('whatsapp_number')->nullable();
             $table->enum('gender', ['M', 'F'])->default('M');
-            $table->string('profession')->nullable();
-            $table->text('adresse')->nullable();
+            $table->string('profession')->nullable()->default(null);
+            $table->string('adresse')->nullable();
             $table->enum('status', ['active', 'unactive'])->default('active');
             $table->boolean('blocked')->default(false);
-            $table->text('blocked_reasons')->default("Non précisée");
+            $table->string('blocked_reasons')->default("Non précisée");
             $table->timestamps();
             $table->softDeletes();
             $table->index(['name', 'prenames']);
             $table->index('status');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -40,6 +42,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tutors');
+        Schema::enableForeignKeyConstraints();
     }
 };
