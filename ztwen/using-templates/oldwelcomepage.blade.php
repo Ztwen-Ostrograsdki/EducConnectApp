@@ -74,7 +74,7 @@
         nav {
             position: fixed;
             top: 0; left: 0; right: 0;
-            z-index: 99;
+            z-index: 100;
             padding: 1.25rem 4rem;
             display: flex;
             align-items: center;
@@ -82,7 +82,6 @@
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             background: rgba(10,14,26,0.6);
-            min-height: 60px;
         }
 
         .nav-logo {
@@ -951,163 +950,18 @@
         }
 
         /* ── Responsive ── */
-        /* ── RESPONSIVE ── */
-
-        /* Tablette (768px - 1024px) */
-        @media (max-width: 1024px) {
-            nav { padding: 1rem 2rem; }
-            .nav-links { gap: 1.5rem; }
-            .nav-links li:not(:last-child):nth-child(n+3) { display: none; }
-            .hero { padding: 7rem 2rem 3rem; }
-            .section { padding: 5rem 2rem; }
-            .features-grid { grid-template-columns: 1fr; gap: 3rem; }
-            .features-text { padding-right: 0; }
-            .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-            .roles-grid { grid-template-columns: repeat(2, 1fr); }
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
-            .hero-stats { gap: 2rem; }
-            .role-buttons { gap: 0.75rem; }
-        }
-
-        /* Mobile (< 768px) */
         @media (max-width: 768px) {
-            * { cursor: auto !important; }
-            .cursor, .cursor-follower { display: none !important; }
-
-            nav {
-                padding: 1rem 1.25rem;
-                justify-content: space-between;
-            }
-
-            .nav-links {
-                display: none;
-                position: fixed;
-                top: 60px; left: 0; right: 0; bottom: 0;
-                background: rgba(10,14,26,0.98);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 2.5rem;
-                z-index: 98;
-                padding: 2rem;
-                overflow-y: auto;
-            }
-
-            .nav-links.open { display: flex; }
-
-            .nav-links li { width: 100%; text-align: center; }
-
-            .nav-links a {
-                font-size: 1.1rem;
-                letter-spacing: 0.08em;
-                display: block;
-                padding: 0.5rem 0;
-                color: var(--white) !important;
-            }
-
-            .nav-cta {
-                font-size: 1rem !important;
-                padding: 0.875rem 2.5rem !important;
-                display: inline-block !important;
-                margin-top: 0.5rem;
-            }
-
-            .hamburger {
-                display: flex !important;
-                z-index: 100;
-            }
-
-            .hero { padding: 6rem 1.25rem 3rem; }
-            .hero-title { font-size: clamp(2rem, 8vw, 3rem); }
-            .hero-sub { font-size: 0.95rem; }
-
-            .role-buttons {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 0 1rem;
-            }
-
-            .role-btn {
-                justify-content: flex-start;
-            }
-
-            .hero-stats {
-                gap: 1.25rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .stat-num { font-size: 1.75rem; }
-
-            .section { padding: 4rem 1.25rem; }
-            .section-title { font-size: clamp(1.75rem, 6vw, 2.5rem); }
-
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+            .hero { padding: 6rem 1.5rem 3rem; }
+            .section { padding: 5rem 1.5rem; }
             .features-grid { grid-template-columns: 1fr; }
             .features-text { padding-right: 0; }
-
-            .steps-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .roles-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .role-card { padding: 1.5rem 1.25rem; }
-
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .footer-bottom {
-                flex-direction: column;
-                gap: 0.75rem;
-                text-align: center;
-            }
-
-            footer { padding: 3rem 1.25rem; }
-
-            .cta-section { padding: 5rem 1.25rem; }
-
-            .slide-card { width: 280px; }
-
-            .scroll-indicator { display: none; }
-        }
-
-        /* Hamburger button */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            z-index: 100;
-            padding: 0.5rem;
-            background: none;
-            border: none;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--white);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.open span:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-        .hamburger.open span:nth-child(2) {
-            opacity: 0;
-            transform: scaleX(0);
-        }
-        .hamburger.open span:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .roles-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr; }
+            .role-buttons { flex-direction: column; align-items: center; }
+            .hero-stats { gap: 1.5rem; }
         }
     </style>
 </head>
@@ -1120,18 +974,13 @@
     <!-- NAVBAR -->
     <nav id="navbar">
         <div class="nav-logo">EducConnect</div>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#features" onclick="closeMenu()">Fonctionnalités</a></li>
-            <li><a href="#how" onclick="closeMenu()">Comment ça marche</a></li>
-            <li><a href="#roles" onclick="closeMenu()">Accès</a></li>
-            <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+        <ul class="nav-links">
+            <li><a href="#features">Fonctionnalités</a></li>
+            <li><a href="#how">Comment ça marche</a></li>
+            <li><a href="#roles">Accès</a></li>
+            <li><a href="#contact">Contact</a></li>
             <li><a href="/login" class="nav-cta">Connexion →</a></li>
         </ul>
-        <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </nav>
 
     <!-- HERO -->
@@ -1743,34 +1592,6 @@
         }); // fin scroll listener
 
         }); // fin DOMContentLoaded
-
-        // ── Hamburger menu ──
-        function toggleMenu() {
-            const nav    = document.getElementById('navLinks');
-            const burger = document.getElementById('hamburger');
-            nav.classList.toggle('open');
-            burger.classList.toggle('open');
-            document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
-        }
-
-        function closeMenu() {
-            const nav    = document.getElementById('navLinks');
-            const burger = document.getElementById('hamburger');
-            nav.classList.remove('open');
-            burger.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-
-        // Fermer le menu au clic en dehors
-        document.addEventListener('click', (e) => {
-            const nav    = document.getElementById('navLinks');
-            const burger = document.getElementById('hamburger');
-            if (nav.classList.contains('open') &&
-                !nav.contains(e.target) &&
-                !burger.contains(e.target)) {
-                closeMenu();
-            }
-        });
     </script>
 </body>
 </html>

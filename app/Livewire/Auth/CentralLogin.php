@@ -27,12 +27,6 @@ class CentralLogin extends Component
      */
     public function login()
     {
-
-        // logger('LOGIN APPELE');
-
-        // throw new \Exception('STOP');
-
-        dd('login appelé');
         $this->validate();
 
         // Rate limiting — max 5 tentatives par minute
@@ -74,12 +68,6 @@ class CentralLogin extends Component
     }
 
 
-
-    public function hello()
-    {
-        dd("OK");
-    }
-
     /**
      * Reset error message when user types.
      *
@@ -108,7 +96,6 @@ class CentralLogin extends Component
     public function render(): \Illuminate\View\View
     {
         return view('livewire.auth.central-login');
-
         
     }
 }

@@ -5,7 +5,12 @@ use App\Livewire\Test;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', Test::class);
+
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // ─── Auth centrale ────────────────────────────────────────────────────
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
@@ -25,7 +30,7 @@ Route::get('/admin/dashboard', function () {
 })->name('central.dashboard')->middleware(['auth']);
 
 // ─── Pages super admin ────────────────────────────────────────────────
-Route::middleware(['auth', 'role:super_admin'])->prefix('admin')->name('central.')->group(function () {
+Route::middleware(['auth', 'check.super.admin'])->prefix('admin')->name('central.')->group(function () {
 
     // Dashboard central
     Route::get('/dashboard', function () {
