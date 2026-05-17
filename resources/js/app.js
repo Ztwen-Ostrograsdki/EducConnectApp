@@ -15,23 +15,57 @@ import { animate, stagger, inView, scroll } from "motion";
 window.Motion = { animate, stagger, inView, scroll };
 
 // ─── Animations globales au chargement de page ───────────────
-document.addEventListener("DOMContentLoaded", () => {
-    // Animer les cartes au chargement
-    animate(
-        "[data-animate='card']",
-        { opacity: [0, 1], y: [20, 0] },
-        { delay: stagger(0.1), duration: 0.4, easing: "ease-out" },
-    );
+// document.addEventListener("DOMContentLoaded", () => {
+//     // Animer les cartes au chargement
+//     animate(
+//         "[data-animate='card']",
+//         { opacity: [0, 1], y: [20, 0] },
+//         { delay: stagger(0.1), duration: 0.4, easing: "ease-out" },
+//     );
 
-    // Animer les éléments visibles au scroll
-    inView("[data-animate='reveal']", ({ target }) => {
-        animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
-    });
+//     // Animer les éléments visibles au scroll
+//     inView("[data-animate='reveal']", ({ target }) => {
+//         animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
+//     });
+// });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll("[data-animate='card']");
+
+    if (cards.length) {
+        animate(
+            cards,
+            { opacity: [0, 1], y: [20, 0] },
+            {
+                delay: stagger(0.1),
+                duration: 0.4,
+                easing: "ease-out",
+            },
+        );
+    }
+
+    const reveals = document.querySelectorAll("[data-animate='reveal']");
+
+    if (reveals.length) {
+        inView(reveals, ({ target }) => {
+            animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
+        });
+    }
 });
 
 // ─── Hook Livewire : ré-animer après les mises à jour DOM ────
+// document.addEventListener("livewire:navigated", () => {
+//     animate("main", { opacity: [0, 1] }, { duration: 0.3 });
+// });
+
 document.addEventListener("livewire:navigated", () => {
-    animate("main", { opacity: [0, 1] }, { duration: 0.3 });
+    requestAnimationFrame(() => {
+        const main = document.querySelector("main");
+
+        if (main) {
+            animate(main, { opacity: [0, 1] }, { duration: 0.3 });
+        }
+    });
 });
 
 // ─── Utilitaires Motion exportés globalement ─────────────────
@@ -69,3 +103,33 @@ window.showToast = (message, type = "success") => {
         ).finished.then(() => toast.remove());
     }, 3500);
 };
+
+document.addEventListener("livewire:initialized", () => {
+    const animateLoginCard = () => {
+        const loginCard = document.querySelector("[data-login-card]");
+
+        if (!loginCard) return;
+
+        animate(
+            loginCard,
+            {
+                opacity: [0, 1],
+                y: [24, 0],
+            },
+            {
+                duration: 0.4,
+                easing: "ease-out",
+            },
+        );
+    };
+
+    // Animation initiale
+    animateLoginCard();
+
+    // Réanimation après navigation Livewire
+    document.addEventListener("livewire:navigated", () => {
+        requestAnimationFrame(() => {
+            animateLoginCard();
+        });
+    });
+});

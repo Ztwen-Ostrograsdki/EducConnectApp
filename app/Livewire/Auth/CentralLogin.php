@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
-#[Layout('layouts.guest-central')]
+#[Layout('livewire.layouts.guest-central')]
 class CentralLogin extends Component
 {
     #[Rule('required|email')]
@@ -23,10 +23,16 @@ class CentralLogin extends Component
     /**
      * Attempt to authenticate the super admin user.
      *
-     * @return void
+     * 
      */
-    public function login(): void
+    public function login()
     {
+
+        // logger('LOGIN APPELE');
+
+        // throw new \Exception('STOP');
+
+        dd('login appelé');
         $this->validate();
 
         // Rate limiting — max 5 tentatives par minute
@@ -52,7 +58,7 @@ class CentralLogin extends Component
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if (!$user->hasRole('super_admin')) {
+        if (!$user->isSuperAdmin()) {
             Auth::logout();
             $this->errorMessage = 'Accès non autorisé.';
             return;
@@ -62,7 +68,16 @@ class CentralLogin extends Component
 
         session()->regenerate();
 
-        $this->redirect(route('central.dashboard'), navigate: true);
+        $this->redirect('/admin/dashboard');
+
+        // $this->redirect(route('central.dashboard'), navigate: true);
+    }
+
+
+
+    public function hello()
+    {
+        dd("OK");
     }
 
     /**
@@ -93,5 +108,7 @@ class CentralLogin extends Component
     public function render(): \Illuminate\View\View
     {
         return view('livewire.auth.central-login');
+
+        
     }
 }

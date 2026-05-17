@@ -1,16 +1,9 @@
-<div
-    class="min-h-screen flex items-center justify-center bg-gray-900 px-4"
-    x-data
-    x-init="
-        $nextTick(() => {
-            window.Motion.animate($el.querySelector('.login-card'),
-                { opacity: [0, 1], y: [24, 0] },
-                { duration: 0.4, easing: 'ease-out' }
-            )
-        })
-    "
->
-    <div class="login-card w-full max-w-md bg-gray-800 rounded-2xl border border-gray-700 p-8">
+<div class="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+
+    <div
+        class="login-card w-full max-w-md bg-gray-800 rounded-2xl border border-gray-700 p-8 opacity-0"
+        data-login-card
+    >
 
         {{-- Logo EducConnect --}}
         <div class="text-center mb-8">
@@ -98,7 +91,7 @@
                        disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
                 <span wire:loading.remove>Accéder à l'administration</span>
-                <span wire:loading class="flex items-center gap-2">
+                <span wire:loading class="flex items-center gap-2 ">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                 stroke="currentColor" stroke-width="4"/>
@@ -110,5 +103,6 @@
             </button>
 
         </form>
+
     </div>
 </div>

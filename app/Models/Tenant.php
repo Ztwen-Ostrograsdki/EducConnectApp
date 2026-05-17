@@ -38,9 +38,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      * Valeurs par défaut
      */
     protected $attributes = [
-        // 'statut'           => 'pending',
-        // 'type_enseignement' => 'general',
-        // 'type_periode'     => 'semestre',
+        'statut'           => 'pending',
+        'type_enseignement' => 'general',
+        'type_periode'     => 'semestre',
         'devise'     => 'Votre dévise',
     ];
 

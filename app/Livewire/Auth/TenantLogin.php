@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
-#[Layout('layouts.guest')]
+#[Layout('livewire.layouts.guest')]
 class TenantLogin extends Component
 {
     #[Rule('required|email')]

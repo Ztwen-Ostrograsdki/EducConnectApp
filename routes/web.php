@@ -1,10 +1,11 @@
 <?php
 
 use App\Livewire\Auth\CentralLogin;
+use App\Livewire\Test;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
+Route::get('/test', Test::class);
 
 // ─── Auth centrale ────────────────────────────────────────────────────
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
@@ -17,6 +18,11 @@ Route::post('/logout', function () {
     session()->regenerateToken();
     return redirect()->route('central.login');
 })->name('logout')->middleware('auth');
+
+
+Route::get('/admin/dashboard', function () {
+    return 'Connecté en tant que Super Admin !';
+})->name('central.dashboard')->middleware(['auth']);
 
 // ─── Pages super admin ────────────────────────────────────────────────
 Route::middleware(['auth', 'role:super_admin'])->prefix('admin')->name('central.')->group(function () {
