@@ -15,10 +15,8 @@ Route::get('/', function () {
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
 
 Route::post('/logout', function () {
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
     
-    $user->logout();
+    Auth::logout();
     session()->invalidate();
     session()->regenerateToken();
     return redirect()->route('central.login');

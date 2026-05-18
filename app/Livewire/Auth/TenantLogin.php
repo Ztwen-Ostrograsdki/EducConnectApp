@@ -23,18 +23,21 @@ class TenantLogin extends Component
 
     public string $errorMessage = '';
 
+
+
     /**
      * Attempt to authenticate the tenant user.
      *
-     * @return void
+     * 
      */
-    public function login(): void
+    public function login()
     {
-        dd(
-            'DB utilisée: ' . DB::connection()->getDatabaseName(),
-            'Email: ' . $this->email,
-            tenant() ? 'Tenant: ' . tenant()->id : 'Pas de tenant'
-        );
+        // dd(
+        //     request()->getHost(),
+        //     request()->getHttpHost(),
+        //     request()->url(),
+        // );
+        
         $this->validate();
 
         // Rate limiting — max 5 tentatives par minute
@@ -56,11 +59,13 @@ class TenantLogin extends Component
             return;
         }
 
+        // dd('Auth réussi !', Auth::user(), Auth::user()->name);
+
         RateLimiter::clear($key);
 
         session()->regenerate();
 
-        // $this->redirect(route('dashboard'), navigate: true);
+        return $this->redirectRoute('dashboard');
     }
 
     /**

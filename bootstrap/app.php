@@ -24,7 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(remove: [
+        
+        $middleware->prependToGroup('web',
+            \App\Http\Middleware\InitializeTenancyByDomainForLivewire::class
+        );
+        
+        $middleware->web(
+            remove: [
             PreventRequestForgery::class,
         ]);
         $middleware->alias([
@@ -32,6 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'check.super.admin'  => \App\Http\Middleware\CheckSuperAdmin::class,
+            'tenant.init' => \App\Http\Middleware\InitializeTenancyByDomainForLivewire::class,
+            'tenant.auth' => \App\Http\Middleware\TenantAuthenticate::class,
         ]);
 
        

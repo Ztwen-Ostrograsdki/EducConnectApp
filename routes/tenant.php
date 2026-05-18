@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 use App\Livewire\Auth\TenantLogin;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 Route::middleware([
     'web',
-    InitializeTenancyByDomain::class,
-    PreventAccessFromCentralDomains::class,
 ])->group(function () {
 
     // ─── Auth ─────────────────────────────────────────────────────────
@@ -20,22 +17,20 @@ Route::middleware([
     
     Route::post('/logout', function () {
 
-        // Vérifier que c'est bien le super admin
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $user->logout();
+        Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
         return redirect()->route('login');
     })->name('logout')->middleware('auth');
 
-    // ─── Pages authentifiées ──────────────────────────────────────────
-    Route::middleware('auth')->group(function () {
 
-        // Dashboard
-        Route::get('/', function () {
-            return view('welcome'); // sera remplacé par le composant Dashboard
+    
+
+    // ─── Pages authentifiées ──────────────────────────────────────────
+    Route::middleware(['auth'])->group(function () {
+
+        Route::get('/dashboard', function () {
+            
         })->name('dashboard');
 
         // ── Directeur ─────────────────────────────────────────────────

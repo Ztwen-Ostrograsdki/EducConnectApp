@@ -158,7 +158,9 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    // 'domain' => env('SESSION_DOMAIN'),
+
+    'domain' => env('SESSION_DOMAIN', 'ecole-test.test'),
 
     /*
     |--------------------------------------------------------------------------
