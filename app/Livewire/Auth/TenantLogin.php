@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Component;
-use Livewire\Attributes\Rule;
-use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Rule;
+use Livewire\Component;
 
 #[Layout('livewire.layouts.guest')]
 class TenantLogin extends Component
@@ -29,6 +30,11 @@ class TenantLogin extends Component
      */
     public function login(): void
     {
+        dd(
+            'DB utilisée: ' . DB::connection()->getDatabaseName(),
+            'Email: ' . $this->email,
+            tenant() ? 'Tenant: ' . tenant()->id : 'Pas de tenant'
+        );
         $this->validate();
 
         // Rate limiting — max 5 tentatives par minute

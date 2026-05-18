@@ -24,8 +24,6 @@
         @if($errorMessage)
             <div
                 class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-                x-data
-                x-init="window.Motion.animate($el, { opacity: [0, 1], x: [-8, 0] }, { duration: 0.3 })"
             >
                 {{ $errorMessage }}
             </div>

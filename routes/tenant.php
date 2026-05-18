@@ -24,7 +24,7 @@ Route::middleware([
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $user()->logout();
+        $user->logout();
         session()->invalidate();
         session()->regenerateToken();
         return redirect()->route('login');
