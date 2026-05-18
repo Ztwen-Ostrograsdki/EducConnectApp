@@ -13,11 +13,8 @@ class CheckSuperAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-         // Vérifier que c'est bien le super admin
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
 
-        if (!Auth::check() || !$user->isSuperAdmin()) {
+        if (!Auth::guard('central')->check()) {
             abort(403, 'Accès non autorisé.');
         }
 

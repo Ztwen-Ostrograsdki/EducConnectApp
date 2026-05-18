@@ -1,0 +1,493 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>School Management - Liste des Élèves</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary-fixed": "#d8e2ff",
+                            "secondary-container": "#00a572",
+                            "surface-tint": "#adc6ff",
+                            "on-error-container": "#ffdad6",
+                            outline: "#8c909f",
+                            "on-secondary": "#003824",
+                            "on-primary": "#002e6a",
+                            "outline-variant": "#424754",
+                            "primary-fixed-dim": "#adc6ff",
+                            "surface-container-highest": "#353534",
+                            tertiary: "#c0c1ff",
+                            "on-tertiary-fixed": "#07006c",
+                            "surface-variant": "#353534",
+                            "on-secondary-fixed-variant": "#005236",
+                            "surface-container-low": "#1c1b1b",
+                            "inverse-primary": "#005ac2",
+                            "on-secondary-fixed": "#002113",
+                            "on-primary-fixed-variant": "#004395",
+                            "on-surface": "#e5e2e1",
+                            "inverse-surface": "#e5e2e1",
+                            "surface-container": "#201f1f",
+                            "on-surface-variant": "#c2c6d6",
+                            "on-error": "#690005",
+                            primary: "#adc6ff",
+                            "surface-container-high": "#2a2a2a",
+                            "on-primary-container": "#00285d",
+                            "secondary-fixed-dim": "#4edea3",
+                            "surface-bright": "#393939",
+                            "tertiary-fixed-dim": "#c0c1ff",
+                            secondary: "#4edea3",
+                            "inverse-on-surface": "#313030",
+                            "on-tertiary-fixed-variant": "#2f2ebe",
+                            surface: "#131313",
+                            "on-tertiary": "#1000a9",
+                            "on-secondary-container": "#00311f",
+                            error: "#ffb4ab",
+                            "on-primary-fixed": "#001a42",
+                            "surface-container-lowest": "#0e0e0e",
+                            "on-tertiary-container": "#0d0096",
+                            "tertiary-fixed": "#e1e0ff",
+                            "tertiary-container": "#8083ff",
+                            "on-background": "#e5e2e1",
+                            "primary-container": "#4d8eff",
+                            "surface-dim": "#131313",
+                            "secondary-fixed": "#6ffbbe",
+                            background: "#131313",
+                            "error-container": "#93000a",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            gutter: "24px",
+                            lg: "40px",
+                            base: "8px",
+                            "margin-desktop": "48px",
+                            "margin-mobile": "16px",
+                            md: "24px",
+                            xs: "4px",
+                            xl: "64px",
+                            sm: "12px",
+                        },
+                        fontFamily: {
+                            "headline-xl-mobile": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "headline-xl": ["Inter"],
+                        },
+                        fontSize: {
+                            "headline-xl-mobile": [
+                                "28px",
+                                { lineHeight: "34px", fontWeight: "700" },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "20px", fontWeight: "400" },
+                            ],
+                            "body-md": [
+                                "16px",
+                                { lineHeight: "24px", fontWeight: "400" },
+                            ],
+                            "body-lg": [
+                                "18px",
+                                { lineHeight: "28px", fontWeight: "400" },
+                            ],
+                            "headline-md": [
+                                "20px",
+                                { lineHeight: "28px", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "28px",
+                                {
+                                    lineHeight: "36px",
+                                    letterSpacing: "-0.01em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-lg-mobile": [
+                                "24px",
+                                { lineHeight: "30px", fontWeight: "600" },
+                            ],
+                            "label-md": [
+                                "12px",
+                                {
+                                    lineHeight: "16px",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-xl": [
+                                "36px",
+                                {
+                                    lineHeight: "44px",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: #131313;
+            }
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            .glass-card {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        </style>
+        <style>
+            body {
+                min-height: max(884px, 100dvh);
+            }
+        </style>
+    </head>
+    <body class="text-on-surface min-h-screen pb-32">
+        <!-- TopAppBar -->
+        <header
+            class="fixed top-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile py-base md:px-margin-desktop"
+        >
+            <div class="flex items-center gap-sm">
+                <div
+                    class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold"
+                >
+                    JD
+                </div>
+                <h1
+                    class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-md md:text-headline-md font-bold text-on-surface"
+                >
+                    School Management
+                </h1>
+            </div>
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors"
+            >
+                <span
+                    class="material-symbols-outlined text-primary"
+                    data-icon="notifications"
+                    >notifications</span
+                >
+            </button>
+        </header>
+        <main
+            class="pt-24 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto"
+        >
+            <!-- Search and Filters Section -->
+            <section class="mb-lg space-y-md">
+                <div class="flex flex-col md:flex-row gap-md items-center">
+                    <div class="relative w-full md:flex-1">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
+                            data-icon="search"
+                            >search</span
+                        >
+                        <input
+                            class="w-full pl-12 pr-4 py-3 bg-surface-container-high border border-white/10 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-body-md text-on-surface placeholder:text-on-surface-variant/50"
+                            placeholder="Rechercher un élève..."
+                            type="text"
+                        />
+                    </div>
+                    <div
+                        class="flex gap-sm overflow-x-auto w-full md:w-auto pb-2 no-scrollbar"
+                    >
+                        <button
+                            class="px-4 py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md whitespace-nowrap"
+                        >
+                            Toutes les classes
+                        </button>
+                        <button
+                            class="px-4 py-2 glass-card hover:bg-white/10 text-on-surface rounded-full font-label-md text-label-md whitespace-nowrap"
+                        >
+                            6ème A
+                        </button>
+                        <button
+                            class="px-4 py-2 glass-card hover:bg-white/10 text-on-surface rounded-full font-label-md text-label-md whitespace-nowrap"
+                        >
+                            3ème B
+                        </button>
+                        <button
+                            class="px-4 py-2 glass-card hover:bg-white/10 text-on-surface rounded-full font-label-md text-label-md whitespace-nowrap"
+                        >
+                            Terminale S
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- Students Grid/Table -->
+            <section class="space-y-sm">
+                <h2 class="font-headline-md text-headline-md mb-md">
+                    Liste des élèves (152)
+                </h2>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md"
+                >
+                    <!-- Student Card 1 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <img
+                            alt="Jean Dupont"
+                            class="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-lg"
+                            data-alt="A professional portrait of a young male student in a dark academic setting. The lighting is focused and dramatic, highlighting his focused expression against a deep charcoal background. The image has a cinematic quality with sharp details and a modern, high-contrast dark-mode aesthetic, utilizing deep blues and neutral tones to convey a sense of intelligence and purpose."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeUhgw73lAYx9PVaJfuNRFVUCmPE5fubIdB2SUzZm6gAGYBQtXqfdpo6Urr5Vpk599SiaVd8ZdVK3Mw39cqX0rA2qIDZWSNqiosAyehE2PXVxSPzY2GoBTZLEQCyAIkCYoH2xg_MP4C1xuXo3fF-xGExt6F9mDwS9gExiWv8gcPgBfp3Zwan9UctBOVp2f0QqNvnovF1KwmGS0ust_qnm3zH9zevyX9Vzuu-iemmsDRgtu4qqR_uCMyrwgyiUQmcBZZqbI3GMCMh8"
+                        />
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Jean Dupont
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                Terminale S
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-secondary/20 text-secondary rounded-full font-label-md text-label-md"
+                                >Présent</span
+                            >
+                        </div>
+                    </div>
+                    <!-- Student Card 2 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <img
+                            alt="Marie Curie"
+                            class="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-lg"
+                            data-alt="A clean, minimalist portrait of a young female student with a bright and determined look. The setting is a sophisticated dark office environment with subtle glass reflections. Soft teal and electric blue accents illuminate the edges of the frame. The overall mood is professional and academic, emphasizing clarity and high-end modern design principles in a dark interface context."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4i4WZmzPWmsJRmpVG0iQYBjZUmAG2iW3pH2OydOYDgepLUY2pFLi9Px6aChDnDmX4Jmu_HXB4ZSerAdpJf3PnPD_yC6HpafndORvgQ6k3dKMEQPs10Zhb5tXKkBUjvDWwF5CkzUdHvY9ysNCvNPRLvsk9ikWw-OdASb-6ShB6BJ6SoZPDqPfb24PC6EyofoewTpnNdTbwUjxeLiQk1Q43gEsaQKSzmS66HYtGnj4rZE9PTdBbj4PY4neqc3Y-UEg5znV_A7ZwEsI"
+                        />
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Marie Curie
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                6ème A
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-error/20 text-error rounded-full font-label-md text-label-md"
+                                >Absent</span
+                            >
+                        </div>
+                    </div>
+                    <!-- Student Card 3 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <img
+                            alt="Lucas Martin"
+                            class="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-lg"
+                            data-alt="A close-up photograph of a male student in a dark room, lit by the glow of a nearby monitor. The lighting creates strong highlights and deep shadows, emphasizing the corporate modern aesthetic. The color palette is restricted to charcoal, deep grays, and a hint of primary blue. The composition is tight and powerful, suggesting a focus on data and technology within a school management system."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU7xiV_JUeM6yMu3iUmdAKKGJ3Ej5NcOYlxg5UrX2abmAYRGMkCn_oSqkV_yNRvJ5CZ5f7UhugzKhh9ZDyo6LpY3nxQ43hmWpD9zJYOnc84NvaQF4cwU7uDh3o13cy6XTtBNUfVMMV57Z35ukawfryam8JZPR-B43KTT3NBuv_i7gIFtNsGE7ZngtWJ7IhFcjZDWaoMzawu67RqDPivEos1IMao5FCssvTFpnjCJO5XGCm_m9f_mDBb1omxNOUtSPUvZgQZS2FQco"
+                        />
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Lucas Martin
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                Terminale S
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-tertiary-container/20 text-tertiary rounded-full font-label-md text-label-md"
+                                >Retard</span
+                            >
+                        </div>
+                    </div>
+                    <!-- Student Card 4 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <img
+                            alt="Sarah Bernard"
+                            class="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-lg"
+                            data-alt="An elegant portrait of a student, capturing a sense of calm and focus. The background is a soft-focus, high-tech classroom setting with dark surfaces and glass partitions. The lighting is diffused, casting a soft glow that aligns with the glassmorphism theme of the UI. The color palette is sophisticated, using dark backgrounds with vibrant teal highlights to create a premium feel."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-dchZ3SToSaXPBuiRKwMgv5CJrDyNVDxlnZIwu3pgcwdTdKaqTyjk3gr63S4GXWpFBFbRlHtOsIC57hwT_AjtX84zlmD7nOfBELfxCv4Tg2KAik90DBIakbmX--0Qyctq3pR0ODope6TYB7ijNphgp0Hv1_4IKeIHeN7m_zltorZ1ga2i7NRBnoOWDG7KIH7MgYehDAkc1uGbOm6mXnWlGCAQhlaj3l1psPI_rqBcCbd6EG9mvNRdfwmtXwLMHhOmb80xq3JRaI0"
+                        />
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Sarah Bernard
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                3ème B
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-secondary/20 text-secondary rounded-full font-label-md text-label-md"
+                                >Présent</span
+                            >
+                        </div>
+                    </div>
+                    <!-- Student Card 5 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <div
+                            class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-headline-md border-2 border-primary/20"
+                        >
+                            TM
+                        </div>
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Thomas Müller
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                6ème A
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-secondary/20 text-secondary rounded-full font-label-md text-label-md"
+                                >Présent</span
+                            >
+                        </div>
+                    </div>
+                    <!-- Student Card 6 -->
+                    <div
+                        class="glass-card p-md rounded-xl flex items-center gap-md hover:scale-[0.98] transition-transform cursor-pointer"
+                    >
+                        <img
+                            alt="Antoine Griezmann"
+                            class="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-lg"
+                            data-alt="A striking portrait of a male student against a dark, textured wall. High-contrast lighting highlights his sharp features and casual but neat attire. The visual style is consistent with an elite academic dashboard, emphasizing trust and authority. The palette uses deep blacks and pristine whites with a subtle hint of blue, maintaining a modern and clean aesthetic."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYx2cfewFtfIYAmhUTFJH3u4pIitxtGteH1gitYPTx0IqBorJ8nNWa8MEmk1DsK-cGq4jAwcu9O4ZI5HH3i_FmIt_Ua82kw8KaEAqx8Dcyo11Zsfg-rVCznWjcZ3IsI4ajCwn-rFW2AAYVtk4EoQY3_1EtQE5VlVOPR7zlh0KBbZkPVWd3imRQ1h6i5aopyalBr1-g0YEPd5TuVg5-xE3wO6wiH0yqR_HMe6Ah30SJoLgn55PJORPecJkDWlqdtHmTNytAYVVmAvM"
+                        />
+                        <div class="flex-1">
+                            <h3
+                                class="font-headline-md text-headline-md text-on-surface"
+                            >
+                                Antoine G.
+                            </h3>
+                            <p
+                                class="font-label-md text-label-md text-on-surface-variant"
+                            >
+                                Terminale S
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-xs">
+                            <span
+                                class="px-3 py-1 bg-secondary/20 text-secondary rounded-full font-label-md text-label-md"
+                                >Présent</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Floating Action Button (FAB) -->
+        <button
+            class="fixed bottom-24 right-margin-mobile md:right-margin-desktop w-14 h-14 bg-primary text-on-primary rounded-xl shadow-xl flex items-center justify-center active:scale-95 transition-transform duration-200 z-50"
+        >
+            <span
+                class="material-symbols-outlined text-[32px]"
+                data-icon="person_add"
+                >person_add</span
+            >
+        </button>
+        <!-- BottomNavBar -->
+        <nav
+            class="fixed bottom-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-t border-white/10 flex justify-around items-center px-margin-mobile py-sm rounded-t-xl"
+        >
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+                href="#"
+            >
+                <span class="material-symbols-outlined" data-icon="dashboard"
+                    >dashboard</span
+                >
+                <span class="font-label-md text-label-md mt-1">Dashboard</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center bg-secondary-container/20 text-secondary rounded-xl px-4 py-1 transition-transform active:scale-95 duration-200"
+                href="#"
+            >
+                <span
+                    class="material-symbols-outlined"
+                    data-icon="group"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >group</span
+                >
+                <span class="font-label-md text-label-md mt-1">Students</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+                href="#"
+            >
+                <span
+                    class="material-symbols-outlined"
+                    data-icon="calendar_month"
+                    >calendar_month</span
+                >
+                <span class="font-label-md text-label-md mt-1">Schedule</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+                href="#"
+            >
+                <span class="material-symbols-outlined" data-icon="payments"
+                    >payments</span
+                >
+                <span class="font-label-md text-label-md mt-1">Payments</span>
+            </a>
+        </nav>
+    </body>
+</html>

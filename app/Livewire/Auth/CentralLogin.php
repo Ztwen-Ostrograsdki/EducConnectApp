@@ -38,7 +38,7 @@ class CentralLogin extends Component
             return;
         }
 
-        if (!Auth::attempt([
+        if (!Auth::guard('central')->attempt([
             'email'    => $this->email,
             'password' => $this->password,
         ])) {
@@ -48,23 +48,14 @@ class CentralLogin extends Component
             return;
         }
 
-        // Vérifier que c'est bien le super admin
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if (!$user->isSuperAdmin()) {
-            Auth::logout();
-            $this->errorMessage = 'Accès non autorisé.';
-            return;
-        }
+        Auth::shouldUse('central');
 
         RateLimiter::clear($key);
 
         session()->regenerate();
 
-        $this->redirect('/admin/dashboard');
+        return $this->redirect(route('central.dashboard'));
 
-        // $this->redirect(route('central.dashboard'), navigate: true);
     }
 
 

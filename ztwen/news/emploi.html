@@ -1,0 +1,645 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary-fixed": "#d8e2ff",
+                            "secondary-container": "#00a572",
+                            "surface-tint": "#adc6ff",
+                            "on-error-container": "#ffdad6",
+                            outline: "#8c909f",
+                            "on-secondary": "#003824",
+                            "on-primary": "#002e6a",
+                            "outline-variant": "#424754",
+                            "primary-fixed-dim": "#adc6ff",
+                            "surface-container-highest": "#353534",
+                            tertiary: "#c0c1ff",
+                            "on-tertiary-fixed": "#07006c",
+                            "surface-variant": "#353534",
+                            "on-secondary-fixed-variant": "#005236",
+                            "surface-container-low": "#1c1b1b",
+                            "inverse-primary": "#005ac2",
+                            "on-secondary-fixed": "#002113",
+                            "on-primary-fixed-variant": "#004395",
+                            "on-surface": "#e5e2e1",
+                            "inverse-surface": "#e5e2e1",
+                            "surface-container": "#201f1f",
+                            "on-surface-variant": "#c2c6d6",
+                            "on-error": "#690005",
+                            primary: "#adc6ff",
+                            "surface-container-high": "#2a2a2a",
+                            "on-primary-container": "#00285d",
+                            "secondary-fixed-dim": "#4edea3",
+                            "surface-bright": "#393939",
+                            "tertiary-fixed-dim": "#c0c1ff",
+                            secondary: "#4edea3",
+                            "inverse-on-surface": "#313030",
+                            "on-tertiary-fixed-variant": "#2f2ebe",
+                            surface: "#131313",
+                            "on-tertiary": "#1000a9",
+                            "on-secondary-container": "#00311f",
+                            error: "#ffb4ab",
+                            "on-primary-fixed": "#001a42",
+                            "surface-container-lowest": "#0e0e0e",
+                            "on-tertiary-container": "#0d0096",
+                            "tertiary-fixed": "#e1e0ff",
+                            "tertiary-container": "#8083ff",
+                            "on-background": "#e5e2e1",
+                            "primary-container": "#4d8eff",
+                            "surface-dim": "#131313",
+                            "secondary-fixed": "#6ffbbe",
+                            background: "#131313",
+                            "error-container": "#93000a",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            gutter: "24px",
+                            lg: "40px",
+                            base: "8px",
+                            "margin-desktop": "48px",
+                            "margin-mobile": "16px",
+                            md: "24px",
+                            xs: "4px",
+                            xl: "64px",
+                            sm: "12px",
+                        },
+                        fontFamily: {
+                            "headline-xl-mobile": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "headline-xl": ["Inter"],
+                        },
+                        fontSize: {
+                            "headline-xl-mobile": [
+                                "28px",
+                                { lineHeight: "34px", fontWeight: "700" },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "20px", fontWeight: "400" },
+                            ],
+                            "body-md": [
+                                "16px",
+                                { lineHeight: "24px", fontWeight: "400" },
+                            ],
+                            "body-lg": [
+                                "18px",
+                                { lineHeight: "28px", fontWeight: "400" },
+                            ],
+                            "headline-md": [
+                                "20px",
+                                { lineHeight: "28px", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "28px",
+                                {
+                                    lineHeight: "36px",
+                                    letterSpacing: "-0.01em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-lg-mobile": [
+                                "24px",
+                                { lineHeight: "30px", fontWeight: "600" },
+                            ],
+                            "label-md": [
+                                "12px",
+                                {
+                                    lineHeight: "16px",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-xl": [
+                                "36px",
+                                {
+                                    lineHeight: "44px",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            .glass-card {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
+        <style>
+            body {
+                min-height: max(884px, 100dvh);
+            }
+        </style>
+    </head>
+    <body class="bg-background text-on-background min-h-screen font-body-md">
+        <!-- Top App Bar -->
+        <header
+            class="fixed top-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-b border-white/10 flex justify-between items-center w-full px-margin-mobile py-base md:px-margin-desktop"
+        >
+            <div class="flex items-center gap-sm">
+                <span
+                    class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg font-bold text-on-surface"
+                    >School Management</span
+                >
+            </div>
+            <div class="flex items-center gap-md">
+                <div class="hidden md:flex items-center gap-lg">
+                    <a
+                        class="text-primary font-bold font-label-md text-label-md transition-transform active:scale-95"
+                        href="#"
+                        >Dashboard</a
+                    >
+                    <a
+                        class="text-on-surface-variant hover:bg-white/5 px-base py-xs rounded transition-colors font-label-md text-label-md"
+                        href="#"
+                        >Students</a
+                    >
+                    <a
+                        class="text-on-surface-variant hover:bg-white/5 px-base py-xs rounded transition-colors font-label-md text-label-md"
+                        href="#"
+                        >Schedule</a
+                    >
+                    <a
+                        class="text-on-surface-variant hover:bg-white/5 px-base py-xs rounded transition-colors font-label-md text-label-md"
+                        href="#"
+                        >Payments</a
+                    >
+                </div>
+                <div class="flex items-center gap-sm">
+                    <button
+                        class="material-symbols-outlined p-base rounded-full hover:bg-white/5 text-on-surface-variant"
+                    >
+                        notifications
+                    </button>
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center border border-primary/20 overflow-hidden"
+                    >
+                        <img
+                            alt="User"
+                            data-alt="A professional close-up portrait of a senior academic administrator in a modern office environment. The lighting is cinematic and warm, with soft focus on a background of mahogany bookshelves and high-tech displays. The style is hyper-realistic and corporate, using a palette of deep blues and charcoals to match a premium school management interface."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA5J_IO2r00HOztwKcFJB5jH32Lkpa2mIMfnrKUpA42I5Eiclbu79kZ2uBE9SHGB51yeuMwBR-91gpnGld6XqIKVje20gTf-_m9_BT0G9pzsdUZmpyuVWTIlV6oQUf-dnQOiKq1VwgC9Co6okMUAysoaaark0wghdUmGYuNymxWicHTWVHfGd98Rr4mq8VVGYCHKYZkrUTVsSunwrrl6JxcKbONcjbFpC_M6K1X65IdW71ju-EJr0UI2XFiGxKufMO0cghAZ15nZQ"
+                        />
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main
+            class="pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto"
+        >
+            <!-- Header & Date Picker -->
+            <section class="mb-lg">
+                <div
+                    class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-md"
+                >
+                    <div>
+                        <h1
+                            class="font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-on-surface"
+                        >
+                            Schedule
+                        </h1>
+                        <p
+                            class="text-on-surface-variant font-body-md text-body-md"
+                        >
+                            Octobre 2023 - Semaine 42
+                        </p>
+                    </div>
+                    <div class="flex gap-xs">
+                        <button
+                            class="bg-surface-container-high p-sm rounded-lg hover:bg-surface-bright transition-colors border border-white/5 flex items-center justify-center"
+                        >
+                            <span class="material-symbols-outlined"
+                                >chevron_left</span
+                            >
+                        </button>
+                        <button
+                            class="bg-surface-container-high p-sm rounded-lg hover:bg-surface-bright transition-colors border border-white/5 flex items-center justify-center"
+                        >
+                            <span class="material-symbols-outlined"
+                                >chevron_right</span
+                            >
+                        </button>
+                    </div>
+                </div>
+                <!-- Horizontal Date Selector -->
+                <div class="flex gap-sm overflow-x-auto pb-base scrollbar-hide">
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl glass-card text-on-surface-variant transition-transform active:scale-95"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >LUN</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >16</span
+                        >
+                    </button>
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl glass-card text-on-surface-variant transition-transform active:scale-95"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >MAR</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >17</span
+                        >
+                    </button>
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl bg-primary text-on-primary shadow-lg shadow-primary/20 transition-transform active:scale-95"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >MER</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >18</span
+                        >
+                    </button>
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl glass-card text-on-surface-variant transition-transform active:scale-95"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >JEU</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >19</span
+                        >
+                    </button>
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl glass-card text-on-surface-variant transition-transform active:scale-95"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >VEN</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >20</span
+                        >
+                    </button>
+                    <button
+                        class="flex flex-col items-center min-w-[72px] py-md rounded-2xl glass-card text-on-surface-variant transition-transform active:scale-95 opacity-50"
+                    >
+                        <span
+                            class="font-label-md text-label-md opacity-70 mb-xs"
+                            >SAM</span
+                        >
+                        <span class="font-headline-md text-headline-md"
+                            >21</span
+                        >
+                    </button>
+                </div>
+            </section>
+            <!-- Vertical Timeline -->
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div
+                    class="absolute left-[2.25rem] top-0 bottom-0 w-[2px] bg-white/5 md:left-[3.25rem]"
+                ></div>
+                <div class="space-y-gutter">
+                    <!-- Time Slot 1 -->
+                    <div class="relative flex gap-md md:gap-lg">
+                        <div
+                            class="w-12 md:w-16 flex-shrink-0 text-right pt-base"
+                        >
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >08:00</span
+                            >
+                        </div>
+                        <div class="flex-grow">
+                            <div
+                                class="glass-card rounded-[1.5rem] p-md md:p-lg hover:border-primary/30 transition-colors group relative overflow-hidden"
+                            >
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary-container/40"
+                                ></div>
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-md"
+                                >
+                                    <div>
+                                        <h3
+                                            class="font-headline-md text-headline-md text-on-surface mb-xs"
+                                        >
+                                            Mathématiques
+                                        </h3>
+                                        <div
+                                            class="flex flex-wrap gap-md text-on-surface-variant font-body-sm text-body-sm"
+                                        >
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >person</span
+                                                >
+                                                <span>M. Dupont</span>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >location_on</span
+                                                >
+                                                <span>Salle 204</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-tertiary-container/20 text-tertiary font-label-md text-label-md px-md py-xs rounded-full border border-tertiary/20 self-start md:self-center"
+                                        >Algèbre linéaire</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Time Slot 2 - Current Class -->
+                    <div class="relative flex gap-md md:gap-lg">
+                        <div
+                            class="w-12 md:w-16 flex-shrink-0 text-right pt-base"
+                        >
+                            <span
+                                class="font-label-md text-label-md text-primary font-bold"
+                                >10:00</span
+                            >
+                        </div>
+                        <!-- Indicator dot -->
+                        <div
+                            class="absolute left-[2.25rem] md:left-[3.25rem] -translate-x-[7px] top-4 w-4 h-4 rounded-full bg-primary ring-4 ring-primary/20 z-10"
+                        ></div>
+                        <div class="flex-grow">
+                            <div
+                                class="glass-card rounded-[1.5rem] p-md md:p-lg border-primary/40 bg-primary/5 relative overflow-hidden"
+                            >
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-primary"
+                                ></div>
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-md"
+                                >
+                                    <div>
+                                        <div
+                                            class="flex items-center gap-sm mb-xs"
+                                        >
+                                            <h3
+                                                class="font-headline-md text-headline-md text-on-surface"
+                                            >
+                                                Physique-Chimie
+                                            </h3>
+                                            <span
+                                                class="bg-primary/20 text-primary text-[10px] font-bold px-sm py-[2px] rounded uppercase tracking-widest animate-pulse"
+                                                >En cours</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="flex flex-wrap gap-md text-on-surface-variant font-body-sm text-body-sm"
+                                        >
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >person</span
+                                                >
+                                                <span>Mme. Martin</span>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >location_on</span
+                                                >
+                                                <span>Labo 03</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-primary-container/20 text-primary font-label-md text-label-md px-md py-xs rounded-full border border-primary/20 self-start md:self-center"
+                                        >Thermodynamique</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Time Slot 3 - Break -->
+                    <div class="relative flex gap-md md:gap-lg opacity-40">
+                        <div
+                            class="w-12 md:w-16 flex-shrink-0 text-right pt-base"
+                        >
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >12:00</span
+                            >
+                        </div>
+                        <div class="flex-grow flex items-center">
+                            <div
+                                class="w-full h-px border-t border-dashed border-white/20"
+                            ></div>
+                            <span
+                                class="px-md font-label-md text-label-md text-on-surface-variant whitespace-nowrap"
+                                >PAUSE DÉJEUNER</span
+                            >
+                            <div
+                                class="w-full h-px border-t border-dashed border-white/20"
+                            ></div>
+                        </div>
+                    </div>
+                    <!-- Time Slot 4 -->
+                    <div class="relative flex gap-md md:gap-lg">
+                        <div
+                            class="w-12 md:w-16 flex-shrink-0 text-right pt-base"
+                        >
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >13:30</span
+                            >
+                        </div>
+                        <div class="flex-grow">
+                            <div
+                                class="glass-card rounded-[1.5rem] p-md md:p-lg hover:border-primary/30 transition-colors group relative overflow-hidden"
+                            >
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-secondary-container/40"
+                                ></div>
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-md"
+                                >
+                                    <div>
+                                        <h3
+                                            class="font-headline-md text-headline-md text-on-surface mb-xs"
+                                        >
+                                            Histoire-Géo
+                                        </h3>
+                                        <div
+                                            class="flex flex-wrap gap-md text-on-surface-variant font-body-sm text-body-sm"
+                                        >
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >person</span
+                                                >
+                                                <span>M. Petit</span>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >location_on</span
+                                                >
+                                                <span>Salle 102</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-secondary-container/20 text-secondary font-label-md text-label-md px-md py-xs rounded-full border border-secondary/20 self-start md:self-center"
+                                        >Guerre Froide</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Time Slot 5 -->
+                    <div class="relative flex gap-md md:gap-lg">
+                        <div
+                            class="w-12 md:w-16 flex-shrink-0 text-right pt-base"
+                        >
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >15:30</span
+                            >
+                        </div>
+                        <div class="flex-grow">
+                            <div
+                                class="glass-card rounded-[1.5rem] p-md md:p-lg hover:border-primary/30 transition-colors group relative overflow-hidden"
+                            >
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-error-container/40"
+                                ></div>
+                                <div
+                                    class="flex flex-col md:flex-row md:items-center justify-between gap-md"
+                                >
+                                    <div>
+                                        <h3
+                                            class="font-headline-md text-headline-md text-on-surface mb-xs"
+                                        >
+                                            Anglais
+                                        </h3>
+                                        <div
+                                            class="flex flex-wrap gap-md text-on-surface-variant font-body-sm text-body-sm"
+                                        >
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >person</span
+                                                >
+                                                <span>Mrs. Smith</span>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-xs"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-[18px]"
+                                                    >location_on</span
+                                                >
+                                                <span>Salle 301</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-error-container/20 text-error font-label-md text-label-md px-md py-xs rounded-full border border-error/20 self-start md:self-center"
+                                        >Oral Skills</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- FAB -->
+        <div class="fixed bottom-24 right-margin-mobile z-40 md:hidden">
+            <button
+                class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center transition-transform active:scale-95"
+            >
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </div>
+        <!-- Bottom Nav Bar (Mobile only) -->
+        <nav
+            class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-t border-white/10 flex justify-around items-center px-margin-mobile py-sm rounded-t-xl"
+        >
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1"
+            >
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1"
+            >
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-md text-label-md">Students</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center bg-secondary-container/20 text-secondary rounded-xl px-4 py-1 transition-transform active:scale-95"
+            >
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="font-label-md text-label-md">Schedule</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1"
+            >
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md text-label-md">Payments</span>
+            </div>
+        </nav>
+    </body>
+</html>

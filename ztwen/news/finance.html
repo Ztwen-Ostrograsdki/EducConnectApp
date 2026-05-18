@@ -1,0 +1,609 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: #131313;
+                color: #e5e2e1;
+                margin: 0;
+                padding-bottom: 80px; /* Space for BottomNavBar */
+            }
+            .glass-card {
+                background: rgba(30, 30, 30, 0.6);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+        </style>
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary-fixed": "#d8e2ff",
+                            "secondary-container": "#00a572",
+                            "surface-tint": "#adc6ff",
+                            "on-error-container": "#ffdad6",
+                            outline: "#8c909f",
+                            "on-secondary": "#003824",
+                            "on-primary": "#002e6a",
+                            "outline-variant": "#424754",
+                            "primary-fixed-dim": "#adc6ff",
+                            "surface-container-highest": "#353534",
+                            tertiary: "#c0c1ff",
+                            "on-tertiary-fixed": "#07006c",
+                            "surface-variant": "#353534",
+                            "on-secondary-fixed-variant": "#005236",
+                            "surface-container-low": "#1c1b1b",
+                            "inverse-primary": "#005ac2",
+                            "on-secondary-fixed": "#002113",
+                            "on-primary-fixed-variant": "#004395",
+                            "on-surface": "#e5e2e1",
+                            "inverse-surface": "#e5e2e1",
+                            "surface-container": "#201f1f",
+                            "on-surface-variant": "#c2c6d6",
+                            "on-error": "#690005",
+                            primary: "#adc6ff",
+                            "surface-container-high": "#2a2a2a",
+                            "on-primary-container": "#00285d",
+                            "secondary-fixed-dim": "#4edea3",
+                            "surface-bright": "#393939",
+                            "tertiary-fixed-dim": "#c0c1ff",
+                            secondary: "#4edea3",
+                            "inverse-on-surface": "#313030",
+                            "on-tertiary-fixed-variant": "#2f2ebe",
+                            surface: "#131313",
+                            "on-tertiary": "#1000a9",
+                            "on-secondary-container": "#00311f",
+                            error: "#ffb4ab",
+                            "on-primary-fixed": "#001a42",
+                            "surface-container-lowest": "#0e0e0e",
+                            "on-tertiary-container": "#0d0096",
+                            "tertiary-fixed": "#e1e0ff",
+                            "tertiary-container": "#8083ff",
+                            "on-background": "#e5e2e1",
+                            "primary-container": "#4d8eff",
+                            "surface-dim": "#131313",
+                            "secondary-fixed": "#6ffbbe",
+                            background: "#131313",
+                            "error-container": "#93000a",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            gutter: "24px",
+                            lg: "40px",
+                            base: "8px",
+                            "margin-desktop": "48px",
+                            "margin-mobile": "16px",
+                            md: "24px",
+                            xs: "4px",
+                            xl: "64px",
+                            sm: "12px",
+                        },
+                        fontFamily: {
+                            "headline-xl-mobile": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "headline-xl": ["Inter"],
+                        },
+                        fontSize: {
+                            "headline-xl-mobile": [
+                                "28px",
+                                { lineHeight: "34px", fontWeight: "700" },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "20px", fontWeight: "400" },
+                            ],
+                            "body-md": [
+                                "16px",
+                                { lineHeight: "24px", fontWeight: "400" },
+                            ],
+                            "body-lg": [
+                                "18px",
+                                { lineHeight: "28px", fontWeight: "400" },
+                            ],
+                            "headline-md": [
+                                "20px",
+                                { lineHeight: "28px", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "28px",
+                                {
+                                    lineHeight: "36px",
+                                    letterSpacing: "-0.01em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-lg-mobile": [
+                                "24px",
+                                { lineHeight: "30px", fontWeight: "600" },
+                            ],
+                            "label-md": [
+                                "12px",
+                                {
+                                    lineHeight: "16px",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-xl": [
+                                "36px",
+                                {
+                                    lineHeight: "44px",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            body {
+                min-height: max(884px, 100dvh);
+            }
+        </style>
+    </head>
+    <body class="bg-background text-on-background">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-b border-white/10 docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-margin-mobile py-base"
+        >
+            <div class="flex items-center gap-base">
+                <div
+                    class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container overflow-hidden"
+                >
+                    <img
+                        class="w-full h-full object-cover"
+                        data-alt="Close up portrait of a professional male administrator with a warm, confident expression. He is wearing a dark charcoal suit that blends into the modern corporate background. The lighting is soft and cinematic, with subtle blue accents reflecting the high-tech school management interface."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhRzwk5YSweDhsE6MndL8kT-Pw62vOs-0q6UeBIzSS9rICtkoC82_AmZGuye386YD7zaajmJXtFBNHliajL6TuVLQTirZKr9iJTDIAyeROVLJEV4FNpipe6IYwdHFNvBbO-IOzB6Gt3Rzvc7HcD7JvtsYKUG5Lc6cX9cKA1v8cAaZ6hDCi9eH41NpfMRHniu7HjwzHs5-7hA2hod6N_Jltn7qZWKy7IqsR5rX3VXGFVKFJSAK69-Nxym20bGsMnQR6PeSnC_hqp84"
+                    />
+                </div>
+                <h1
+                    class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-surface"
+                >
+                    School Management
+                </h1>
+            </div>
+            <button
+                class="material-symbols-outlined text-primary hover:bg-white/5 transition-colors p-2 rounded-full"
+            >
+                notifications
+            </button>
+        </header>
+        <main
+            class="px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto space-y-lg"
+        >
+            <!-- Header & Action Section -->
+            <section
+                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md"
+            >
+                <div>
+                    <h2
+                        class="font-headline-xl-mobile text-headline-xl-mobile md:text-headline-xl md:font-headline-xl"
+                    >
+                        Suivi des Finances
+                    </h2>
+                    <p class="font-body-md text-on-surface-variant mt-xs">
+                        Vue d'ensemble de la collecte des frais de scolarité.
+                    </p>
+                </div>
+                <button
+                    class="bg-primary text-on-primary px-lg py-sm rounded-lg flex items-center gap-xs font-label-md text-label-md active:scale-95 transition-transform duration-200"
+                >
+                    <span class="material-symbols-outlined"
+                        >picture_as_pdf</span
+                    >
+                    Générer un rapport PDF
+                </button>
+            </section>
+            <!-- Bento Grid: Summary & Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+                <!-- Financial Summary Widget -->
+                <div
+                    class="lg:col-span-1 glass-card rounded-xl p-md flex flex-col justify-between space-y-md"
+                >
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p
+                                class="font-label-md text-label-md uppercase text-on-surface-variant tracking-wider"
+                            >
+                                Total Collecté
+                            </p>
+                            <h3
+                                class="font-headline-lg text-headline-lg text-secondary mt-xs"
+                            >
+                                142,500 €
+                            </h3>
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-secondary text-3xl"
+                            >account_balance_wallet</span
+                        >
+                    </div>
+                    <div class="space-y-sm">
+                        <div
+                            class="flex justify-between font-label-md text-label-md"
+                        >
+                            <span>Objectif : 180,000 €</span>
+                            <span>79%</span>
+                        </div>
+                        <div
+                            class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden"
+                        >
+                            <div class="h-full bg-secondary w-[79%]"></div>
+                        </div>
+                    </div>
+                    <div class="pt-base border-t border-white/5">
+                        <p class="font-body-sm text-on-surface-variant italic">
+                            Dernière mise à jour : il y a 12 minutes
+                        </p>
+                    </div>
+                </div>
+                <!-- Evolution Chart Widget -->
+                <div class="lg:col-span-2 glass-card rounded-xl p-md">
+                    <div class="flex justify-between items-center mb-lg">
+                        <h3 class="font-headline-md text-headline-md">
+                            Évolution des Paiements
+                        </h3>
+                        <div class="flex gap-xs">
+                            <span
+                                class="px-sm py-xs rounded bg-surface-container text-on-surface font-label-md text-label-md"
+                                >Ce mois</span
+                            >
+                            <span
+                                class="px-sm py-xs rounded hover:bg-white/5 cursor-pointer font-label-md text-label-md"
+                                >Trimestre</span
+                            >
+                        </div>
+                    </div>
+                    <div
+                        class="h-[200px] w-full flex items-end justify-between gap-base px-base"
+                    >
+                        <!-- Simple Bar Chart Representation -->
+                        <div class="flex flex-col items-center gap-xs flex-1">
+                            <div
+                                class="w-full bg-primary/20 rounded-t-lg h-[40%] hover:bg-primary/40 transition-colors"
+                            ></div>
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >S1</span
+                            >
+                        </div>
+                        <div class="flex flex-col items-center gap-xs flex-1">
+                            <div
+                                class="w-full bg-primary/20 rounded-t-lg h-[65%] hover:bg-primary/40 transition-colors"
+                            ></div>
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >S2</span
+                            >
+                        </div>
+                        <div class="flex flex-col items-center gap-xs flex-1">
+                            <div
+                                class="w-full bg-primary rounded-t-lg h-[85%]"
+                            ></div>
+                            <span
+                                class="font-label-md text-label-md text-on-surface"
+                                >S3</span
+                            >
+                        </div>
+                        <div class="flex flex-col items-center gap-xs flex-1">
+                            <div
+                                class="w-full bg-primary/20 rounded-t-lg h-[50%] hover:bg-primary/40 transition-colors"
+                            ></div>
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant"
+                                >S4</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Transactions Table -->
+            <div class="glass-card rounded-xl overflow-hidden">
+                <div
+                    class="p-md border-b border-white/10 flex justify-between items-center"
+                >
+                    <h3 class="font-headline-md text-headline-md">
+                        Transactions Récentes
+                    </h3>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm"
+                            >search</span
+                        >
+                        <input
+                            class="bg-surface-container border-none rounded-full pl-10 pr-4 py-xs text-body-sm focus:ring-2 focus:ring-primary w-64"
+                            placeholder="Rechercher un élève..."
+                            type="text"
+                        />
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead
+                            class="bg-surface-container-high border-b border-white/10"
+                        >
+                            <tr>
+                                <th
+                                    class="px-md py-sm font-label-md text-label-md uppercase tracking-wider text-on-surface-variant"
+                                >
+                                    Nom de l'élève
+                                </th>
+                                <th
+                                    class="px-md py-sm font-label-md text-label-md uppercase tracking-wider text-on-surface-variant"
+                                >
+                                    Montant
+                                </th>
+                                <th
+                                    class="px-md py-sm font-label-md text-label-md uppercase tracking-wider text-on-surface-variant"
+                                >
+                                    Date
+                                </th>
+                                <th
+                                    class="px-md py-sm font-label-md text-label-md uppercase tracking-wider text-on-surface-variant"
+                                >
+                                    Statut
+                                </th>
+                                <th
+                                    class="px-md py-sm font-label-md text-label-md uppercase tracking-wider text-on-surface-variant text-right"
+                                >
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td
+                                    class="px-md py-md flex items-center gap-sm"
+                                >
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-xs"
+                                    >
+                                        JA
+                                    </div>
+                                    <span class="font-body-md"
+                                        >Jean-Pierre Atangana</span
+                                    >
+                                </td>
+                                <td class="px-md py-md font-body-md">450 €</td>
+                                <td
+                                    class="px-md py-md font-body-sm text-on-surface-variant"
+                                >
+                                    14 Oct 2023
+                                </td>
+                                <td class="px-md py-md">
+                                    <span
+                                        class="bg-secondary/20 text-secondary px-sm py-1 rounded-full font-label-md text-label-md flex items-center gap-1 w-fit"
+                                    >
+                                        <span
+                                            class="w-2 h-2 rounded-full bg-secondary"
+                                        ></span>
+                                        Payé
+                                    </span>
+                                </td>
+                                <td class="px-md py-md text-right">
+                                    <button
+                                        class="material-symbols-outlined text-on-surface-variant hover:text-on-surface"
+                                    >
+                                        more_vert
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td
+                                    class="px-md py-md flex items-center gap-sm"
+                                >
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-xs"
+                                    >
+                                        ML
+                                    </div>
+                                    <span class="font-body-md"
+                                        >Marie-Laure Dupont</span
+                                    >
+                                </td>
+                                <td class="px-md py-md font-body-md">320 €</td>
+                                <td
+                                    class="px-md py-md font-body-sm text-on-surface-variant"
+                                >
+                                    12 Oct 2023
+                                </td>
+                                <td class="px-md py-md">
+                                    <span
+                                        class="bg-tertiary-container/20 text-tertiary px-sm py-1 rounded-full font-label-md text-label-md flex items-center gap-1 w-fit"
+                                    >
+                                        <span
+                                            class="w-2 h-2 rounded-full bg-tertiary"
+                                        ></span>
+                                        En attente
+                                    </span>
+                                </td>
+                                <td class="px-md py-md text-right">
+                                    <button
+                                        class="material-symbols-outlined text-on-surface-variant hover:text-on-surface"
+                                    >
+                                        more_vert
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td
+                                    class="px-md py-md flex items-center gap-sm"
+                                >
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-xs"
+                                    >
+                                        SK
+                                    </div>
+                                    <span class="font-body-md"
+                                        >Samuel Kouam</span
+                                    >
+                                </td>
+                                <td class="px-md py-md font-body-md">600 €</td>
+                                <td
+                                    class="px-md py-md font-body-sm text-on-surface-variant"
+                                >
+                                    08 Oct 2023
+                                </td>
+                                <td class="px-md py-md">
+                                    <span
+                                        class="bg-error/20 text-error px-sm py-1 rounded-full font-label-md text-label-md flex items-center gap-1 w-fit"
+                                    >
+                                        <span
+                                            class="w-2 h-2 rounded-full bg-error"
+                                        ></span>
+                                        En retard
+                                    </span>
+                                </td>
+                                <td class="px-md py-md text-right">
+                                    <button
+                                        class="material-symbols-outlined text-on-surface-variant hover:text-on-surface"
+                                    >
+                                        more_vert
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td
+                                    class="px-md py-md flex items-center gap-sm"
+                                >
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-xs"
+                                    >
+                                        SD
+                                    </div>
+                                    <span class="font-body-md"
+                                        >Sophie Diallo</span
+                                    >
+                                </td>
+                                <td class="px-md py-md font-body-md">450 €</td>
+                                <td
+                                    class="px-md py-md font-body-sm text-on-surface-variant"
+                                >
+                                    05 Oct 2023
+                                </td>
+                                <td class="px-md py-md">
+                                    <span
+                                        class="bg-secondary/20 text-secondary px-sm py-1 rounded-full font-label-md text-label-md flex items-center gap-1 w-fit"
+                                    >
+                                        <span
+                                            class="w-2 h-2 rounded-full bg-secondary"
+                                        ></span>
+                                        Payé
+                                    </span>
+                                </td>
+                                <td class="px-md py-md text-right">
+                                    <button
+                                        class="material-symbols-outlined text-on-surface-variant hover:text-on-surface"
+                                    >
+                                        more_vert
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    class="p-md bg-surface-container-low flex items-center justify-between"
+                >
+                    <span class="font-body-sm text-on-surface-variant"
+                        >Affichage de 4 sur 128 transactions</span
+                    >
+                    <div class="flex gap-base">
+                        <button
+                            class="px-base py-xs rounded hover:bg-white/5 material-symbols-outlined text-sm"
+                        >
+                            chevron_left
+                        </button>
+                        <button
+                            class="px-base py-xs rounded hover:bg-white/5 material-symbols-outlined text-sm"
+                        >
+                            chevron_right
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- BottomNavBar -->
+        <nav
+            class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-sm bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-t border-white/10 rounded-t-xl"
+        >
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+            >
+                <span class="material-symbols-outlined" data-icon="dashboard"
+                    >dashboard</span
+                >
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+            >
+                <span class="material-symbols-outlined" data-icon="group"
+                    >group</span
+                >
+                <span class="font-label-md text-label-md">Students</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 transition-colors"
+            >
+                <span
+                    class="material-symbols-outlined"
+                    data-icon="calendar_month"
+                    >calendar_month</span
+                >
+                <span class="font-label-md text-label-md">Schedule</span>
+            </div>
+            <div
+                class="flex flex-col items-center justify-center bg-secondary-container/20 text-secondary rounded-xl px-4 py-1 active:scale-95 transition-transform duration-200"
+            >
+                <span
+                    class="material-symbols-outlined"
+                    data-icon="payments"
+                    data-weight="fill"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >payments</span
+                >
+                <span class="font-label-md text-label-md">Payments</span>
+            </div>
+        </nav>
+    </body>
+</html>

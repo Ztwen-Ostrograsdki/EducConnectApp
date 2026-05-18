@@ -12,23 +12,21 @@ Route::get('/', function () {
 });
 
 // ─── Auth centrale ────────────────────────────────────────────────────
-Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest');
+Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest:central');
 
 Route::post('/logout', function () {
     
-    Auth::logout();
+    Auth::guard('central')->logout();
     session()->invalidate();
     session()->regenerateToken();
     return redirect()->route('central.login');
-})->name('central.logout')->middleware('auth');
+})->name('central.logout')->middleware('auth:central');
 
 
-Route::get('/admin/dashboard', function () {
-    return 'Connecté en tant que Super Admin !';
-})->name('central.dashboard')->middleware(['auth']);
+
 
 // ─── Pages super admin ────────────────────────────────────────────────
-Route::middleware(['auth', 'check.super.admin'])->prefix('admin')->name('central.')->group(function () {
+Route::middleware(['auth:central'])->prefix('admin')->name('central.')->group(function () {
 
     // Dashboard central
     Route::get('/dashboard', function () {

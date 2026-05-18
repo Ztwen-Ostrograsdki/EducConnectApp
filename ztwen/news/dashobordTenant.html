@@ -1,0 +1,571 @@
+<!doctype html>
+
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            .glass-card {
+                background: rgba(30, 30, 30, 0.6);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            body {
+                background-color: #131313;
+                color: #e5e2e1;
+                font-family: "Inter", sans-serif;
+            }
+        </style>
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary-fixed": "#d8e2ff",
+                            "secondary-container": "#00a572",
+                            "surface-tint": "#adc6ff",
+                            "on-error-container": "#ffdad6",
+                            outline: "#8c909f",
+                            "on-secondary": "#003824",
+                            "on-primary": "#002e6a",
+                            "outline-variant": "#424754",
+                            "primary-fixed-dim": "#adc6ff",
+                            "surface-container-highest": "#353534",
+                            tertiary: "#c0c1ff",
+                            "on-tertiary-fixed": "#07006c",
+                            "surface-variant": "#353534",
+                            "on-secondary-fixed-variant": "#005236",
+                            "surface-container-low": "#1c1b1b",
+                            "inverse-primary": "#005ac2",
+                            "on-secondary-fixed": "#002113",
+                            "on-primary-fixed-variant": "#004395",
+                            "on-surface": "#e5e2e1",
+                            "inverse-surface": "#e5e2e1",
+                            "surface-container": "#201f1f",
+                            "on-surface-variant": "#c2c6d6",
+                            "on-error": "#690005",
+                            primary: "#adc6ff",
+                            "surface-container-high": "#2a2a2a",
+                            "on-primary-container": "#00285d",
+                            "secondary-fixed-dim": "#4edea3",
+                            "surface-bright": "#393939",
+                            "tertiary-fixed-dim": "#c0c1ff",
+                            secondary: "#4edea3",
+                            "inverse-on-surface": "#313030",
+                            "on-tertiary-fixed-variant": "#2f2ebe",
+                            surface: "#131313",
+                            "on-tertiary": "#1000a9",
+                            "on-secondary-container": "#00311f",
+                            error: "#ffb4ab",
+                            "on-primary-fixed": "#001a42",
+                            "surface-container-lowest": "#0e0e0e",
+                            "on-tertiary-container": "#0d0096",
+                            "tertiary-fixed": "#e1e0ff",
+                            "tertiary-container": "#8083ff",
+                            "on-background": "#e5e2e1",
+                            "primary-container": "#4d8eff",
+                            "surface-dim": "#131313",
+                            "secondary-fixed": "#6ffbbe",
+                            background: "#131313",
+                            "error-container": "#93000a",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            gutter: "24px",
+                            lg: "40px",
+                            base: "8px",
+                            "margin-desktop": "48px",
+                            "margin-mobile": "16px",
+                            md: "24px",
+                            xs: "4px",
+                            xl: "64px",
+                            sm: "12px",
+                        },
+                        fontFamily: {
+                            "headline-xl-mobile": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "body-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "label-md": ["Inter"],
+                            "headline-xl": ["Inter"],
+                        },
+                        fontSize: {
+                            "headline-xl-mobile": [
+                                "28px",
+                                { lineHeight: "34px", fontWeight: "700" },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "20px", fontWeight: "400" },
+                            ],
+                            "body-md": [
+                                "16px",
+                                { lineHeight: "24px", fontWeight: "400" },
+                            ],
+                            "body-lg": [
+                                "18px",
+                                { lineHeight: "28px", fontWeight: "400" },
+                            ],
+                            "headline-md": [
+                                "20px",
+                                { lineHeight: "28px", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "28px",
+                                {
+                                    lineHeight: "36px",
+                                    letterSpacing: "-0.01em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-lg-mobile": [
+                                "24px",
+                                { lineHeight: "30px", fontWeight: "600" },
+                            ],
+                            "label-md": [
+                                "12px",
+                                {
+                                    lineHeight: "16px",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "600",
+                                },
+                            ],
+                            "headline-xl": [
+                                "36px",
+                                {
+                                    lineHeight: "44px",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            body {
+                min-height: max(884px, 100dvh);
+            }
+        </style>
+    </head>
+    <body class="min-h-screen pb-24 md:pb-0 md:pt-20">
+        <!-- TopAppBar -->
+        <header
+            class="fixed top-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile py-base md:px-margin-desktop"
+        >
+            <div class="flex items-center gap-sm">
+                <span
+                    class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface"
+                    >School Management</span
+                >
+            </div>
+            <div class="flex items-center gap-md">
+                <div class="hidden md:flex gap-gutter">
+                    <nav class="flex gap-md">
+                        <a
+                            class="text-primary font-bold font-label-md text-label-md"
+                            href="#"
+                            >Dashboard</a
+                        >
+                        <a
+                            class="text-on-surface-variant hover:bg-white/5 transition-colors font-label-md text-label-md px-2 py-1 rounded"
+                            href="#"
+                            >Students</a
+                        >
+                        <a
+                            class="text-on-surface-variant hover:bg-white/5 transition-colors font-label-md text-label-md px-2 py-1 rounded"
+                            href="#"
+                            >Schedule</a
+                        >
+                        <a
+                            class="text-on-surface-variant hover:bg-white/5 transition-colors font-label-md text-label-md px-2 py-1 rounded"
+                            href="#"
+                            >Payments</a
+                        >
+                    </nav>
+                </div>
+                <div class="flex items-center gap-sm">
+                    <button
+                        class="p-2 rounded-full hover:bg-white/5 transition-colors"
+                    >
+                        <span
+                            class="material-symbols-outlined text-primary dark:text-primary"
+                            >notifications</span
+                        >
+                    </button>
+                    <div
+                        class="w-8 h-8 rounded-full overflow-hidden border border-primary/20"
+                    >
+                        <img
+                            alt="User Profile"
+                            class="w-full h-full object-cover"
+                            data-alt="A professional portrait of a school administrator in a modern office. The lighting is soft and corporate, with a deep charcoal background that complements a sophisticated dark-mode UI. High-quality digital photography with a focus on professional authority and clean aesthetics."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI6ScQvruruH8X-Nl6LR2lg_mk9xiDmo5JHI1VAkDDirNIdfZax43fsCYnbbKXisff3fjhjW7Iufv0Iw7I9xW-mmK2kyDrJ0Btdq4_sPZ3H870D-pJxwUe4U09oRvXfu8Fol1JKk1a55UyRghvPOAbmH2K6XuWEqEe8NLEhcd_Dv_XAo7xQopVMLzeAswGY6jYyBip0zrfe-LQVQemJs4pIjztRh7NEDqJV2nRX6-HV7q0aodVuhQL-xJIxogslESLNz25RQ1uPH8"
+                        />
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main
+            class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-lg space-y-xl"
+        >
+            <!-- Salutation Section -->
+            <section class="space-y-xs">
+                <h1
+                    class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-on-surface"
+                >
+                    Bonjour, Admin
+                </h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Voici un aperçu de l'activité de votre établissement pour
+                    aujourd'hui.
+                </p>
+            </section>
+            <!-- Stats Grid (Bento Style) -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+                <div class="glass-card p-md rounded-xl space-y-sm">
+                    <div class="flex justify-between items-start">
+                        <span
+                            class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg"
+                            >group</span
+                        >
+                        <span class="text-secondary font-label-md text-label-md"
+                            >+2.4%</span
+                        >
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
+                        >
+                            Élèves
+                        </p>
+                        <p
+                            class="font-headline-lg text-headline-lg text-on-surface"
+                        >
+                            1,240
+                        </p>
+                    </div>
+                </div>
+                <div class="glass-card p-md rounded-xl space-y-sm">
+                    <div class="flex justify-between items-start">
+                        <span
+                            class="material-symbols-outlined text-tertiary p-2 bg-tertiary/10 rounded-lg"
+                            >school</span
+                        >
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
+                        >
+                            Professeurs
+                        </p>
+                        <p
+                            class="font-headline-lg text-headline-lg text-on-surface"
+                        >
+                            85
+                        </p>
+                    </div>
+                </div>
+                <div class="glass-card p-md rounded-xl space-y-sm">
+                    <div class="flex justify-between items-start">
+                        <span
+                            class="material-symbols-outlined text-secondary p-2 bg-secondary/10 rounded-lg"
+                            >check_circle</span
+                        >
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
+                        >
+                            Présence
+                        </p>
+                        <p
+                            class="font-headline-lg text-headline-lg text-on-surface"
+                        >
+                            94%
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="glass-card p-md rounded-xl border-l-4 border-error/50 space-y-sm"
+                >
+                    <div class="flex justify-between items-start">
+                        <span
+                            class="material-symbols-outlined text-error p-2 bg-error/10 rounded-lg"
+                            >alarm</span
+                        >
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
+                        >
+                            Retards
+                        </p>
+                        <p
+                            class="font-headline-lg text-headline-lg text-on-surface"
+                        >
+                            12
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+                <!-- Cours en cours Section -->
+                <div class="lg:col-span-2 space-y-md">
+                    <div class="flex justify-between items-center">
+                        <h2
+                            class="font-headline-md text-headline-md text-on-surface"
+                        >
+                            Cours en cours
+                        </h2>
+                        <button
+                            class="text-primary font-label-md text-label-md hover:underline"
+                        >
+                            Voir l'emploi du temps
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                        <!-- Class Card 1 -->
+                        <div
+                            class="glass-card overflow-hidden rounded-xl flex flex-col group hover:border-primary/30 transition-all duration-300"
+                        >
+                            <div class="h-32 relative">
+                                <img
+                                    class="w-full h-full object-cover opacity-60"
+                                    data-alt="A clean, modern classroom environment with sleek furniture and advanced educational technology. The lighting is bright and focused, using a blue and grey color palette that fits into a high-end school management dashboard. The style is professional and minimalist."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD1e0LlXQuQ1c7FSucis4vLcEY7okFpjYj22Ce2w0hltf4zj_xyHGan7FfLzy9YaXIzvoWIG4U-TxzRwAaQQfNUzi_05QGQIyqpw9YIs_1fWoUxjwWRHVQ5ZVLrGoQXgU8ERCbkVDctcKFRu-kBvRLASEJAmnnQVz8j0G6qR-3CSUfW4jgJTgkUQDHU4JkaI8Gz7lCUGwBDJ67B4DDnf1W0PQVeOnH53tQH4Ule5CjCB6K9LRGgOd33x4tzz_bcSfAmGI4heZo8oE"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] to-transparent"
+                                ></div>
+                                <div class="absolute bottom-sm left-md">
+                                    <span
+                                        class="bg-primary/20 text-primary text-[10px] font-bold uppercase px-2 py-1 rounded"
+                                        >Salle 204</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="p-md space-y-base">
+                                <h3
+                                    class="font-headline-md text-headline-md text-on-surface"
+                                >
+                                    Mathématiques Avancées
+                                </h3>
+                                <div class="flex items-center gap-sm">
+                                    <img
+                                        alt="Prof"
+                                        class="w-8 h-8 rounded-full"
+                                        data-alt="Close up portrait of a professional female teacher in her late 30s, smiling warmly. Her appearance is professional and trustworthy, set against a blurred academic background. The lighting is soft and high-key, maintaining the elite educational aesthetic."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo9y-CQ8AH1dT4mfj0q9Bju91gwAYQxvWy0a6CkndV7KkAC3W9mkzTjJg-d9LMcB_MsBHHHTY9sLwFP0xXXotncubmjpR15Ix9LEkamOb7F7599txc1oEHU91A70Ox3kUu7yagoR0T9LZHpNy0oSe2EO0Ebzg9xnCWkbcz1XEdv88fETs0FY8XlAQKlf06Jj-jc17lr8RKqagX3pVP73XyfAoIdxW4Nso0yKxfJ3-ms4R7O-vp5M2m86Fm5wKB9ieqSXou7ga8FBE"
+                                    />
+                                    <span
+                                        class="font-body-sm text-body-sm text-on-surface-variant"
+                                        >Dr. Sophie Martin</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Class Card 2 -->
+                        <div
+                            class="glass-card overflow-hidden rounded-xl flex flex-col group hover:border-primary/30 transition-all duration-300"
+                        >
+                            <div class="h-32 relative">
+                                <img
+                                    class="w-full h-full object-cover opacity-60"
+                                    data-alt="A sophisticated science laboratory with modern equipment and glassware. The scene is illuminated by cool blue tones and crisp white lighting, emphasizing a clean and precise academic atmosphere. The visual style is professional, high-definition, and corporate modern."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUJRyNsIdAoYdedS_sfAUxDfb1Y5B9yDew-jQUDDqUCzb6fQCXKS0i-UI2SPwT73oelp3YX3P1GY8O_37oWArV7cOKxYcZ5uwRq9mhAJgzVqmWOTq8XyYKRbliqzlUgotwwmcp5lw0hXWpsM91Nip_IqD8u6DnDfaR7mvWHUUOKT4cgd_3rtbdSLlUn66B9iuiPYGl6gdqhS__iPxlWsl4kf3jACBaKQA1fG7xuu_V1AGrJz4nP9wpoE29XplrzdhOglHgGHDFuhw"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] to-transparent"
+                                ></div>
+                                <div class="absolute bottom-sm left-md">
+                                    <span
+                                        class="bg-tertiary/20 text-tertiary text-[10px] font-bold uppercase px-2 py-1 rounded"
+                                        >Labo Chimie</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="p-md space-y-base">
+                                <h3
+                                    class="font-headline-md text-headline-md text-on-surface"
+                                >
+                                    Physique-Chimie
+                                </h3>
+                                <div class="flex items-center gap-sm">
+                                    <img
+                                        alt="Prof"
+                                        class="w-8 h-8 rounded-full"
+                                        data-alt="Portrait of a male scientist and professor in a modern lab coat. He has a calm and focused expression. The background is a high-tech laboratory with soft bokeh lighting. The overall mood is intelligent, authoritative, and perfectly suited for a premium educational platform."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5Zq8rg8wb0mBekdaR2djJ4NAgj-FWTWDD9QYiQzlv2ZoUDMk6EqHNXGZkSmreyX46t9BZwcFTqFNwcgbOrUOG7KL6b1UNLK31IKU3TTNpFi5wKri9Jub_TGr7XPPXEFumkuNUXK54r9qq4uJVZCBAQHHWdI_I4VUjFXa3xm1wjJ68ICUHFzDT4UNeP7D_KfilmD9Wy_tbiK3iMt3GtkscbbJZoIg_I-OfQttxhF4F1tKmWNF2eSlk2Jwr1toK82WWCpMeoMCi0yQ"
+                                    />
+                                    <span
+                                        class="font-body-sm text-body-sm text-on-surface-variant"
+                                        >Prof. Marc Durand</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Activités Récentes Section -->
+                <div class="space-y-md">
+                    <h2
+                        class="font-headline-md text-headline-md text-on-surface"
+                    >
+                        Activités récentes
+                    </h2>
+                    <div class="glass-card rounded-xl p-md space-y-gutter">
+                        <!-- Activity Item 1 -->
+                        <div class="flex gap-md">
+                            <div class="mt-1">
+                                <span
+                                    class="material-symbols-outlined text-secondary text-[20px]"
+                                    >payments</span
+                                >
+                            </div>
+                            <div class="space-y-xs">
+                                <p
+                                    class="font-body-md text-body-md text-on-surface"
+                                >
+                                    Paiement reçu
+                                </p>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant"
+                                >
+                                    Frais de scolarité de Lucas Bernard validés.
+                                </p>
+                                <p
+                                    class="font-label-md text-label-md text-outline"
+                                >
+                                    Il y a 5 min
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Activity Item 2 -->
+                        <div class="flex gap-md">
+                            <div class="mt-1">
+                                <span
+                                    class="material-symbols-outlined text-error text-[20px]"
+                                    >warning</span
+                                >
+                            </div>
+                            <div class="space-y-xs">
+                                <p
+                                    class="font-body-md text-body-md text-on-surface"
+                                >
+                                    Alerte de retard
+                                </p>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant"
+                                >
+                                    3 élèves non signalés en Terminale B.
+                                </p>
+                                <p
+                                    class="font-label-md text-label-md text-outline"
+                                >
+                                    Il y a 20 min
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Activity Item 3 -->
+                        <div class="flex gap-md">
+                            <div class="mt-1">
+                                <span
+                                    class="material-symbols-outlined text-primary text-[20px]"
+                                    >person_add</span
+                                >
+                            </div>
+                            <div class="space-y-xs">
+                                <p
+                                    class="font-body-md text-body-md text-on-surface"
+                                >
+                                    Nouvelle inscription
+                                </p>
+                                <p
+                                    class="font-body-sm text-body-sm text-on-surface-variant"
+                                >
+                                    Dossier de Emma Royer en cours d'examen.
+                                </p>
+                                <p
+                                    class="font-label-md text-label-md text-outline"
+                                >
+                                    Il y a 1 heure
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full py-base border border-white/10 rounded-lg font-label-md text-label-md text-on-surface hover:bg-white/5 transition-colors"
+                        >
+                            Tout voir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- BottomNavBar (Mobile Only) -->
+        <nav
+            class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/50 dark:bg-surface/50 backdrop-blur-xl border-t border-white/10 flex justify-around items-center px-margin-mobile py-sm rounded-t-xl"
+        >
+            <a
+                class="flex flex-col items-center justify-center bg-secondary-container/20 text-secondary rounded-xl px-4 py-1 active:scale-95 transition-transform duration-200"
+                href="#"
+            >
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 active:scale-95 transition-transform duration-200"
+                href="#"
+            >
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-md text-label-md">Students</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 active:scale-95 transition-transform duration-200"
+                href="#"
+            >
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="font-label-md text-label-md">Schedule</span>
+            </a>
+            <a
+                class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-white/5 active:scale-95 transition-transform duration-200"
+                href="#"
+            >
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md text-label-md">Payments</span>
+            </a>
+        </nav>
+        <!-- Contextual FAB (Only for main dashboards) -->
+        <button
+            class="fixed bottom-24 right-margin-mobile md:bottom-gutter md:right-margin-desktop w-14 h-14 bg-primary text-on-primary-container rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform duration-200 z-40"
+        >
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </body>
+</html>

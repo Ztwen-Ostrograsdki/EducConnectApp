@@ -40,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.super.admin'  => \App\Http\Middleware\CheckSuperAdmin::class,
             'tenant.init' => \App\Http\Middleware\InitializeTenancyByDomainForLivewire::class,
             'tenant.auth' => \App\Http\Middleware\TenantAuthenticate::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
 
        

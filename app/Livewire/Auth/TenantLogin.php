@@ -49,7 +49,8 @@ class TenantLogin extends Component
             return;
         }
 
-        if (!Auth::attempt([
+
+        if (!Auth::guard('tenant')->attempt([
             'email'    => $this->email,
             'password' => $this->password,
         ], $this->remember)) {
@@ -58,6 +59,8 @@ class TenantLogin extends Component
             $this->reset('password');
             return;
         }
+
+        Auth::shouldUse('tenant');
 
         // dd('Auth réussi !', Auth::user(), Auth::user()->name);
 

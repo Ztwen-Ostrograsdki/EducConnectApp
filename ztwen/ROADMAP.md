@@ -1,6 +1,7 @@
 # 🏫 EducConnect — ROADMAP & Documentation Technique
 
 ## 📌 Contexte du projet
+
 Plateforme éducative **multi-école SaaS** construite avec Laravel 13 + Livewire 4 + stancl/tenancy.
 Chaque école a son propre subdomain et sa propre base de données isolée.
 
@@ -8,24 +9,25 @@ Chaque école a son propre subdomain et sa propre base de données isolée.
 
 ## 🏗️ Stack technique
 
-| Technologie | Version | Rôle |
-|---|---|---|
-| Laravel | 13.9.0 | Framework principal |
-| Livewire | 4.3 | Composants dynamiques |
-| stancl/tenancy | 3.10 | Multi-tenant (subdomain + DB séparée) |
-| spatie/laravel-permission | 7.4 | Rôles & permissions |
-| maatwebsite/excel | 3.1 | Import/Export Excel |
-| spatie/browsershot | 5.3 | Génération PDF (bulletins) |
-| Alpine.js | 3.15 | Interactivité JS légère |
-| Motion | 12.38 | Animations |
-| Tailwind CSS | 4.3 | Styles |
-| Puppeteer | 24.43 | Rendu PDF headless |
+| Technologie               | Version | Rôle                                  |
+| ------------------------- | ------- | ------------------------------------- |
+| Laravel                   | 13.9.0  | Framework principal                   |
+| Livewire                  | 4.3     | Composants dynamiques                 |
+| stancl/tenancy            | 3.10    | Multi-tenant (subdomain + DB séparée) |
+| spatie/laravel-permission | 7.4     | Rôles & permissions                   |
+| maatwebsite/excel         | 3.1     | Import/Export Excel                   |
+| spatie/browsershot        | 5.3     | Génération PDF (bulletins)            |
+| Alpine.js                 | 3.15    | Interactivité JS légère               |
+| Motion                    | 12.38   | Animations                            |
+| Tailwind CSS              | 4.3     | Styles                                |
+| Puppeteer                 | 24.43   | Rendu PDF headless                    |
 
 ---
 
 ## 🌐 Architecture Multi-tenant
 
 ### Type : Subdomain + DB séparée par école
+
 ```
 educconnect.com          → Super Admin (DB centrale)
 ecole-lumiere.educconnect.com  → DB tenant école Lumière
@@ -33,12 +35,14 @@ ecole-soleil.educconnect.com   → DB tenant école Soleil
 ```
 
 ### DB Centrale (landlord)
+
 - Tenants (écoles)
 - Domains (subdomains)
 - Abonnements
 - Super Admin
 
 ### DB Tenant (par école)
+
 - Users (directeur, enseignants, parents)
 - Élèves
 - Classes
@@ -52,13 +56,13 @@ ecole-soleil.educconnect.com   → DB tenant école Soleil
 
 ## 👥 Rôles
 
-| Rôle | Périmètre |
-|---|---|
+| Rôle          | Périmètre                                          |
+| ------------- | -------------------------------------------------- |
 | `super_admin` | Plateforme entière, validation écoles, abonnements |
-| `directeur` | Son école uniquement, tout gérer |
-| `enseignant` | Ses classes + ses matières uniquement |
-| `parent` | Données de ses enfants uniquement |
-| `eleve` | Ses propres données |
+| `directeur`   | Son école uniquement, tout gérer                   |
+| `enseignant`  | Ses classes + ses matières uniquement              |
+| `parent`      | Données de ses enfants uniquement                  |
+| `eleve`       | Ses propres données                                |
 
 ---
 
@@ -112,12 +116,13 @@ Classe
 ```
 
 ### Exemples concrets
-| Classe | Promotion | Filière | Série | Niveau |
-|---|---|---|---|---|
-| Terminale BTP 2 | Terminale | BTP | null | secondaire |
-| Troisième 1 | Troisième | null | null | secondaire |
-| Terminale C | Terminale | null | C | secondaire |
-| BTS Informatique 1 | BTS | Informatique | null | supérieur |
+
+| Classe             | Promotion | Filière      | Série | Niveau     |
+| ------------------ | --------- | ------------ | ----- | ---------- |
+| Terminale BTP 2    | Terminale | BTP          | null  | secondaire |
+| Troisième 1        | Troisième | null         | null  | secondaire |
+| Terminale C        | Terminale | null         | C     | secondaire |
+| BTS Informatique 1 | BTS       | Informatique | null  | supérieur  |
 
 ---
 
@@ -146,14 +151,16 @@ Classe
 ## 📝 Notes
 
 ### Types de notes
-| Type | Sur |
-|---|---|
-| Interrogation 1..n | 10 |
-| Devoir 1 | 20 |
-| Devoir 2 | 20 |
-| Examen | 20 |
+
+| Type               | Sur |
+| ------------------ | --- |
+| Interrogation 1..n | 10  |
+| Devoir 1           | 20  |
+| Devoir 2           | 20  |
+| Examen             | 20  |
 
 ### Règles
+
 - Saisie unitaire ou via Excel
 - **Non modifiable après délai** sans justification validée par le directeur
 - Historique complet des modifications + éditeur référencé
@@ -179,11 +186,11 @@ Classe
 
 ## 📬 Notifications
 
-| Canal | Provider |
-|---|---|
-| SMS | Africa's Talking |
+| Canal    | Provider                           |
+| -------- | ---------------------------------- |
+| SMS      | Africa's Talking                   |
 | WhatsApp | Meta Cloud API (WhatsApp Business) |
-| Email | Resend |
+| Email    | Resend                             |
 
 ---
 
@@ -197,29 +204,46 @@ Classe
 ## ✅ État d'avancement
 
 ### Fait
+
 - [x] Laravel 13 installé
 - [x] Livewire, Tenancy, Spatie Permission, Excel, Browsershot installés
 - [x] Alpine.js, Motion, Tailwind, Puppeteer installés
 - [x] `php artisan tenancy:install` exécuté
-- [x] Config `central_domains` à mettre à jour pour production
+- [x] Config `central_domains` configurée
 - [x] DB centrale `educconnect_central` créée
 - [x] Connexion `central` ajoutée dans `config/database.php`
 - [x] `.env` configuré
 - [x] Repo GitHub lié
+- [x] Migrations centrales (users, tenants, domains, cache, jobs)
+- [x] Migrations tenant (school_years, filiars, serials, promotions, classes, subjects, teachers, students, tutors, marks, presences, payments, etc.)
+- [x] Modèles avec relations Laravel complets
+- [x] TenancyServiceProvider configuré
+- [x] Modèle Tenant personnalisé
+- [x] Spatie Permission installé et configuré
+- [x] RolesAndPermissionsSeeder créé
+- [x] Middleware CheckSuperAdmin créé
+- [x] Middleware TenantAuthenticate créé
+- [x] Composants Livewire Auth (TenantLogin, CentralLogin)
+- [x] Layouts (app, guest, guest-central)
+- [x] Routes centrales et tenant configurées
+- [x] Vite + Tailwind v4 configurés
+- [x] Alpine.js + Motion intégrés
+- [x] Welcome page animée (Motion, responsive)
+- [x] Login super admin fonctionnel (localhost:8000)
+- [x] Login directeur fonctionnel (ecole-test.test:8000)
+- [x] Session tenant fixée (SESSION_DOMAIN)
+- [x] Tenant de test créé (ecole-test)
+- [x] Super admin créé en DB centrale
+- [x] Directeur créé en DB tenant avec rôle
 
 ### En cours
-- [ ] `php artisan migrate` (migrations centrales)
-- [ ] Configuration TenancyServiceProvider
-- [ ] Modèle Tenant personnalisé
-- [ ] Migrations tenant (toutes les tables métier)
-- [ ] Modèles avec relations Laravel
-- [ ] Rôles & permissions Spatie
-- [ ] Configuration vite.config.js + app.js + app.css
+
+- [ ] Dashboard tenant (directeur)
+- [ ] Dashboard central (super admin)
 
 ### À faire ensuite
-- [ ] Layout principal (sidebar, navbar)
-- [ ] Page super admin (gestion écoles, abonnements)
-- [ ] Auth multi-tenant (login par subdomain)
+
+- [ ] Layout principal avec sidebar et navbar
 - [ ] Module Années scolaires
 - [ ] Module Classes & Promotions
 - [ ] Module Apprenants (CRUD + import Excel)
@@ -230,6 +254,7 @@ Classe
 - [ ] Module Notifications (SMS, WhatsApp, Email)
 - [ ] Module Paiements frais scolaires
 - [ ] Module Abonnements (super admin)
+- [ ] Page d'administration centrale (gestion écoles)
 
 ---
 

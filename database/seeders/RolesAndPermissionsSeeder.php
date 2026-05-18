@@ -138,6 +138,32 @@ class RolesAndPermissionsSeeder extends Seeder
         $directeur = Role::firstOrCreate(['name' => 'directeur']);
         $directeur->syncPermissions(Permission::all());
 
+
+        /**
+         * Assistant Directeur — accès limité à ses classes et matières
+         */
+        $enseignant = Role::firstOrCreate(['name' => 'assistant directeur']);
+        $enseignant->syncPermissions([
+            'classes.view',
+            'teachers.view',
+            'students.view',
+            'students.view_archives',
+            'subjects.view',
+            'filiars.view',
+            'tutors.view',
+            'promotions.view',
+            'serials.view',
+            'marks.view',
+            'marks.import',
+            'marks.export',
+            'presences.view',
+            'presences.notify_tutor',
+            'bulletins.view',
+            'payments.view',
+            'bulletins.view',
+            'bulletins.generate',
+        ]);
+
         /**
          * Enseignant — accès limité à ses classes et matières
          */
@@ -158,6 +184,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'presences.notify_tutor',
             'bulletins.view',
         ]);
+
+        
 
         /**
          * Parent/Tuteur — accès limité à ses enfants
