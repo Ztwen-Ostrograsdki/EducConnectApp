@@ -1,4 +1,4 @@
-<div class="w-full overflow-x-hidden p-2">
+<div class="w-full overflow-x-hidden">
 
     {{-- ===================================================== --}}
     {{-- GLOBAL CONTAINER --}}
@@ -29,7 +29,7 @@
 
                         <h1 class="text-2xl sm:text-3xl font-bold">
 
-                            Enseignants
+                            Parents d'Élèves
 
                         </h1>
 
@@ -38,7 +38,7 @@
                                      text-indigo-400
                                      text-xs">
 
-                            248 Enseignants
+                            1 248 Parents
 
                         </span>
 
@@ -46,7 +46,7 @@
 
                     <p class="mt-2 text-slate-400 text-sm sm:text-base">
 
-                        Vue globale du personnel enseignant de l’établissement
+                        Gestion centralisée des représentants légaux des apprenants
 
                     </p>
 
@@ -69,7 +69,7 @@
                                    hover:bg-indigo-600
                                    transition-all text-sm">
 
-                        Ajouter Enseignant
+                        Ajouter Parent
 
                     </button>
 
@@ -90,10 +90,10 @@
                         gap-4">
 
                 @foreach([
-                    ['Total', '248', 'text-indigo-400'],
-                    ['Actifs', '232', 'text-emerald-400'],
-                    ['Temps Plein', '180', 'text-sky-400'],
-                    ['Taux Présence', '96%', 'text-amber-400']
+                    ['Parents Actifs', '1180', 'text-emerald-400'],
+                    ['Accès Bloqués', '32', 'text-rose-400'],
+                    ['Notifications Envoyées', '8420', 'text-indigo-400'],
+                    ['Parents Connectés', '864', 'text-sky-400']
                 ] as $kpi)
 
                 <div class="rounded-3xl
@@ -122,7 +122,7 @@
         </section>
 
         {{-- ===================================================== --}}
-        {{-- FILTER BAR --}}
+        {{-- FILTERS --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
 
@@ -138,7 +138,7 @@
 
                         <input
                             type="text"
-                            placeholder="Rechercher un enseignant..."
+                            placeholder="Rechercher un parent, téléphone ou enfant..."
                             class="w-full h-12 rounded-2xl
                                    bg-slate-950
                                    border border-slate-800
@@ -149,7 +149,9 @@
                                    focus:ring-indigo-500/40"
                         >
 
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                        <div class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    text-slate-500">
 
                             🔍
 
@@ -157,38 +159,26 @@
 
                     </div>
 
-                    {{-- FILTERS --}}
+                    {{-- FILTER GRID --}}
                     <div class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
-                                xl:grid-cols-5
+                                xl:grid-cols-7
                                 gap-3">
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
 
-                            <option>Toutes matières</option>
-                            <option>Mathématiques</option>
-                            <option>Physique</option>
-
-                        </select>
-
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
-
-                            <option>Toutes classes</option>
+                            <option>Toutes les classes</option>
                             <option>Terminale F2-1</option>
+                            <option>1ère G2</option>
 
                         </select>
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
 
                             <option>Sexe</option>
                             <option>Masculin</option>
@@ -198,12 +188,31 @@
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
 
-                            <option>Statut</option>
+                            <option>Ville</option>
+                            <option>Cotonou</option>
+                            <option>Porto-Novo</option>
+
+                        </select>
+
+                        <select class="h-11 px-4 rounded-2xl
+                                       bg-slate-950
+                                       border border-slate-800 text-sm">
+
+                            <option>Profession</option>
+                            <option>Commerçant</option>
+                            <option>Fonctionnaire</option>
+
+                        </select>
+
+                        <select class="h-11 px-4 rounded-2xl
+                                       bg-slate-950
+                                       border border-slate-800 text-sm">
+
+                            <option>Statut Accès</option>
                             <option>Actif</option>
-                            <option>Suspendu</option>
+                            <option>Bloqué</option>
 
                         </select>
 
@@ -213,6 +222,70 @@
                                        transition-all text-sm">
 
                             Filtrer
+
+                        </button>
+
+                        <button class="h-11 rounded-2xl
+                                       bg-rose-500/20
+                                       text-rose-400
+                                       hover:bg-rose-500/30
+                                       transition-all text-sm">
+
+                            Réinitialiser
+
+                        </button>
+
+                    </div>
+
+                    {{-- GLOBAL ACTIONS --}}
+                    <div class="grid
+                                grid-cols-1
+                                sm:grid-cols-2
+                                xl:grid-cols-5
+                                gap-3">
+
+                        <button class="h-12 rounded-2xl
+                                       bg-indigo-500
+                                       hover:bg-indigo-600
+                                       transition-all text-sm">
+
+                            Notifier Tous
+
+                        </button>
+
+                        <button class="h-12 rounded-2xl
+                                       bg-emerald-500
+                                       hover:bg-emerald-600
+                                       transition-all text-sm">
+
+                            Envoyer Bulletins
+
+                        </button>
+
+                        <button class="h-12 rounded-2xl
+                                       bg-sky-500
+                                       hover:bg-sky-600
+                                       transition-all text-sm">
+
+                            Envoyer Notes
+
+                        </button>
+
+                        <button class="h-12 rounded-2xl
+                                       bg-amber-500
+                                       hover:bg-amber-600
+                                       transition-all text-sm">
+
+                            Mail Global
+
+                        </button>
+
+                        <button class="h-12 rounded-2xl
+                                       bg-rose-500
+                                       hover:bg-rose-600
+                                       transition-all text-sm">
+
+                            Bloquer Accès
 
                         </button>
 
@@ -231,15 +304,15 @@
 
             <div class="grid
                         grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_380px]
+                        2xl:grid-cols-[minmax(0,1fr)_390px]
                         gap-6">
 
                 {{-- ===================================================== --}}
-                {{-- LEFT --}}
+                {{-- LEFT CONTENT --}}
                 {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- TEACHERS TABLE --}}
+                    {{-- TABLE --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -259,13 +332,13 @@
 
                                     <h2 class="text-lg sm:text-xl font-semibold">
 
-                                        Liste des Enseignants
+                                        Liste des Parents
 
                                     </h2>
 
                                     <p class="mt-1 text-sm text-slate-400">
 
-                                        Gestion et suivi du personnel
+                                        Gestion des accès et suivi des représentants
 
                                     </p>
 
@@ -300,18 +373,34 @@
                         {{-- TABLE --}}
                         <div class="overflow-x-auto">
 
-                            <table class="min-w-[1200px] w-full">
+                            <table class="min-w-[1900px] w-full">
 
                                 <thead class="bg-slate-950 border-b border-slate-800">
 
                                     <tr>
 
                                         <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Enseignant
+                                            Parent
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Matière
+                                            Sexe
+                                        </th>
+
+                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                            Profession
+                                        </th>
+
+                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                            Ville
+                                        </th>
+
+                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                            Téléphone
+                                        </th>
+
+                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                            Enfant(s)
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -319,15 +408,7 @@
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Notes
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Heures/Sem
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Présence
+                                            Dernière Connexion
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -344,7 +425,7 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,10) as $teacher)
+                                    @foreach(range(1,12) as $parent)
 
                                     <tr class="hover:bg-slate-800/40 transition-all">
 
@@ -354,21 +435,20 @@
                                             <div class="flex items-center gap-4">
 
                                                 <div class="w-14 h-14 rounded-2xl
-                                                            bg-slate-800
-                                                            shrink-0">
+                                                            bg-slate-800 shrink-0">
                                                 </div>
 
                                                 <div class="min-w-0">
 
                                                     <h3 class="font-medium truncate">
 
-                                                        M. Jean Kouassi
+                                                        Mme AGBODJI Clarisse
 
                                                     </h3>
 
                                                     <p class="mt-1 text-sm text-slate-400 truncate">
 
-                                                        enseignant@email.com
+                                                        clarisse@email.com
 
                                                     </p>
 
@@ -378,46 +458,87 @@
 
                                         </td>
 
-                                        {{-- SUBJECT --}}
+                                        {{-- SEX --}}
+                                        <td class="px-4 py-5 text-center">
+
+                                            Féminin
+
+                                        </td>
+
+                                        {{-- JOB --}}
                                         <td class="px-4 py-5 text-center whitespace-nowrap">
 
-                                            Mathématiques
+                                            Fonctionnaire
+
+                                        </td>
+
+                                        {{-- CITY --}}
+                                        <td class="px-4 py-5 text-center">
+
+                                            Cotonou
+
+                                        </td>
+
+                                        {{-- PHONE --}}
+                                        <td class="px-4 py-5 text-center whitespace-nowrap">
+
+                                            +229 01 00 00 00
+
+                                        </td>
+
+                                        {{-- CHILDREN --}}
+                                        <td class="px-4 py-5">
+
+                                            <div class="space-y-2">
+
+                                                <div class="px-3 py-2 rounded-xl
+                                                            bg-slate-950 text-sm">
+
+                                                    KOUASSI Marc
+
+                                                </div>
+
+                                                <div class="px-3 py-2 rounded-xl
+                                                            bg-slate-950 text-sm">
+
+                                                    KOUASSI Sarah
+
+                                                </div>
+
+                                            </div>
 
                                         </td>
 
                                         {{-- CLASSES --}}
-                                        <td class="px-4 py-5 text-center">
+                                        <td class="px-4 py-5">
 
-                                            8
+                                            <div class="flex flex-wrap
+                                                        justify-center gap-2">
+
+                                                <span class="px-3 py-1 rounded-full
+                                                             bg-indigo-500/10
+                                                             text-indigo-400 text-xs">
+
+                                                    Tle F2-1
+
+                                                </span>
+
+                                                <span class="px-3 py-1 rounded-full
+                                                             bg-sky-500/10
+                                                             text-sky-400 text-xs">
+
+                                                    1ère G2
+
+                                                </span>
+
+                                            </div>
 
                                         </td>
 
-                                        {{-- NOTES --}}
-                                        <td class="px-4 py-5 text-center">
+                                        {{-- LOGIN --}}
+                                        <td class="px-4 py-5 text-center whitespace-nowrap">
 
-                                            <span class="px-3 py-1 rounded-full
-                                                         bg-indigo-500/10
-                                                         text-indigo-400 text-sm">
-
-                                                482
-
-                                            </span>
-
-                                        </td>
-
-                                        {{-- HOURS --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            26h
-
-                                        </td>
-
-                                        {{-- PRESENCE --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            <span class="text-emerald-400">
-                                                98%
-                                            </span>
+                                            Aujourd’hui 07:32
 
                                         </td>
 
@@ -437,32 +558,56 @@
                                         {{-- ACTIONS --}}
                                         <td class="px-6 py-5">
 
-                                            <div class="flex items-center justify-end gap-2">
+                                            <div class="flex flex-wrap
+                                                        justify-end gap-2">
 
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-indigo-500
-                                                               transition-all">
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-indigo-500/10
+                                                               text-indigo-400
+                                                               hover:bg-indigo-500/20
+                                                               transition-all text-sm">
 
-                                                    👁
-
-                                                </button>
-
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-emerald-500
-                                                               transition-all">
-
-                                                    ✏
+                                                    Bulletin
 
                                                 </button>
 
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-rose-500
-                                                               transition-all">
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-sky-500/10
+                                                               text-sky-400
+                                                               hover:bg-sky-500/20
+                                                               transition-all text-sm">
 
-                                                    🗑
+                                                    Notes
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-emerald-500/10
+                                                               text-emerald-400
+                                                               hover:bg-emerald-500/20
+                                                               transition-all text-sm">
+
+                                                    Notifier
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-amber-500/10
+                                                               text-amber-400
+                                                               hover:bg-amber-500/20
+                                                               transition-all text-sm">
+
+                                                    Modifier
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-rose-500/10
+                                                               text-rose-400
+                                                               hover:bg-rose-500/20
+                                                               transition-all text-sm">
+
+                                                    Bloquer
 
                                                 </button>
 
@@ -491,11 +636,11 @@
 
                                 <p class="text-sm text-slate-400">
 
-                                    Affichage de 1 à 10 sur 248 enseignants
+                                    Affichage de 1 à 12 sur 1248 parents
 
                                 </p>
 
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
 
                                     <button class="h-10 px-4 rounded-xl
                                                    bg-slate-800
@@ -548,7 +693,7 @@
                 {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- QUICK STATS --}}
+                    {{-- STATS --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -556,17 +701,17 @@
 
                         <h2 class="text-lg font-semibold">
 
-                            Répartition Matières
+                            Activité des Parents
 
                         </h2>
 
                         <div class="mt-5 space-y-5">
 
                             @foreach([
-                                ['Mathématiques', '82%', 'bg-indigo-500'],
-                                ['Physique', '70%', 'bg-emerald-500'],
-                                ['Informatique', '65%', 'bg-amber-500'],
-                                ['Français', '58%', 'bg-sky-500']
+                                ['Bulletins consultés', '78%', 'bg-indigo-500'],
+                                ['Notifications lues', '69%', 'bg-emerald-500'],
+                                ['Parents connectés', '57%', 'bg-sky-500'],
+                                ['Accès bloqués', '8%', 'bg-rose-500']
                             ] as $item)
 
                             <div>
@@ -600,7 +745,7 @@
 
                     </div>
 
-                    {{-- RECENT ACTIVITY --}}
+                    {{-- RECENT --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -624,8 +769,8 @@
 
                                     <div class="w-11 h-11 rounded-2xl
                                                 bg-indigo-500/10
-                                                shrink-0
-                                                flex items-center justify-center
+                                                flex items-center
+                                                justify-center
                                                 text-indigo-400">
 
                                         ✓
@@ -636,19 +781,19 @@
 
                                         <h3 class="font-medium text-sm">
 
-                                            Notes publiées
+                                            Bulletin envoyé
 
                                         </h3>
 
                                         <p class="mt-1 text-sm text-slate-400">
 
-                                            M. Jean Kouassi a publié les notes de Terminale F2-1
+                                            Bulletin transmis au parent
 
                                         </p>
 
                                         <p class="mt-2 text-xs text-slate-500">
 
-                                            Il y a 2 heures
+                                            Il y a 35 min
 
                                         </p>
 
@@ -679,12 +824,12 @@
                         <div class="mt-5 grid grid-cols-2 gap-3">
 
                             @foreach([
-                                'Présences',
-                                'Emplois',
+                                'Bulletins',
                                 'Notes',
-                                'Rapports',
-                                'Statistiques',
-                                'Archives'
+                                'Messages',
+                                'Présences',
+                                'Paiements',
+                                'Archivage'
                             ] as $menu)
 
                             <button class="h-24 rounded-2xl

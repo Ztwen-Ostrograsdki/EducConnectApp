@@ -71,7 +71,7 @@
                         <span class="s-acc-arrow">▶</span>
                     </div>
                     <div class="s-acc-content">
-                        <a href="{{route('tenant.classes.portail')}}" class="s-link" style="font-size:.78rem;">
+                        <a href="{{route('tenant.classes.portal')}}" class="s-link" style="font-size:.78rem;">
                             <div class="s-icon" style="font-size:.72rem;">📋</div>
                             <span class="s-label">Toutes les classes</span>
                         </a>
@@ -89,8 +89,8 @@
 
             <div class="s-section">
                 <div class="s-section-label">Personnes</div>
-                <a href="#" class="s-link"><div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span></a>
-                <a href="#" class="s-link"><div class="s-icon">👩‍🏫</div><span class="s-label">Enseignants</span><span class="s-badge badge-green">42</span></a>
+                <a href="{{route('tenant.students.portal')}}" class="s-link"><div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span></a>
+                <a href="{{route('tenant.teachers.portal')}}" class="s-link"><div class="s-icon">👩‍🏫</div><span class="s-label">Enseignants</span><span class="s-badge badge-green">42</span></a>
                 <a href="#" class="s-link"><div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span></a>
             </div>
 

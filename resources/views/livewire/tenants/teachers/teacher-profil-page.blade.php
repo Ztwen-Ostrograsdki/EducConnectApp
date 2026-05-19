@@ -338,7 +338,7 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,8) as $i)
+                                    @foreach(range(1,4) as $i)
 
                                     <tr class="hover:bg-slate-800/40 transition-all">
 

@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Livewire\Tenants\User;
+
+use Livewire\Component;
+
+class PersonnelProfil extends Component
+{
+    public function render()
+    {
+        return view('livewire.tenants.user.personnel-profil');
+    }
+}

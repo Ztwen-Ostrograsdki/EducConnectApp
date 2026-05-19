@@ -383,31 +383,27 @@
                     </div>
 
                     {{-- ACTIONS --}}
-                    <div class="mt-5 flex items-center gap-2">
+                    <div class="mt-5 grid grid-cols-9 items-center gap-2 w-full text-center">
 
-                        <button class="flex-1 h-11 rounded-2xl
+                        <a href="{{route('tenant.student.profil', ['student_uuid' => 'f2-' . $i])}}" class="p-3 rounded-2xl
                                        bg-slate-800
                                        hover:bg-indigo-500
                                        transition-all
-                                       text-sm">
-
-                            <a href="{{route('tenant.student.profil', ['student_uuid' => 'f2-' . $i])}}" class="">
+                                       text-sm  col-span-4">
                                 Voir profil
-                            </a>
+                        </a>
 
-                        </button>
-
-                        <button class="flex-1 h-11 rounded-2xl
+                        <button class="p-3 rounded-2xl
                                        bg-slate-800
                                        hover:bg-emerald-500
                                        transition-all
-                                       text-sm">
+                                       text-sm col-span-3">
 
                             Modifier
 
                         </button>
 
-                        <button class="w-11 h-11 rounded-2xl
+                        <button class="p-3 col-span-2 rounded-2xl
                                        bg-slate-800
                                        hover:bg-rose-500
                                        transition-all

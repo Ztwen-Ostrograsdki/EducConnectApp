@@ -1,4 +1,4 @@
-<div class="w-full overflow-x-hidden p-2">
+<div class="w-full overflow-x-hidden">
 
     {{-- ===================================================== --}}
     {{-- GLOBAL CONTAINER --}}
@@ -29,7 +29,7 @@
 
                         <h1 class="text-2xl sm:text-3xl font-bold">
 
-                            Enseignants
+                            Personnels Administratifs
 
                         </h1>
 
@@ -38,7 +38,7 @@
                                      text-indigo-400
                                      text-xs">
 
-                            248 Enseignants
+                            84 Personnels
 
                         </span>
 
@@ -46,7 +46,7 @@
 
                     <p class="mt-2 text-slate-400 text-sm sm:text-base">
 
-                        Vue globale du personnel enseignant de l’établissement
+                        Gestion des accès, rôles et privilèges du personnel
 
                     </p>
 
@@ -69,7 +69,7 @@
                                    hover:bg-indigo-600
                                    transition-all text-sm">
 
-                        Ajouter Enseignant
+                        Ajouter Personnel
 
                     </button>
 
@@ -90,10 +90,10 @@
                         gap-4">
 
                 @foreach([
-                    ['Total', '248', 'text-indigo-400'],
-                    ['Actifs', '232', 'text-emerald-400'],
-                    ['Temps Plein', '180', 'text-sky-400'],
-                    ['Taux Présence', '96%', 'text-amber-400']
+                    ['Administrateurs', '12', 'text-indigo-400'],
+                    ['Comptables', '8', 'text-emerald-400'],
+                    ['Surveillants', '24', 'text-sky-400'],
+                    ['Accès Restreints', '6', 'text-rose-400']
                 ] as $kpi)
 
                 <div class="rounded-3xl
@@ -138,7 +138,7 @@
 
                         <input
                             type="text"
-                            placeholder="Rechercher un enseignant..."
+                            placeholder="Rechercher un personnel..."
                             class="w-full h-12 rounded-2xl
                                    bg-slate-950
                                    border border-slate-800
@@ -149,7 +149,9 @@
                                    focus:ring-indigo-500/40"
                         >
 
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                        <div class="absolute left-4 top-1/2
+                                    -translate-y-1/2
+                                    text-slate-500">
 
                             🔍
 
@@ -161,34 +163,33 @@
                     <div class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
-                                xl:grid-cols-5
+                                xl:grid-cols-7
                                 gap-3">
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
 
-                            <option>Toutes matières</option>
-                            <option>Mathématiques</option>
-                            <option>Physique</option>
-
-                        </select>
-
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
-
-                            <option>Toutes classes</option>
-                            <option>Terminale F2-1</option>
+                            <option>Tous les rôles</option>
+                            <option>Admin</option>
+                            <option>Comptable</option>
+                            <option>Surveillant</option>
 
                         </select>
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
+
+                            <option>Permissions</option>
+                            <option>Gestion utilisateurs</option>
+                            <option>Gestion notes</option>
+
+                        </select>
+
+                        <select class="h-11 px-4 rounded-2xl
+                                       bg-slate-950
+                                       border border-slate-800 text-sm">
 
                             <option>Sexe</option>
                             <option>Masculin</option>
@@ -198,12 +199,21 @@
 
                         <select class="h-11 px-4 rounded-2xl
                                        bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                                       border border-slate-800 text-sm">
 
                             <option>Statut</option>
                             <option>Actif</option>
                             <option>Suspendu</option>
+
+                        </select>
+
+                        <select class="h-11 px-4 rounded-2xl
+                                       bg-slate-950
+                                       border border-slate-800 text-sm">
+
+                            <option>Ancienneté</option>
+                            <option>Nouveaux</option>
+                            <option>Anciens</option>
 
                         </select>
 
@@ -213,6 +223,16 @@
                                        transition-all text-sm">
 
                             Filtrer
+
+                        </button>
+
+                        <button class="h-11 rounded-2xl
+                                       bg-rose-500/20
+                                       text-rose-400
+                                       hover:bg-rose-500/30
+                                       transition-all text-sm">
+
+                            Réinitialiser
 
                         </button>
 
@@ -231,7 +251,7 @@
 
             <div class="grid
                         grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_380px]
+                        2xl:grid-cols-[minmax(0,1fr)_400px]
                         gap-6">
 
                 {{-- ===================================================== --}}
@@ -239,7 +259,7 @@
                 {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- TEACHERS TABLE --}}
+                    {{-- TABLE --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -259,13 +279,13 @@
 
                                     <h2 class="text-lg sm:text-xl font-semibold">
 
-                                        Liste des Enseignants
+                                        Liste des Personnels
 
                                     </h2>
 
                                     <p class="mt-1 text-sm text-slate-400">
 
-                                        Gestion et suivi du personnel
+                                        Attribution des rôles et contrôle des privilèges
 
                                     </p>
 
@@ -278,7 +298,7 @@
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Trier
+                                        Rôles
 
                                     </button>
 
@@ -287,7 +307,7 @@
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Colonnes
+                                        Permissions
 
                                     </button>
 
@@ -300,34 +320,30 @@
                         {{-- TABLE --}}
                         <div class="overflow-x-auto">
 
-                            <table class="min-w-[1200px] w-full">
+                            <table class="min-w-[1800px] w-full">
 
                                 <thead class="bg-slate-950 border-b border-slate-800">
 
                                     <tr>
 
                                         <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Enseignant
+                                            Personnel
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Matière
+                                            Rôle
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Classes
+                                            Permissions
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Notes
+                                            Ancienneté
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Heures/Sem
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Présence
+                                            Dernière Activité
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -344,7 +360,7 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,10) as $teacher)
+                                    @foreach(range(1,8) as $staff)
 
                                     <tr class="hover:bg-slate-800/40 transition-all">
 
@@ -354,21 +370,20 @@
                                             <div class="flex items-center gap-4">
 
                                                 <div class="w-14 h-14 rounded-2xl
-                                                            bg-slate-800
-                                                            shrink-0">
+                                                            bg-slate-800 shrink-0">
                                                 </div>
 
                                                 <div class="min-w-0">
 
                                                     <h3 class="font-medium truncate">
 
-                                                        M. Jean Kouassi
+                                                        M. Adjinacou Pierre
 
                                                     </h3>
 
                                                     <p class="mt-1 text-sm text-slate-400 truncate">
 
-                                                        enseignant@email.com
+                                                        admin@ecole.com
 
                                                     </p>
 
@@ -378,46 +393,58 @@
 
                                         </td>
 
-                                        {{-- SUBJECT --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                            Mathématiques
-
-                                        </td>
-
-                                        {{-- CLASSES --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            8
-
-                                        </td>
-
-                                        {{-- NOTES --}}
+                                        {{-- ROLE --}}
                                         <td class="px-4 py-5 text-center">
 
                                             <span class="px-3 py-1 rounded-full
                                                          bg-indigo-500/10
                                                          text-indigo-400 text-sm">
 
-                                                482
+                                                Administrateur
 
                                             </span>
 
                                         </td>
 
-                                        {{-- HOURS --}}
-                                        <td class="px-4 py-5 text-center">
+                                        {{-- PERMISSIONS --}}
+                                        <td class="px-4 py-5">
 
-                                            26h
+                                            <div class="flex flex-wrap
+                                                        justify-center gap-2">
+
+                                                @foreach([
+                                                    'users.create',
+                                                    'notes.edit',
+                                                    'dashboard.view',
+                                                    'roles.assign'
+                                                ] as $permission)
+
+                                                <span class="px-3 py-1 rounded-full
+                                                             bg-slate-950
+                                                             text-slate-300
+                                                             text-xs">
+
+                                                    {{ $permission }}
+
+                                                </span>
+
+                                                @endforeach
+
+                                            </div>
 
                                         </td>
 
-                                        {{-- PRESENCE --}}
+                                        {{-- EXPERIENCE --}}
                                         <td class="px-4 py-5 text-center">
 
-                                            <span class="text-emerald-400">
-                                                98%
-                                            </span>
+                                            8 ans
+
+                                        </td>
+
+                                        {{-- LAST ACTIVITY --}}
+                                        <td class="px-4 py-5 text-center whitespace-nowrap">
+
+                                            Aujourd’hui 09:15
 
                                         </td>
 
@@ -437,32 +464,56 @@
                                         {{-- ACTIONS --}}
                                         <td class="px-6 py-5">
 
-                                            <div class="flex items-center justify-end gap-2">
+                                            <div class="flex flex-wrap
+                                                        justify-end gap-2">
 
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-indigo-500
-                                                               transition-all">
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-indigo-500/10
+                                                               text-indigo-400
+                                                               hover:bg-indigo-500/20
+                                                               transition-all text-sm">
 
-                                                    👁
-
-                                                </button>
-
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-emerald-500
-                                                               transition-all">
-
-                                                    ✏
+                                                    Profil
 
                                                 </button>
 
-                                                <button class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-rose-500
-                                                               transition-all">
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-emerald-500/10
+                                                               text-emerald-400
+                                                               hover:bg-emerald-500/20
+                                                               transition-all text-sm">
 
-                                                    🗑
+                                                    Attribuer Rôle
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-sky-500/10
+                                                               text-sky-400
+                                                               hover:bg-sky-500/20
+                                                               transition-all text-sm">
+
+                                                    Permissions
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-amber-500/10
+                                                               text-amber-400
+                                                               hover:bg-amber-500/20
+                                                               transition-all text-sm">
+
+                                                    Restreindre
+
+                                                </button>
+
+                                                <button class="h-10 px-4 rounded-xl
+                                                               bg-rose-500/10
+                                                               text-rose-400
+                                                               hover:bg-rose-500/20
+                                                               transition-all text-sm">
+
+                                                    Révoquer
 
                                                 </button>
 
@@ -491,11 +542,11 @@
 
                                 <p class="text-sm text-slate-400">
 
-                                    Affichage de 1 à 10 sur 248 enseignants
+                                    Affichage de 1 à 8 sur 84 personnels
 
                                 </p>
 
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
 
                                     <button class="h-10 px-4 rounded-xl
                                                    bg-slate-800
@@ -548,7 +599,7 @@
                 {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- QUICK STATS --}}
+                    {{-- ROLE DISTRIBUTION --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -556,17 +607,17 @@
 
                         <h2 class="text-lg font-semibold">
 
-                            Répartition Matières
+                            Répartition des Rôles
 
                         </h2>
 
                         <div class="mt-5 space-y-5">
 
                             @foreach([
-                                ['Mathématiques', '82%', 'bg-indigo-500'],
-                                ['Physique', '70%', 'bg-emerald-500'],
-                                ['Informatique', '65%', 'bg-amber-500'],
-                                ['Français', '58%', 'bg-sky-500']
+                                ['Administrateurs', '18%', 'bg-indigo-500'],
+                                ['Comptables', '12%', 'bg-emerald-500'],
+                                ['Surveillants', '40%', 'bg-sky-500'],
+                                ['Secrétaires', '30%', 'bg-amber-500']
                             ] as $item)
 
                             <div>
@@ -600,7 +651,7 @@
 
                     </div>
 
-                    {{-- RECENT ACTIVITY --}}
+                    {{-- RECENT ACTIVITIES --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -636,19 +687,19 @@
 
                                         <h3 class="font-medium text-sm">
 
-                                            Notes publiées
+                                            Permission accordée
 
                                         </h3>
 
                                         <p class="mt-1 text-sm text-slate-400">
 
-                                            M. Jean Kouassi a publié les notes de Terminale F2-1
+                                            Nouveau privilège attribué à un administrateur
 
                                         </p>
 
                                         <p class="mt-2 text-xs text-slate-500">
 
-                                            Il y a 2 heures
+                                            Il y a 30 min
 
                                         </p>
 
@@ -664,7 +715,7 @@
 
                     </div>
 
-                    {{-- QUICK MENU --}}
+                    {{-- QUICK ACTIONS --}}
                     <div class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
@@ -679,12 +730,12 @@
                         <div class="mt-5 grid grid-cols-2 gap-3">
 
                             @foreach([
-                                'Présences',
-                                'Emplois',
-                                'Notes',
-                                'Rapports',
-                                'Statistiques',
-                                'Archives'
+                                'Rôles',
+                                'Permissions',
+                                'Historique',
+                                'Logs',
+                                'Sécurité',
+                                'Archivage'
                             ] as $menu)
 
                             <button class="h-24 rounded-2xl
