@@ -1,0 +1,289 @@
+
+<div class="min-h-screen bg-slate-950 text-slate-100 w-full
+                max-w-full
+                px-3
+                overflow-x-hidden">
+
+    {{-- ================================================= --}}
+    {{-- HEADER --}}
+    {{-- ================================================= --}}
+    <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
+
+            <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
+
+                <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+
+                    {{-- LEFT --}}
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
+
+                        {{-- ICON --}}
+                        <div class="shrink-0 self-start">
+
+                            <div class="w-16 h-16 sm:w-20 sm:h-20
+                                        rounded-3xl
+                                        bg-indigo-500/10
+                                        border border-indigo-500/20
+                                        flex items-center justify-center">
+
+                                <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400">
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                        {{-- CONTENT --}}
+                        <div class="min-w-0 flex-1">
+
+                            <div class="flex flex-wrap items-center gap-2">
+
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl
+                                           font-bold
+                                           leading-tight
+                                           break-words">
+
+                                    1ère F2 — Génie Électrique
+
+                                </h1>
+
+                                <span class="shrink-0
+                                             px-3 py-1 rounded-full
+                                             text-xs
+                                             bg-emerald-500/10
+                                             border border-emerald-500/20
+                                             text-emerald-400">
+
+                                    Active
+
+                                </span>
+
+                            </div>
+
+                            <p class="mt-3 text-sm sm:text-base
+                                      text-slate-400
+                                      break-words">
+
+                                Salle spécialisée en électronique industrielle,
+                                automatismes et électrotechnique.
+
+                            </p>
+
+                            {{-- META --}}
+                            <div class="mt-4
+                                        flex flex-col
+                                        sm:flex-row
+                                        sm:flex-wrap
+                                        gap-2 sm:gap-5
+                                        text-sm text-slate-400">
+
+                                <div class="break-words">
+                                    👨‍🏫 M. HOUNDEKINDO
+                                </div>
+
+                                <div class="break-words">
+                                    📍 Bloc B — Salle 14
+                                </div>
+
+                                <div class="break-words">
+                                    🕒 2025-2026
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- ACTIONS --}}
+                    <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+
+                        <button class="w-full sm:w-auto
+                                       px-4 py-3
+                                       rounded-2xl
+                                       bg-indigo-500
+                                       hover:bg-indigo-600
+                                       transition-all duration-300
+                                       text-sm sm:text-base">
+
+                            Ajouter Élève
+
+                        </button>
+
+                        <button class="w-full sm:w-auto
+                                       px-4 py-3
+                                       rounded-2xl
+                                       bg-slate-800
+                                       border border-slate-700
+                                       hover:bg-slate-700
+                                       transition-all duration-300
+                                       text-sm sm:text-base">
+
+                            Modifier Classe
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    {{-- ================================================= --}}
+    {{-- NAVIGATION --}}
+    {{-- ================================================= --}}
+    <section class="px-1 pt-6">
+
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+
+            <div class="overflow-x-auto">
+
+                <div class="flex gap-2 p-3 w-max min-w-full">
+
+                    {{-- OVERVIEW --}}
+                    <button
+                        wire:click="setSection('classe-home-page')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-home-page',
+                            'hover:bg-slate-800' => $section !== 'classe-home-page'
+                        ])
+                    >
+                        Vue Générale
+                    </button>
+
+                    {{-- STUDENTS --}}
+                    <button
+                        wire:click="setSection('classe-students-list')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-students-list',
+                            'hover:bg-slate-800' => $section !== 'classe-students-list'
+                        ])
+                    >
+                        Élèves
+                    </button>
+
+                    {{-- TEACHERS --}}
+                    <button
+                        wire:click="setSection('classe-teachers-list')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
+                            'hover:bg-slate-800' => $section !== 'classe-teachers-list'
+                        ])
+                    >
+                        Enseignants
+                    </button>
+
+                    {{-- NOTES --}}
+                    <button
+                        wire:click="setSection('classe-marks-page')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-marks-page',
+                            'hover:bg-slate-800' => $section !== 'classe-marks-page'
+                        ])
+                    >
+                        Notes
+                    </button>
+
+                    {{-- ATTENDANCE --}}
+                    <button
+                        wire:click="setSection('classe-presence-page')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-presence-page',
+                            'hover:bg-slate-800' => $section !== 'classe-presence-page'
+                        ])
+                    >
+                        Présences
+                    </button>
+
+                    {{-- DOCUMENTS --}}
+                    <button
+                        wire:click="setSection('classe-plan-page')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-plan-page',
+                            'hover:bg-slate-800' => $section !== 'classe-plan-page'
+                        ])
+                    >
+                        Emploi du temps
+                    </button>
+                    {{-- DOCUMENTS --}}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {{-- ================================================= --}}
+    {{-- DYNAMIC CONTENT --}}
+    {{-- ================================================= --}}
+    <section class="p-2 my-2.5 shadow-sm shadow-cyan-600 rounded-2xl">
+        <div wire:key="section-{{ $section }}">
+
+            @switch($section)
+
+                @case('classe-home-page')
+
+                    <livewire:tenants.classes.sections.classe-home-page
+                        :classroom="$classroom"
+                    />
+
+                @break
+                
+                @case('classe-students-list')
+
+                    <livewire:tenants.classes.sections.classe-students-list
+                        :classroom="$classroom"
+                    />
+
+                @break
+
+                @case('classe-teachers-list')
+
+                    <livewire:tenants.classes.sections.classe-teachers-list
+                        :classroom="$classroom"
+                    />
+
+                @break 
+                
+                @case('classe-marks-page')
+
+                    <livewire:tenants.classes.sections.classe-marks-page
+                        :classroom="$classroom"
+                    />
+
+                @break
+                
+                @case('classe-presence-page')
+
+                    <livewire:tenants.classes.sections.classe-presence-page
+                        :classroom="$classroom"
+                    />
+
+                @break
+                
+                @case('classe-plan-page')
+
+                    <livewire:tenants.classes.sections.classe-plan-page
+                        :classroom="$classroom"
+                    />
+
+                @break
+
+                
+
+            @endswitch
+
+        </div>
+
+    </section>
+
+</div>

@@ -39,9 +39,9 @@
 }
 
 @layer components {
-    .dashboard-card {
+    /* .dashboard-card {
         @apply bg-slate-800 border border-slate-700 rounded-2xl shadow-lg;
-    }
+    } */
 
     .sidebar-link {
         @apply flex items-center gap-3 px-3 py-2 rounded-xl
@@ -53,3 +53,59 @@
         @apply bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500;
     }
 }
+
+.dashboard-card {
+    @apply bg-slate-800 border border-slate-700 rounded-2xl;
+}
+.kpi-card {
+    @apply relative overflow-hidden
+    rounded-2xl
+    border border-slate-700
+    bg-slate-800
+    p-5
+    transition-all duration-200;
+}
+
+/* .kpi-card:hover {
+    @apply -translate-y-1 border-indigo-500/40;
+}
+.dashboard-panel {
+    @apply rounded-2xl
+    border border-slate-700
+    bg-slate-800;
+}
+.panel-header {
+    @apply flex items-center justify-between
+    border-b border-slate-700
+    px-5 py-4;
+}
+.section-title {
+    @apply text-sm font-bold text-slate-100;
+}
+.mono-muted {
+    @apply font-mono text-[11px]
+    tracking-wider
+    text-slate-500 uppercase;
+}
+
+.btn-primary {
+    @apply inline-flex items-center gap-2
+    rounded-xl
+    bg-gradient-to-br
+    from-indigo-500 to-violet-500
+    px-4 py-2
+    text-xs font-semibold text-white
+    transition-all duration-200
+    hover:opacity-90;
+}
+
+.btn-secondary {
+    @apply inline-flex items-center gap-2
+    rounded-xl
+    border border-indigo-500/20
+    bg-indigo-500/10
+    px-4 py-2
+    text-xs font-semibold text-indigo-300
+    transition-all duration-200
+    hover:bg-indigo-500/20;
+} */

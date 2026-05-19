@@ -8,10 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
     
 </head>
 <body>
-<div class="shell">
+<div class="shell ">
 
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
@@ -70,7 +71,14 @@
                         <span class="s-acc-arrow">▶</span>
                     </div>
                     <div class="s-acc-content">
-                        <a href="#" class="s-link" style="font-size:.78rem;"><div class="s-icon" style="font-size:.72rem;">📋</div><span class="s-label">Toutes les classes</span></a>
+                        <a href="{{route('tenant.classes.portail')}}" class="s-link" style="font-size:.78rem;">
+                            <div class="s-icon" style="font-size:.72rem;">📋</div>
+                            <span class="s-label">Toutes les classes</span>
+                        </a>
+                        <a href="{{route('tenant.classe.profil', ['classe_slug' => 'premiere-f2'])}}" class="s-link" style="font-size:.78rem;">
+                            <div class="s-icon" style="font-size:.72rem;">📋</div>
+                            <span class="s-label">Classe de 1ère F2</span>
+                        </a>
                         <a href="#" class="s-link" style="font-size:.78rem;"><div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle classe</span></a>
                     </div>
                 </div>
@@ -193,7 +201,14 @@
             </div>
         </header>
 
-        <main class="content" id="content">{{ $slot }}</main>
+        <main class="flex-1
+            min-w-0
+            w-full
+            max-w-full
+            overflow-x-hidden" 
+            id="content">
+            {{ $slot }}
+        </main>
     </div>
 </div>
 

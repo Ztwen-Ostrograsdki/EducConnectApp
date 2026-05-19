@@ -16,13 +16,16 @@
     --sidebar-c: 72px;
     --header-h: 64px;
 }
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+html,
+body {
+    overflow-x: hidden;
 }
+
+* {
+    min-width: 0;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -874,6 +877,7 @@ body {
     .ut-role {
         display: none;
     }
+
     .content {
         padding: 0.875rem;
     }
@@ -885,4 +889,16 @@ body {
     .year-select {
         max-width: 78px;
     }
+}
+
+.app-reset {
+    font-family: "Inter", sans-serif;
+}
+
+.app-reset *,
+.app-reset *::before,
+.app-reset *::after {
+    margin: initial;
+    padding: initial;
+    box-sizing: border-box;
 }

@@ -16,22 +16,26 @@ Alpine.start();
 import { animate, stagger, inView, scroll } from "motion";
 window.Motion = { animate, stagger, inView, scroll };
 
-// ─── Animations globales au chargement de page ───────────────
-// document.addEventListener("DOMContentLoaded", () => {
-//     // Animer les cartes au chargement
-//     animate(
-//         "[data-animate='card']",
-//         { opacity: [0, 1], y: [20, 0] },
-//         { delay: stagger(0.1), duration: 0.4, easing: "ease-out" },
-//     );
-
-//     // Animer les éléments visibles au scroll
-//     inView("[data-animate='reveal']", ({ target }) => {
-//         animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
-//     });
-// });
-
 document.addEventListener("DOMContentLoaded", () => {
+    const animateCard = () => {
+        const zCards = document.querySelectorAll("[data-z-card]");
+
+        if (zCards.length) {
+            animate(
+                zCards,
+                { opacity: [0, 1], y: [20, 0] },
+                {
+                    delay: stagger(0.1),
+                    duration: 0.4,
+                    easing: "ease-out",
+                },
+            );
+        }
+    };
+
+    // Animation initiale
+    animateCard();
+
     const cards = document.querySelectorAll("[data-animate='card']");
 
     if (cards.length) {
