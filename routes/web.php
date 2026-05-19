@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Auth\CentralLogin;
+use App\Livewire\Central\CentralDashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,9 +30,7 @@ Route::post('/logout', function () {
 Route::middleware(['auth:central'])->prefix('admin')->name('central.')->group(function () {
 
     // Dashboard central
-    Route::get('/dashboard', function () {
-        return view('welcome'); // sera remplacé par le composant CentralDashboard
-    })->name('dashboard');
+    Route::get('/dashboard', CentralDashboard::class)->name('dashboard');
 
     // Gestion des écoles (tenants)
     Route::prefix('schools')->name('schools.')->group(function () {

@@ -10,12 +10,16 @@ class CheckSuperAdmin
 {
     /**
      * Handle an incoming request.
+     * Vérifie que l'utilisateur est connecté via le guard central.
+     *
+     * @param Request $request
+     * @param Closure $next
+     * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-
         if (!Auth::guard('central')->check()) {
-            abort(403, 'Accès non autorisé.');
+            return redirect()->route('central.login');
         }
 
         return $next($request);

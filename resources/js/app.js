@@ -5,6 +5,8 @@
 
 import "./bootstrap";
 
+import "./layouts/tenant-sidebar";
+
 // Alpine.js (complément naturel de Livewire)
 import Alpine from "alpinejs";
 window.Alpine = Alpine;
@@ -51,6 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
             animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
         });
     }
+
+    inView("[data-sidebar-item]", ({ target }) => {
+        animate(
+            target,
+            {
+                opacity: [0, 1],
+                x: [-12, 0],
+            },
+            {
+                duration: 0.3,
+            },
+        );
+    });
 });
 
 // ─── Hook Livewire : ré-animer après les mises à jour DOM ────

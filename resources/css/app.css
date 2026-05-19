@@ -10,6 +10,8 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 } 
 */
+
+@import "./components/tenant-sidebar.css";
 @import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -34,4 +36,20 @@
 
     --color-secondary-500: #22c55e;
     --color-secondary-700: #15803d;
+}
+
+@layer components {
+    .dashboard-card {
+        @apply bg-slate-800 border border-slate-700 rounded-2xl shadow-lg;
+    }
+
+    .sidebar-link {
+        @apply flex items-center gap-3 px-3 py-2 rounded-xl
+        text-slate-400 hover:text-white
+        hover:bg-white/5 transition-all duration-200;
+    }
+
+    .sidebar-link-active {
+        @apply bg-indigo-500/10 text-indigo-400 border-l-2 border-indigo-500;
+    }
 }

@@ -148,7 +148,22 @@
                 <div class="year-switcher">
                     <span class="year-icon">📅</span>
 
-                    <livewire:tenants.tenant-dashboard-school-year-selector-component />
+                    <select
+                        class="year-select"
+                        wire:model.live="selectedYear"
+                    >
+                        <option value="2024-2025">
+                            2024–2025
+                        </option>
+
+                        <option value="2023-2024">
+                            2023–2024
+                        </option>
+
+                        <option value="2022-2023">
+                            2022–2023
+                        </option>
+                    </select>
                 </div>
 
                 <button class="h-btn" title="Thème">🌙</button>

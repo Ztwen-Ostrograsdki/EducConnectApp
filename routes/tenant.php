@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Dashboard;
+use App\Livewire\Tenants\TenantDashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -30,7 +31,7 @@ Route::middleware([
     // ─── Pages authentifiées ──────────────────────────────────────────
     Route::middleware(['auth:tenant'])->group(function () {
 
-        Route::get('/dashboard', Dashboard::class)->name('dashboard');
+        Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
 
         // ── Directeur ─────────────────────────────────────────────────
         Route::middleware('role:directeur')->prefix('director')->name('director.')->group(function () {
