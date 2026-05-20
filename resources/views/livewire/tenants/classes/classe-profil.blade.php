@@ -1,4 +1,3 @@
-
 <div class="min-h-screen bg-slate-950 text-slate-100 w-full
                 max-w-full
                 px-3
@@ -9,95 +8,99 @@
     {{-- ================================================= --}}
     <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
 
-            <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
+        <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
 
-                <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+            <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
-                    {{-- LEFT --}}
-                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
+                {{-- LEFT --}}
+                <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
 
-                        {{-- ICON --}}
-                        <div class="shrink-0 self-start">
+                    {{-- ICON --}}
+                    <div class="shrink-0 self-start">
 
-                            <div class="w-16 h-16 sm:w-20 sm:h-20
+                        <div
+                            class="w-16 h-16 sm:w-20 sm:h-20
                                         rounded-3xl
                                         bg-indigo-500/10
                                         border border-indigo-500/20
                                         flex items-center justify-center">
 
-                                <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400">
-                                </svg>
-
-                            </div>
+                            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400">
+                            </svg>
 
                         </div>
 
-                        {{-- CONTENT --}}
-                        <div class="min-w-0 flex-1">
+                    </div>
 
-                            <div class="flex flex-wrap items-center gap-2">
+                    {{-- CONTENT --}}
+                    <div class="min-w-0 flex-1">
 
-                                <h1 class="text-xl sm:text-2xl lg:text-3xl
+                        <div class="flex flex-wrap items-center gap-2">
+
+                            <h1 class="text-xl sm:text-2xl lg:text-3xl
                                            font-bold
                                            leading-tight
                                            break-words">
 
-                                    1ère F2 — Génie Électrique
+                                1ère F2 — Génie Électrique
 
-                                </h1>
+                            </h1>
 
-                                <span class="shrink-0
+                            <span
+                                class="shrink-0
                                              px-3 py-1 rounded-full
                                              text-xs
                                              bg-emerald-500/10
                                              border border-emerald-500/20
                                              text-emerald-400">
 
-                                    Active
+                                Active
 
-                                </span>
+                            </span>
 
-                            </div>
+                        </div>
 
-                            <p class="mt-3 text-sm sm:text-base
+                        <p class="mt-3 text-sm sm:text-base
                                       text-slate-400
                                       break-words">
 
-                                Salle spécialisée en électronique industrielle,
-                                automatismes et électrotechnique.
+                            Salle spécialisée en électronique industrielle,
+                            automatismes et électrotechnique.
 
-                            </p>
+                        </p>
 
-                            {{-- META --}}
-                            <div class="mt-4
+                        {{-- META --}}
+                        <div
+                            class="mt-4
                                         flex flex-col
                                         sm:flex-row
                                         sm:flex-wrap
                                         gap-2 sm:gap-5
                                         text-sm text-slate-400">
 
-                                <div class="break-words">
-                                    👨‍🏫 M. HOUNDEKINDO
-                                </div>
+                            <div class="break-words">
+                                👨‍🏫 M. HOUNDEKINDO
+                            </div>
 
-                                <div class="break-words">
-                                    📍 Bloc B — Salle 14
-                                </div>
+                            <div class="break-words">
+                                📍 Bloc B — Salle 14
+                            </div>
 
-                                <div class="break-words">
-                                    🕒 2025-2026
-                                </div>
-
+                            <div class="break-words">
+                                🕒 2025-2026
                             </div>
 
                         </div>
 
                     </div>
 
-                    {{-- ACTIONS --}}
-                    <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+                </div>
 
-                        <button class="w-full sm:w-auto
+                {{-- ACTIONS --}}
+                <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+
+                    <button
+                        class="w-full sm:w-auto
                                        px-4 py-3
                                        rounded-2xl
                                        bg-indigo-500
@@ -105,11 +108,12 @@
                                        transition-all duration-300
                                        text-sm sm:text-base">
 
-                            Ajouter Élève
+                        Ajouter Élève
 
-                        </button>
+                    </button>
 
-                        <button class="w-full sm:w-auto
+                    <button
+                        class="w-full sm:w-auto
                                        px-4 py-3
                                        rounded-2xl
                                        bg-slate-800
@@ -118,17 +122,17 @@
                                        transition-all duration-300
                                        text-sm sm:text-base">
 
-                            Modifier Classe
+                        Modifier Classe
 
-                        </button>
-
-                    </div>
+                    </button>
 
                 </div>
 
             </div>
 
-        </section>
+        </div>
+
+    </section>
 
     {{-- ================================================= --}}
     {{-- NAVIGATION --}}
@@ -142,85 +146,73 @@
                 <div class="flex gap-2 p-3 w-max min-w-full">
 
                     {{-- OVERVIEW --}}
-                    <button
-                        wire:click="setSection('classe-home-page')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-home-page',
-                            'hover:bg-slate-800' => $section !== 'classe-home-page'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-home-page')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-home-page',
+                        'hover:bg-slate-800' => $section !== 'classe-home-page',
+                    ])>
                         Vue Générale
                     </button>
 
                     {{-- STUDENTS --}}
-                    <button
-                        wire:click="setSection('classe-students-list')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-students-list',
-                            'hover:bg-slate-800' => $section !== 'classe-students-list'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-students-list')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-students-list',
+                        'hover:bg-slate-800' => $section !== 'classe-students-list',
+                    ])>
                         Élèves
                     </button>
 
                     {{-- TEACHERS --}}
-                    <button
-                        wire:click="setSection('classe-teachers-list')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
-                            'hover:bg-slate-800' => $section !== 'classe-teachers-list'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-teachers-list')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
+                        'hover:bg-slate-800' => $section !== 'classe-teachers-list',
+                    ])>
                         Enseignants
+                    </button>
+                    {{-- Parents --}}
+                    <button wire:click="setSection('classe-parents-page')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-parents-page',
+                        'hover:bg-slate-800' => $section !== 'classe-parents-page',
+                    ])>
+                        Parents
                     </button>
 
                     {{-- NOTES --}}
-                    <button
-                        wire:click="setSection('classe-marks-page')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-marks-page',
-                            'hover:bg-slate-800' => $section !== 'classe-marks-page'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-marks-page')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-marks-page',
+                        'hover:bg-slate-800' => $section !== 'classe-marks-page',
+                    ])>
                         Notes
                     </button>
 
                     {{-- ATTENDANCE --}}
-                    <button
-                        wire:click="setSection('classe-presence-page')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-presence-page',
-                            'hover:bg-slate-800' => $section !== 'classe-presence-page'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-presence-page')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-presence-page',
+                        'hover:bg-slate-800' => $section !== 'classe-presence-page',
+                    ])>
                         Présences
                     </button>
 
                     {{-- PRESENCES --}}
-                    <button
-                        wire:click="setSection('classe-plan-page')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-plan-page',
-                            'hover:bg-slate-800' => $section !== 'classe-plan-page'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-plan-page')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' => $section === 'classe-plan-page',
+                        'hover:bg-slate-800' => $section !== 'classe-plan-page',
+                    ])>
                         Emploi du temps
                     </button>
                     {{-- BULLENTINS --}}
-                    <button
-                        wire:click="setSection('classe-pupil-bulletin-component')"
-                        @class([
-                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                            'bg-indigo-500 text-white' => $section === 'classe-pupil-bulletin-component',
-                            'hover:bg-slate-800' => $section !== 'classe-pupil-bulletin-component'
-                        ])
-                    >
+                    <button wire:click="setSection('classe-pupil-bulletin-component')" @class([
+                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'bg-indigo-500 text-white' =>
+                            $section === 'classe-pupil-bulletin-component',
+                        'hover:bg-slate-800' => $section !== 'classe-pupil-bulletin-component',
+                    ])>
                         Bulletins
                     </button>
 
@@ -239,128 +231,112 @@
         <div wire:key="section-{{ $section }}">
 
             @switch($section)
-
                 @case('classe-home-page')
-
-                    <livewire:tenants.classes.sections.classe-home-page
-                        :classroom="$classroom"
-                    />
-
+                    <livewire:tenants.classes.sections.classe-home-page :classroom="$classroom" />
                 @break
-                
+
                 @case('classe-students-list')
-
-                    <livewire:tenants.classes.sections.classe-students-list
-                        :classroom="$classroom"
-                    />
-
+                    <livewire:tenants.classes.sections.classe-students-list :classroom="$classroom" />
                 @break
 
                 @case('classe-teachers-list')
+                    <livewire:tenants.classes.sections.classe-teachers-list :classroom="$classroom" />
+                @break
 
-                    <livewire:tenants.classes.sections.classe-teachers-list
-                        :classroom="$classroom"
-                    />
+                @case('classe-parents-page')
+                    <livewire:tenants.classes.sections.classe-parents-page :classroom="$classroom" />
+                @break
 
-                @break 
-                
                 @case('classe-marks-page')
-
-                    <livewire:tenants.classes.sections.classe-marks-page
-                        :classroom="$classroom"
-                    />
-
+                    <livewire:tenants.classes.sections.classe-marks-page :classroom="$classroom" />
                 @break
-                
+
                 @case('classe-presence-page')
-
-                    <livewire:tenants.classes.sections.classe-presence-page
-                        :classroom="$classroom"
-                    />
-
+                    <livewire:tenants.classes.sections.classe-presence-page :classroom="$classroom" />
                 @break
-                
+
                 @case('classe-plan-page')
-
-                    <livewire:tenants.classes.sections.classe-plan-page
-                        :classroom="$classroom"
-                    />
-
+                    <livewire:tenants.classes.sections.classe-plan-page :classroom="$classroom" />
                 @break
-                
+
                 @case('classe-pupil-bulletin-component')
+                    <section class="mb-6">
 
-                <section class="mb-6">
+                        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
 
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
+                            <div class="flex flex-col xl:flex-row gap-4">
 
-                        <div class="flex flex-col xl:flex-row gap-4">
-
-                            {{-- FILTERS --}}
-                            <div class="grid
+                                {{-- FILTERS --}}
+                                <div
+                                    class="grid
                                         grid-cols-1
                                         sm:grid-cols-2
                                         lg:grid-cols-4
                                         gap-3">
 
-                                {{-- SEMESTER --}}
-                                <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl
+                                    {{-- SEMESTER --}}
+                                    <select wire:model.live="period_type_selected"
+                                        class="h-12 px-4 rounded-2xl
                                             bg-slate-950
                                             border border-slate-800
                                             text-sm">
                                         <option value="">Sélectionner le semestre|trimestre</option>
-                                    @foreach(range(1,2) as $i)
-                                        <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
-                                    @endforeach
+                                        @foreach (range(1, 2) as $i)
+                                            <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
+                                        @endforeach
 
-                                    @foreach(range(1,3) as $i)
-                                        <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
-                                    @endforeach
+                                        @foreach (range(1, 3) as $i)
+                                            <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                                        @endforeach
 
-                                </select>
+                                    </select>
 
-                                {{-- Pupils --}}
-                                <select wire:model.live="student_uuid_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
-                                    <option value="">Sélectionner l'apprenant</option>
-                                    @foreach(range(1,10) as $i)
-                                        <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}</option>
-                                    @endforeach
-                                </select>
+                                    {{-- Pupils --}}
+                                    <select wire:model.live="student_uuid_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                                        <option value="">Sélectionner l'apprenant</option>
+                                        @foreach (range(1, 10) as $i)
+                                            <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}</option>
+                                        @endforeach
+                                    </select>
 
-                                {{-- ACTIONS --}}
-                                @if($student_uuid_selected && $period_type_selected)
-                                    <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl
+                                    {{-- ACTIONS --}}
+                                    @if ($student_uuid_selected && $period_type_selected)
+                                        <button wire:click='reloadStudentBulletin'
+                                            class="h-12 px-5 rounded-2xl
                                                 bg-sky-800
                                                 border border-sky-700
                                                 hover:bg-sky-700
                                                 transition-all
                                                 text-sm cursor-pointer">
 
-                                        Charger
-                                    </button>
+                                            Charger
+                                        </button>
 
-                                    <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl
+                                        <button wire:click='resetBulletinSelections'
+                                            class="h-12 px-5 rounded-2xl
                                                 bg-slate-800
                                                 border border-slate-700
                                                 hover:bg-slate-700
                                                 transition-all
                                                 text-sm cursor-pointer">
 
-                                        Réinitialiser
+                                            Réinitialiser
 
-                                    </button>
-                                @endif
+                                        </button>
+                                    @endif
+                                </div>
+
                             </div>
 
                         </div>
 
-                    </div>
-
-                </section>
-                @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
+                    </section>
+                    @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
                 @break
+
             @endswitch
         </div>
     </section>
 
 </div>
+

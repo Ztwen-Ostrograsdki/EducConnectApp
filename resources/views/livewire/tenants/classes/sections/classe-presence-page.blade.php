@@ -38,7 +38,8 @@
             {{-- ACTIONS --}}
             <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
 
-                <button class="w-full sm:w-auto
+                <button
+                    class="w-full sm:w-auto
                                px-5 py-3 rounded-2xl
                                bg-emerald-500 hover:bg-emerald-600
                                transition-all duration-300
@@ -48,7 +49,8 @@
 
                 </button>
 
-                <button class="w-full sm:w-auto
+                <button
+                    class="w-full sm:w-auto
                                px-5 py-3 rounded-2xl
                                bg-slate-800
                                border border-slate-700
@@ -147,9 +149,7 @@
 
                     <div class="relative">
 
-                        <input
-                            type="text"
-                            placeholder="Rechercher un apprenant..."
+                        <input type="text" placeholder="Rechercher un apprenant..."
                             class="w-full h-12
                                    rounded-2xl
                                    bg-slate-950
@@ -158,8 +158,7 @@
                                    text-sm
                                    outline-none
                                    focus:border-emerald-500
-                                   transition-all"
-                        >
+                                   transition-all">
 
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
 
@@ -179,13 +178,10 @@
                             gap-3">
 
                     {{-- DATE --}}
-                    <input
-                        type="date"
-                        class="h-12 px-4 rounded-2xl
+                    <input type="date" class="h-12 px-4 rounded-2xl
                                bg-slate-950
                                border border-slate-800
-                               text-sm"
-                    >
+                               text-sm">
 
                     {{-- SEMESTER --}}
                     <select class="h-12 px-4 rounded-2xl
@@ -212,7 +208,8 @@
                     </select>
 
                     {{-- RESET --}}
-                    <button class="h-12 px-5 rounded-2xl
+                    <button
+                        class="h-12 px-5 rounded-2xl
                                    bg-slate-800
                                    border border-slate-700
                                    hover:bg-slate-700
@@ -234,7 +231,7 @@
     {{-- ===================================================== --}}
     {{-- DESKTOP TABLE --}}
     {{-- ===================================================== --}}
-    <section class="hidden 2xl:block mb-6">
+    <section class="w-full mb-6">
 
         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
 
@@ -242,7 +239,7 @@
 
                 <table class="w-full">
 
-                    <thead class="bg-slate-950 border-b border-slate-800">
+                    <thead class="bg-slate-950 border-b border-slate-800 truncate">
 
                         <tr>
 
@@ -284,110 +281,111 @@
 
                     <tbody class="divide-y divide-slate-800">
 
-                        @foreach(range(1,15) as $i)
+                        @foreach (range(1, 15) as $i)
+                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                        <tr class="hover:bg-slate-800/40 transition-all">
+                                {{-- STUDENT --}}
+                                <td class="px-6 py-5">
 
-                            {{-- STUDENT --}}
-                            <td class="px-6 py-5">
+                                    <div class="flex items-center gap-4 min-w-0">
 
-                                <div class="flex items-center gap-4 min-w-0">
+                                        <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
+                                        </div>
 
-                                    <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
+                                        <div class="min-w-0">
+
+                                            <h3 class="font-medium truncate">
+                                                Kouassi Vincent {{ $i }}
+                                            </h3>
+
+                                            <p class="text-sm text-slate-400 truncate">
+                                                MAT-2025-{{ $i }}
+                                            </p>
+
+                                        </div>
+
                                     </div>
 
-                                    <div class="min-w-0">
+                                </td>
 
-                                        <h3 class="font-medium truncate">
-                                            Kouassi Vincent {{$i}}
-                                        </h3>
+                                {{-- DATE --}}
+                                <td class="px-4 py-5 text-center truncate">
+                                    12/05/2026
+                                </td>
 
-                                        <p class="text-sm text-slate-400 truncate">
-                                            MAT-2025-{{$i}}
-                                        </p>
+                                {{-- TIME --}}
+                                <td class="px-4 py-5 text-center truncate">
+                                    08:00
+                                </td>
 
-                                    </div>
+                                {{-- STATUS --}}
+                                <td class="px-4 py-5 text-center truncate">
 
-                                </div>
-
-                            </td>
-
-                            {{-- DATE --}}
-                            <td class="px-4 py-5 text-center">
-                                12/05/2026
-                            </td>
-
-                            {{-- TIME --}}
-                            <td class="px-4 py-5 text-center">
-                                08:00
-                            </td>
-
-                            {{-- STATUS --}}
-                            <td class="px-4 py-5 text-center">
-
-                                <span class="px-3 py-1 rounded-full
+                                    <span class="px-3 py-1 rounded-full
                                              bg-emerald-500/10
                                              text-emerald-400 text-sm">
 
-                                    Présent
+                                        Présent
 
-                                </span>
+                                    </span>
 
-                            </td>
+                                </td>
 
-                            {{-- RATE --}}
-                            <td class="px-4 py-5 text-center font-semibold">
-                                96%
-                            </td>
+                                {{-- RATE --}}
+                                <td class="px-4 py-5 text-center font-semibold truncate">
+                                    96%
+                                </td>
 
-                            {{-- LATE --}}
-                            <td class="px-4 py-5 text-center">
-                                1
-                            </td>
+                                {{-- LATE --}}
+                                <td class="px-4 py-5 text-center truncate">
+                                    1
+                                </td>
 
-                            {{-- ABSENCES --}}
-                            <td class="px-4 py-5 text-center">
-                                0
-                            </td>
+                                {{-- ABSENCES --}}
+                                <td class="px-4 py-5 text-center truncate">
+                                    0
+                                </td>
 
-                            {{-- ACTIONS --}}
-                            <td class="px-6 py-5">
+                                {{-- ACTIONS --}}
+                                <td class="px-6 py-5">
 
-                                <div class="flex items-center justify-end gap-2">
+                                    <div class="flex items-center justify-end gap-2 truncate">
 
-                                    <button class="w-10 h-10 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-indigo-500
-                                                   transition-all">
+                                        <button
+                                            class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-indigo-800
+                                                               hover:bg-indigo-500
+                                                               transition-all">
 
-                                        👁
+                                            Profil
 
-                                    </button>
+                                        </button>
 
-                                    <button class="w-10 h-10 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-emerald-500
-                                                   transition-all">
+                                        <button
+                                            class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-emerald-800
+                                                               hover:bg-emerald-500
+                                                               transition-all">
 
-                                        ✏
+                                            Bloquer
 
-                                    </button>
+                                        </button>
 
-                                    <button class="w-10 h-10 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-rose-500
-                                                   transition-all">
+                                        <button
+                                            class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-red-800
+                                                               hover:bg-red-500
+                                                               transition-all">
 
-                                        🗑
+                                            Supprimer
 
-                                    </button>
+                                        </button>
 
-                                </div>
+                                    </div>
 
-                            </td>
+                                </td>
 
-                        </tr>
-
+                            </tr>
                         @endforeach
 
                     </tbody>
@@ -400,175 +398,5 @@
 
     </section>
 
-    {{-- ===================================================== --}}
-    {{-- MOBILE / TABLET CARDS --}}
-    {{-- ===================================================== --}}
-    <section class="2xl:hidden">
-
-        <div class="grid
-                    grid-cols-1
-                    lg:grid-cols-2
-                    gap-4 sm:gap-6">
-
-            @foreach(range(1,15) as $i)
-
-            <div class="rounded-3xl
-                        border border-slate-800
-                        bg-slate-900
-                        overflow-hidden">
-
-                <div class="p-5">
-
-                    {{-- TOP --}}
-                    <div class="flex items-start gap-4 min-w-0">
-
-                        <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex flex-wrap items-center gap-2">
-
-                                <h3 class="font-semibold truncate">
-                                    Kouassi Vincent {{$i}}
-                                </h3>
-
-                                <span class="px-2 py-1 rounded-full
-                                             bg-emerald-500/10
-                                             text-emerald-400
-                                             text-xs">
-
-                                    Présent
-
-                                </span>
-
-                            </div>
-
-                            <p class="mt-2 text-sm text-slate-400 truncate">
-                                MAT-2025-{{$i}}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {{-- STATS --}}
-                    <div class="mt-6 grid grid-cols-3 gap-3">
-
-                        <div class="rounded-2xl bg-slate-950 p-4 text-center">
-
-                            <p class="text-xs text-slate-500">
-                                Présence
-                            </p>
-
-                            <h4 class="mt-2 text-lg font-bold text-emerald-400">
-                                96%
-                            </h4>
-
-                        </div>
-
-                        <div class="rounded-2xl bg-slate-950 p-4 text-center">
-
-                            <p class="text-xs text-slate-500">
-                                Retards
-                            </p>
-
-                            <h4 class="mt-2 text-lg font-bold text-amber-400">
-                                1
-                            </h4>
-
-                        </div>
-
-                        <div class="rounded-2xl bg-slate-950 p-4 text-center">
-
-                            <p class="text-xs text-slate-500">
-                                Absences
-                            </p>
-
-                            <h4 class="mt-2 text-lg font-bold text-rose-400">
-                                0
-                            </h4>
-
-                        </div>
-
-                    </div>
-
-                    {{-- DETAILS --}}
-                    <div class="mt-5 grid grid-cols-2 gap-3">
-
-                        <div class="rounded-xl bg-slate-950 p-3">
-
-                            <p class="text-xs text-slate-500">
-                                Date
-                            </p>
-
-                            <h4 class="mt-1 font-medium">
-                                12/05/2026
-                            </h4>
-
-                        </div>
-
-                        <div class="rounded-xl bg-slate-950 p-3">
-
-                            <p class="text-xs text-slate-500">
-                                Heure
-                            </p>
-
-                            <h4 class="mt-1 font-medium">
-                                08:00
-                            </h4>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- ACTIONS --}}
-                <div class="border-t border-slate-800 p-4">
-
-                    <div class="grid grid-cols-3 gap-3">
-
-                        <button class="h-11 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-indigo-500
-                                       transition-all
-                                       text-sm">
-
-                            Voir
-
-                        </button>
-
-                        <button class="h-11 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-emerald-500
-                                       transition-all
-                                       text-sm">
-
-                            Modifier
-
-                        </button>
-
-                        <button class="h-11 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-rose-500
-                                       transition-all
-                                       text-sm">
-
-                            Suppr.
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            @endforeach
-
-        </div>
-
-    </section>
-
 </div>
+

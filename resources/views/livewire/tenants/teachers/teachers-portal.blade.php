@@ -430,7 +430,7 @@
                                             {{-- ACTIONS --}}
                                             <td class="px-6 py-5">
 
-                                                <div class="flex items-center justify-end gap-2">
+                                                <div class="flex items-center justify-end gap-2 truncate">
 
                                                     <button
                                                         class="w-10 h-10 rounded-xl
@@ -438,7 +438,7 @@
                                                                hover:bg-indigo-500
                                                                transition-all">
 
-                                                        👁
+                                                        Profil
 
                                                     </button>
 
@@ -448,7 +448,7 @@
                                                                hover:bg-emerald-500
                                                                transition-all">
 
-                                                        ✏
+                                                        Bloquer
 
                                                     </button>
 
@@ -458,7 +458,7 @@
                                                                hover:bg-rose-500
                                                                transition-all">
 
-                                                        🗑
+                                                        Supprimer
 
                                                     </button>
 

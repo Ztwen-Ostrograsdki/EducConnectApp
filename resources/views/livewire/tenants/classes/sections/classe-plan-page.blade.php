@@ -38,7 +38,8 @@
             {{-- ACTIONS --}}
             <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
 
-                <button class="w-full sm:w-auto
+                <button
+                    class="w-full sm:w-auto
                                px-5 py-3 rounded-2xl
                                bg-indigo-500 hover:bg-indigo-600
                                transition-all duration-300
@@ -48,7 +49,8 @@
 
                 </button>
 
-                <button class="w-full sm:w-auto
+                <button
+                    class="w-full sm:w-auto
                                px-5 py-3 rounded-2xl
                                bg-slate-800
                                border border-slate-700
@@ -147,9 +149,7 @@
 
                     <div class="relative">
 
-                        <input
-                            type="text"
-                            placeholder="Rechercher un cours ou un enseignant..."
+                        <input type="text" placeholder="Rechercher un cours ou un enseignant..."
                             class="w-full h-12
                                    rounded-2xl
                                    bg-slate-950
@@ -158,8 +158,7 @@
                                    text-sm
                                    outline-none
                                    focus:border-indigo-500
-                                   transition-all"
-                        >
+                                   transition-all">
 
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
 
@@ -205,7 +204,8 @@
                     </select>
 
                     {{-- RESET --}}
-                    <button class="h-12 px-5 rounded-2xl
+                    <button
+                        class="h-12 px-5 rounded-2xl
                                    bg-slate-800
                                    border border-slate-700
                                    hover:bg-slate-700
@@ -227,7 +227,39 @@
     {{-- ===================================================== --}}
     {{-- DESKTOP TIMETABLE --}}
     {{-- ===================================================== --}}
-    <section class="hidden xl:block mb-6">
+    <section class="w-full">
+
+        <div class="flex justify-end flex-wrap gap-3 text-gray-950 p-2">
+
+            <button class="px-3 py-2 rounded-2xl
+                                    bg-red-500 hover:bg-red-600">
+
+                Vider les emplois
+
+            </button>
+
+            <button class="px-3 py-2 rounded-2xl
+                                    bg-blue-500 hover:bg-blue-600">
+
+                Imprimer PDF
+
+            </button>
+
+            <button class="px-3 py-2 rounded-2xl
+                                    bg-emerald-500 hover:bg-emerald-600">
+
+                Emprimer Excel
+
+            </button>
+
+            <button class="px-3 py-2 rounded-2xl
+                                    bg-amber-500 hover:bg-amber-600">
+
+                Imprimer Excel et PDF
+
+            </button>
+
+        </div>
 
         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
 
@@ -235,32 +267,35 @@
 
                 <table class="w-full">
 
-                    <thead class="bg-slate-950 border-b border-slate-800">
+                    <thead class="bg-slate-950 border-b border-slate-800 truncate">
 
                         <tr>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Horaires
                             </th>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Lundi
                             </th>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Mardi
                             </th>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Mercredi
                             </th>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Jeudi
                             </th>
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
                                 Vendredi
+                            </th>
+                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                Samedi
                             </th>
 
                         </tr>
@@ -269,76 +304,68 @@
 
                     <tbody class="divide-y divide-slate-800">
 
-                        @foreach([
-                            '08:00 - 10:00',
-                            '10:00 - 12:00',
-                            '13:00 - 15:00',
-                            '15:00 - 17:00'
-                        ] as $time)
+                        @foreach (['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00', '15:00 - 17:00'] as $time)
+                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                        <tr class="hover:bg-slate-800/40 transition-all">
+                                {{-- TIME --}}
+                                <td class="px-6 py-6 font-medium text-slate-300">
+                                    {{ $time }}
+                                </td>
 
-                            {{-- TIME --}}
-                            <td class="px-6 py-6 font-medium text-slate-300">
-                                {{ $time }}
-                            </td>
+                                @foreach (range(1, 6) as $day)
+                                    {{-- COURSE --}}
+                                    <td class="px-4 py-5">
 
-                            @foreach(range(1,5) as $day)
-
-                            {{-- COURSE --}}
-                            <td class="px-4 py-5">
-
-                                <div class="rounded-2xl
+                                        <div
+                                            class="rounded-2xl
                                             border border-indigo-500/20
                                             bg-indigo-500/10
                                             p-4 min-w-[180px]">
 
-                                    <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-start justify-between gap-3">
 
-                                        <div class="min-w-0">
+                                                <div class="min-w-0">
 
-                                            <h3 class="font-semibold truncate">
-                                                Mathématiques
-                                            </h3>
+                                                    <h3 class="font-semibold truncate">
+                                                        Mathématiques
+                                                    </h3>
 
-                                            <p class="mt-1 text-sm text-indigo-300 truncate">
-                                                M. HOUNDEKINDO
-                                            </p>
+                                                    <p class="mt-1 text-sm text-indigo-300 truncate">
+                                                        M. HOUNDEKINDO
+                                                    </p>
 
-                                        </div>
+                                                </div>
 
-                                        <div class="w-3 h-3 rounded-full
+                                                <div class="w-3 h-3 rounded-full
                                                     bg-indigo-400 shrink-0">
-                                        </div>
+                                                </div>
 
-                                    </div>
+                                            </div>
 
-                                    <div class="mt-4 flex items-center justify-between gap-3">
+                                            <div class="mt-4 flex items-center justify-between gap-3 truncate">
 
-                                        <span class="px-2 py-1 rounded-xl
+                                                <span class="px-2 py-1 rounded-xl
                                                      bg-slate-950/50
                                                      text-xs text-slate-300">
 
-                                            Salle B12
+                                                    Salle B12
 
-                                        </span>
+                                                </span>
 
-                                        <span class="text-xs text-slate-400">
+                                                <span class="text-xs text-slate-400">
 
-                                            2h
+                                                    2h
 
-                                        </span>
+                                                </span>
 
-                                    </div>
+                                            </div>
 
-                                </div>
+                                        </div>
 
-                            </td>
+                                    </td>
+                                @endforeach
 
-                            @endforeach
-
-                        </tr>
-
+                            </tr>
                         @endforeach
 
                     </tbody>
@@ -351,158 +378,5 @@
 
     </section>
 
-    {{-- ===================================================== --}}
-    {{-- MOBILE / TABLET VIEW --}}
-    {{-- ===================================================== --}}
-    <section class="xl:hidden">
-
-        <div class="space-y-5">
-
-            @foreach([
-                'Lundi',
-                'Mardi',
-                'Mercredi',
-                'Jeudi',
-                'Vendredi'
-            ] as $day)
-
-            {{-- DAY --}}
-            <div class="rounded-3xl
-                        border border-slate-800
-                        bg-slate-900
-                        overflow-hidden">
-
-                {{-- HEADER --}}
-                <div class="border-b border-slate-800
-                            px-5 py-4">
-
-                    <div class="flex items-center justify-between gap-4">
-
-                        <h2 class="text-lg font-semibold">
-                            {{ $day }}
-                        </h2>
-
-                        <span class="px-3 py-1 rounded-full
-                                     bg-indigo-500/10
-                                     text-indigo-400 text-xs">
-
-                            4 cours
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-                {{-- COURSES --}}
-                <div class="p-5 space-y-4">
-
-                    @foreach(range(1,4) as $course)
-
-                    <div class="rounded-2xl
-                                border border-slate-800
-                                bg-slate-950
-                                p-4">
-
-                        {{-- TOP --}}
-                        <div class="flex items-start justify-between gap-3">
-
-                            <div class="min-w-0">
-
-                                <div class="flex flex-wrap items-center gap-2">
-
-                                    <h3 class="font-semibold truncate">
-                                        Mathématiques
-                                    </h3>
-
-                                    <span class="w-2 h-2 rounded-full bg-indigo-400">
-                                    </span>
-
-                                </div>
-
-                                <p class="mt-1 text-sm text-slate-400 truncate">
-                                    M. HOUNDEKINDO
-                                </p>
-
-                            </div>
-
-                            <span class="px-3 py-1 rounded-xl
-                                         bg-indigo-500/10
-                                         text-indigo-400
-                                         text-xs shrink-0">
-
-                                08:00
-
-                            </span>
-
-                        </div>
-
-                        {{-- DETAILS --}}
-                        <div class="mt-5 grid grid-cols-2 gap-3">
-
-                            <div class="rounded-xl bg-slate-900 p-3">
-
-                                <p class="text-xs text-slate-500">
-                                    Salle
-                                </p>
-
-                                <h4 class="mt-1 font-medium">
-                                    B12
-                                </h4>
-
-                            </div>
-
-                            <div class="rounded-xl bg-slate-900 p-3">
-
-                                <p class="text-xs text-slate-500">
-                                    Durée
-                                </p>
-
-                                <h4 class="mt-1 font-medium">
-                                    2h
-                                </h4>
-
-                            </div>
-
-                        </div>
-
-                        {{-- ACTIONS --}}
-                        <div class="mt-5 grid grid-cols-2 gap-3">
-
-                            <button class="h-11 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-indigo-500
-                                           transition-all
-                                           text-sm">
-
-                                Modifier
-
-                            </button>
-
-                            <button class="h-11 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-rose-500
-                                           transition-all
-                                           text-sm">
-
-                                Supprimer
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-            @endforeach
-
-        </div>
-
-    </section>
-
 </div>
+

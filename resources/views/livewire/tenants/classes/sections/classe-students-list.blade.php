@@ -25,7 +25,8 @@
                                 Liste des apprenants
                             </h1>
 
-                            <span class="px-3 py-1 rounded-full
+                            <span
+                                class="px-3 py-1 rounded-full
                                          bg-indigo-500/10
                                          border border-indigo-500/20
                                          text-indigo-400 text-xs shrink-0">
@@ -41,7 +42,8 @@
                     {{-- ACTIONS --}}
                     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
 
-                        <button class="w-full sm:w-auto
+                        <button
+                            class="w-full sm:w-auto
                                        px-5 py-3 rounded-2xl
                                        bg-slate-800
                                        border border-slate-700
@@ -75,9 +77,7 @@
 
                         <div class="relative">
 
-                            <input
-                                type="text"
-                                placeholder="Rechercher un apprenant..."
+                            <input type="text" placeholder="Rechercher un apprenant..."
                                 class="w-full
                                        h-12
                                        rounded-2xl
@@ -87,8 +87,7 @@
                                        text-sm
                                        outline-none
                                        focus:border-indigo-500
-                                       transition-all"
-                            >
+                                       transition-all">
 
                             <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
 
@@ -129,7 +128,8 @@
 
                         </select>
 
-                        <button class="h-12 px-5 rounded-2xl
+                        <button
+                            class="h-12 px-5 rounded-2xl
                                        bg-slate-800
                                        border border-slate-700
                                        hover:bg-slate-700
@@ -148,10 +148,7 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- TABLE DESKTOP --}}
-        {{-- ===================================================== --}}
-        <section class="hidden xl:block">
+        <section class="w-full">
 
             <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
 
@@ -183,7 +180,7 @@
                                     Parent
                                 </th>
 
-                                <th class="text-right px-6 py-4 text-sm font-medium text-slate-400">
+                                <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">
                                     Actions
                                 </th>
 
@@ -193,106 +190,108 @@
 
                         <tbody class="divide-y divide-slate-800">
 
-                            @foreach(range(1,10) as $i)
+                            @foreach (range(1, 10) as $i)
+                                <tr class="hover:bg-slate-800/40 transition-all">
 
-                            <tr  class="hover:bg-slate-800/40 transition-all">
+                                    {{-- STUDENT --}}
+                                    <td class="px-6 py-5">
 
-                                {{-- STUDENT --}}
-                                <td class="px-6 py-5">
+                                        <div class="flex items-center gap-4 min-w-0">
 
-                                    <div class="flex items-center gap-4 min-w-0">
+                                            <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
+                                            </div>
 
-                                        <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
+                                            <div class="min-w-0">
+
+                                                <a href="{{ route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)]) }}">
+                                                    <h3 class="font-medium truncate">
+                                                        Kouassi Vincent {{ $i }}
+                                                    </h3>
+
+                                                    <p class="text-sm text-slate-400 truncate">
+                                                        Génie Électrique
+                                                    </p>
+                                                </a>
+
+                                            </div>
+
                                         </div>
 
-                                        <div class="min-w-0">
+                                    </td>
 
-                                            <a href="{{route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)])}}">
-                                                <h3 class="font-medium truncate">
-                                                    Kouassi Vincent {{$i}}
-                                                </h3>
+                                    {{-- MATRICULE --}}
+                                    <td class="px-6 py-5 truncate text-sm text-slate-300">
+                                        MAT-2025-{{ $i }}
+                                    </td>
 
-                                                <p class="text-sm text-slate-400 truncate">
-                                                    Génie Électrique
-                                                </p>
-                                            </a>
+                                    {{-- MOYENNE --}}
+                                    <td class="px-6 py-5">
 
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-                                {{-- MATRICULE --}}
-                                <td class="px-6 py-5 text-sm text-slate-300">
-                                    MAT-2025-{{$i}}
-                                </td>
-
-                                {{-- MOYENNE --}}
-                                <td class="px-6 py-5">
-
-                                    <div class="inline-flex
+                                        <div
+                                            class="inline-flex
                                                 items-center
                                                 px-3 py-1
                                                 rounded-full
                                                 bg-emerald-500/10
                                                 text-emerald-400
-                                                text-sm">
+                                                text-sm truncate">
 
-                                        15.4
+                                            15.4
 
-                                    </div>
+                                        </div>
 
-                                </td>
+                                    </td>
 
-                                {{-- PRESENCE --}}
-                                <td class="px-6 py-5 text-sm">
-                                    96%
-                                </td>
+                                    {{-- PRESENCE --}}
+                                    <td class="px-6 py-5 text-sm truncate">
+                                        96%
+                                    </td>
 
-                                {{-- PARENT --}}
-                                <td class="px-6 py-5 text-sm text-slate-300">
-                                    M. HOUNDEKINDO
-                                </td>
+                                    {{-- PARENT --}}
+                                    <td class="px-6 py-5 text-sm text-slate-300 truncate">
+                                        M. HOUNDEKINDO
+                                    </td>
 
-                                {{-- ACTIONS --}}
-                                <td class="px-6 py-5">
+                                    {{-- ACTIONS --}}
+                                    <td class="px-6 py-5">
 
-                                    <div class="flex items-center justify-end gap-2">
+                                        <div class="flex items-center justify-end gap-2 truncate">
 
-                                        <button class="w-10 h-10 rounded-xl
-                                                       bg-slate-800
-                                                       hover:bg-indigo-500
-                                                       transition-all">
+                                            <button
+                                                class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-indigo-800
+                                                               hover:bg-indigo-500
+                                                               transition-all">
 
-                                            👁
+                                                Profil
 
-                                        </button>
+                                            </button>
 
-                                        <button class="w-10 h-10 rounded-xl
-                                                       bg-slate-800
-                                                       hover:bg-emerald-500
-                                                       transition-all">
+                                            <button
+                                                class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-emerald-800
+                                                               hover:bg-emerald-500
+                                                               transition-all">
 
-                                            ✏
+                                                Bloquer
 
-                                        </button>
+                                            </button>
 
-                                        <button class="w-10 h-10 rounded-xl
-                                                       bg-slate-800
-                                                       hover:bg-rose-500
-                                                       transition-all">
+                                            <button
+                                                class="py-2 px-2.5 cursor-pointer rounded-xl
+                                                               bg-red-800
+                                                               hover:bg-red-500
+                                                               transition-all">
 
-                                            🗑
+                                                Supprimer
 
-                                        </button>
+                                            </button>
 
-                                    </div>
+                                        </div>
 
-                                </td>
+                                    </td>
 
-                            </tr>
-
+                                </tr>
                             @endforeach
 
                         </tbody>
@@ -300,124 +299,6 @@
                     </table>
 
                 </div>
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- MOBILE / TABLET CARDS --}}
-        {{-- ===================================================== --}}
-        <section class="xl:hidden px-1 pb-8">
-
-            <div class="space-y-4">
-
-                @foreach(range(1,10) as $i)
-
-                <div class="rounded-3xl
-                            border border-slate-800
-                            bg-slate-900
-                            p-5
-                            overflow-hidden">
-
-                    {{-- TOP --}}
-                    <div class="flex items-start gap-4 min-w-0">
-
-                        <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex flex-wrap items-center gap-2">
-
-                                <h3 class="font-semibold truncate">
-                                    Kouassi Vincent {{$i}}
-                                </h3>
-
-                                <span class="px-2 py-1 rounded-full
-                                             bg-emerald-500/10
-                                             text-emerald-400
-                                             text-xs shrink-0">
-
-                                    15.4
-
-                                </span>
-
-                            </div>
-
-                            <p class="mt-1 text-sm text-slate-400 truncate">
-                                MAT-2025-{{$i}}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {{-- INFOS --}}
-                    <div class="mt-5 grid grid-cols-2 gap-4">
-
-                        <div>
-
-                            <p class="text-xs text-slate-500">
-                                Présence
-                            </p>
-
-                            <p class="mt-1 text-sm">
-                                96%
-                            </p>
-
-                        </div>
-
-                        <div>
-
-                            <p class="text-xs text-slate-500">
-                                Parent
-                            </p>
-
-                            <p class="mt-1 text-sm truncate">
-                                HOUNDEKINDO
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {{-- ACTIONS --}}
-                    <div class="mt-5 grid grid-cols-9 items-center gap-2 w-full text-center">
-
-                        <a href="{{route('tenant.student.profil', ['student_uuid' => 'f2-' . $i])}}" class="p-3 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-indigo-500
-                                       transition-all
-                                       text-sm  col-span-4">
-                                Voir profil
-                        </a>
-
-                        <button class="p-3 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-emerald-500
-                                       transition-all
-                                       text-sm col-span-3">
-
-                            Modifier
-
-                        </button>
-
-                        <button class="p-3 col-span-2 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-rose-500
-                                       transition-all
-                                       shrink-0">
-
-                            🗑
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-                @endforeach
 
             </div>
 
@@ -443,7 +324,8 @@
 
                     <div class="flex items-center gap-2">
 
-                        <button class="h-10 px-4 rounded-xl
+                        <button
+                            class="h-10 px-4 rounded-xl
                                        bg-slate-800
                                        hover:bg-slate-700
                                        transition-all
@@ -461,7 +343,8 @@
 
                         </button>
 
-                        <button class="h-10 px-4 rounded-xl
+                        <button
+                            class="h-10 px-4 rounded-xl
                                        bg-slate-800
                                        hover:bg-slate-700
                                        transition-all
@@ -471,7 +354,8 @@
 
                         </button>
 
-                        <button class="h-10 px-4 rounded-xl
+                        <button
+                            class="h-10 px-4 rounded-xl
                                        bg-slate-800
                                        hover:bg-slate-700
                                        transition-all
@@ -492,3 +376,4 @@
     </div>
 
 </div>
+

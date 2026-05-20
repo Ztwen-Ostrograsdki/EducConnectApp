@@ -89,32 +89,25 @@
                         xl:grid-cols-4
                         gap-4">
 
-                @foreach([
-                    ['Parents Actifs', '172', 'text-emerald-400'],
-                    ['Accès Bloqués', '14', 'text-rose-400'],
-                    ['Notifications', '842', 'text-indigo-400'],
-                    ['Enfants liés', '248', 'text-amber-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Parents Actifs', '172', 'text-emerald-400'], ['Accès Bloqués', '14', 'text-rose-400'], ['Notifications', '842', 'text-indigo-400'], ['Enfants liés', '248', 'text-amber-400']] as $kpi)
+                    <div class="rounded-3xl
                             border border-slate-800
                             bg-slate-900
                             p-4 sm:p-5">
 
-                    <p class="text-xs sm:text-sm text-slate-400">
-                        {{ $kpi[0] }}
-                    </p>
+                        <p class="text-xs sm:text-sm text-slate-400">
+                            {{ $kpi[0] }}
+                        </p>
 
-                    <h2 class="mt-3
+                        <h2 class="mt-3
                                text-2xl sm:text-3xl xl:text-4xl
                                font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -136,9 +129,7 @@
                     {{-- SEARCH --}}
                     <div class="relative">
 
-                        <input
-                            type="text"
-                            placeholder="Rechercher un parent..."
+                        <input type="text" placeholder="Rechercher un parent..."
                             class="w-full h-12 rounded-2xl
                                    bg-slate-950
                                    border border-slate-800
@@ -146,8 +137,7 @@
                                    text-sm
                                    focus:outline-none
                                    focus:ring-2
-                                   focus:ring-indigo-500/40"
-                        >
+                                   focus:ring-indigo-500/40">
 
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
                             🔍
@@ -235,7 +225,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-indigo-500/20
                                        text-indigo-400
                                        hover:bg-indigo-500/30
@@ -245,7 +236,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-amber-500/20
                                        text-amber-400
                                        hover:bg-amber-500/30
@@ -255,7 +247,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-rose-500/20
                                        text-rose-400
                                        hover:bg-rose-500/30
@@ -280,13 +273,9 @@
 
             <div class="grid
                         grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_380px]
                         gap-6">
 
-                {{-- ===================================================== --}}
-                {{-- LEFT --}}
-                {{-- ===================================================== --}}
-                <div class="space-y-6 min-w-0">
+                <div class="space-y-6 min-w-0 col-span-1">
 
                     {{-- TABLE --}}
                     <div class="rounded-3xl
@@ -298,7 +287,8 @@
                         <div class="border-b border-slate-800
                                     p-4 sm:p-6">
 
-                            <div class="flex flex-col
+                            <div
+                                class="flex flex-col
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
@@ -314,9 +304,33 @@
 
                                     <p class="mt-1 text-sm text-slate-400">
 
-                                        Gestion des accès et informations des représentants
+                                        Gestion des accès et suivi des représentants
 
                                     </p>
+
+                                </div>
+
+                                <div class="flex flex-wrap gap-3">
+
+                                    <button
+                                        class="h-11 px-4 rounded-2xl
+                                                   bg-slate-800
+                                                   hover:bg-slate-700
+                                                   transition-all text-sm">
+
+                                        Trier
+
+                                    </button>
+
+                                    <button
+                                        class="h-11 px-4 rounded-2xl
+                                                   bg-slate-800
+                                                   hover:bg-slate-700
+                                                   transition-all text-sm">
+
+                                        Colonnes
+
+                                    </button>
 
                                 </div>
 
@@ -324,14 +338,17 @@
 
                         </div>
 
-                        {{-- TABLE RESPONSIVE --}}
+                        {{-- TABLE --}}
                         <div class="overflow-x-auto">
 
-                            <table class="min-w-[1650px] w-full">
+                            <table class="min-w-[1900px] w-full">
 
-                                <thead class="bg-slate-950 border-b border-slate-800">
+                                <thead class="bg-slate-950 border-b border-slate-800 truncate">
 
                                     <tr>
+                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                            N°
+                                        </th>
 
                                         <th class="px-6 py-4 text-left text-sm text-slate-400">
                                             Parent
@@ -342,26 +359,10 @@
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Profession
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
                                             Enfant(s)
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Autres Classes
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Dernière Connexion
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Statut
-                                        </th>
-
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
+                                        <th class="px-6 py-4 text-center text-sm text-slate-400">
                                             Actions
                                         </th>
 
@@ -371,193 +372,146 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,10) as $parent)
+                                    @foreach (range(1, 12) as $parent)
+                                        <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    <tr class="hover:bg-slate-800/40 transition-all">
+                                            <td class="px-4 py-5 text-center">
 
-                                        {{-- PROFILE --}}
-                                        <td class="px-6 py-5">
+                                                {{ $loop->iteration }}
 
-                                            <div class="flex items-center gap-4">
+                                            </td>
 
-                                                <div class="w-14 h-14 rounded-2xl
+                                            {{-- PROFILE --}}
+                                            <td class="px-6 py-5">
+
+                                                <a title="Charger le profil de ce parent" href="{{ route('tenant.parent.profil', ['parent_uuid' => 'f']) }}" class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl">
+
+                                                    <div class="w-14 h-14 rounded-2xl
                                                             bg-slate-800 shrink-0">
-                                                </div>
+                                                    </div>
 
-                                                <div class="min-w-0">
-
-                                                    <h3 class="font-medium truncate">
-
-                                                        Mme Ahouandjinou Claire
-
-                                                    </h3>
-
-                                                    <p class="mt-1 text-sm text-slate-400 truncate">
-
-                                                        parent@email.com
-
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- PHONE --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                            +229 01 00 00 00
-
-                                        </td>
-
-                                        {{-- JOB --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            Commerçante
-
-                                        </td>
-
-                                        {{-- CHILDREN --}}
-                                        <td class="px-4 py-5">
-
-                                            <div class="space-y-2">
-
-                                                <div class="px-3 py-2 rounded-xl
-                                                            bg-slate-950 text-sm">
-
-                                                    KOUASSI Marc — Tle F2-1
-
-                                                </div>
-
-                                                <div class="px-3 py-2 rounded-xl
-                                                            bg-slate-950 text-sm">
-
-                                                    KOUASSI Sarah — 1ère G2
-
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- OTHER CLASSES --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            <div class="flex flex-wrap
-                                                        justify-center gap-2">
-
-                                                <span class="px-3 py-1 rounded-full
-                                                             bg-indigo-500/10
-                                                             text-indigo-400 text-xs">
-
-                                                    1ère G2
-
-                                                </span>
-
-                                                <span class="px-3 py-1 rounded-full
-                                                             bg-sky-500/10
-                                                             text-sky-400 text-xs">
-
-                                                    2nde C
-
-                                                </span>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- LAST LOGIN --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                            Aujourd’hui 08:42
-
-                                        </td>
-
-                                        {{-- STATUS --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            <span class="px-3 py-1 rounded-full
+                                                    <div class="min-w-0 flex flex-col">
+                                                        <h3 class="font-medium truncate">
+                                                            Mme AGBODJI Clarisse
+                                                            <span
+                                                                class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                Actif
+                                                                Actif
 
-                                            </span>
+                                                            </span>
+                                                        </h3>
 
-                                        </td>
+                                                        <p class="mt-1 text-sm text-sky-400 truncate">
+                                                            clarisse@email.com
+                                                        </p>
+                                                        <p class="mt-1 text-sm text-slate-400 truncate">
+                                                            Fonctionnaire
+                                                        </p>
 
-                                        {{-- ACTIONS --}}
-                                        <td class="px-6 py-5">
+                                                        <p class="mt-1 text-sm text-amber-400 truncate">
+                                                            Cotonou
+                                                        </p>
+                                                    </div>
 
-                                            <div class="flex flex-wrap
+                                                </a>
+
+                                            </td>
+
+                                            {{-- PHONE --}}
+                                            <td class="px-4 py-5 text-center whitespace-nowrap">
+
+                                                +229 01 00 00 00
+
+                                            </td>
+
+                                            {{-- CHILDREN --}}
+                                            <td class="px-4 py-5 truncate">
+
+                                                <div class="space-y-2">
+
+                                                    <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
+                                                        class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600 items-center gap-x-1">
+
+                                                        <span>KOUASSI Marc</span>
+
+                                                        <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
+                                                            2nde F2-2
+                                                        </span>
+
+                                                    </a>
+
+                                                    <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
+                                                        class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600 items-center gap-x-1">
+
+                                                        <span>AGUADO Pièrrot</span>
+
+                                                        <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
+                                                            Tle F2-2
+                                                        </span>
+
+                                                    </a>
+
+                                                </div>
+
+                                            </td>
+
+                                            {{-- ACTIONS --}}
+                                            <td class="px-6 py-5">
+
+                                                <div class="flex flex-wrap
                                                         justify-end gap-2">
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-indigo-500/10
                                                                text-indigo-400
                                                                hover:bg-indigo-500/20
                                                                transition-all text-sm">
 
-                                                    Bulletin
+                                                        Bulletin
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-sky-500/10
                                                                text-sky-400
                                                                hover:bg-sky-500/20
                                                                transition-all text-sm">
 
-                                                    Notes
+                                                        Env. Notes
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-emerald-500/10
                                                                text-emerald-400
                                                                hover:bg-emerald-500/20
                                                                transition-all text-sm">
 
-                                                    Notifier
+                                                        Notifier
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-amber-500/10
-                                                               text-amber-400
-                                                               hover:bg-amber-500/20
-                                                               transition-all text-sm">
-
-                                                    Modifier
-
-                                                </button>
-
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-rose-500/10
                                                                text-rose-400
                                                                hover:bg-rose-500/20
                                                                transition-all text-sm">
 
-                                                    Bloquer
+                                                        Bloquer
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-rose-500
-                                                               transition-all text-sm">
+                                                </div>
 
-                                                    Supprimer
+                                            </td>
 
-                                                </button>
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -577,13 +531,14 @@
 
                                 <p class="text-sm text-slate-400">
 
-                                    Affichage de 1 à 10 sur 186 parents
+                                    Affichage de 1 à 12 sur 1248 parents
 
                                 </p>
 
                                 <div class="flex items-center gap-2 flex-wrap">
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -592,7 +547,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-indigo-500
                                                    hover:bg-indigo-600
                                                    transition-all text-sm">
@@ -601,7 +557,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -610,7 +567,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -632,165 +590,6 @@
                 {{-- ===================================================== --}}
                 {{-- RIGHT SIDEBAR --}}
                 {{-- ===================================================== --}}
-                <div class="space-y-6 min-w-0">
-
-                    {{-- QUICK STATS --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Activité des Parents
-
-                        </h2>
-
-                        <div class="mt-5 space-y-5">
-
-                            @foreach([
-                                ['Connexions actives', '82%', 'bg-emerald-500'],
-                                ['Bulletins ouverts', '71%', 'bg-indigo-500'],
-                                ['Notifications lues', '64%', 'bg-sky-500'],
-                                ['Accès bloqués', '9%', 'bg-rose-500']
-                            ] as $item)
-
-                            <div>
-
-                                <div class="flex items-center justify-between">
-
-                                    <span class="text-sm text-slate-300">
-                                        {{ $item[0] }}
-                                    </span>
-
-                                    <span class="text-sm font-semibold">
-                                        {{ $item[1] }}
-                                    </span>
-
-                                </div>
-
-                                <div class="mt-2 h-2 rounded-full
-                                            bg-slate-800 overflow-hidden">
-
-                                    <div class="h-full rounded-full {{ $item[2] }}"
-                                         style="width: {{ $item[1] }}">
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- RECENT ACTIVITIES --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Activités Récentes
-
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach(range(1,5) as $activity)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <div class="flex items-start gap-3">
-
-                                    <div class="w-11 h-11 rounded-2xl
-                                                bg-indigo-500/10
-                                                shrink-0
-                                                flex items-center justify-center
-                                                text-indigo-400">
-
-                                        ✓
-
-                                    </div>
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-medium text-sm">
-
-                                            Bulletin envoyé
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            Bulletin trimestriel transmis au parent
-
-                                        </p>
-
-                                        <p class="mt-2 text-xs text-slate-500">
-
-                                            Il y a 45 min
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- QUICK MENU --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Accès Rapides
-
-                        </h2>
-
-                        <div class="mt-5 grid grid-cols-2 gap-3">
-
-                            @foreach([
-                                'Présences',
-                                'Bulletins',
-                                'Paiements',
-                                'Notes',
-                                'Messages',
-                                'Archives'
-                            ] as $menu)
-
-                            <button class="h-24 rounded-2xl
-                                           bg-slate-950
-                                           hover:bg-indigo-500/10
-                                           border border-slate-800
-                                           transition-all
-                                           text-sm">
-
-                                {{ $menu }}
-
-                            </button>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </div>
 
             </div>
 
@@ -799,3 +598,4 @@
     </div>
 
 </div>
+

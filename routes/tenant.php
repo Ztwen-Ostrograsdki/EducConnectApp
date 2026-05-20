@@ -7,6 +7,8 @@ use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
+use App\Livewire\Tenants\Promotions\PromotionProfil;
+use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
@@ -54,10 +56,14 @@ Route::middleware([
             Route::get('/dashboard/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
             Route::get('/dashboard/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
-
-            Route::get('/dashboard/matieres/portail-des-matieres/{subject_slug}', SubjectProfil::class)->name('subject.profil');
             
-            Route::get('/dashboard/classes/portail-classses/{classe_slug}', ClasseProfil::class)->name('classe.profil');
+            Route::get('/dashboard/promotions/portail-des-promotions', PromotionsPortal::class)->name('promotions.portal');
+
+            Route::get('/dashboard/promotions/portail-des-promotions/profil-promotion/ID={promotion_slug}', PromotionProfil::class)->name('promotion.profil');
+            
+            Route::get('/dashboard/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
+            
+            Route::get('/dashboard/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
 
             
         });

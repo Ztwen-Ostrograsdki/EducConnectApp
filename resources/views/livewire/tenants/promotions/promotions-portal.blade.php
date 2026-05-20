@@ -2,61 +2,117 @@
 
     <div class="mx-auto
                 w-full
-                max-w-[1850px]
+                max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
 
-        {{-- HEADER --}}
+        {{-- ===================================================== --}}
+        {{-- HERO --}}
+        {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="flex flex-col
-                        xl:flex-row
-                        xl:items-center
-                        xl:justify-between
-                        gap-5">
+            <div class="relative overflow-hidden
+                        rounded-[32px]
+                        border border-slate-800
+                        bg-slate-900">
 
-                <div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-
-                        <h1 class="text-2xl sm:text-3xl font-bold">
-
-                            Promotions
-
-                        </h1>
-
-                        <span class="px-3 py-1 rounded-full
-                                     bg-indigo-500/10
-                                     text-indigo-400 text-xs">
-
-                            12 Promotions
-
-                        </span>
-
-                    </div>
-
-                    <p class="mt-2 text-slate-400 text-sm">
-
-                        Gestion des promotions académiques
-
-                    </p>
-
+                {{-- BG --}}
+                <div class="absolute inset-0
+                            bg-gradient-to-br
+                            from-indigo-500/10
+                            via-slate-900
+                            to-slate-900">
                 </div>
 
-                <div class="flex flex-wrap gap-3">
+                <div class="relative p-5 sm:p-6 lg:p-8">
 
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-slate-800 hover:bg-slate-700">
+                    <div class="flex flex-col
+                                xl:flex-row
+                                xl:items-start
+                                xl:justify-between
+                                gap-8">
 
-                        Exporter
+                        {{-- LEFT --}}
+                        <div class="min-w-0">
 
-                    </button>
+                            <div class="flex flex-wrap
+                                        items-center
+                                        gap-3">
 
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-indigo-500 hover:bg-indigo-600">
+                                <h1 class="text-2xl sm:text-3xl font-bold">
 
-                        Ajouter Promotion
+                                    Dashboard Promotions
 
-                    </button>
+                                </h1>
+
+                                <span class="px-3 py-1 rounded-full
+                                             bg-indigo-500/10
+                                             text-indigo-400 text-xs">
+
+                                    Gestion Académique
+
+                                </span>
+
+                            </div>
+
+                            <p class="mt-3 text-slate-400 max-w-3xl">
+
+                                Vue globale des promotions,
+                                performances académiques,
+                                statistiques des apprenants
+                                et gestion des classes.
+
+                            </p>
+
+                            {{-- BADGES --}}
+                            <div class="mt-6 flex flex-wrap gap-3">
+
+                                <div class="px-4 py-2 rounded-2xl
+                                            bg-slate-800 border border-slate-700">
+
+                                    7 Promotions
+
+                                </div>
+
+                                <div class="px-4 py-2 rounded-2xl
+                                            bg-slate-800 border border-slate-700">
+
+                                    124 Classes
+
+                                </div>
+
+                                <div class="px-4 py-2 rounded-2xl
+                                            bg-slate-800 border border-slate-700">
+
+                                    4 812 Apprenants
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {{-- ACTIONS --}}
+                        <div class="flex flex-wrap gap-3">
+
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-emerald-500 hover:bg-emerald-600
+                                           transition">
+
+                                Nouvelle Promotion
+
+                            </button>
+
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-indigo-500 hover:bg-indigo-600
+                                           transition">
+
+                                Statistiques
+
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -64,114 +120,178 @@
 
         </section>
 
+        {{-- ===================================================== --}}
         {{-- KPI --}}
+        {{-- ===================================================== --}}
         <section class="mb-6">
 
             <div class="grid
                         grid-cols-2
-                        xl:grid-cols-4
+                        lg:grid-cols-4
+                        2xl:grid-cols-6
                         gap-4">
 
-                @foreach([
-                    ['Promotions', '12', 'text-indigo-400'],
-                    ['Classes', '84', 'text-emerald-400'],
-                    ['Élèves', '4821', 'text-sky-400'],
-                    ['Réussite', '91%', 'text-amber-400']
-                ] as $item)
-
-                <div class="rounded-3xl
+                @foreach ([['Promotions', '7', 'text-indigo-400'], ['Classes', '124', 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400'], ['Filières', '14', 'text-rose-400']] as $kpi)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
-                        {{ $item[0] }}
-                    </p>
+                        <p class="text-sm text-slate-400">
 
-                    <h2 class="mt-3 text-3xl font-bold {{ $item[2] }}">
-                        {{ $item[1] }}
-                    </h2>
+                            {{ $kpi[0] }}
 
-                </div>
+                        </p>
 
+                        <h2 class="mt-3 text-2xl font-bold {{ $kpi[1] ? $kpi[2] : '' }}">
+
+                            {{ $kpi[1] }}
+
+                        </h2>
+
+                    </div>
                 @endforeach
 
             </div>
 
         </section>
 
-        {{-- FILTERS --}}
-        <section class="mb-6">
-
-            <div class="rounded-3xl
-                        bg-slate-900
-                        border border-slate-800
-                        p-5">
-
-                <div class="grid
-                            grid-cols-1
-                            md:grid-cols-2
-                            xl:grid-cols-5
-                            gap-3">
-
-                    <input
-                        type="text"
-                        placeholder="Rechercher une promotion..."
-                        class="h-11 rounded-2xl
-                               bg-slate-950
-                               border border-slate-800
-                               px-4"
-                    >
-
-                    <select class="h-11 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800 px-4">
-
-                        <option>Taux réussite</option>
-
-                    </select>
-
-                    <select class="h-11 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800 px-4">
-
-                        <option>Effectifs</option>
-
-                    </select>
-
-                    <button class="h-11 rounded-2xl
-                                   bg-indigo-500 hover:bg-indigo-600">
-
-                        Filtrer
-
-                    </button>
-
-                    <button class="h-11 rounded-2xl
-                                   bg-slate-800 hover:bg-slate-700">
-
-                        Réinitialiser
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        {{-- TABLE --}}
+        {{-- ===================================================== --}}
+        {{-- PROMOTIONS TABLE --}}
+        {{-- ===================================================== --}}
         <section>
 
-            <div class="rounded-3xl
+            <div class="rounded-[32px]
                         bg-slate-900
                         border border-slate-800
                         overflow-hidden">
 
+                {{-- ===================================================== --}}
+                {{-- HEADER --}}
+                {{-- ===================================================== --}}
+                <div class="p-5 sm:p-6 border-b border-slate-800">
+
+                    <div class="flex flex-col
+                                2xl:flex-row
+                                2xl:items-center
+                                2xl:justify-between
+                                gap-5">
+
+                        {{-- TITLE --}}
+                        <div>
+
+                            <h2 class="text-xl font-semibold">
+
+                                Liste des Promotions
+
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+
+                                Analyse détaillée des promotions,
+                                performances et statistiques.
+
+                            </p>
+
+                        </div>
+
+                        {{-- FILTERS --}}
+                        <div
+                            class="flex flex-col
+                                    sm:flex-row
+                                    flex-wrap
+                                    gap-3
+                                    w-full
+                                    2xl:w-auto">
+
+                            {{-- SEARCH --}}
+                            <div class="relative w-full sm:w-auto">
+
+                                <input type="text" placeholder="Rechercher une promotion..."
+                                    class="h-12
+                                              w-full sm:w-[260px]
+                                              rounded-2xl
+                                              bg-slate-950
+                                              border border-slate-800
+                                              pl-4 pr-4
+                                              text-sm">
+
+                            </div>
+
+                            {{-- FILIERE --}}
+                            <select
+                                class="h-12
+                                           rounded-2xl
+                                           bg-slate-950
+                                           border border-slate-800
+                                           px-4
+                                           text-sm">
+
+                                <option>
+                                    Toutes les Filières
+                                </option>
+
+                                <option>
+                                    F1
+                                </option>
+
+                                <option>
+                                    F2
+                                </option>
+
+                                <option>
+                                    F3
+                                </option>
+
+                                <option>
+                                    F4
+                                </option>
+
+                            </select>
+
+                            {{-- SERIE --}}
+                            <select
+                                class="h-12
+                                           rounded-2xl
+                                           bg-slate-950
+                                           border border-slate-800
+                                           px-4
+                                           text-sm">
+
+                                <option>
+                                    Toutes les Séries
+                                </option>
+
+                                <option>
+                                    Série A
+                                </option>
+
+                                <option>
+                                    Série C
+                                </option>
+
+                                <option>
+                                    Série D
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- ===================================================== --}}
+                {{-- TABLE --}}
+                {{-- ===================================================== --}}
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-[1400px] w-full">
+                    <table class="min-w-[2100px] w-full">
 
-                        <thead class="bg-slate-950 border-b border-slate-800">
+                        {{-- HEAD --}}
+                        <thead class="bg-slate-950
+                                     border-b border-slate-800">
 
                             <tr>
 
@@ -180,19 +300,35 @@
                                 </th>
 
                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Classes
+                                    Nb Classes
                                 </th>
 
                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Élèves
+                                    Effectif
+                                </th>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Meilleur Élève
+                                </th>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Plus Faible
+                                </th>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Plus Jeune
+                                </th>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Plus Âgé
                                 </th>
 
                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Réussite
+                                    Moyenne
                                 </th>
 
                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Responsable
+                                    Taux Réussite
                                 </th>
 
                                 <th class="px-6 py-4 text-right text-sm text-slate-400">
@@ -203,88 +339,264 @@
 
                         </thead>
 
+                        {{-- BODY --}}
                         <tbody class="divide-y divide-slate-800">
 
-                            @foreach(range(1,8) as $promotion)
+                            @foreach (['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'] as $promo)
+                                <tr class="hover:bg-slate-800/40
+                                       transition-colors duration-200">
 
-                            <tr class="hover:bg-slate-800/40">
+                                    {{-- PROMOTION --}}
+                                    <td class="px-6 py-5">
 
-                                {{-- PROMOTION --}}
-                                <td class="px-6 py-5">
+                                        <div>
 
-                                    <a href="#"
-                                       class="font-semibold text-indigo-400 hover:underline">
+                                            <h3 class="font-semibold text-lg">
 
-                                        Sixième
+                                                {{ $promo }}
 
-                                    </a>
+                                            </h3>
 
-                                </td>
+                                            <p class="mt-1 text-sm text-slate-400">
 
-                                {{-- CLASSES --}}
-                                <td class="px-4 py-5 text-center">
+                                                Année Académique
+                                                2025 - 2026
 
-                                    12
+                                            </p>
 
-                                </td>
+                                        </div>
 
-                                {{-- STUDENTS --}}
-                                <td class="px-4 py-5 text-center">
+                                    </td>
 
-                                    684
+                                    {{-- CLASSES --}}
+                                    <td class="px-4 py-5 text-center">
 
-                                </td>
+                                        <span class="font-semibold">
 
-                                {{-- SUCCESS --}}
-                                <td class="px-4 py-5 text-center">
+                                            18
 
-                                    <span class="text-emerald-400">
+                                        </span>
 
-                                        92%
+                                    </td>
 
-                                    </span>
+                                    {{-- EFFECTIF --}}
+                                    <td class="px-4 py-5 text-center">
 
-                                </td>
+                                        <span class="font-semibold
+                                                 text-indigo-400">
 
-                                {{-- MANAGER --}}
-                                <td class="px-4 py-5 text-center">
+                                            684
 
-                                    M. Kouassi
+                                        </span>
 
-                                </td>
+                                    </td>
 
-                                {{-- ACTIONS --}}
-                                <td class="px-6 py-5">
+                                    {{-- BEST --}}
+                                    <td class="px-6 py-5">
 
-                                    <div class="flex justify-end gap-2">
+                                        <div>
 
-                                        <button class="h-10 px-4 rounded-xl
-                                                       bg-indigo-500/10
-                                                       text-indigo-400">
+                                            <h3 class="font-medium">
 
-                                            Profil
+                                                KOUASSI Sarah
 
-                                        </button>
+                                            </h3>
 
-                                        <button class="h-10 px-4 rounded-xl
-                                                       bg-emerald-500/10
-                                                       text-emerald-400">
+                                            <p class="text-sm text-emerald-400">
 
-                                            Classes
+                                                (18.92)
+                                            </p>
 
-                                        </button>
+                                        </div>
 
-                                    </div>
+                                    </td>
 
-                                </td>
+                                    {{-- WORST --}}
+                                    <td class="px-6 py-5">
 
-                            </tr>
+                                        <div>
 
+                                            <h3 class="font-medium">
+
+                                                HOUNKPE David
+
+                                            </h3>
+
+                                            <p class="text-sm text-rose-400">
+
+                                                (03.42)
+
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                    {{-- YOUNGEST --}}
+                                    <td class="px-6 py-5">
+
+                                        <div>
+
+                                            <h3 class="font-medium">
+
+                                                ADJOVI Esther
+
+                                            </h3>
+
+                                            <p class="text-sm text-slate-400">
+
+                                                10 ans
+
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                    {{-- OLDEST --}}
+                                    <td class="px-6 py-5">
+
+                                        <div>
+
+                                            <h3 class="font-medium">
+
+                                                AKAKPO Jonas
+
+                                            </h3>
+
+                                            <p class="text-sm text-slate-400">
+
+                                                19 ans
+
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                    {{-- AVG --}}
+                                    <td class="px-4 py-5 text-center">
+
+                                        <span class="text-lg font-bold
+                                                 text-emerald-400">
+
+                                            12.84
+
+                                        </span>
+
+                                    </td>
+
+                                    {{-- SUCCESS --}}
+                                    <td class="px-4 py-5 text-center">
+
+                                        <span
+                                            class="px-3 py-1 rounded-full
+                                                 bg-emerald-500/10
+                                                 text-emerald-400
+                                                 text-xs">
+
+                                            78%
+
+                                        </span>
+
+                                    </td>
+
+                                    {{-- ACTIONS --}}
+                                    <td class="px-6 py-5">
+
+                                        <div class="flex justify-end
+                                                flex-wrap
+                                                gap-2">
+
+                                            {{-- PROFIL --}}
+                                            <a href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'f']) }}"
+                                                class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
+                                                Profil
+                                            </a>
+
+                                            {{-- CLOSE --}}
+                                            <button
+                                                class="h-10 px-4
+                                                       rounded-xl
+                                                       bg-amber-500/10
+                                                       text-amber-400
+                                                       hover:bg-amber-500/20
+                                                       transition">
+
+                                                Fermer
+
+                                            </button>
+
+                                            {{-- DELETE --}}
+                                            <button
+                                                class="h-10 px-4
+                                                       rounded-xl
+                                                       bg-rose-500/10
+                                                       text-rose-400
+                                                       hover:bg-rose-500/20
+                                                       transition">
+
+                                                Supprimer
+
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
                             @endforeach
 
                         </tbody>
 
                     </table>
+
+                </div>
+
+                {{-- ===================================================== --}}
+                {{-- FOOTER --}}
+                {{-- ===================================================== --}}
+                <div class="p-5 border-t border-slate-800">
+
+                    <div class="flex flex-col
+                                lg:flex-row
+                                lg:items-center
+                                lg:justify-between
+                                gap-4">
+
+                        {{-- INFO --}}
+                        <div class="text-sm text-slate-400">
+
+                            Affichage de
+                            <span class="text-slate-200 font-medium">
+                                7
+                            </span>
+                            promotions enregistrées.
+
+                        </div>
+
+                        {{-- EXPORTS --}}
+                        <div class="flex flex-wrap gap-3">
+
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-emerald-500 hover:bg-emerald-600
+                                           transition">
+
+                                Export Excel
+
+                            </button>
+
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-rose-500 hover:bg-rose-600
+                                           transition">
+
+                                Export PDF
+
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -295,3 +607,4 @@
     </div>
 
 </div>
+
