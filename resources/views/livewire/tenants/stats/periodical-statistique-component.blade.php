@@ -193,33 +193,25 @@
                         xl:grid-cols-5
                         gap-4">
 
-                @foreach([
-                    ['Classes','18','text-indigo-400'],
-                    ['Effectif','1248','text-emerald-400'],
-                    ['Admissibilité','84%','text-sky-400'],
-                    ['Meilleure Moy.','17.82','text-amber-400'],
-                    ['Plus Faible','03.11','text-rose-400'],
-                ] as $card)
-
-                <div class="rounded-3xl
+                @foreach ([['Classes', '18', 'text-indigo-400'], ['Effectif', '1248', 'text-emerald-400'], ['Admissibilité', '84%', 'text-sky-400'], ['Meilleure Moy.', '17.82', 'text-amber-400'], ['Plus Faible', '03.11', 'text-rose-400']] as $card)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
+                        <p class="text-sm text-slate-400">
 
-                        {{ $card[0] }}
+                            {{ $card[0] }}
 
-                    </p>
+                        </p>
 
-                    <h2 class="mt-3 text-3xl font-bold {{ $card[2] }}">
+                        <h2 class="mt-3 text-3xl font-bold {{ $card[2] }}">
 
-                        {{ $card[1] }}
+                            {{ $card[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -265,9 +257,8 @@
                         {{-- SEARCH --}}
                         <div class="w-full lg:w-[320px]">
 
-                            <input type="text"
-                                   placeholder="Rechercher une classe..."
-                                   class="w-full
+                            <input type="text" placeholder="Rechercher une classe..."
+                                class="w-full
                                           h-11
                                           rounded-2xl
                                           bg-slate-950
@@ -283,97 +274,110 @@
                 {{-- TABLE --}}
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-[2400px] w-full">
+                    <table class="min-w-[4200px] w-full border-collapse">
 
-                        <thead class="bg-slate-950 border-b border-slate-800">
+                        {{-- ===================================================== --}}
+                        {{-- HEADER --}}
+                        {{-- ===================================================== --}}
+                        <thead class="bg-slate-950">
 
+                            {{-- ===================================================== --}}
+                            {{-- ROW 1 --}}
+                            {{-- ===================================================== --}}
                             <tr>
 
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                {{-- CLASSE --}}
+                                <th rowspan="2" class="px-6 py-5
+                       text-left
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Classe
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                {{-- EFFECTIF --}}
+                                <th colspan="3" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Effectif
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                {{-- ABANDONS --}}
+                                <th colspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-rose-300
+                       border border-slate-800">
 
-                                    < 4
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    4 - 7
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    7 - 9
+                                    Abandons
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                {{-- INTERVALS --}}
+                                @foreach (['< 4', '4 - 7', '7 - 9', '9 - 10', '10 - 12', '12 - 14', '14 - 16', '> 16'] as $interval)
+                                    <th colspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
-                                    9 - 10
+                                        {{ $interval }}
 
-                                </th>
+                                    </th>
+                                @endforeach
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    10 - 12
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    12 - 14
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    14 - 16
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-
-                                    > 16
-
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                {{-- OTHER --}}
+                                <th rowspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Meilleure Moy.
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                <th rowspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Plus Faible
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                <th rowspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Major
 
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                <th rowspan="2" class="px-4 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Dernier
 
                                 </th>
 
-                                <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                <th rowspan="2" class="px-6 py-4
+                       text-center
+                       text-sm font-semibold
+                       text-slate-300
+                       border border-slate-800">
 
                                     Admissibilité
 
@@ -381,114 +385,233 @@
 
                             </tr>
 
-                        </thead>
+                            {{-- ===================================================== --}}
+                            {{-- ROW 2 --}}
+                            {{-- ===================================================== --}}
+                            <tr>
 
-                        <tbody class="divide-y divide-slate-800">
+                                {{-- EFFECTIF --}}
+                                <th class="px-4 py-3
+                       text-center
+                       text-xs text-slate-400
+                       border border-slate-800">
 
-                            @foreach(range(1,12) as $class)
+                                    F
 
-                            <tr class="hover:bg-slate-800/40">
+                                </th>
 
-                                <td class="px-6 py-5 font-medium">
+                                <th class="px-4 py-3
+                       text-center
+                       text-xs text-slate-400
+                       border border-slate-800">
 
-                                    Terminale F2-{{ $class }}
+                                    G
 
-                                </td>
+                                </th>
 
-                                <td class="px-4 py-5 text-center">
+                                <th class="px-4 py-3
+                       text-center
+                       text-xs text-slate-400
+                       border border-slate-800">
 
-                                    48
+                                    T
 
-                                </td>
+                                </th>
 
-                                <td class="px-4 py-5 text-center text-rose-400">
+                                {{-- ABANDONS --}}
+                                <th class="px-4 py-3
+                       text-center
+                       text-xs text-rose-400
+                       border border-slate-800">
 
-                                    2
+                                    Eff.
 
-                                </td>
+                                </th>
 
-                                <td class="px-4 py-5 text-center text-orange-400">
+                                <th class="px-4 py-3
+                       text-center
+                       text-xs text-rose-400
+                       border border-slate-800">
 
-                                    4
+                                    %
 
-                                </td>
+                                </th>
 
-                                <td class="px-4 py-5 text-center text-amber-400">
+                                {{-- INTERVALS --}}
+                                @foreach (range(1, 8) as $i)
+                                    <th class="px-4 py-3
+                       text-center
+                       text-xs text-slate-400
+                       border border-slate-800">
 
-                                    6
+                                        Eff.
 
-                                </td>
+                                    </th>
 
-                                <td class="px-4 py-5 text-center text-yellow-400">
+                                    <th class="px-4 py-3
+                       text-center
+                       text-xs text-slate-400
+                       border border-slate-800">
 
-                                    5
+                                        %
 
-                                </td>
-
-                                <td class="px-4 py-5 text-center text-sky-400">
-
-                                    10
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center text-indigo-400">
-
-                                    12
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center text-emerald-400">
-
-                                    7
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center text-green-400">
-
-                                    2
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center font-semibold text-emerald-400">
-
-                                    17.82
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center font-semibold text-rose-400">
-
-                                    03.21
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center">
-
-                                    Sarah KOUASSI
-
-                                </td>
-
-                                <td class="px-4 py-5 text-center">
-
-                                    Marc HOUNKPATI
-
-                                </td>
-
-                                <td class="px-6 py-5 text-center">
-
-                                    <div class="inline-flex items-center gap-2">
-
-                                        <span class="text-emerald-400 font-bold">
-
-                                            84%
-
-                                        </span>
-
-                                    </div>
-
-                                </td>
+                                    </th>
+                                @endforeach
 
                             </tr>
 
+                        </thead>
+
+                        {{-- ===================================================== --}}
+                        {{-- BODY --}}
+                        {{-- ===================================================== --}}
+                        <tbody class="bg-slate-900">
+
+                            @foreach (range(1, 12) as $class)
+                                <tr class="hover:bg-slate-800/40 transition-colors duration-200">
+
+                                    {{-- CLASSE --}}
+                                    <td class="px-6 py-5
+                       font-semibold
+                       whitespace-nowrap
+                       border border-slate-800">
+
+                                        Terminale F2-{{ $class }}
+
+                                    </td>
+
+                                    {{-- EFFECTIF --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       text-pink-400
+                       font-medium
+                       border border-slate-800">
+
+                                        21
+
+                                    </td>
+
+                                    <td class="px-4 py-5
+                       text-center
+                       text-sky-400
+                       font-medium
+                       border border-slate-800">
+
+                                        27
+
+                                    </td>
+
+                                    <td class="px-4 py-5
+                       text-center
+                       font-bold
+                       border border-slate-800">
+
+                                        48
+
+                                    </td>
+
+                                    {{-- ABANDONS --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       text-rose-400
+                       border border-slate-800">
+
+                                        2
+
+                                    </td>
+
+                                    <td class="px-4 py-5
+                       text-center
+                       text-rose-400
+                       border border-slate-800">
+
+                                        4%
+
+                                    </td>
+
+                                    {{-- INTERVALS --}}
+                                    @foreach ([['2', '4%', 'text-rose-400'], ['4', '8%', 'text-orange-400'], ['6', '12%', 'text-amber-400'], ['5', '10%', 'text-yellow-400'], ['10', '20%', 'text-sky-400'], ['12', '25%', 'text-indigo-400'], ['7', '15%', 'text-emerald-400'], ['2', '4%', 'text-green-400']] as $range)
+                                        <td class="px-4 py-5
+                       text-center
+                       {{ $range[2] }}
+                       border border-slate-800">
+
+                                            {{ $range[0] }}
+
+                                        </td>
+
+                                        <td class="px-4 py-5
+                       text-center
+                       {{ $range[2] }}
+                       border border-slate-800">
+
+                                            {{ $range[1] }}
+
+                                        </td>
+                                    @endforeach
+
+                                    {{-- BEST --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       font-bold text-emerald-400
+                       border border-slate-800">
+
+                                        17.82
+
+                                    </td>
+
+                                    {{-- LOW --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       font-bold text-rose-400
+                       border border-slate-800">
+
+                                        03.21
+
+                                    </td>
+
+                                    {{-- MAJOR --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       whitespace-nowrap
+                       border border-slate-800">
+
+                                        Sarah KOUASSI
+
+                                    </td>
+
+                                    {{-- LAST --}}
+                                    <td class="px-4 py-5
+                       text-center
+                       whitespace-nowrap
+                       border border-slate-800">
+
+                                        Marc HOUNKPATI
+
+                                    </td>
+
+                                    {{-- SUCCESS --}}
+                                    <td class="px-6 py-5
+                       text-center
+                       border border-slate-800">
+
+                                        <div class="inline-flex
+                            items-center
+                            gap-2
+                            px-3 py-1 rounded-full
+                            bg-emerald-500/10">
+
+                                            <span class="text-emerald-400 font-bold">
+
+                                                84%
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
                             @endforeach
 
                         </tbody>
@@ -504,3 +627,4 @@
     </div>
 
 </div>
+

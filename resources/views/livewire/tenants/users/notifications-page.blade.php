@@ -1,4 +1,4 @@
-<div class="w-full overflow-x-hidden">
+<div class="w-full overflow-x-hidden p-2">
 
     <div class="mx-auto
                 w-full
@@ -89,38 +89,70 @@
                         2xl:grid-cols-6
                         gap-4">
 
-                @foreach([
-                    ['Notifications','1 284','text-indigo-400'],
-                    ['Emails','843','text-sky-400'],
-                    ['SMS','212','text-amber-400'],
-                    ['WhatsApp','694','text-emerald-400'],
-                    ['Échecs','18','text-rose-400'],
-                    ['Programmées','46','text-violet-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Notifications', '1 284', 'text-indigo-400'], ['Emails', '843', 'text-sky-400'], ['SMS', '212', 'text-amber-400'], ['WhatsApp', '694', 'text-emerald-400'], ['Échecs', '18', 'text-rose-400'], ['Programmées', '46', 'text-violet-400']] as $kpi)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
+                        <p class="text-sm text-slate-400">
 
-                        {{ $kpi[0] }}
+                            {{ $kpi[0] }}
 
-                    </p>
+                        </p>
 
-                    <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
+                        <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
 
+        </section>
+
+        <section class="mb-3">
+            <div class="space-y-6">
+
+                {{-- ===================================================== --}}
+                {{-- QUICK SEND --}}
+                {{-- ===================================================== --}}
+                <div class="rounded-3xl bg-gradient-to-br from-indigo-500/20 to-slate-900 border border-indigo-500/20 p-5">
+                    <div class="flex  items-center">
+                        <div class="w-1/3">
+                            <h2 class="text-lg font-semibold">
+                                Envoi Rapide
+                            </h2>
+
+                            <p class="mt-2 text-sm text-slate-300">
+                                Envoyer rapidement une notification.
+                            </p>
+                        </div>
+
+                        <div class="w-2/3">
+                            <input type="email" placeholder="email destinaire" class="w-full rounded-2xl bg-slate-900/70 border border-slate-800 px-4 py-3.5">
+                        </div>
+                    </div>
+
+                    <div class="mt-5 space-y-4">
+                        <div class="w-full">
+                            <div class="col-span-2">
+                                <input type="text" placeholder="Objet..." class="w-full rounded-2xl bg-slate-900/70 border border-slate-800 px-4 py-3.5">
+                            </div>
+                        </div>
+
+                        <textarea rows="5" placeholder="Votre message..." class="w-full rounded-2xl bg-slate-900/70 border border-slate-800 p-4"></textarea>
+
+                        <button class="w-full p-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600">
+                            Envoyer Notification
+                        </button>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
         {{-- ===================================================== --}}
@@ -140,9 +172,8 @@
                             gap-4">
 
                     {{-- SEARCH --}}
-                    <input type="text"
-                           placeholder="Rechercher une notification..."
-                           class="h-12 rounded-2xl
+                    <input type="text" placeholder="Rechercher une notification..."
+                        class="h-12 rounded-2xl
                                   bg-slate-950
                                   border border-slate-800
                                   px-4">
@@ -190,8 +221,7 @@
                     </select>
 
                     {{-- DATE --}}
-                    <input type="date"
-                           class="h-12 rounded-2xl
+                    <input type="date" class="h-12 rounded-2xl
                                   bg-slate-950
                                   border border-slate-800
                                   px-4">
@@ -209,20 +239,13 @@
             </div>
 
         </section>
-
         {{-- ===================================================== --}}
         {{-- MAIN GRID --}}
         {{-- ===================================================== --}}
         <section>
 
-            <div class="grid
-                        grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_420px]
-                        gap-6">
+            <div class="">
 
-                {{-- ===================================================== --}}
-                {{-- LEFT --}}
-                {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
                     {{-- ===================================================== --}}
@@ -236,7 +259,8 @@
                         {{-- HEADER --}}
                         <div class="p-5 border-b border-slate-800">
 
-                            <div class="flex flex-col
+                            <div
+                                class="flex flex-col
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
@@ -286,7 +310,7 @@
                         {{-- TABLE --}}
                         <div class="overflow-x-auto">
 
-                            <table class="min-w-[1800px] w-full">
+                            <table class="w-full truncate">
 
                                 <thead class="bg-slate-950
                                              border-b border-slate-800">
@@ -317,7 +341,7 @@
                                             Date
                                         </th>
 
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
+                                        <th class="px-6 py-4 text-center text-sm text-slate-400">
                                             Actions
                                         </th>
 
@@ -327,107 +351,109 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,12) as $notif)
+                                    @foreach (range(1, 12) as $notif)
+                                        <tr class="hover:bg-slate-800/40">
 
-                                    <tr class="hover:bg-slate-800/40">
+                                            <td class="px-6 py-5">
 
-                                        <td class="px-6 py-5">
+                                                <input type="checkbox">
 
-                                            <input type="checkbox">
+                                            </td>
 
-                                        </td>
+                                            <td class="px-6 py-5">
 
-                                        <td class="px-6 py-5">
+                                                <div>
 
-                                            <div>
+                                                    <h3 class="font-medium">
 
-                                                <h3 class="font-medium">
+                                                        Réunion des Parents
 
-                                                    Réunion des Parents
+                                                    </h3>
 
-                                                </h3>
+                                                    <p class="mt-1 text-sm text-slate-400">
 
-                                                <p class="mt-1 text-sm text-slate-400">
+                                                        Information générale
+                                                        pour les parents d’élèves.
 
-                                                    Information générale
-                                                    pour les parents d’élèves.
+                                                    </p>
 
-                                                </p>
+                                                </div>
 
-                                            </div>
+                                            </td>
 
-                                        </td>
+                                            <td class="px-4 py-5 text-center">
 
-                                        <td class="px-4 py-5 text-center">
-
-                                            <span class="px-3 py-1 rounded-full
+                                                <span
+                                                    class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-xs">
 
-                                                WhatsApp
+                                                    WhatsApp
 
-                                            </span>
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center">
+                                            <td class="px-4 py-5 text-center">
 
-                                            684
+                                                684
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center">
+                                            <td class="px-4 py-5 text-center">
 
-                                            <span class="px-3 py-1 rounded-full
+                                                <span class="px-3 py-1 rounded-full
                                                          bg-indigo-500/10
                                                          text-indigo-400 text-xs">
 
-                                                Envoyée
+                                                    Envoyée
 
-                                            </span>
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center">
+                                            <td class="px-4 py-5 text-center">
 
-                                            19 Mai 2026
+                                                19 Mai 2026
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-6 py-5">
+                                            <td class="px-6 py-5">
 
-                                            <div class="flex justify-end gap-2">
+                                                <div class="flex justify-end gap-2">
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-indigo-500/10
                                                                text-indigo-400">
 
-                                                    Voir
+                                                        Voir
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-emerald-500/10
                                                                text-emerald-400">
 
-                                                    Relancer
+                                                        Relancer
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-rose-500/10
                                                                text-rose-400">
 
-                                                    Supprimer
+                                                        Supprimer
 
-                                                </button>
+                                                    </button>
 
-                                            </div>
+                                                </div>
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -479,45 +505,37 @@
                                     xl:grid-cols-4
                                     gap-4">
 
-                            @foreach([
-                                ['Emails Livrés','92%','bg-indigo-500'],
-                                ['SMS Livrés','87%','bg-amber-500'],
-                                ['WhatsApp','96%','bg-emerald-500'],
-                                ['Push','99%','bg-sky-500']
-                            ] as $report)
-
-                            <div class="rounded-2xl
+                            @foreach ([['Emails Livrés', '92%', 'bg-indigo-500'], ['SMS Livrés', '87%', 'bg-amber-500'], ['WhatsApp', '96%', 'bg-emerald-500'], ['Push', '99%', 'bg-sky-500']] as $report)
+                                <div class="rounded-2xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-4">
 
-                                <div class="flex justify-between">
+                                    <div class="flex justify-between">
 
-                                    <span class="text-sm text-slate-400">
+                                        <span class="text-sm text-slate-400">
 
-                                        {{ $report[0] }}
+                                            {{ $report[0] }}
 
-                                    </span>
+                                        </span>
 
-                                    <span class="font-semibold">
+                                        <span class="font-semibold">
 
-                                        {{ $report[1] }}
+                                            {{ $report[1] }}
 
-                                    </span>
+                                        </span>
 
-                                </div>
+                                    </div>
 
-                                <div class="mt-3 h-2 rounded-full
+                                    <div class="mt-3 h-2 rounded-full
                                             bg-slate-800 overflow-hidden">
 
-                                    <div class="h-full rounded-full {{ $report[2] }}"
-                                         style="width: {{ $report[1] }}">
+                                        <div class="h-full rounded-full {{ $report[2] }}" style="width: {{ $report[1] }}">
+                                        </div>
+
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
@@ -525,176 +543,6 @@
                     </div>
 
                 </div>
-
-                {{-- ===================================================== --}}
-                {{-- RIGHT SIDEBAR --}}
-                {{-- ===================================================== --}}
-                <div class="space-y-6">
-
-                    {{-- ===================================================== --}}
-                    {{-- QUICK SEND --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-gradient-to-br
-                                from-indigo-500/20
-                                to-slate-900
-                                border border-indigo-500/20
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Envoi Rapide
-
-                        </h2>
-
-                        <p class="mt-2 text-sm text-slate-300">
-
-                            Envoyer rapidement une notification.
-
-                        </p>
-
-                        <div class="mt-5 space-y-4">
-
-                            <input type="text"
-                                   placeholder="Objet..."
-                                   class="w-full
-                                          h-11
-                                          rounded-2xl
-                                          bg-slate-900/70
-                                          border border-slate-800
-                                          px-4">
-
-                            <textarea rows="5"
-                                      placeholder="Votre message..."
-                                      class="w-full
-                                             rounded-2xl
-                                             bg-slate-900/70
-                                             border border-slate-800
-                                             p-4"></textarea>
-
-                            <button class="w-full
-                                           h-12
-                                           rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600">
-
-                                Envoyer Notification
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    {{-- ===================================================== --}}
-                    {{-- SCHEDULED --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Notifications Programmées
-
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach(range(1,5) as $schedule)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800
-                                        p-4">
-
-                                <div class="flex items-center justify-between">
-
-                                    <div>
-
-                                        <h3 class="font-medium">
-
-                                            Bulletin Semestriel
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            20 Mai 2026 — 08:00
-
-                                        </p>
-
-                                    </div>
-
-                                    <span class="px-3 py-1 rounded-full
-                                                 bg-amber-500/10
-                                                 text-amber-400 text-xs">
-
-                                        Programmé
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- ===================================================== --}}
-                    {{-- CHANNELS --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Canaux Disponibles
-
-                        </h2>
-
-                        <div class="mt-5 space-y-3">
-
-                            @foreach([
-                                ['Email','Actif','text-indigo-400'],
-                                ['WhatsApp','Actif','text-emerald-400'],
-                                ['SMS','Actif','text-amber-400'],
-                                ['Push','Actif','text-sky-400'],
-                            ] as $channel)
-
-                            <div class="flex items-center justify-between
-                                        rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800
-                                        p-4">
-
-                                <span>
-
-                                    {{ $channel[0] }}
-
-                                </span>
-
-                                <span class="{{ $channel[2] }} text-sm font-medium">
-
-                                    {{ $channel[1] }}
-
-                                </span>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </div>
-
             </div>
 
         </section>
@@ -702,3 +550,4 @@
     </div>
 
 </div>
+

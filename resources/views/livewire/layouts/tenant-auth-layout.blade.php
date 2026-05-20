@@ -114,6 +114,13 @@
                 </div>
 
                 <div class="s-section">
+                    <div class="s-section-label">Statistiques</div>
+                    <a href="{{ route('tenant.stats.general') }}" class="s-link">
+                        <div class="s-icon">📝</div><span class="s-label">Générale</span><span class="s-badge badge-red">3</span>
+                    </a>
+                </div>
+
+                <div class="s-section">
                     <div class="s-section-label">Évaluation</div>
                     <a href="#" class="s-link">
                         <div class="s-icon">📝</div><span class="s-label">Notes</span><span class="s-badge badge-red">3</span>
@@ -138,7 +145,7 @@
                     <a href="#" class="s-link">
                         <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>
                     </a>
-                    <a href="#" class="s-link">
+                    <a href="{{ route('tenant.notifications.center') }}" class="s-link">
                         <div class="s-icon">🔔</div><span class="s-label">Notifications</span>
                     </a>
                 </div>

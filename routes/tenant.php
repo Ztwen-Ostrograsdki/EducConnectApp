@@ -13,6 +13,7 @@ use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
+use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
@@ -21,6 +22,7 @@ use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
+use App\Livewire\Tenants\Users\NotificationsPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -76,12 +78,16 @@ Route::middleware([
             Route::get('/dashboard/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
 
             Route::get('/dashboard/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
+            
+            Route::get('/dashboard/statistiques-semestrielles/',PeriodicalStatistiqueComponent::class)->name('stats.general');
 
             
         });
 
 
         Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('tenant.student.profil');
+
+        Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
         
         
         
