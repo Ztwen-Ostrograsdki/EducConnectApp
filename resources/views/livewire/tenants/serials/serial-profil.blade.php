@@ -2,72 +2,147 @@
 
     <div class="mx-auto
                 w-full
-                max-w-[1850px]
+                max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
 
+        <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
+
+            <h1 class="text-lg sm:text-3xl font-bold">
+
+                Profil de la série AB
+
+            </h1>
+
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">
+
+                Série Active
+
+            </span>
+
+        </div>
+
         {{-- ===================================================== --}}
-        {{-- HEADER --}}
+        {{-- HERO --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-[32px]
-                        bg-slate-900
+            <div class="relative overflow-hidden
+                        rounded-[32px]
                         border border-slate-800
-                        p-5 sm:p-6 lg:p-8">
+                        bg-slate-900">
 
-                <div class="flex flex-col
-                            2xl:flex-row
-                            2xl:items-center
-                            2xl:justify-between
-                            gap-6">
+                {{-- BG --}}
+                <div class="absolute inset-0
+                            bg-gradient-to-br
+                            from-indigo-500/10
+                            via-slate-900
+                            to-slate-900">
+                </div>
 
-                    {{-- LEFT --}}
-                    <div class="min-w-0">
+                <div class="relative p-5 sm:p-6 lg:p-8">
 
-                        <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex flex-col
+                                xl:flex-row
+                                xl:items-start
+                                xl:justify-between
+                                gap-8">
 
-                            <h1 class="text-2xl sm:text-3xl font-bold">
+                        {{-- LEFT --}}
+                        <div class="flex flex-col
+                                    lg:flex-row
+                                    gap-6
+                                    min-w-0">
 
-                                Série F2
+                            {{-- ICON --}}
+                            <div class="flex justify-center lg:block">
 
-                            </h1>
+                                <div
+                                    class="w-32 h-32 sm:w-36 sm:h-36
+                                            rounded-[30px]
+                                            bg-indigo-500/10
+                                            border border-indigo-500/20
+                                            flex items-center justify-center
+                                            text-5xl
+                                            shrink-0">
 
-                            <span class="px-3 py-1 rounded-full
-                                         bg-indigo-500/10
-                                         text-indigo-400 text-xs">
+                                    {{ initials($serial_slug) }}
 
-                                Construction Mécanique
+                                </div>
 
-                            </span>
+                            </div>
+
+                            {{-- INFOS --}}
+                            <div class="min-w-0">
+
+                                <div class="flex flex-wrap
+                                            items-center
+                                            gap-3">
+
+                                    <h1 class="text-2xl sm:text-3xl font-bold">
+
+                                        {{ $serial_name }}
+
+                                    </h1>
+                                </div>
+
+                                <p class="mt-2 text-slate-400">
+
+                                    Tableau global des statistiques,
+                                    performances de la série.
+
+                                </p>
+
+                                {{-- BADGES --}}
+                                <div class="mt-5 flex flex-wrap gap-3">
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                                bg-slate-800 border border-slate-700">
+
+                                        18 Enseignants
+
+                                    </div>
+
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
+
+                                        42 Classes
+
+                                    </div>
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
+
+                                        4255 apprenants
+
+                                    </div>
+                                </div>
+
+                            </div>
 
                         </div>
 
-                        <p class="mt-3 text-slate-400 max-w-3xl">
+                        {{-- ACTIONS --}}
+                        <div class="flex flex-wrap gap-3">
 
-                            Vue globale de la série F2 avec
-                            statistiques, performances,
-                            classes, enseignants et matières.
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-indigo-500 hover:bg-indigo-600">
 
-                        </p>
+                                Ajouter une classe
 
-                    </div>
+                            </button>
 
-                    {{-- ACTIONS --}}
-                    <div class="flex flex-wrap gap-3">
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-emerald-500 hover:bg-emerald-600">
 
-                        <button class="h-11 px-5 rounded-2xl
-                                       bg-indigo-500 hover:bg-indigo-600">
+                                Export PDF
 
-                            Ajouter Classe
+                            </button>
 
-                        </button>
+                            <button class="h-11 px-5 rounded-2xl
+                                           bg-sky-500 hover:bg-sky-600">
 
-                        <button class="h-11 px-5 rounded-2xl
-                                       bg-slate-800 hover:bg-slate-700">
+                                Statistiques
 
-                            Exporter
+                            </button>
 
-                        </button>
+                        </div>
 
                     </div>
 
@@ -84,31 +159,29 @@
 
             <div class="grid
                         grid-cols-2
-                        xl:grid-cols-4
+                        lg:grid-cols-4
+                        2xl:grid-cols-6
                         gap-4">
 
-                @foreach([
-                    ['Classes', '8', 'text-indigo-400'],
-                    ['Élèves', '386', 'text-emerald-400'],
-                    ['Réussite', '87%', 'text-sky-400'],
-                    ['Moyenne Générale', '13.84', 'text-amber-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Moyenne Générale', '11.84', 'text-indigo-400'], ['Meilleure classe', 'Terminale F4-3', 'text-emerald-400'], ['Faibel classe', 'Terminale F4-6', 'text-rose-400'], ['Taux Réussite', '72%', 'text-sky-400'], ['Classes', '35', 'text-amber-400'], ['Enseignants', '18', 'text-violet-400']] as $kpi)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
-                        {{ $kpi[0] }}
-                    </p>
+                        <p class="text-sm text-slate-400">
 
-                    <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
-                        {{ $kpi[1] }}
-                    </h2>
+                            {{ $kpi[0] }}
 
-                </div>
+                        </p>
 
+                        <h2 class="mt-3 text-xl font-bold {{ $kpi[2] }}">
+
+                            {{ $kpi[1] }}
+
+                        </h2>
+
+                    </div>
                 @endforeach
 
             </div>
@@ -116,60 +189,172 @@
         </section>
 
         {{-- ===================================================== --}}
-        {{-- FILTERS --}}
+        {{-- BEST / WORST --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-3xl
-                        bg-slate-900
-                        border border-slate-800
-                        p-5">
+            <div class="grid
+                        grid-cols-1
+                        xl:grid-cols-2
+                        gap-6">
 
-                <div class="grid
-                            grid-cols-1
-                            md:grid-cols-2
-                            xl:grid-cols-5
-                            gap-3">
+                {{-- BEST --}}
+                <div class="rounded-[32px]
+                            bg-slate-900
+                            border border-emerald-500/20
+                            p-6">
 
-                    <select class="h-11 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800 px-4">
+                    <div class="flex items-center gap-4">
 
-                        <option>Toutes les classes</option>
-                        <option>Terminale F2-1</option>
-                        <option>Terminale F2-2</option>
+                        <div class="w-16 h-16 rounded-2xl
+                                    bg-emerald-500/10
+                                    flex items-center justify-center
+                                    text-2xl">
 
-                    </select>
+                            🏆
 
-                    <select class="h-11 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800 px-4">
+                        </div>
 
-                        <option>Toutes les matières</option>
+                        <div>
 
-                    </select>
+                            <h2 class="text-xl font-semibold">
 
-                    <select class="h-11 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800 px-4">
+                                Meilleure Performance
 
-                        <option>Performance</option>
+                            </h2>
 
-                    </select>
+                            <p class="text-slate-400">
 
-                    <button class="h-11 rounded-2xl
-                                   bg-indigo-500 hover:bg-indigo-600">
+                                Plus forte moyenne enregistrée.
 
-                        Filtrer
+                            </p>
 
-                    </button>
+                        </div>
 
-                    <button class="h-11 rounded-2xl
-                                   bg-slate-800 hover:bg-slate-700">
+                    </div>
 
-                        Réinitialiser
+                    <div class="mt-6 space-y-4">
 
-                    </button>
+                        <div class="rounded-2xl
+                                    bg-slate-950
+                                    border border-slate-800
+                                    p-5">
+
+                            <h3 class="text-lg font-semibold">
+
+                                KOUASSI Sarah
+
+                            </h3>
+
+                            <p class="mt-2 text-slate-400">
+
+                                Classe : Terminale F4-1
+
+                            </p>
+
+                            <div class="mt-4 flex flex-wrap gap-3">
+
+                                <span class="px-3 py-1 rounded-full
+                                             bg-emerald-500/10
+                                             text-emerald-400 text-xs">
+
+                                    Moyenne : 19.75
+
+                                </span>
+
+                                <span class="px-3 py-1 rounded-full
+                                             bg-indigo-500/10
+                                             text-indigo-400 text-xs">
+
+                                    Promotion : Terminale
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- WORST --}}
+                <div class="rounded-[32px]
+                            bg-slate-900
+                            border border-rose-500/20
+                            p-6">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="w-16 h-16 rounded-2xl
+                                    bg-rose-500/10
+                                    flex items-center justify-center
+                                    text-2xl">
+
+                            ⚠️
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-xl font-semibold">
+
+                                Plus Faible Performance
+
+                            </h2>
+
+                            <p class="text-slate-400">
+
+                                Plus faible moyenne enregistrée.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-6 space-y-4">
+
+                        <div class="rounded-2xl
+                                    bg-slate-950
+                                    border border-slate-800
+                                    p-5">
+
+                            <h3 class="text-lg font-semibold">
+
+                                HOUNKPE David
+
+                            </h3>
+
+                            <p class="mt-2 text-slate-400">
+
+                                Classe : Tle F4-2
+
+                            </p>
+
+                            <div class="mt-4 flex flex-wrap gap-3">
+
+                                <span class="px-3 py-1 rounded-full
+                                             bg-rose-500/10
+                                             text-rose-400 text-xs">
+
+                                    Moyenne : 02.15
+
+                                </span>
+
+                                <span class="px-3 py-1 rounded-full
+                                             bg-indigo-500/10
+                                             text-indigo-400 text-xs">
+
+                                    Promotion : Terminale F4
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -178,75 +363,647 @@
         </section>
 
         {{-- ===================================================== --}}
-        {{-- MAIN GRID --}}
+        {{-- BEST BOY / BEST GIRL --}}
         {{-- ===================================================== --}}
-        <section>
+        <section class="mb-6">
 
             <div class="grid
-                        grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_420px]
-                        gap-6">
+                grid-cols-1
+                xl:grid-cols-2
+                gap-6">
 
                 {{-- ===================================================== --}}
-                {{-- LEFT --}}
+                {{-- MEILLEUR GARÇON --}}
                 {{-- ===================================================== --}}
-                <div class="space-y-6 min-w-0">
+                <div class="rounded-[32px]
+                    bg-slate-900
+                    border border-sky-500/20
+                    overflow-hidden">
 
-                    {{-- ===================================================== --}}
-                    {{-- CLASSES --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                overflow-hidden">
+                    {{-- HEADER --}}
+                    <div class="p-6 border-b border-slate-800">
 
-                        <div class="p-5 border-b border-slate-800">
+                        <div class="flex items-center gap-4">
 
-                            <h2 class="text-xl font-semibold">
+                            <div class="w-16 h-16 rounded-2xl
+                                bg-sky-500/10
+                                flex items-center justify-center
+                                text-2xl">
 
-                                Classes de la Série
+                                🏅
 
-                            </h2>
+                            </div>
+
+                            <div>
+
+                                <h2 class="text-xl font-semibold">
+
+                                    Meilleur Garçon
+
+                                </h2>
+
+                                <p class="mt-1 text-sm text-slate-400">
+
+                                    Meilleure performance masculine
+                                    dans la matière.
+
+                                </p>
+
+                            </div>
 
                         </div>
 
+                    </div>
+
+                    {{-- CONTENT --}}
+                    <div class="p-6">
+
+                        <div class="flex flex-col
+                            lg:flex-row
+                            lg:items-center
+                            gap-5">
+
+                            {{-- PHOTO --}}
+                            <div class="flex justify-center lg:block">
+
+                                <div class="w-28 h-28 rounded-[28px]
+                                    bg-slate-800
+                                    border border-slate-700
+                                    shrink-0">
+                                </div>
+
+                            </div>
+
+                            {{-- DETAILS --}}
+                            <div class="flex-1 min-w-0">
+
+                                <div class="flex flex-wrap
+                                    items-center
+                                    gap-3">
+
+                                    <h3 class="text-2xl font-bold">
+
+                                        HOUNKPE David
+
+                                    </h3>
+
+                                    <span class="px-3 py-1 rounded-full
+                                         bg-sky-500/10
+                                         text-sky-400 text-xs">
+
+                                        Rang #1 Garçon
+
+                                    </span>
+
+                                </div>
+
+                                <p class="mt-2 text-slate-400">
+
+                                    Terminale F4-1 —
+                                    Promotion Terminale
+
+                                </p>
+
+                                {{-- BADGES --}}
+                                <div class="mt-5 flex flex-wrap gap-3">
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Moyenne : 18.92
+
+                                    </div>
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Coef : 4
+
+                                    </div>
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Prof : M. AHOLOU
+
+                                    </div>
+
+                                </div>
+
+                                {{-- ACTIONS --}}
+                                <div class="mt-6 flex flex-wrap gap-3">
+
+                                    <button class="h-11 px-5 rounded-2xl
+                                           bg-sky-500 hover:bg-sky-600">
+
+                                        Voir Profil
+
+                                    </button>
+
+                                    <button class="h-11 px-5 rounded-2xl
+                                           bg-indigo-500 hover:bg-indigo-600">
+
+                                        Historique Notes
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- ===================================================== --}}
+                {{-- MEILLEURE FILLE --}}
+                {{-- ===================================================== --}}
+                <div class="rounded-[32px]
+                    bg-slate-900
+                    border border-pink-500/20
+                    overflow-hidden">
+
+                    {{-- HEADER --}}
+                    <div class="p-6 border-b border-slate-800">
+
+                        <div class="flex items-center gap-4">
+
+                            <div class="w-16 h-16 rounded-2xl
+                                bg-pink-500/10
+                                flex items-center justify-center
+                                text-2xl">
+
+                                👑
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="text-xl font-semibold">
+
+                                    Meilleure Fille
+
+                                </h2>
+
+                                <p class="mt-1 text-sm text-slate-400">
+
+                                    Meilleure performance féminine
+                                    dans la matière.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- CONTENT --}}
+                    <div class="p-6">
+
+                        <div class="flex flex-col
+                            lg:flex-row
+                            lg:items-center
+                            gap-5">
+
+                            {{-- PHOTO --}}
+                            <div class="flex justify-center lg:block">
+
+                                <div class="w-28 h-28 rounded-[28px]
+                                    bg-slate-800
+                                    border border-slate-700
+                                    shrink-0">
+                                </div>
+
+                            </div>
+
+                            {{-- DETAILS --}}
+                            <div class="flex-1 min-w-0">
+
+                                <div class="flex flex-wrap
+                                    items-center
+                                    gap-3">
+
+                                    <h3 class="text-2xl font-bold">
+
+                                        KOUASSI Sarah
+
+                                    </h3>
+
+                                    <span class="px-3 py-1 rounded-full
+                                         bg-pink-500/10
+                                         text-pink-400 text-xs">
+
+                                        Rang #1 Fille
+
+                                    </span>
+
+                                </div>
+
+                                <p class="mt-2 text-slate-400">
+
+                                    Terminale F4-2 —
+                                    Promotion Terminale
+
+                                </p>
+
+                                {{-- BADGES --}}
+                                <div class="mt-5 flex flex-wrap gap-3">
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Moyenne : 19.41
+
+                                    </div>
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Coef : 4
+
+                                    </div>
+
+                                    <div class="px-4 py-2 rounded-2xl
+                                        bg-slate-950
+                                        border border-slate-800">
+
+                                        Prof : Mme ADJOVI
+
+                                    </div>
+
+                                </div>
+
+                                {{-- ACTIONS --}}
+                                <div class="mt-6 flex flex-wrap gap-3">
+
+                                    <button class="h-11 px-5 rounded-2xl
+                                           bg-pink-500 hover:bg-pink-600">
+
+                                        Voir Profil
+
+                                    </button>
+
+                                    <button class="h-11 px-5 rounded-2xl
+                                           bg-indigo-500 hover:bg-indigo-600">
+
+                                        Historique Notes
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {{-- ===================================================== --}}
+        {{-- TEACHERS --}}
+        {{-- ===================================================== --}}
+        <section class="mb-6 p-2">
+
+            <div class="rounded-[32px]
+                        bg-slate-900
+                        border border-slate-800
+                        overflow-hidden">
+
+                {{-- HEADER --}}
+                <div class="p-5 border-b border-slate-800">
+
+                    <div class="flex flex-col
+                                xl:flex-row
+                                xl:items-center
+                                xl:justify-between
+                                gap-4">
+
+                        <div>
+
+                            <h2 class="text-xl font-semibold">
+
+                                Enseignants de la série
+
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+
+                                Gestion des enseignants concernés.
+
+                            </p>
+
+                        </div>
+
+                        {{-- FILTERS --}}
+                        <div class="flex flex-wrap gap-3">
+
+                            <input type="text" placeholder="Rechercher enseignant..."
+                                class="h-11 min-w-[220px]
+                                          rounded-2xl
+                                          bg-slate-950
+                                          border border-slate-800
+                                          px-4">
+
+                            <select class="h-11 rounded-2xl
+                                           bg-slate-950
+                                           border border-slate-800
+                                           px-4">
+
+                                <option>Toutes les classes</option>
+                                <option>AB</option>
+                                <option>C</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- TABLE --}}
+                <div class="overflow-x-auto">
+
+                    <table class="min-w-[1700px] w-full">
+
+                        <thead class="bg-slate-950
+                                     border-b border-slate-800">
+
+                            <tr>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Enseignant
+                                </th>
+
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Classes
+                                </th>
+
+                                <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-800">
+
+                            @foreach (range(1, 10) as $teacher)
+                                <tr class="hover:bg-slate-800/40">
+
+                                    {{-- TEACHER --}}
+                                    <td class="px-6 py-5">
+
+                                        <div class="flex items-center gap-4 truncate">
+
+                                            <div class="w-14 h-14
+                                                    rounded-2xl
+                                                    bg-slate-800">
+                                            </div>
+
+                                            <div>
+
+                                                <h3 class="font-medium">
+
+                                                    M. AHOLOU Pascal
+
+                                                </h3>
+
+                                                <p class="text-sm text-slate-400">
+
+                                                    aholou@email.com
+
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    {{-- CLASSES --}}
+                                    <td class="px-6 py-5">
+
+                                        <div class="flex flex-wrap gap-2 truncate">
+
+                                            <span class="px-3 py-1 rounded-full
+                                                     bg-indigo-500/10
+                                                     text-indigo-400 text-xs">
+
+                                                Tle F2-1
+
+                                            </span>
+
+                                            <span class="px-3 py-1 rounded-full
+                                                     bg-indigo-500/10
+                                                     text-indigo-400 text-xs">
+
+                                                1ère F3-2
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                    {{-- ACTIONS --}}
+                                    <td class="px-6 py-5">
+
+                                        <div class="flex justify-end gap-2 truncate">
+
+                                            <button class="h-10 px-4 rounded-xl
+                                                       bg-indigo-500/10
+                                                       text-indigo-400">
+
+                                                Voir Profil
+
+                                            </button>
+
+                                            <button class="h-10 px-4 rounded-xl
+                                                       bg-amber-500/10
+                                                       text-amber-400">
+
+                                                Bloquer
+
+                                            </button>
+
+                                            <button class="h-10 px-4 rounded-xl
+                                                       bg-rose-500/10
+                                                       text-rose-400">
+
+                                                Retirer
+
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {{-- ===================================================== --}}
+        {{-- LISTES DES APPRENANTS DE LA SERIE  --}}
+        {{-- ===================================================== --}}
+        <section class="mb-6">
+
+            <div class="rounded-[32px]
+                bg-slate-900
+                border border-slate-800
+                overflow-hidden">
+
+                {{-- ===================================================== --}}
+                {{-- HEADER --}}
+                {{-- ===================================================== --}}
+                <div class="p-5 sm:p-6 border-b border-slate-800">
+
+                    <div class="flex flex-col
+                        xl:flex-row
+                        xl:items-center
+                        xl:justify-between
+                        gap-5">
+
+                        {{-- TITLE --}}
+                        <div>
+
+                            <h2 class="text-xl font-semibold">
+
+                                Apprenants de la série
+
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+
+                                Gestion des apprenants
+                                de la série selon les
+                                promotions, classes
+
+                            </p>
+
+                        </div>
+
+                        {{-- FILTERS --}}
+                        <div class="flex flex-col
+                            sm:flex-row
+                            gap-3
+                            w-full
+                            xl:w-auto">
+
+                            {{-- CLASSES --}}
+                            <select
+                                class="h-12
+                                   min-w-[220px]
+                                   rounded-2xl
+                                   bg-slate-950
+                                   border border-slate-800
+                                   px-4
+                                   text-sm">
+
+                                <option>
+                                    Toutes les classes
+                                </option>
+
+                                <option>
+                                    Terminales F4-1
+                                </option>
+                                <option>
+                                    Terminales F4-2
+                                </option>
+                                <option>
+                                    Terminales F4-3
+                                </option>
+                                <option>
+                                    Terminales F4-4
+                                </option>
+
+                            </select>
+
+                            {{-- SERIE --}}
+                            <select
+                                class="h-12
+                                   min-w-[220px]
+                                   rounded-2xl
+                                   bg-slate-950
+                                   border border-slate-800
+                                   px-4
+                                   text-sm">
+
+                                <option>
+                                    Toutes les promotions
+                                </option>
+
+                                <option>
+                                    Terminales
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- ===================================================== --}}
+                {{-- TABLE --}}
+                {{-- ===================================================== --}}
+                <section class="w-full p-2">
+
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+
                         <div class="overflow-x-auto">
 
-                            <table class="min-w-[1600px] w-full">
+                            <table class="w-full p-1">
 
-                                <thead class="bg-slate-950 border-b border-slate-800">
+                                <thead class="bg-slate-950 border-b border-slate-800 ">
 
                                     <tr>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                            Apprenant
+                                        </th>
+
+                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                            Matricule
+                                        </th>
+
+                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
                                             Classe
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Prof Principal
+                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                            Présence
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Élèves
+                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                            Parent
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Garçons
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Filles
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Réussite
-                                        </th>
-
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
+                                        <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">
                                             Actions
                                         </th>
 
@@ -256,80 +1013,114 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,8) as $class)
+                                    @foreach (range(1, 10) as $i)
+                                        <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    <tr class="hover:bg-slate-800/40">
+                                            {{-- STUDENT --}}
+                                            <td class="px-6 py-5">
 
-                                        <td class="px-6 py-5 font-medium">
+                                                <div class="flex items-center gap-4 min-w-0">
 
-                                            Terminale F2-{{ $class }}
+                                                    <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
+                                                    </div>
 
-                                        </td>
+                                                    <div class="min-w-0">
 
-                                        <td class="px-4 py-5 text-center">
+                                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)]) }}">
+                                                            <h3 class="font-medium truncate">
+                                                                Kouassi Vincent {{ $i }}
+                                                            </h3>
 
-                                            M. AGOSSOU
+                                                            <p class="text-sm text-slate-400 truncate">
+                                                                Génie Électrique
+                                                            </p>
+                                                        </a>
 
-                                        </td>
+                                                    </div>
 
-                                        <td class="px-4 py-5 text-center">
+                                                </div>
 
-                                            48
+                                            </td>
 
-                                        </td>
+                                            {{-- MATRICULE --}}
+                                            <td class="px-6 py-5 text-sm text-slate-300">
+                                                <div
+                                                    class="inline-flex
+                                                items-center
+                                                px-3 py-1
+                                                rounded-full
+                                                bg-amber-500/10
+                                                text-amber-400
+                                                text-sm truncate">
 
-                                        <td class="px-4 py-5 text-center">
+                                                    Matricule GGGG
 
-                                            35
+                                                </div>
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center">
+                                            {{-- MOYENNE --}}
+                                            <td class="px-6 py-5">
 
-                                            13
+                                                <div
+                                                    class="inline-flex
+                                                items-center
+                                                px-3 py-1
+                                                rounded-full
+                                                bg-emerald-500/10
+                                                text-emerald-400
+                                                text-sm truncate">
 
-                                        </td>
+                                                    Tle F4-5
 
-                                        <td class="px-4 py-5 text-center
-                                                   text-indigo-400 font-semibold">
+                                                </div>
 
-                                            13.84
+                                            </td>
 
-                                        </td>
+                                            {{-- PRESENCE --}}
+                                            <td class="px-6 py-5 text-sm">
+                                                96%
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center
-                                                   text-emerald-400 font-semibold">
+                                            {{-- PARENT --}}
+                                            <td class="px-6 py-5 truncate text-sm text-slate-300">
+                                                M. HOUNDEKINDO
+                                            </td>
 
-                                            88%
+                                            {{-- ACTIONS --}}
+                                            <td class="px-6 py-5">
 
-                                        </td>
+                                                <div class="flex justify-end gap-2 truncate">
 
-                                        <td class="px-6 py-5">
+                                                    <button class="h-10 px-4 rounded-xl
+                                                       bg-indigo-500/10
+                                                       text-indigo-400">
 
-                                            <div class="flex justify-end gap-2">
+                                                        Voir Profil
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-indigo-500/10
-                                                               text-indigo-400">
+                                                    </button>
 
-                                                    Profil
+                                                    <button class="h-10 px-4 rounded-xl
+                                                       bg-amber-500/10
+                                                       text-amber-400">
 
-                                                </button>
+                                                        Bloquer
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-emerald-500/10
-                                                               text-emerald-400">
+                                                    </button>
 
-                                                    Notes
+                                                    <button class="h-10 px-4 rounded-xl
+                                                       bg-rose-500/10
+                                                       text-rose-400">
 
-                                                </button>
+                                                        Retirer
 
-                                            </div>
+                                                    </button>
 
-                                        </td>
+                                                </div>
 
-                                    </tr>
+                                            </td>
 
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -340,393 +1131,64 @@
 
                     </div>
 
-                    {{-- ===================================================== --}}
-                    {{-- SUBJECTS --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                overflow-hidden">
+                </section>
 
-                        <div class="p-5 border-b border-slate-800">
+            </div>
 
-                            <h2 class="text-xl font-semibold">
+        </section>
 
-                                Matières & Coefficients
-
-                            </h2>
-
-                        </div>
-
-                        <div class="overflow-x-auto">
-
-                            <table class="min-w-[1400px] w-full">
-
-                                <thead class="bg-slate-950 border-b border-slate-800">
-
-                                    <tr>
-
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Matière
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Coef
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Enseignants
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Réussite
-                                        </th>
-
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
-                                            Actions
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody class="divide-y divide-slate-800">
-
-                                    @foreach([
-                                        ['Mathématiques',5],
-                                        ['Physique',4],
-                                        ['Construction',6],
-                                        ['Informatique',3],
-                                        ['Français',2],
-                                    ] as $subject)
-
-                                    <tr class="hover:bg-slate-800/40">
-
-                                        <td class="px-6 py-5 font-medium">
-
-                                            {{ $subject[0] }}
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center">
-
-                                            {{ $subject[1] }}
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center">
-
-                                            6
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center
-                                                   text-indigo-400">
-
-                                            13.74
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center
-                                                   text-emerald-400">
-
-                                            86%
-
-                                        </td>
-
-                                        <td class="px-6 py-5">
-
-                                            <div class="flex justify-end gap-2">
-
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-indigo-500/10
-                                                               text-indigo-400">
-
-                                                    Profil
-
-                                                </button>
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
-                                    @endforeach
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                    {{-- ===================================================== --}}
-                    {{-- TEACHERS --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
+        <div class="rounded-3xl
                                 bg-slate-900
                                 border border-slate-800
                                 p-5">
 
+            <h2 class="text-lg font-semibold">
+
+                Élèves en Difficulté
+
+            </h2>
+
+            <div class="mt-5 space-y-4">
+
+                @foreach (range(1, 5) as $weak)
+                    <div class="rounded-2xl
+                                        bg-slate-950
+                                        p-4">
+
                         <div class="flex items-center justify-between">
 
-                            <h2 class="text-xl font-semibold">
+                            <div>
 
-                                Enseignants de la Série
+                                <h3 class="font-medium">
 
-                            </h2>
+                                    KOFFI Junior
 
-                            <span class="text-sm text-slate-400">
+                                </h3>
 
-                                24 Enseignants
+                                <p class="mt-1 text-sm text-slate-400">
+
+                                    Terminale F2-2
+
+                                </p>
+
+                            </div>
+
+                            <span class="text-rose-400 font-bold">
+
+                                08.42
 
                             </span>
 
                         </div>
 
-                        <div class="mt-5 grid
-                                    grid-cols-1
-                                    sm:grid-cols-2
-                                    xl:grid-cols-3
-                                    gap-4">
-
-                            @foreach(range(1,9) as $teacher)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800
-                                        p-4">
-
-                                <div class="flex items-center gap-4">
-
-                                    <div class="w-14 h-14 rounded-2xl
-                                                bg-slate-800">
-                                    </div>
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-medium truncate">
-
-                                            M. AGBODJI
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            Construction Mécanique
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="mt-4 flex items-center justify-between">
-
-                                    <span class="text-sm text-slate-400">
-
-                                        Classes
-
-                                    </span>
-
-                                    <span class="font-semibold">
-
-                                        4
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
                     </div>
-
-                </div>
-
-                {{-- ===================================================== --}}
-                {{-- RIGHT --}}
-                {{-- ===================================================== --}}
-                <div class="space-y-6">
-
-                    {{-- BEST STUDENTS --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Meilleurs Élèves
-
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach([
-                                ['Meilleure Fille','Sarah KOUASSI','17.82'],
-                                ['Meilleur Garçon','Marc AGBODO','17.11']
-                            ] as $student)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <p class="text-xs text-slate-400">
-
-                                    {{ $student[0] }}
-
-                                </p>
-
-                                <div class="mt-2 flex items-center justify-between">
-
-                                    <h3 class="font-semibold">
-
-                                        {{ $student[1] }}
-
-                                    </h3>
-
-                                    <span class="text-emerald-400 font-bold">
-
-                                        {{ $student[2] }}
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- WEAK STUDENTS --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Élèves en Difficulté
-
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach(range(1,5) as $weak)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <div class="flex items-center justify-between">
-
-                                    <div>
-
-                                        <h3 class="font-medium">
-
-                                            KOFFI Junior
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            Terminale F2-2
-
-                                        </p>
-
-                                    </div>
-
-                                    <span class="text-rose-400 font-bold">
-
-                                        08.42
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- GLOBAL PERFORMANCE --}}
-                    <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Performances Globales
-
-                        </h2>
-
-                        <div class="mt-5 space-y-5">
-
-                            @foreach([
-                                ['Mathématiques','84%','bg-indigo-500'],
-                                ['Construction','91%','bg-emerald-500'],
-                                ['Physique','76%','bg-sky-500'],
-                                ['Informatique','95%','bg-amber-500']
-                            ] as $perf)
-
-                            <div>
-
-                                <div class="flex justify-between">
-
-                                    <span class="text-sm text-slate-300">
-
-                                        {{ $perf[0] }}
-
-                                    </span>
-
-                                    <span class="text-sm font-semibold">
-
-                                        {{ $perf[1] }}
-
-                                    </span>
-
-                                </div>
-
-                                <div class="mt-2 h-2 rounded-full
-                                            bg-slate-800 overflow-hidden">
-
-                                    <div class="h-full rounded-full {{ $perf[2] }}"
-                                         style="width: {{ $perf[1] }}">
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </div>
+                @endforeach
 
             </div>
 
-        </section>
+        </div>
 
     </div>
 
 </div>
+

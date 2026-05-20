@@ -5,6 +5,22 @@
                 max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
 
+        <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
+
+            <h1 class="text-lg sm:text-3xl font-bold">
+
+                Profil de la Promotion Tle F2
+
+            </h1>
+
+            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">
+
+                Promotion Active
+
+            </span>
+
+        </div>
+
         {{-- ===================================================== --}}
         {{-- HERO --}}
         {{-- ===================================================== --}}
@@ -67,14 +83,6 @@
                                         {{ $promotion_name }}
 
                                     </h1>
-
-                                    <span class="px-3 py-1 rounded-full
-                                                 bg-emerald-500/10
-                                                 text-emerald-400 text-xs">
-
-                                        Promotion Active
-
-                                    </span>
 
                                 </div>
 
@@ -742,14 +750,6 @@
                                     Classes
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Nb Classes
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Moyenne
-                                </th>
-
                                 <th class="px-6 py-4 text-center text-sm text-slate-400">
                                     Actions
                                 </th>
@@ -815,21 +815,6 @@
                                             </span>
 
                                         </div>
-
-                                    </td>
-
-                                    {{-- NB --}}
-                                    <td class="px-4 py-5 text-center truncate">
-
-                                        4
-
-                                    </td>
-
-                                    {{-- AVG --}}
-                                    <td class="px-4 py-5 text-center truncate
-                                           text-emerald-400 font-semibold">
-
-                                        12.84
 
                                     </td>
 
@@ -1163,6 +1148,57 @@
             </div>
 
         </section>
+
+        <div class="rounded-3xl
+                                bg-slate-900
+                                border border-slate-800
+                                p-5">
+
+            <h2 class="text-lg font-semibold">
+
+                Élèves en Difficulté
+
+            </h2>
+
+            <div class="mt-5 space-y-4">
+
+                @foreach (range(1, 5) as $weak)
+                    <div class="rounded-2xl
+                                        bg-slate-950
+                                        p-4">
+
+                        <div class="flex items-center justify-between">
+
+                            <div>
+
+                                <h3 class="font-medium">
+
+                                    KOFFI Junior
+
+                                </h3>
+
+                                <p class="mt-1 text-sm text-slate-400">
+
+                                    Terminale F2-2
+
+                                </p>
+
+                            </div>
+
+                            <span class="text-rose-400 font-bold">
+
+                                08.42
+
+                            </span>
+
+                        </div>
+
+                    </div>
+                @endforeach
+
+            </div>
+
+        </div>
 
     </div>
 

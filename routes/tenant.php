@@ -5,10 +5,14 @@ declare(strict_types=1);
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
+use App\Livewire\Tenants\Filiars\FiliarProfil;
+use App\Livewire\Tenants\Filiars\FiliarsPortal;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
+use App\Livewire\Tenants\Serials\SerialProfil;
+use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
@@ -64,6 +68,14 @@ Route::middleware([
             Route::get('/dashboard/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
             
             Route::get('/dashboard/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
+
+            Route::get('/dashboard/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
+
+            Route::get('/dashboard/filieres/portail-des-filieres/profil-filiere/ID={filiar_slug}', FiliarProfil::class)->name('filiar.profil');
+
+            Route::get('/dashboard/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
+
+            Route::get('/dashboard/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
 
             
         });

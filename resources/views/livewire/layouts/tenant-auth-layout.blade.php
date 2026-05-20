@@ -89,6 +89,12 @@
                     <a data-sidebar-item href="{{ route('tenant.promotions.portal') }}" class="s-link">
                         <div class="s-icon">🎯</div><span class="s-label">Promotions</span>
                     </a>
+                    <a data-sidebar-item href="{{ route('tenant.filiars.portal') }}" class="s-link">
+                        <div class="s-icon">🎯</div><span class="s-label">Filières</span>
+                    </a>
+                    <a data-sidebar-item href="{{ route('tenant.serials.portal') }}" class="s-link">
+                        <div class="s-icon">🎯</div><span class="s-label">Séries</span>
+                    </a>
                     <a data-sidebar-item href="#" class="s-link">
                         <div class="s-icon">🗓️</div><span class="s-label">Emploi du temps</span>
                     </a>
