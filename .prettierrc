@@ -1,0 +1,15 @@
+{
+    "plugins": ["@shufo/prettier-plugin-blade"],
+
+    "printWidth": 240,
+
+    "tabWidth": 4,
+
+    "wrapAttributes": "auto",
+
+    "singleAttributePerLine": false,
+
+    "htmlWhitespaceSensitivity": "ignore",
+
+    "bladeBracketSameLine": true
+}

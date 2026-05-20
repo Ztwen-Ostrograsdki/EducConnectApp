@@ -89,32 +89,25 @@
                         xl:grid-cols-4
                         gap-4">
 
-                @foreach([
-                    ['Total', '248', 'text-indigo-400'],
-                    ['Actifs', '232', 'text-emerald-400'],
-                    ['Temps Plein', '180', 'text-sky-400'],
-                    ['Taux Présence', '96%', 'text-amber-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Total', '248', 'text-indigo-400'], ['Actifs', '232', 'text-emerald-400'], ['Temps Plein', '180', 'text-sky-400'], ['Taux Présence', '96%', 'text-amber-400']] as $kpi)
+                    <div class="rounded-3xl
                             border border-slate-800
                             bg-slate-900
                             p-4 sm:p-5">
 
-                    <p class="text-xs sm:text-sm text-slate-400">
-                        {{ $kpi[0] }}
-                    </p>
+                        <p class="text-xs sm:text-sm text-slate-400">
+                            {{ $kpi[0] }}
+                        </p>
 
-                    <h2 class="mt-3
+                        <h2 class="mt-3
                                text-2xl sm:text-3xl xl:text-4xl
                                font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -136,9 +129,7 @@
                     {{-- SEARCH --}}
                     <div class="relative">
 
-                        <input
-                            type="text"
-                            placeholder="Rechercher un enseignant..."
+                        <input type="text" placeholder="Rechercher un enseignant..."
                             class="w-full h-12 rounded-2xl
                                    bg-slate-950
                                    border border-slate-800
@@ -146,8 +137,7 @@
                                    text-sm
                                    focus:outline-none
                                    focus:ring-2
-                                   focus:ring-indigo-500/40"
-                        >
+                                   focus:ring-indigo-500/40">
 
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
 
@@ -249,7 +239,8 @@
                         <div class="border-b border-slate-800
                                     p-4 sm:p-6">
 
-                            <div class="flex flex-col
+                            <div
+                                class="flex flex-col
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
@@ -273,7 +264,8 @@
 
                                 <div class="flex flex-wrap gap-3">
 
-                                    <button class="h-11 px-4 rounded-2xl
+                                    <button
+                                        class="h-11 px-4 rounded-2xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -282,7 +274,8 @@
 
                                     </button>
 
-                                    <button class="h-11 px-4 rounded-2xl
+                                    <button
+                                        class="h-11 px-4 rounded-2xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -344,134 +337,136 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,10) as $teacher)
+                                    @foreach (range(1, 10) as $teacher)
+                                        <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    <tr class="hover:bg-slate-800/40 transition-all">
+                                            {{-- PROFILE --}}
+                                            <td class="px-6 py-5">
 
-                                        {{-- PROFILE --}}
-                                        <td class="px-6 py-5">
+                                                <div class="flex items-center gap-4">
 
-                                            <div class="flex items-center gap-4">
-
-                                                <div class="w-14 h-14 rounded-2xl
+                                                    <div class="w-14 h-14 rounded-2xl
                                                             bg-slate-800
                                                             shrink-0">
+                                                    </div>
+
+                                                    <div class="min-w-0">
+
+                                                        <h3 class="font-medium truncate">
+
+                                                            M. Jean Kouassi
+
+                                                        </h3>
+
+                                                        <p class="mt-1 text-sm text-slate-400 truncate">
+
+                                                            enseignant@email.com
+
+                                                        </p>
+
+                                                    </div>
+
                                                 </div>
 
-                                                <div class="min-w-0">
+                                            </td>
 
-                                                    <h3 class="font-medium truncate">
+                                            {{-- SUBJECT --}}
+                                            <td class="px-4 py-5 text-center whitespace-nowrap">
 
-                                                        M. Jean Kouassi
+                                                Mathématiques
 
-                                                    </h3>
+                                            </td>
 
-                                                    <p class="mt-1 text-sm text-slate-400 truncate">
+                                            {{-- CLASSES --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                                        enseignant@email.com
+                                                8
 
-                                                    </p>
+                                            </td>
 
-                                                </div>
+                                            {{-- NOTES --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                            </div>
-
-                                        </td>
-
-                                        {{-- SUBJECT --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                            Mathématiques
-
-                                        </td>
-
-                                        {{-- CLASSES --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            8
-
-                                        </td>
-
-                                        {{-- NOTES --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            <span class="px-3 py-1 rounded-full
+                                                <span class="px-3 py-1 rounded-full
                                                          bg-indigo-500/10
                                                          text-indigo-400 text-sm">
 
-                                                482
+                                                    482
 
-                                            </span>
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                        {{-- HOURS --}}
-                                        <td class="px-4 py-5 text-center">
+                                            {{-- HOURS --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                            26h
+                                                26h
 
-                                        </td>
+                                            </td>
 
-                                        {{-- PRESENCE --}}
-                                        <td class="px-4 py-5 text-center">
+                                            {{-- PRESENCE --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                            <span class="text-emerald-400">
-                                                98%
-                                            </span>
+                                                <span class="text-emerald-400">
+                                                    98%
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                        {{-- STATUS --}}
-                                        <td class="px-4 py-5 text-center">
+                                            {{-- STATUS --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                            <span class="px-3 py-1 rounded-full
+                                                <span
+                                                    class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                Actif
+                                                    Actif
 
-                                            </span>
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                        {{-- ACTIONS --}}
-                                        <td class="px-6 py-5">
+                                            {{-- ACTIONS --}}
+                                            <td class="px-6 py-5">
 
-                                            <div class="flex items-center justify-end gap-2">
+                                                <div class="flex items-center justify-end gap-2">
 
-                                                <button class="w-10 h-10 rounded-xl
+                                                    <button
+                                                        class="w-10 h-10 rounded-xl
                                                                bg-slate-800
                                                                hover:bg-indigo-500
                                                                transition-all">
 
-                                                    👁
+                                                        👁
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="w-10 h-10 rounded-xl
+                                                    <button
+                                                        class="w-10 h-10 rounded-xl
                                                                bg-slate-800
                                                                hover:bg-emerald-500
                                                                transition-all">
 
-                                                    ✏
+                                                        ✏
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="w-10 h-10 rounded-xl
+                                                    <button
+                                                        class="w-10 h-10 rounded-xl
                                                                bg-slate-800
                                                                hover:bg-rose-500
                                                                transition-all">
 
-                                                    🗑
+                                                        🗑
 
-                                                </button>
+                                                    </button>
 
-                                            </div>
+                                                </div>
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -497,7 +492,8 @@
 
                                 <div class="flex items-center gap-2">
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -506,7 +502,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-indigo-500
                                                    hover:bg-indigo-600
                                                    transition-all text-sm">
@@ -515,7 +512,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -524,7 +522,8 @@
 
                                     </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                    <button
+                                        class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
@@ -562,38 +561,30 @@
 
                         <div class="mt-5 space-y-5">
 
-                            @foreach([
-                                ['Mathématiques', '82%', 'bg-indigo-500'],
-                                ['Physique', '70%', 'bg-emerald-500'],
-                                ['Informatique', '65%', 'bg-amber-500'],
-                                ['Français', '58%', 'bg-sky-500']
-                            ] as $item)
+                            @foreach ([['Mathématiques', '82%', 'bg-indigo-500'], ['Physique', '70%', 'bg-emerald-500'], ['Informatique', '65%', 'bg-amber-500'], ['Français', '58%', 'bg-sky-500']] as $item)
+                                <div>
 
-                            <div>
+                                    <div class="flex items-center justify-between">
 
-                                <div class="flex items-center justify-between">
+                                        <span class="text-sm text-slate-300">
+                                            {{ $item[0] }}
+                                        </span>
 
-                                    <span class="text-sm text-slate-300">
-                                        {{ $item[0] }}
-                                    </span>
+                                        <span class="text-sm font-semibold">
+                                            {{ $item[1] }}
+                                        </span>
 
-                                    <span class="text-sm font-semibold">
-                                        {{ $item[1] }}
-                                    </span>
+                                    </div>
 
-                                </div>
-
-                                <div class="mt-2 h-2 rounded-full
+                                    <div class="mt-2 h-2 rounded-full
                                             bg-slate-800 overflow-hidden">
 
-                                    <div class="h-full rounded-full {{ $item[2] }}"
-                                         style="width: {{ $item[1] }}">
+                                        <div class="h-full rounded-full {{ $item[2] }}" style="width: {{ $item[1] }}">
+                                        </div>
+
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
@@ -614,50 +605,49 @@
 
                         <div class="mt-5 space-y-4">
 
-                            @foreach(range(1,5) as $activity)
-
-                            <div class="rounded-2xl
+                            @foreach (range(1, 5) as $activity)
+                                <div class="rounded-2xl
                                         bg-slate-950
                                         p-4">
 
-                                <div class="flex items-start gap-3">
+                                    <div class="flex items-start gap-3">
 
-                                    <div class="w-11 h-11 rounded-2xl
+                                        <div
+                                            class="w-11 h-11 rounded-2xl
                                                 bg-indigo-500/10
                                                 shrink-0
                                                 flex items-center justify-center
                                                 text-indigo-400">
 
-                                        ✓
+                                            ✓
 
-                                    </div>
+                                        </div>
 
-                                    <div class="min-w-0">
+                                        <div class="min-w-0">
 
-                                        <h3 class="font-medium text-sm">
+                                            <h3 class="font-medium text-sm">
 
-                                            Notes publiées
+                                                Notes publiées
 
-                                        </h3>
+                                            </h3>
 
-                                        <p class="mt-1 text-sm text-slate-400">
+                                            <p class="mt-1 text-sm text-slate-400">
 
-                                            M. Jean Kouassi a publié les notes de Terminale F2-1
+                                                M. Jean Kouassi a publié les notes de Terminale F2-1
 
-                                        </p>
+                                            </p>
 
-                                        <p class="mt-2 text-xs text-slate-500">
+                                            <p class="mt-2 text-xs text-slate-500">
 
-                                            Il y a 2 heures
+                                                Il y a 2 heures
 
-                                        </p>
+                                            </p>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
@@ -678,26 +668,18 @@
 
                         <div class="mt-5 grid grid-cols-2 gap-3">
 
-                            @foreach([
-                                'Présences',
-                                'Emplois',
-                                'Notes',
-                                'Rapports',
-                                'Statistiques',
-                                'Archives'
-                            ] as $menu)
-
-                            <button class="h-24 rounded-2xl
+                            @foreach (['Présences', 'Emplois', 'Notes', 'Rapports', 'Statistiques', 'Archives'] as $menu)
+                                <button
+                                    class="h-24 rounded-2xl
                                            bg-slate-950
                                            hover:bg-indigo-500/10
                                            border border-slate-800
                                            transition-all
                                            text-sm">
 
-                                {{ $menu }}
+                                    {{ $menu }}
 
-                            </button>
-
+                                </button>
                             @endforeach
 
                         </div>
@@ -713,3 +695,4 @@
     </div>
 
 </div>
+

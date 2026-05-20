@@ -10,6 +10,8 @@ use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
+use App\Livewire\Tenants\Subjects\SubjectProfil;
+use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
@@ -51,6 +53,10 @@ Route::middleware([
             
             Route::get('/dashboard/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
+            Route::get('/dashboard/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
+
+            Route::get('/dashboard/matieres/portail-des-matieres/{subject_slug}', SubjectProfil::class)->name('subject.profil');
+            
             Route::get('/dashboard/classes/portail-classses/{classe_slug}', ClasseProfil::class)->name('classe.profil');
 
             
