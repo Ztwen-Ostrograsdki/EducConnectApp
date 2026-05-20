@@ -23,7 +23,7 @@
                             to-slate-900">
                 </div>
 
-                <div class="relative p-5 sm:p-6 lg:p-8">
+                <div class="relative p-2 py-3">
 
                     <div class="flex flex-col
                                 xl:flex-row
@@ -38,7 +38,7 @@
                                     min-w-0">
 
                             {{-- PHOTO --}}
-                            <div class="flex justify-center lg:block">
+                            <div class="flex justify-center items-center lg:block p-2">
 
                                 <div class="w-32 h-32 sm:w-36 sm:h-36
                                             rounded-[30px]
@@ -73,6 +73,12 @@
 
                                 </div>
 
+                                <p class="mt-2 text-amber-400">
+
+                                    Email :
+                                    marceline@gmail.com
+
+                                </p>
                                 <p class="mt-2 text-slate-400">
 
                                     Parent principal —
@@ -256,10 +262,7 @@
                                     gap-4">
 
                             @foreach([
-                                ['Nom complet','KOUASSI Marceline'],
                                 ['Téléphone','+229 01 97 00 00 00'],
-                                ['Email','parent@email.com'],
-                                ['Profession','Commerçante'],
                                 ['Nationalité','Béninoise'],
                                 ['Adresse','Akpakpa — Cotonou'],
                                 ['N° Identité','BJ-998721'],
@@ -339,17 +342,12 @@
 
                             <table class="min-w-[1700px] w-full">
 
-                                <thead class="bg-slate-950
-                                             border-b border-slate-800">
+                                <thead class="bg-slate-950 text-center border-b border-slate-800">
 
-                                    <tr>
+                                    <tr class="text-center">
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                        <th class="px-6 py-4  text-sm text-slate-400">
                                             Apprenant
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Classe
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -361,10 +359,6 @@
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
                                             Présence
                                         </th>
 
@@ -372,7 +366,7 @@
                                             Statut
                                         </th>
 
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
+                                        <th class="px-6 py-4 text-center text-sm text-slate-400">
                                             Actions
                                         </th>
 
@@ -388,38 +382,18 @@
 
                                         <td class="px-6 py-5">
 
-                                            <div class="flex items-center gap-4">
+                                            <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
 
-                                                <div class="w-14 h-14
-                                                            rounded-2xl
-                                                            bg-slate-800">
-                                                </div>
+                                                KOUASSI Marc
 
-                                                <div>
+                                                <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
+                                                    2nde F2-2
+                                                </span>
 
-                                                    <h3 class="font-medium">
-
-                                                        KOUASSI Sarah
-
-                                                    </h3>
-
-                                                    <p class="text-sm text-slate-400">
-
-                                                        MAT-2026-001
-
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
+                                            </a>
 
                                         </td>
 
-                                        <td class="px-4 py-5 text-center">
-
-                                            Terminale F2-1
-
-                                        </td>
 
                                         <td class="px-4 py-5 text-center">
 
@@ -430,14 +404,6 @@
                                         <td class="px-4 py-5 text-center">
 
                                             17 ans
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center
-                                                   font-semibold
-                                                   text-emerald-400">
-
-                                            15.42
 
                                         </td>
 
@@ -461,29 +427,35 @@
 
                                         <td class="px-6 py-5">
 
-                                            <div class="flex justify-end gap-2">
+                                            <div class="flex items-center justify-end gap-2">
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-indigo-500/10
-                                                               text-indigo-400">
+                                                <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="p-2.5 rounded-2xl
+                                               bg-blue-500/20
+                                               text-blue-400
+                                               hover:bg-blue-500/30
+                                               transition-all text-sm inline-block text-center">
 
-                                                    Profil
+                                                    Profil 
 
-                                                </button>
+                                                </a>
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-emerald-500/10
-                                                               text-emerald-400">
 
-                                                    Bulletin
+                                                <a href="{{route('tenant.student.marks', ['student_uuid' => 'dddd'])}}" class="p-2.5 rounded-2xl
+                                               bg-green-500/20
+                                               text-green-400
+                                               hover:bg-green-500/30
+                                               transition-all text-sm inline-block text-center">
 
-                                                </button>
+                                                    Notes 
 
-                                                <button class="h-10 px-4 rounded-xl
-                                                               bg-sky-500/10
-                                                               text-sky-400">
+                                                </a>
+                                                <button class="p-2.5 rounded-2xl
+                                               bg-red-500/20
+                                               text-red-400
+                                               hover:bg-red-500/30
+                                               transition-all text-sm inline-block text-center">
 
-                                                    Notes
+                                                    Dissocier
 
                                                 </button>
 
@@ -530,7 +502,7 @@
 
                                     <tr>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                        <th class="px-6 py-4  text-sm text-slate-400">
                                             Enfant
                                         </th>
 
@@ -550,11 +522,11 @@
                                             Coef
                                         </th>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                        <th class="px-6 py-4  text-sm text-slate-400">
                                             Enseignant
                                         </th>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                        <th class="px-6 py-4  text-sm text-slate-400">
                                             Observation
                                         </th>
 
@@ -564,7 +536,7 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,12) as $note)
+                                    @foreach(range(1,3) as $note)
 
                                     <tr class="hover:bg-slate-800/40">
 

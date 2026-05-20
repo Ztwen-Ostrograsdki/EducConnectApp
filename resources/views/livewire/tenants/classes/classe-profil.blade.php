@@ -201,7 +201,7 @@
                         Présences
                     </button>
 
-                    {{-- DOCUMENTS --}}
+                    {{-- PRESENCES --}}
                     <button
                         wire:click="setSection('classe-plan-page')"
                         @class([
@@ -212,7 +212,17 @@
                     >
                         Emploi du temps
                     </button>
-                    {{-- DOCUMENTS --}}
+                    {{-- BULLENTINS --}}
+                    <button
+                        wire:click="setSection('classe-pupil-bulletin-component')"
+                        @class([
+                            'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                            'bg-indigo-500 text-white' => $section === 'classe-pupil-bulletin-component',
+                            'hover:bg-slate-800' => $section !== 'classe-pupil-bulletin-component'
+                        ])
+                    >
+                        Bulletins
+                    </button>
 
                 </div>
 
@@ -277,13 +287,80 @@
                     />
 
                 @break
-
                 
+                @case('classe-pupil-bulletin-component')
 
+                <section class="mb-6">
+
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
+
+                        <div class="flex flex-col xl:flex-row gap-4">
+
+                            {{-- FILTERS --}}
+                            <div class="grid
+                                        grid-cols-1
+                                        sm:grid-cols-2
+                                        lg:grid-cols-4
+                                        gap-3">
+
+                                {{-- SEMESTER --}}
+                                <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl
+                                            bg-slate-950
+                                            border border-slate-800
+                                            text-sm">
+                                        <option value="">Sélectionner le semestre|trimestre</option>
+                                    @foreach(range(1,2) as $i)
+                                        <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
+                                    @endforeach
+
+                                    @foreach(range(1,3) as $i)
+                                        <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                                    @endforeach
+
+                                </select>
+
+                                {{-- Pupils --}}
+                                <select wire:model.live="student_uuid_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                                    <option value="">Sélectionner l'apprenant</option>
+                                    @foreach(range(1,10) as $i)
+                                        <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}</option>
+                                    @endforeach
+                                </select>
+
+                                {{-- ACTIONS --}}
+                                @if($student_uuid_selected && $period_type_selected)
+                                    <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl
+                                                bg-sky-800
+                                                border border-sky-700
+                                                hover:bg-sky-700
+                                                transition-all
+                                                text-sm cursor-pointer">
+
+                                        Charger
+                                    </button>
+
+                                    <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl
+                                                bg-slate-800
+                                                border border-slate-700
+                                                hover:bg-slate-700
+                                                transition-all
+                                                text-sm cursor-pointer">
+
+                                        Réinitialiser
+
+                                    </button>
+                                @endif
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+                @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
+                @break
             @endswitch
-
         </div>
-
     </section>
 
 </div>

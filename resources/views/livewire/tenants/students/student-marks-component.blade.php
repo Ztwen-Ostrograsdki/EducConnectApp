@@ -5,60 +5,178 @@
     {{-- ===================================================== --}}
     <section class="mb-6">
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+        <div class="rounded-3xl
+                    border border-slate-800
+                    bg-slate-900
+                    overflow-hidden">
 
-            {{-- LEFT --}}
-            <div class="min-w-0">
+            <div class="p-5 sm:p-8">
 
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-col xl:flex-row gap-8">
 
-                    <h1 class="text-2xl sm:text-3xl font-bold break-words">
-                        Gestion des Notes
-                    </h1>
+                    {{-- AVATAR --}}
+                    <div class="flex flex-col items-center xl:items-start">
 
-                    <span class="px-3 py-1 rounded-full
-                                 bg-indigo-500/10
-                                 border border-indigo-500/20
-                                 text-indigo-400 text-xs shrink-0">
+                        <div class="w-36 h-36 rounded-3xl
+                                    bg-slate-800
+                                    shrink-0">
+                        </div>
 
-                        42 apprenants
+                        <div class="mt-5 flex flex-wrap gap-3 justify-center xl:justify-start">
 
-                    </span>
+                            <span class="px-3 py-1 rounded-full
+                                         bg-indigo-500/10
+                                         text-indigo-400 text-xs">
+
+                                Terminale F2-1
+
+                            </span>
+
+                            <span class="px-3 py-1 rounded-full
+                                         bg-emerald-500/10
+                                         text-emerald-400 text-xs">
+
+                                Excellent
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {{-- INFOS --}}
+                    <div class="flex-1 min-w-0">
+
+                        <div class="flex flex-col 2xl:flex-row
+                                    2xl:items-start
+                                    2xl:justify-between
+                                    gap-6">
+
+                            <div class="min-w-0">
+
+                                <h1 class="text-3xl sm:text-4xl font-bold break-words">
+
+                                    Kouassi Vincent HOUNDEKINDO
+
+                                </h1>
+
+                                <p class="mt-2 text-slate-400">
+
+                                    Matricule : MAT-2026-00124
+
+                                </p>
+
+                                <div class="mt-6 grid
+                                            grid-cols-1
+                                            sm:grid-cols-2
+                                            xl:grid-cols-4
+                                            gap-4">
+
+                                    <div class="rounded-2xl bg-slate-950 p-4">
+
+                                        <p class="text-xs text-slate-500">
+                                            Âge
+                                        </p>
+
+                                        <h4 class="mt-2 font-semibold">
+                                            17 ans
+                                        </h4>
+
+                                    </div>
+
+                                    <div class="rounded-2xl bg-slate-950 p-4">
+
+                                        <p class="text-xs text-slate-500">
+                                            Sexe
+                                        </p>
+
+                                        <h4 class="mt-2 font-semibold">
+                                            Masculin
+                                        </h4>
+
+                                    </div>
+
+                                    <div class="rounded-2xl bg-slate-950 p-4">
+
+                                        <p class="text-xs text-slate-500">
+                                            Nationalité
+                                        </p>
+
+                                        <h4 class="mt-2 font-semibold">
+                                            Béninoise
+                                        </h4>
+
+                                    </div>
+
+                                    <div class="rounded-2xl bg-slate-950 p-4">
+
+                                        <p class="text-xs text-slate-500">
+                                            Naissance
+                                        </p>
+
+                                        <h4 class="mt-2 font-semibold">
+                                            12/08/2008
+                                        </h4>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {{-- ACTIONS --}}
+                            <div class="grid
+                                        grid-cols-2
+                                        sm:grid-cols-4
+                                        xl:grid-cols-2
+                                        gap-3 w-full xl:w-[260px]">
+
+                                <a href="{{route('tenant.student.profil', ['student_uuid' => $student_uuid])}}" class="p-3 rounded-2xl col-span-2
+                                               bg-primary-500/70
+                                               text-gray-200
+                                               hover:bg-primary-800/70
+                                               transition-all text-sm inline-block text-center">
+
+                                    Retour à l'acceuil profil 
+
+                                </a>
+
+                                <button class="p-3 rounded-2xl
+                                               bg-slate-800
+                                               hover:bg-slate-700
+                                               transition-all text-sm">
+
+                                    Présence
+
+                                </button>
+
+                                <button class="p-3 rounded-2xl
+                                               bg-rose-500/20
+                                               text-rose-400
+                                               hover:bg-rose-500/30
+                                               transition-all text-sm">
+
+                                    Suspendre
+
+                                </button>
+
+                                <a href="{{route('tenant.classe.profil', ['classe_slug' => $classe_slug])}}" class="p-3 col-span-2 rounded-2xl
+                                               bg-sky-500/20
+                                               text-sky-400
+                                               hover:bg-sky-500/30
+                                               transition-all text-sm inline-block text-center">
+
+                                    Acceder à la classe 
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
-
-                <p class="mt-2 text-slate-400 text-sm sm:text-base">
-
-                    Notes, moyennes et statistiques pédagogiques de la classe.
-
-                </p>
-
-            </div>
-
-            {{-- ACTIONS --}}
-            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-                <button class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-indigo-500 hover:bg-indigo-600
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Ajouter Notes
-
-                </button>
-
-                <button class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-slate-800
-                               border border-slate-700
-                               hover:bg-slate-700
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Exporter PDF
-
-                </button>
 
             </div>
 
@@ -69,7 +187,24 @@
     {{-- ===================================================== --}}
     {{-- KPI --}}
     {{-- ===================================================== --}}
-    <section class="mb-6">
+    <section class="mb-6 rounded-3xl border border-slate-800 bg-slate-900 p-4">
+
+        <div class="min-w-0 mb-2">
+
+            <div class="flex flex-wrap items-center gap-3">
+
+                <h1 class="text-2xl sm:text-3xl font-bold break-words">
+                    Détails des Notes
+                </h1>
+            </div>
+
+            <p class="mt-0 text-gray-400 text-sm sm:text-base">
+
+                Notes, moyennes et statistiques pédagogiques apprenant.
+
+            </p>
+
+        </div>
 
         <div class="grid
                     grid-cols-1
@@ -107,11 +242,11 @@
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
 
                 <p class="text-sm text-slate-400">
-                    Matière
+                    Classe
                 </p>
 
                 <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    Maths
+                    Terminale
                 </h2>
 
             </div>
@@ -140,42 +275,13 @@
 
         <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
 
-            <div class="flex flex-col xl:flex-row gap-4">
-
-                {{-- SEARCH --}}
-                <div class="flex-1 min-w-0">
-
-                    <div class="relative">
-
-                        <input
-                            type="text"
-                            placeholder="Rechercher un apprenant..."
-                            class="w-full h-12
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   pl-12 pr-4
-                                   text-sm
-                                   outline-none
-                                   focus:border-indigo-500
-                                   transition-all"
-                        >
-
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-
-                            🔍
-
-                        </div>
-
-                    </div>
-
-                </div>
+            <div class="flex flex-col justify-between xl:flex-row gap-4">
 
                 {{-- FILTERS --}}
                 <div class="grid
                             grid-cols-1
                             sm:grid-cols-2
-                            lg:grid-cols-3
+                            lg:grid-cols-2
                             gap-3">
 
                     {{-- SEMESTER --}}
@@ -191,18 +297,6 @@
 
                     </select>
 
-                    {{-- SUBJECT --}}
-                    <select class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
-                        <option>Mathématiques</option>
-                        <option>Physique</option>
-                        <option>Électricité</option>
-
-                    </select>
-
                     {{-- RESET --}}
                     <button class="h-12 px-5 rounded-2xl
                                    bg-slate-800
@@ -212,6 +306,37 @@
                                    text-sm">
 
                         Réinitialiser
+
+                    </button>
+
+                </div>
+                <div class="flex justify-center flex-wrap gap-3 text-gray-950">
+
+                    <button class="px-3 py-2 rounded-2xl
+                                    bg-red-500 hover:bg-red-600">
+
+                        Verrouiller notes
+
+                    </button>
+                    
+                    <button class="px-3 py-2 rounded-2xl
+                                    bg-blue-500 hover:bg-blue-600">
+
+                        Imprimer PDF
+
+                    </button>
+
+                    <button class="px-3 py-2 rounded-2xl
+                                    bg-emerald-500 hover:bg-emerald-600">
+
+                        Emprimer Excel
+
+                    </button>
+
+                    <button class="px-3 py-2 rounded-2xl
+                                    bg-amber-500 hover:bg-amber-600">
+
+                        Imprimer Excel et PDF
 
                     </button>
 
@@ -239,7 +364,7 @@
                         <tr>
 
                             <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                Apprenants
+                                Matières
                             </th>
 
                             <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -302,15 +427,14 @@
 
                                     <div class="min-w-0">
 
-                                        <a href="{{route('tenant.student.profil', ['student_uuid' => 'f2-' . $i])}}">
-                                            <h3 class="font-medium truncate">
-                                                Kouassi Vincent {{$i}}
-                                            </h3>
+                                        <h3 class="font-medium truncate">
+                                            Matière {{$i}}
+                                        </h3>
 
-                                            <p class="text-sm text-slate-400 truncate">
-                                                MAT-2025-{{$i}}
-                                            </p>
-                                        </a>
+                                        <p class="text-sm text-slate-400 truncate">
+                                            Coef {{rand(1, 5)}}
+                                        </p>
+
                                     </div>
 
                                 </div>
@@ -427,11 +551,11 @@
                         <div class="min-w-0 flex-1">
 
                             <h3 class="font-semibold truncate">
-                                Kouassi Vincent {{$i}}
+                                Matière {{$i}}
                             </h3>
 
                             <p class="mt-1 text-sm text-slate-400 truncate">
-                                MAT-2025-{{$i}}
+                                Coef {{rand(1, 5)}}
                             </p>
 
                         </div>
@@ -505,13 +629,15 @@
 
                     <div class="grid grid-cols-2 gap-3">
 
-                        <a href="{{route('tenant.student.profil', ['student_uuid' => 'f2-' . $i])}}" class="p-3 rounded-2xl
+                        <button class="h-11 rounded-2xl
                                        bg-slate-800
                                        hover:bg-indigo-500
                                        transition-all
-                                       text-sm text-center">
-                                Voir profil
-                        </a>
+                                       text-sm">
+
+                            Voir
+
+                        </button>
 
                         <button class="h-11 rounded-2xl
                                        bg-slate-800

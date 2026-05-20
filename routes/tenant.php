@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
-use App\Livewire\Tenants\Dashboard;
+use App\Livewire\Tenants\Parents\ParentProfil;
+use App\Livewire\Tenants\Parents\ParentsPortal;
+use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
@@ -45,6 +47,8 @@ Route::middleware([
             
             Route::get('/dashboard/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
             
+            Route::get('/dashboard/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
+            
             Route::get('/dashboard/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
             Route::get('/dashboard/classes/portail-classses/{classe_slug}', ClasseProfil::class)->name('classe.profil');
@@ -54,6 +58,13 @@ Route::middleware([
 
 
         Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('tenant.student.profil');
+        
+        
+        
+        Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('tenant.parent.profil');
+        
+        
+        Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('tenant.student.marks');
 
         
 

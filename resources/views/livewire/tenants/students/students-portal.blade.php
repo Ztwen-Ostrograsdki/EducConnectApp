@@ -53,23 +53,33 @@
                 </div>
 
                 {{-- ACTIONS --}}
-                <div class="flex flex-wrap gap-3">
+                <div class="flex justify-center flex-wrap gap-3 text-gray-950">
 
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-slate-800
-                                   hover:bg-slate-700
-                                   transition-all text-sm">
+                    <button class="p-2 px-3 rounded-2xl
+                                    bg-gray-500 hover:bg-gray-600">
 
-                        Exporter
+                        Ajouter un appr.
+
+                    </button>
+                    
+                    <button class="p-2 px-3 rounded-2xl
+                                    bg-blue-500 hover:bg-blue-600">
+
+                        Imprimer PDF
 
                     </button>
 
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-indigo-500
-                                   hover:bg-indigo-600
-                                   transition-all text-sm">
+                    <button class="p-2 px-3 rounded-2xl
+                                    bg-emerald-500 hover:bg-emerald-600">
 
-                        Ajouter Élève
+                        Emprimer Excel
+
+                    </button>
+
+                    <button class="p-2 px-3 rounded-2xl
+                                    bg-amber-500 hover:bg-amber-600">
+
+                        Imprimer Excel et PDF
 
                     </button>
 

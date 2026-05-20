@@ -131,25 +131,26 @@
                                         xl:grid-cols-2
                                         gap-3 w-full xl:w-[260px]">
 
-                                <button class="h-12 rounded-2xl
+                                <button class="p-3 rounded-2xl
                                                bg-indigo-500
                                                hover:bg-indigo-600
                                                transition-all text-sm">
 
-                                    Modifier
+                                    Editer
 
                                 </button>
 
-                                <button class="h-12 rounded-2xl
-                                               bg-slate-800
-                                               hover:bg-slate-700
-                                               transition-all text-sm">
+                                <a href="{{route('tenant.student.marks', ['student_uuid' => $student_uuid])}}" class="p-3 rounded-2xl
+                                               bg-green-500/20
+                                               text-green-400
+                                               hover:bg-green-500/30
+                                               transition-all text-sm inline-block text-center">
 
-                                    Notes
+                                    Les notes 
 
-                                </button>
+                                </a>
 
-                                <button class="h-12 rounded-2xl
+                                <button class="p-3 rounded-2xl
                                                bg-slate-800
                                                hover:bg-slate-700
                                                transition-all text-sm">
@@ -158,7 +159,7 @@
 
                                 </button>
 
-                                <button class="h-12 rounded-2xl
+                                <button class="p-3 rounded-2xl
                                                bg-rose-500/20
                                                text-rose-400
                                                hover:bg-rose-500/30
@@ -167,6 +168,16 @@
                                     Suspendre
 
                                 </button>
+
+                                <a href="{{route('tenant.classe.profil', ['classe_slug' => $classe_slug])}}" class="p-3 col-span-2 rounded-2xl
+                                               bg-sky-500/20
+                                               text-sky-400
+                                               hover:bg-sky-500/30
+                                               transition-all text-sm inline-block text-center">
+
+                                    Acceder à la classe 
+
+                                </a>
 
                             </div>
 
@@ -682,9 +693,71 @@
                 </div>
 
             </div>
-
         </div>
-
     </section>
 
+    <section class="grid my-3 pb-9">
+        {{-- Bulletins --}}
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+            <div>
+                <h2 class="text-xl font-semibold">
+                    Bulletin de notes de l'année scolaire <span class="text-sky-600">{{ session('school_year_selected') }}</span>
+                </h2>
+                <p class="mt-1 text-sm text-slate-400">
+                    Détails sur les notes par semestre|trimestre de l'apprenant
+                </p>
+            </div>
+            <div class="flex flex-col xl:flex-row gap-4">
+                        {{-- FILTERS --}}
+                <div class="grid
+                            grid-cols-1
+                            sm:grid-cols-2
+                            lg:grid-cols-4
+                            gap-3 p-1 py-2.5">
+
+                    {{-- SEMESTER --}}
+                    <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl
+                                bg-slate-950
+                                border border-slate-800
+                                text-sm">
+                            <option value="">Sélectionner le semestre|trimestre</option>
+                        @foreach(range(1,2) as $i)
+                            <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
+                        @endforeach
+
+                        @foreach(range(1,3) as $i)
+                            <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                        @endforeach
+
+                    </select>
+
+                    {{-- ACTIONS --}}
+                    @if($period_type_selected)
+                        <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl
+                                    bg-sky-800
+                                    border border-sky-700
+                                    hover:bg-sky-700
+                                    transition-all
+                                    text-sm cursor-pointer">
+
+                            Charger
+                        </button>
+
+                        <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl
+                                    bg-slate-800
+                                    border border-slate-700
+                                    hover:bg-slate-700
+                                    transition-all
+                                    text-sm cursor-pointer">
+
+                            Réinitialiser
+
+                        </button>
+                    @endif
+                </div>
+
+            </div>
+            @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
+        </div>
+    </section>
 </div>

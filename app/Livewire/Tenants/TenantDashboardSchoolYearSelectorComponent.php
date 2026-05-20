@@ -12,6 +12,8 @@ class TenantDashboardSchoolYearSelectorComponent extends Component
     public function updatedSelectedYear(): void
     {
         $this->dispatch('yearChanged', $this->selectedYear);
+
+        session()->put('school_year_selected', $this->selectedYear);
     }
 
     public function render()
@@ -22,6 +24,12 @@ class TenantDashboardSchoolYearSelectorComponent extends Component
             '2024-2025' => '2024-2025',
             '2025-2026' => '2025-2026',
         ];
+
+        if(session()->has('school_year_selected')){
+
+            $this->selectedYear = session('school_year_selected');
+
+        }
 
         return view('livewire.tenants.tenant-dashboard-school-year-selector-component', compact('schoolYears'));
     }

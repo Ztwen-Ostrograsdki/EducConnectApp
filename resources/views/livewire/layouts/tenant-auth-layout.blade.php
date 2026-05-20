@@ -48,7 +48,7 @@
                 <div class="s-school-name">{{ tenant()?->name ?? 'Mon École' }}</div>
                 <div class="s-school-year">
                     <span class="s-school-dot"></span>
-                    Année 2024–2025
+                    Année {{ session('school_year_selected') }}
                 </div>
             </div>
         </div>
@@ -91,7 +91,7 @@
                 <div class="s-section-label">Personnes</div>
                 <a href="{{route('tenant.students.portal')}}" class="s-link"><div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span></a>
                 <a href="{{route('tenant.teachers.portal')}}" class="s-link"><div class="s-icon">👩‍🏫</div><span class="s-label">Enseignants</span><span class="s-badge badge-green">42</span></a>
-                <a href="#" class="s-link"><div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span></a>
+                <a href="{{route('tenant.parents.portal')}}" class="s-link"><div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span></a>
             </div>
 
             <div class="s-section">
@@ -205,7 +205,7 @@
             min-w-0
             w-full
             max-w-full
-            overflow-x-hidden" 
+            overflow-x-hidden p-3" 
             id="content">
             {{ $slot }}
         </main>
