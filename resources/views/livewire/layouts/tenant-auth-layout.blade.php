@@ -12,7 +12,7 @@
     
 </head>
 <body>
-<div class="shell ">
+<div class="shell">
 
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 

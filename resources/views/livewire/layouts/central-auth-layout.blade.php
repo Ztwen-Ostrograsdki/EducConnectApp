@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? config('app.name') }}</title>
+    <title>ADMINISTRATION CENTRALE - {{ $title ?? config('app.name') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    
 </head>
 <body>
 <div class="shell">
@@ -70,7 +69,14 @@
                         <span class="s-acc-arrow">▶</span>
                     </div>
                     <div class="s-acc-content">
-                        <a href="#" class="s-link" style="font-size:.78rem;"><div class="s-icon" style="font-size:.72rem;">📋</div><span class="s-label">Toutes les classes</span></a>
+                        <a href="{{route('tenant.classes.portal')}}" class="s-link" style="font-size:.78rem;">
+                            <div class="s-icon" style="font-size:.72rem;">📋</div>
+                            <span class="s-label">Toutes les classes</span>
+                        </a>
+                        <a href="{{route('tenant.classe.profil', ['classe_slug' => 'premiere-f2'])}}" class="s-link" style="font-size:.78rem;">
+                            <div class="s-icon" style="font-size:.72rem;">📋</div>
+                            <span class="s-label">Classe de 1ère F2</span>
+                        </a>
                         <a href="#" class="s-link" style="font-size:.78rem;"><div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle classe</span></a>
                     </div>
                 </div>
@@ -81,8 +87,8 @@
 
             <div class="s-section">
                 <div class="s-section-label">Personnes</div>
-                <a href="#" class="s-link"><div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span></a>
-                <a href="#" class="s-link"><div class="s-icon">👩‍🏫</div><span class="s-label">Enseignants</span><span class="s-badge badge-green">42</span></a>
+                <a href="{{route('tenant.students.portal')}}" class="s-link"><div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span></a>
+                <a href="{{route('tenant.teachers.portal')}}" class="s-link"><div class="s-icon">👩‍🏫</div><span class="s-label">Enseignants</span><span class="s-badge badge-green">42</span></a>
                 <a href="#" class="s-link"><div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span></a>
             </div>
 
@@ -148,22 +154,7 @@
                 <div class="year-switcher">
                     <span class="year-icon">📅</span>
 
-                    <select
-                        class="year-select"
-                        wire:model.live="selectedYear"
-                    >
-                        <option value="2024-2025">
-                            2024–2025
-                        </option>
-
-                        <option value="2023-2024">
-                            2023–2024
-                        </option>
-
-                        <option value="2022-2023">
-                            2022–2023
-                        </option>
-                    </select>
+                    <livewire:tenants.tenant-dashboard-school-year-selector-component />
                 </div>
 
                 <button class="h-btn" title="Thème">🌙</button>
@@ -208,7 +199,14 @@
             </div>
         </header>
 
-        <main class="content" id="content">{{ $slot }}</main>
+        <main class="flex-1
+            min-w-0
+            w-full
+            max-w-full
+            overflow-x-hidden" 
+            id="content">
+            {{ $slot }}
+        </main>
     </div>
 </div>
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Livewire\Tenants\Serials;
+namespace App\Livewire\Tenants\Parents;
 
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
-class SerialProfil extends Component
+class ParentProfil extends Component
 {
     public function render()
     {
-        return view('livewire.tenants.serials.serial-profil');
+        return view('livewire.tenants.parents.parent-profil');
     }
 }
