@@ -10,14 +10,13 @@ use Livewire\Component;
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class PromotionProfil extends Component
 {
-
     public string $promotion_slug;
 
-    public string $promotion_name = "Promotion Nom";
+    public string $promotion_name = 'Promotion Nom';
 
-    public ?string $school_year_selected; 
+    public ?string $school_year_selected;
 
-    public function mount (string $promotion_slug)
+    public function mount(string $promotion_slug)
     {
 
         $this->promotion_slug = $promotion_slug;
@@ -31,7 +30,7 @@ class PromotionProfil extends Component
     {
         $this->school_year_selected = $schoolYear;
     }
-    
+
     public function render()
     {
         return view('livewire.tenants.promotions.promotion-profil');

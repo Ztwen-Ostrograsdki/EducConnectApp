@@ -37,7 +37,7 @@ return new class extends Migration
             $table->dateTime('payment_date')->nullable();
             $table->string('observations')->nullable();
             $table->foreignId('registred_by')->nullable()
-                  ->constrained('users')->nullOnDelete();
+                ->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 

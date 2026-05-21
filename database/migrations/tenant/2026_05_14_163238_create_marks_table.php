@@ -41,14 +41,14 @@ return new class extends Migration
             $table->boolean('validated')->default(true);
             $table->timestamp('locked_at')->nullable();         // date de verrouillage
             $table->foreignId('locked_by')->nullable()          // qui a verrouillé
-                  ->constrained('users')->nullOnDelete();
+                ->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 
             // Un élève ne peut avoir qu'une note de chaque type par matière/période/année
             $table->unique([
                 'student_id', 'subject_id', 'school_year_id',
-                'period', 'mark_type'
+                'period', 'mark_type',
             ], 'uniq_mark');
 
             $table->index(['student_id', 'school_year_id', 'period']);

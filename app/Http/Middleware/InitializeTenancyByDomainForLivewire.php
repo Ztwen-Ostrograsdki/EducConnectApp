@@ -13,12 +13,12 @@ class InitializeTenancyByDomainForLivewire
         $domain = $request->getHost();
         $centralDomains = config('tenancy.central_domains', []);
 
-        if (!in_array($domain, $centralDomains)) {
+        if (! in_array($domain, $centralDomains)) {
             try {
                 $tenantDomain = Domain::where('domain', $domain)->first();
                 if ($tenantDomain) {
                     tenancy()->initialize($tenantDomain->tenant);
-                    
+
                     // Forcer la reconnexion de la session sur la DB tenant
                     $sessionConfig = config('session');
                     $sessionConfig['connection'] = 'tenant';

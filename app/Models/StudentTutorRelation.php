@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Student;
-use App\Models\Tutor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,28 +16,31 @@ class StudentTutorRelation extends Model
 
     protected $casts = [
         'is_primary_contact' => 'boolean',
-        'is_active'          => 'boolean',
-        'locked'             => 'boolean',
+        'is_active' => 'boolean',
+        'locked' => 'boolean',
     ];
 
     /**
      * Get the student in this relation.
-     *
-     * @return BelongsTo
      */
-    public function student(): BelongsTo { return $this->belongsTo(Student::class, 'student_id'); }
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 
     /**
      * Get the tutor in this relation.
-     *
-     * @return BelongsTo
      */
-    public function tutor(): BelongsTo { return $this->belongsTo(Tutor::class, 'tutor_id'); }
+    public function tutor(): BelongsTo
+    {
+        return $this->belongsTo(Tutor::class, 'tutor_id');
+    }
 
     /**
      * Check if this relation is active.
-     *
-     * @return bool
      */
-    public function isActive(): bool { return $this->is_active && !$this->locked; }
+    public function isActive(): bool
+    {
+        return $this->is_active && ! $this->locked;
+    }
 }

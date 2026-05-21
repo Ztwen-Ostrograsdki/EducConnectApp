@@ -200,7 +200,7 @@
                     <div class="year-switcher">
                         <span class="year-icon">📅</span>
 
-                        <livewire:tenants.tenant-dashboard-school-year-selector-component />
+                        <livewire:school-year-selector-component />
                     </div>
 
                     <button class="h-btn" title="Thème">🌙</button>

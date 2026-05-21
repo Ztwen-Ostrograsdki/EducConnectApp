@@ -16,13 +16,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mark_id')->constrained('marks')->cascadeOnDelete();
             $table->foreignId('editor_id')->nullable()         // qui a modifié
-                  ->constrained('users')->nullOnDelete();
+                ->constrained('users')->nullOnDelete();
             $table->decimal('old_value', 5, 2);           // valeur avant modification
             $table->decimal('new_value', 5, 2);           // valeur après modification
             $table->text('reasons')->nullable();                   // justification de la modification
             $table->boolean('authorized_by_director')->default(false);
             $table->foreignId('authorized_by')->nullable()  // directeur qui a autorisé
-                  ->constrained('users')->nullOnDelete();
+                ->constrained('users')->nullOnDelete();
             $table->timestamp('authorized_at')->nullable();
             $table->timestamps();
 

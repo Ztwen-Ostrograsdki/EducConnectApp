@@ -28,7 +28,6 @@ class ClassePupilBulletinComponent extends Component
         $this->school_year_selected = $schoolYear;
     }
 
-
     #[On('ReloadTheStudentBulletin')]
     public function onReloadTheStudentBulletin(?string $period_type_selected, ?string $student_uuid_selected)
     {

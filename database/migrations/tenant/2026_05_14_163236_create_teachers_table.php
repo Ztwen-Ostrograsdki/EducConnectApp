@@ -33,19 +33,19 @@ return new class extends Migration
             $table->json('specialties')->nullable();
             $table->json('diploma')->nullable();
             $table->boolean('blocked')->default(false);
-            $table->string('blocked_reasons')->default("Non précisée");
- 
+            $table->string('blocked_reasons')->default('Non précisée');
+
             // Statut global de l'enseignant dans l'école
             // (indépendant du statut annuel)
             $table->enum('status', [
                 'active',       // affilié et actif dans l'école
                 'unactive',     // plus dans l'école
             ])->default('unactive');
- 
+
             $table->timestamp('affiliated_at')->nullable();     // date d'affiliation initiale
             $table->timestamps();
             $table->softDeletes();
- 
+
             $table->index(['status', 'name']);
             $table->index('email');
         });

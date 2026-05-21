@@ -5,13 +5,12 @@ namespace App\Livewire\Tenants\Teachers;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class TeacherProfilPage extends Component
 {
+    public string $teacher_uuid;
 
-    public string $teacher_uuid, $teacher;
-
+    public string $teacher;
 
     public function mount(string $teacher_uuid)
     {

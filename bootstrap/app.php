@@ -1,10 +1,17 @@
 <?php
 
+use App\Http\Middleware\CheckSuperAdmin;
+use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\TenantAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,26 +31,25 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        
+
         $middleware->prependToGroup('web',
-            \App\Http\Middleware\InitializeTenancyByDomainForLivewire::class
+            InitializeTenancyByDomainForLivewire::class
         );
-        
+
         $middleware->web(
             remove: [
-            PreventRequestForgery::class,
-        ]);
+                PreventRequestForgery::class,
+            ]);
         $middleware->alias([
-            'role'       => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'check.super.admin'  => \App\Http\Middleware\CheckSuperAdmin::class,
-            'tenant.init' => \App\Http\Middleware\InitializeTenancyByDomainForLivewire::class,
-            'tenant.auth' => \App\Http\Middleware\TenantAuthenticate::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'check.super.admin' => CheckSuperAdmin::class,
+            'tenant.init' => InitializeTenancyByDomainForLivewire::class,
+            'tenant.auth' => TenantAuthenticate::class,
+            'guest' => RedirectIfAuthenticated::class,
         ]);
 
-       
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

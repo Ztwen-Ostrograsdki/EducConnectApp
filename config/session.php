@@ -132,8 +132,6 @@ return [
         Str::slug((string) env('APP_NAME', 'laravel'), '_').'-session'
     ),
 
-    
-
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path

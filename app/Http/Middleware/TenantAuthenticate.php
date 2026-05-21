@@ -12,10 +12,6 @@ class TenantAuthenticate
     /**
      * Handle an incoming request.
      * Initialise le tenant et vérifie l'authentification via guard tenant.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return mixed
      */
     public function handle(Request $request, Closure $next): mixed
     {
@@ -23,7 +19,7 @@ class TenantAuthenticate
         $domain = $request->getHost();
         $centralDomains = config('tenancy.central_domains', []);
 
-        if (!in_array($domain, $centralDomains)) {
+        if (! in_array($domain, $centralDomains)) {
             try {
                 $tenantDomain = Domain::where('domain', $domain)->first();
                 if ($tenantDomain) {
@@ -35,7 +31,7 @@ class TenantAuthenticate
         }
 
         // Vérifier l'auth via guard tenant
-        if (!Auth::guard('tenant')->check()) {
+        if (! Auth::guard('tenant')->check()) {
             return redirect()->route('login');
         }
 

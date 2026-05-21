@@ -215,6 +215,6 @@ return [
          */
 
         'store' => 'default',
-        
+
     ],
 ];

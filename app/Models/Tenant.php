@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
+use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
@@ -30,7 +31,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'adresse',                 // Adresse physique
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
-            'devise'
+            'devise',
         ];
     }
 
@@ -38,10 +39,10 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      * Valeurs par défaut
      */
     protected $attributes = [
-        'statut'           => 'pending',
+        'statut' => 'pending',
         'type_enseignement' => 'general',
-        'type_periode'     => 'semestre',
-        'devise'     => 'Votre dévise',
+        'type_periode' => 'semestre',
+        'devise' => 'Votre dévise',
     ];
 
     /**
@@ -101,5 +102,10 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function labelPeriode(): string
     {
         return $this->usesTrimestres() ? 'Trimestre' : 'Semestre';
+    }
+
+    public function moduleAccess(): HasOne
+    {
+        return $this->hasOne(TenantModuleAccess::class, 'tenant_id');
     }
 }

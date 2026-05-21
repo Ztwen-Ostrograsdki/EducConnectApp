@@ -238,7 +238,7 @@ Classe
 
 ### En cours
 
-- [ ] Dashboard tenant (directeur)
+- [x] Dashboard tenant (directeur)
 - [ ] Dashboard central (super admin)
 
 ### À faire ensuite

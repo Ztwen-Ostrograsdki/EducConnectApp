@@ -314,6 +314,15 @@ body {
 .sidebar.collapsed .s-link {
     justify-content: center;
 }
+
+.sidebar.collapsed .s-link span.border {
+    display: none;
+}
+
+.sidebar.collapsed .s-section.border {
+    border-style: none;
+    padding: 0;
+}
 .s-link:hover {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);

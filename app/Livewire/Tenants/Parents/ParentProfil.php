@@ -15,7 +15,6 @@ class ParentProfil extends Component
         $this->parent_uuid = $parent_uuid;
     }
 
-
     public function render()
     {
         return view('livewire.tenants.parents.parent-profil');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CentralUser;
 use App\Models\User;
 
 return [
@@ -43,10 +44,9 @@ return [
     //         'provider' => 'users',
     //     ],
 
-
     // ],
 
-        'guards' => [
+    'guards' => [
 
         'central' => [
             'driver' => 'session',
@@ -59,10 +59,6 @@ return [
         ],
 
     ],
-
-    
-
-    
 
     /*
     |--------------------------------------------------------------------------
@@ -96,12 +92,12 @@ return [
     'providers' => [
         'central_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\CentralUser::class,
+            'model' => CentralUser::class,
         ],
 
         'tenant_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
         ],
 
     ],

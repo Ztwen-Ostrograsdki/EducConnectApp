@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -12,8 +12,6 @@ class RolesAndPermissionsSeeder extends Seeder
     /**
      * Run the database seeds.
      * Creates all roles and permissions for the tenant (school) context.
-     *
-     * @return void
      */
     public function run(): void
     {
@@ -138,7 +136,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $directeur = Role::firstOrCreate(['name' => 'directeur']);
         $directeur->syncPermissions(Permission::all());
 
-
         /**
          * Assistant Directeur — accès limité à ses classes et matières
          */
@@ -185,8 +182,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'bulletins.view',
         ]);
 
-        
-
         /**
          * Parent/Tuteur — accès limité à ses enfants
          */
@@ -215,10 +210,10 @@ class RolesAndPermissionsSeeder extends Seeder
         $this->command->table(
             ['Rôle', 'Permissions'],
             [
-                ['directeur',  Permission::all()->count() . ' permissions'],
-                ['enseignant', $enseignant->permissions->count() . ' permissions'],
-                ['tuteur',     $tuteur->permissions->count() . ' permissions'],
-                ['eleve',      $eleve->permissions->count() . ' permissions'],
+                ['directeur',  Permission::all()->count().' permissions'],
+                ['enseignant', $enseignant->permissions->count().' permissions'],
+                ['tuteur',     $tuteur->permissions->count().' permissions'],
+                ['eleve',      $eleve->permissions->count().' permissions'],
             ]
         );
     }

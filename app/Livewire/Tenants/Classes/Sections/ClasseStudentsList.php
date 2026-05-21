@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Tenants\Classes\Sections;
 
-
-
 use Livewire\Component;
 
 class ClasseStudentsList extends Component

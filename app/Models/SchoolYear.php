@@ -2,13 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Classe;
-use App\Models\ClasseSubjectOfSchoolYear;
-use App\Models\Mark;
-use App\Models\Payment;
-use App\Models\Presence;
-use App\Models\TeacherYearlyAccess;
-use App\Models\TutorYearlyAccess;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,8 +24,8 @@ class SchoolYear extends Model
     ];
 
     protected $casts = [
-        'start'     => 'date',
-        'end'       => 'date',
+        'start' => 'date',
+        'end' => 'date',
         'is_active' => 'boolean',
         'is_closed' => 'boolean',
     ];
@@ -41,8 +34,6 @@ class SchoolYear extends Model
 
     /**
      * Get all classes for this school year.
-     *
-     * @return HasMany
      */
     public function classes(): HasMany
     {
@@ -51,8 +42,6 @@ class SchoolYear extends Model
 
     /**
      * Get all marks for this school year.
-     *
-     * @return HasMany
      */
     public function marks(): HasMany
     {
@@ -61,8 +50,6 @@ class SchoolYear extends Model
 
     /**
      * Get all presences for this school year.
-     *
-     * @return HasMany
      */
     public function presences(): HasMany
     {
@@ -71,8 +58,6 @@ class SchoolYear extends Model
 
     /**
      * Get all payments for this school year.
-     *
-     * @return HasMany
      */
     public function payments(): HasMany
     {
@@ -81,8 +66,6 @@ class SchoolYear extends Model
 
     /**
      * Get all teacher yearly accesses for this school year.
-     *
-     * @return HasMany
      */
     public function teacherAccesses(): HasMany
     {
@@ -91,8 +74,6 @@ class SchoolYear extends Model
 
     /**
      * Get all tutor yearly accesses for this school year.
-     *
-     * @return HasMany
      */
     public function tutorAccesses(): HasMany
     {
@@ -101,8 +82,6 @@ class SchoolYear extends Model
 
     /**
      * Get all classe-subject assignments for this school year.
-     *
-     * @return HasMany
      */
     public function classeSubjects(): HasMany
     {
@@ -113,9 +92,6 @@ class SchoolYear extends Model
 
     /**
      * Scope to get only active school years.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -124,9 +100,6 @@ class SchoolYear extends Model
 
     /**
      * Scope to get only closed school years.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeClosed(Builder $query): Builder
     {
@@ -135,9 +108,6 @@ class SchoolYear extends Model
 
     /**
      * Scope to get the current school year (active and not closed).
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeCurrent(Builder $query): Builder
     {
@@ -148,18 +118,14 @@ class SchoolYear extends Model
 
     /**
      * Check if the school year is currently active.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
-        return $this->is_active && !$this->is_closed;
+        return $this->is_active && ! $this->is_closed;
     }
 
     /**
      * Check if the school year is closed.
-     *
-     * @return bool
      */
     public function isClosed(): bool
     {
@@ -168,8 +134,6 @@ class SchoolYear extends Model
 
     /**
      * Check if the school year uses trimesters.
-     *
-     * @return bool
      */
     public function usesTrimestres(): bool
     {
@@ -178,8 +142,6 @@ class SchoolYear extends Model
 
     /**
      * Get the number of periods for this school year.
-     *
-     * @return int
      */
     public function periodsCount(): int
     {
@@ -188,8 +150,6 @@ class SchoolYear extends Model
 
     /**
      * Get the label for a period (Semestre or Trimestre).
-     *
-     * @return string
      */
     public function periodLabel(): string
     {
@@ -207,7 +167,7 @@ class SchoolYear extends Model
         $count = $this->periodsCount();
 
         return array_map(
-            fn(int $i) => ['number' => $i, 'label' => "$label $i"],
+            fn (int $i) => ['number' => $i, 'label' => "$label $i"],
             range(1, $count)
         );
     }

@@ -9,18 +9,17 @@ use Livewire\Component;
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class PeriodicalStatistiqueComponent extends Component
 {
+    public ?string $school_year_selected;
 
-    public ?string $school_year_selected; 
+    public ?string $period_type_selected;
 
-    public ?string $period_type_selected; 
+    public ?string $promotion_selected;
 
-    public ?string $promotion_selected; 
+    public ?string $filiar_selected;
 
-    public ?string $filiar_selected; 
+    public ?string $serial_selected;
 
-    public ?string $serial_selected; 
-
-    public ?string $classe_selected; 
+    public ?string $classe_selected;
 
     #[On('yearChanged')]
     public function onYearChanged(string $schoolYear)
@@ -47,7 +46,7 @@ class PeriodicalStatistiqueComponent extends Component
     {
         session()->put('tenant_periodic_stats_serial_selected', $serial_selected);
     }
-    
+
     public function updatedClasseSelected(?string $classe_selected)
     {
         session()->put('tenant_periodic_stats_classe_selected', $classe_selected);

@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Payment;
-use App\Models\Student;
-use App\Models\TutorYearlyAccess;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,7 +34,7 @@ class Tutor extends Model
     ];
 
     protected $casts = [
-        'blocked'            => 'boolean',
+        'blocked' => 'boolean',
         'account_created_at' => 'datetime',
     ];
 
@@ -46,8 +42,6 @@ class Tutor extends Model
 
     /**
      * Get the user account associated with this tutor.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -56,20 +50,16 @@ class Tutor extends Model
 
     /**
      * Get all students linked to this tutor.
-     *
-     * @return BelongsToMany
      */
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'student_tutor_relations', 'tutor_id', 'student_id')
-                    ->withPivot(['parent_relation', 'is_primary_contact', 'is_active', 'locked'])
-                    ->withTimestamps();
+            ->withPivot(['parent_relation', 'is_primary_contact', 'is_active', 'locked'])
+            ->withTimestamps();
     }
 
     /**
      * Get only active students linked to this tutor.
-     *
-     * @return BelongsToMany
      */
     public function activeStudents(): BelongsToMany
     {
@@ -78,8 +68,6 @@ class Tutor extends Model
 
     /**
      * Get all yearly accesses for this tutor.
-     *
-     * @return HasMany
      */
     public function yearlyAccesses(): HasMany
     {
@@ -88,22 +76,16 @@ class Tutor extends Model
 
     /**
      * Get yearly accesses for a specific student and school year.
-     *
-     * @param int $studentId
-     * @param int $schoolYearId
-     * @return HasMany
      */
     public function accessForStudentAndYear(int $studentId, int $schoolYearId): HasMany
     {
         return $this->yearlyAccesses()
-                    ->where('student_id', $studentId)
-                    ->where('school_year_id', $schoolYearId);
+            ->where('student_id', $studentId)
+            ->where('school_year_id', $schoolYearId);
     }
 
     /**
      * Get all payments recorded by this tutor.
-     *
-     * @return HasMany
      */
     public function payments(): HasMany
     {
@@ -114,9 +96,6 @@ class Tutor extends Model
 
     /**
      * Scope to get only active and non-blocked tutors.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -125,9 +104,6 @@ class Tutor extends Model
 
     /**
      * Scope to get only blocked tutors.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeBlocked(Builder $query): Builder
     {
@@ -138,8 +114,6 @@ class Tutor extends Model
 
     /**
      * Get the full name of the tutor.
-     *
-     * @return string
      */
     public function fullName(): string
     {
@@ -148,18 +122,14 @@ class Tutor extends Model
 
     /**
      * Check if the tutor is active and not blocked.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' && !$this->blocked;
+        return $this->status === 'active' && ! $this->blocked;
     }
 
     /**
      * Check if the tutor is blocked.
-     *
-     * @return bool
      */
     public function isBlocked(): bool
     {
@@ -168,52 +138,47 @@ class Tutor extends Model
 
     /**
      * Check if the tutor has a valid access for a specific student and school year.
-     *
-     * @param int $studentId
-     * @param int $schoolYearId
-     * @return bool
      */
     public function hasValidAccessForYear(int $studentId, int $schoolYearId): bool
     {
         return $this->yearlyAccesses()
-                    ->where('student_id', $studentId)
-                    ->where('school_year_id', $schoolYearId)
-                    ->where('status', 'active')
-                    ->exists();
+            ->where('student_id', $studentId)
+            ->where('school_year_id', $schoolYearId)
+            ->where('status', 'active')
+            ->exists();
     }
 
     /**
      * Check if the tutor is linked to a specific student.
-     *
-     * @param int $studentId
-     * @return bool
      */
     public function hasStudent(int $studentId): bool
     {
         return $this->students()
-                    ->where('students.id', $studentId)
-                    ->exists();
+            ->where('students.id', $studentId)
+            ->exists();
     }
 
     /**
      * Check if the tutor can renew their token for a specific student and school year.
-     *
-     * @param int $studentId
-     * @param int $schoolYearId
-     * @return bool
      */
     public function canRenewTokenForYear(int $studentId, int $schoolYearId): bool
     {
-        if (!$this->isActive()) return false;
-        if (!$this->hasStudent($studentId)) return false;
+        if (! $this->isActive()) {
+            return false;
+        }
+        if (! $this->hasStudent($studentId)) {
+            return false;
+        }
 
         $access = $this->yearlyAccesses()
-                       ->where('student_id', $studentId)
-                       ->where('school_year_id', $schoolYearId)
-                       ->first();
+            ->where('student_id', $studentId)
+            ->where('school_year_id', $schoolYearId)
+            ->first();
 
-        if (!$access) return false;
+        if (! $access) {
+            return false;
+        }
 
-        return !$access->isSuspended() && !$access->isBlocked();
+        return ! $access->isSuspended() && ! $access->isBlocked();
     }
 }

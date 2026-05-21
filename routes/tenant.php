@@ -36,13 +36,13 @@ Route::middleware([
 
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest:tenant');
-    
-    
+
     Route::post('/logout', function () {
 
         Auth::guard('tenant')->logout();
         session()->invalidate();
         session()->regenerateToken();
+
         return redirect()->route('login');
     })->name('logout')->middleware('auth:tenant');
 
@@ -54,21 +54,21 @@ Route::middleware([
         // ── Directeur ─────────────────────────────────────────────────
         Route::middleware('role:directeur')->prefix('ecole')->name('tenant.')->group(function () {
             Route::get('/dashboard/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
-            
+
             Route::get('/dashboard/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
-            
+
             Route::get('/dashboard/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
-            
+
             Route::get('/dashboard/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
             Route::get('/dashboard/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
-            
+
             Route::get('/dashboard/promotions/portail-des-promotions', PromotionsPortal::class)->name('promotions.portal');
 
             Route::get('/dashboard/promotions/portail-des-promotions/profil-promotion/ID={promotion_slug}', PromotionProfil::class)->name('promotion.profil');
-            
+
             Route::get('/dashboard/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
-            
+
             Route::get('/dashboard/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
 
             Route::get('/dashboard/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
@@ -78,25 +78,18 @@ Route::middleware([
             Route::get('/dashboard/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
 
             Route::get('/dashboard/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
-            
-            Route::get('/dashboard/statistiques-semestrielles/',PeriodicalStatistiqueComponent::class)->name('stats.general');
 
-            
+            Route::get('/dashboard/statistiques-semestrielles/', PeriodicalStatistiqueComponent::class)->name('stats.general');
+
         });
-
 
         Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('tenant.student.profil');
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
-        
-        
-        
-        Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('tenant.parent.profil');
-        
-        
-        Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('tenant.student.marks');
 
-        
+        Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('tenant.parent.profil');
+
+        Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('tenant.student.marks');
 
         Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('tenant.teacher.profil');
 

@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::create('tutors', function (Blueprint $table) {
-           $table->id();
+            $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('qr_code')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('adresse')->nullable();
             $table->enum('status', ['active', 'unactive'])->default('active');
             $table->boolean('blocked')->default(false);
-            $table->string('blocked_reasons')->default("Non précisée");
+            $table->string('blocked_reasons')->default('Non précisée');
             $table->timestamps();
             $table->softDeletes();
             $table->index(['name', 'prenames']);

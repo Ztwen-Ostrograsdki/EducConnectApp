@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Classe;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,7 +25,7 @@ class Promotion extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'order'     => 'integer',
+        'order' => 'integer',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────

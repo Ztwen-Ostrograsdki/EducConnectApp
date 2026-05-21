@@ -7,7 +7,7 @@ use Livewire\Component;
 class ClassePresencePage extends Component
 {
     public string $classroom;
-    
+
     public function render()
     {
         return view('livewire.tenants.classes.sections.classe-presence-page');

@@ -11,14 +11,10 @@ class CheckSuperAdmin
     /**
      * Handle an incoming request.
      * Vérifie que l'utilisateur est connecté via le guard central.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return mixed
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (!Auth::guard('central')->check()) {
+        if (! Auth::guard('central')->check()) {
             return redirect()->route('central.login');
         }
 

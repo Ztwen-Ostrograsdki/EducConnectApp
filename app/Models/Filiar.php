@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Classe;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,8 +30,6 @@ class Filiar extends Model
 
     /**
      * Get all classes belonging to this filiar.
-     *
-     * @return HasMany
      */
     public function classes(): HasMany
     {
@@ -43,9 +40,6 @@ class Filiar extends Model
 
     /**
      * Scope to get only active filiars.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -56,8 +50,6 @@ class Filiar extends Model
 
     /**
      * Check if the filiar is active.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {

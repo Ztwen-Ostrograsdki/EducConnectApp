@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('serials', function (Blueprint $table) {
             $table->id();
-            $table->string('slug'); 
+            $table->string('slug');
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('name');                              // ex: A, B, C, D
             $table->string('code')->nullable();                 // ex: A, B, C

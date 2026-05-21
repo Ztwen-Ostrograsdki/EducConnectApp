@@ -15,7 +15,7 @@ class TenantDashboard extends Component
     {
         $year = now()->year;
 
-        $this->tenant_dashboard_selected_school_year = $year - 1 . '-' . $year;
+        $this->tenant_dashboard_selected_school_year = $year - 1 .'-'.$year;
     }
 
     #[On('yearChanged')]
@@ -23,7 +23,7 @@ class TenantDashboard extends Component
     {
         $this->tenant_dashboard_selected_school_year = $schoolYear;
     }
-    
+
     public function render()
     {
         return view('livewire.tenants.tenant-dashboard');

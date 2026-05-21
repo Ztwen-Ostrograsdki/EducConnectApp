@@ -6,14 +6,18 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class StudentMarksComponent extends Component
 {
-    public ?string $student_name, $student_uuid, $classe_slug;
+    public ?string $student_name;
 
-    public ?string $period_type_selected, $school_year_selected; 
+    public ?string $student_uuid;
 
+    public ?string $classe_slug;
+
+    public ?string $period_type_selected;
+
+    public ?string $school_year_selected;
 
     public function mount(string $student_uuid)
     {

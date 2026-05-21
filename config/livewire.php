@@ -76,7 +76,7 @@ return [
             'css' => false,
             'test' => false,
         ],
-        
+
     ],
 
     /*

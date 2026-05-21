@@ -12,11 +12,11 @@ class FiliarProfil extends Component
 {
     public string $filiar_slug;
 
-    public string $filiar_name = "filiar Nom";
+    public string $filiar_name = 'filiar Nom';
 
-    public ?string $school_year_selected; 
+    public ?string $school_year_selected;
 
-    public function mount (string $filiar_slug)
+    public function mount(string $filiar_slug)
     {
 
         $this->filiar_slug = $filiar_slug;
@@ -30,7 +30,7 @@ class FiliarProfil extends Component
     {
         $this->school_year_selected = $schoolYear;
     }
-    
+
     public function render()
     {
         return view('livewire.tenants.filiars.filiar-profil');

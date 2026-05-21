@@ -5,12 +5,16 @@
 
 import "./bootstrap";
 
-import "./layouts/tenant-sidebar";
+import "./layouts/dashboards-layouts";
 
 // Alpine.js (complément naturel de Livewire)
 import Alpine from "alpinejs";
 window.Alpine = Alpine;
 Alpine.start();
+
+// import { createIcons, icons } from "lucide";
+
+// createIcons({ icons });
 
 // Motion — animations déclaratives sur les éléments du DOM
 import { animate, stagger, inView, scroll } from "motion";
@@ -115,11 +119,7 @@ window.showToast = (message, type = "success") => {
     animate(toast, { opacity: [0, 1], y: [16, 0] }, { duration: 0.3 });
 
     setTimeout(() => {
-        animate(
-            toast,
-            { opacity: [1, 0], y: [0, 16] },
-            { duration: 0.3 },
-        ).finished.then(() => toast.remove());
+        animate(toast, { opacity: [1, 0], y: [0, 16] }, { duration: 0.3 }).finished.then(() => toast.remove());
     }, 3500);
 };
 

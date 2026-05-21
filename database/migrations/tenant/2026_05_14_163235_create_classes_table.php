@@ -25,17 +25,17 @@ return new class extends Migration
             $table->enum('level', ['primaire', 'secondaire', 'superieur']);
             $table->integer('effectif_max')->default(50);
             $table->foreignId('principal_id')
-                  ->nullable()
-                  ->constrained('teachers')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('teachers')
+                ->nullOnDelete();
             $table->foreignId('respo_1_id')                       // apprenant responsable
-                  ->nullable()
-                  ->constrained('students')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('students')
+                ->nullOnDelete();
             $table->foreignId('respo_2_id')                       // apprenant responsable
-                  ->nullable()
-                  ->constrained('students')
-                  ->nullOnDelete();
+                ->nullable()
+                ->constrained('students')
+                ->nullOnDelete();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_locked')->default(false); // on pourra empêcher l'accès aux enseignants momentanement
             $table->json('locked_for_teachers')->default(null); // un tableau des id des enseignant sur lequels on pourra empêcher l'accès à certains enseignants momentanement

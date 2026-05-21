@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\ClasseSubjectOfSchoolYear;
-use App\Models\Mark;
-use App\Models\Presence;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,8 +31,6 @@ class Subject extends Model
 
     /**
      * Get all classe-subject assignments for this subject.
-     *
-     * @return HasMany
      */
     public function classeSubjects(): HasMany
     {
@@ -44,8 +39,6 @@ class Subject extends Model
 
     /**
      * Get all marks for this subject.
-     *
-     * @return HasMany
      */
     public function marks(): HasMany
     {
@@ -54,8 +47,6 @@ class Subject extends Model
 
     /**
      * Get all presences for this subject.
-     *
-     * @return HasMany
      */
     public function presences(): HasMany
     {
@@ -66,9 +57,6 @@ class Subject extends Model
 
     /**
      * Scope to get only active subjects.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -77,10 +65,6 @@ class Subject extends Model
 
     /**
      * Scope to filter subjects by level.
-     *
-     * @param Builder $query
-     * @param string $level
-     * @return Builder
      */
     public function scopeByLevel(Builder $query, string $level): Builder
     {
@@ -91,8 +75,6 @@ class Subject extends Model
 
     /**
      * Check if the subject is active.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {

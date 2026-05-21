@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Classe;
-use App\Models\SchoolYear;
-use App\Models\Student;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -24,13 +21,12 @@ class YearlyClasseStudent extends Model
     ];
 
     protected $casts = [
-        'is_active'           => 'boolean',
-        'started_at'           => 'date',
-        'ended_at'           => 'date',
+        'is_active' => 'boolean',
+        'started_at' => 'date',
+        'ended_at' => 'date',
     ];
 
-
-     // ─── Relations ────────────────────────────────────────────────────
+    // ─── Relations ────────────────────────────────────────────────────
 
     public function schoolYear(): BelongsTo
     {
@@ -45,8 +41,9 @@ class YearlyClasseStudent extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
-    
+
     }
+
     public function classe(): BelongsTo
     {
         return $this->belongsTo(Classe::class, 'classe_id');

@@ -13,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         require_once app_path('Helpers/helpers.php');
+        require_once app_path('Helpers/modules.php');
     }
 
     /**
@@ -27,8 +28,8 @@ class AppServiceProvider extends ServiceProvider
 
             // Ne pas initialiser si c'est un domaine central
             $centralDomains = config('tenancy.central_domains', []);
-            
-            if (!in_array($host, $centralDomains)) {
+
+            if (! in_array($host, $centralDomains)) {
                 try {
                     $domain = Domain::where('domain', $host)->first();
                     if ($domain) {

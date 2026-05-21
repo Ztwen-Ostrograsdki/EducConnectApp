@@ -79,9 +79,7 @@ window.toggleDD = function (id) {
 
 document.addEventListener("click", (e) => {
     if (!e.target.closest(".dd")) {
-        document
-            .querySelectorAll(".dd-menu")
-            .forEach((menu) => menu.classList.remove("open"));
+        document.querySelectorAll(".dd-menu").forEach((menu) => menu.classList.remove("open"));
     }
 });
 
@@ -89,9 +87,7 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         closeSidebar();
 
-        document
-            .querySelectorAll(".dd-menu")
-            .forEach((menu) => menu.classList.remove("open"));
+        document.querySelectorAll(".dd-menu").forEach((menu) => menu.classList.remove("open"));
     }
 });
 

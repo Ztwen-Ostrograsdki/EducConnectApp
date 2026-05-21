@@ -9,12 +9,11 @@ use Livewire\Component;
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class SubjectProfil extends Component
 {
-
     public string $subject_slug;
 
-    public ?string $school_year_selected; 
+    public ?string $school_year_selected;
 
-    public function mount (string $subject_slug)
+    public function mount(string $subject_slug)
     {
 
         $this->subject_slug = $subject_slug;

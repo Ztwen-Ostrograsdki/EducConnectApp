@@ -9,7 +9,7 @@ use Livewire\Component;
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class SubjectsPortal extends Component
 {
-    public ?string $school_year_selected; 
+    public ?string $school_year_selected;
 
     #[On('yearChanged')]
     public function onYearChanged(string $schoolYear)
@@ -17,7 +17,6 @@ class SubjectsPortal extends Component
         $this->school_year_selected = $schoolYear;
     }
 
-    
     public function render()
     {
         return view('livewire.tenants.subjects.subjects-portal');

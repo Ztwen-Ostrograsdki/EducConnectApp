@@ -16,14 +16,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
             $table->foreignId('school_year_id')->constrained('school_years')->cascadeOnDelete();
- 
+
             // ─── Token de validation annuel ───────────────────────────
             $table->string('token')->nullable()->unique();
             $table->timestamp('token_expires_at')->nullable();      // +72h après génération
             $table->timestamp('token_requested_at')->nullable();    // dernière demande de renouvellement
             $table->integer('token_attempts')->default(0);          // nb de renouvellements demandés
             $table->timestamp('validated_at')->nullable();          // date de validation du token
- 
+
             // ─── Statut annuel ────────────────────────────────────────
             $table->enum('status', [
                 'pending',      // token envoyé, en attente de validation
@@ -32,18 +32,18 @@ return new class extends Migration
                 'suspended',    // suspendu manuellement par le directeur
                 'inactive',     // retiré de l'année (plus de classes assignées)
             ])->default('pending');
- 
+
             // ─── Suspension ───────────────────────────────────────────
             $table->string('suspension_reason')->nullable();          // motif de suspension
             $table->timestamp('suspended_at')->nullable();          // date de suspension
             $table->foreignId('suspended_by')->nullable()           // directeur qui a suspendu
-                  ->constrained('users')->nullOnDelete();
- 
+                ->constrained('users')->nullOnDelete();
+
             $table->timestamps();
- 
+
             // Un teacher ne peut avoir qu'une entrée par année scolaire
             $table->unique(['teacher_id', 'school_year_id']);
- 
+
             $table->index(['school_year_id', 'status']);
             $table->index('token');
             $table->index('token_expires_at');

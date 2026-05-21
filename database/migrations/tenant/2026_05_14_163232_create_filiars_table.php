@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('filiars', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
-            $table->string('slug'); 
+            $table->string('slug');
             $table->string('name');                              // ex: BTP, Informatique
             $table->string('code')->nullable();                 // ex: BTP, INFO
             $table->string('description')->nullable()->default(null);

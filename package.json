@@ -23,6 +23,7 @@
     "dependencies": {
         "alpinejs": "^3.15.12",
         "axios": "^1.16.1",
+        "lucide": "^1.16.0",
         "motion": "^12.38.0",
         "puppeteer": "^24.43.1"
     }
