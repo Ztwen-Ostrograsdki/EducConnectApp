@@ -1,11 +1,14 @@
 <?php
 
+use App\Events\TestNotification;
 use App\Livewire\Auth\CentralLogin;
 use App\Livewire\Central\CentralDashboard;
 use App\Livewire\Central\RequestsComponent;
 use App\Livewire\Central\SchoolProfilComponent;
+use App\Livewire\Central\SchoolsComponent;
 use App\Livewire\Central\SubscriptionsComponent;
 use App\Livewire\Central\TenantProfilComponent;
+use App\Livewire\Central\TenantsComponent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +39,9 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
         // sera rempli au fur et à mesure
     });
 
+    // Gestion des directeurs ou tenants inscrits
+    Route::get('/tenants/gestion', TenantsComponent::class)->name('tenants.portal');
+
     // Gestion des demandes abonnements
     Route::get('/les-demandes-abonnement/gestion', RequestsComponent::class)->name('requests.portal');
 
@@ -45,6 +51,15 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
 
     // Gestion des tenants
     Route::get('/les-abonnes/profil/ID={tenant_uuid}', TenantProfilComponent::class)->name('tenant.profil');
+
+
     Route::get('/les-ecoles/profil/ID={school_uuid}', SchoolProfilComponent::class)->name('school.profil');
 
+});
+
+Route::get('/test-broadcast', function () {
+
+    broadcast(new TestNotification());
+
+    return 'sent';
 });

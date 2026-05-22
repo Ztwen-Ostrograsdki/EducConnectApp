@@ -60,7 +60,9 @@ class TenantLogin extends Component
             
             if($tenant->domain_blocked){
 
-                $this->errorMessage = "L'accès à votre espace est temporairement bloqué!";
+                $this->errorMessage = "L'accès à votre espace est temporairement bloqué! Veuillez contacter l'administrateur!";
+
+                session('abort-error', "Compte inacessible");
 
                 Auth::guard('tenant')->logout();
 

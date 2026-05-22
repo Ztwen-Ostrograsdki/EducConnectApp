@@ -56,51 +56,51 @@
                         <div class="s-icon">📊</div><span class="s-label">Dashboard - Acceuil</span>
                     </a>
                 </div>
-                <div class="s-section border p-3 border-gray-500 rounded-2xl">
+                <div class="s-section">
                     <div class="s-section-label">Les demandes</div>
                     <a href="{{ route('central.requests.portal') }}" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-calendar-sync class="w-6 h-6 text-green-400" />
+                            <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
                         </div>
                         <span class="s-label">En attentes</span>
                         <span class="rounded-lg px-3 bg-orange-400/20 text-orange-300 border border-gray-500">100</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-circle-check-big class="w-6 h-6 text-red-400" />
+                            <x-lucide-circle-check-big class="w-3 h-3 text-red-400" />
                         </div>
                         <span class="s-label">Approuvées</span>
                         <span class="rounded-lg px-3 bg-green-400/20 text-red-300 border border-gray-500">7</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-circle-x class="w-6 h-6 text-red-400" />
+                            <x-lucide-circle-x class="w-3 h-3 text-red-400" />
                         </div>
                         <span class="s-label">Rejetées</span>
                         <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">7</span>
                     </a>
                 </div>
-                <div class="s-section border p-3 border-gray-500 rounded-2xl">
+                <div class="s-section">
                     <div class="s-section-label">General</div>
                     <div class="s-acc" id="acc-tenants">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-tenants')">
                             <div class="s-icon">
-                                <x-lucide-users class="w-6 h-6 text-gray-900" />
+                                <x-lucide-users class="w-3 h-3 text-gray-900" />
                             </div>
                             <span class="s-label">Les tenants</span>
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="#" class="s-link" style="font-size:.78rem;">
+                            <a href="{{ route('central.tenants.portal') }}" class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
-                                    <x-lucide-circle-pile class="w-6 h-6 text-gray-500" />
+                                    <x-lucide-circle-pile class="w-3 h-3 text-gray-500" />
                                 </div>
                                 <span class="s-label">Tous les tenants</span>
                             </a>
                             @for ($i = 1; $i < 4; $i++)
                                 <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}" class="s-link" style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
-                                        <x-lucide-user class="w-6 h-6 text-indigo-400" />
+                                        <x-lucide-user class="w-3 h-3 text-indigo-400" />
                                     </div>
                                     <span class="s-label">
                                         Mr Tenant {{ $i }}
@@ -121,7 +121,7 @@
                         <div class="s-acc-content">
                             <a href="#" class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
-                                    <x-lucide-sliders-vertical class="w-6 h-6 text-amber-800" />
+                                    <x-lucide-sliders-vertical class="w-3 h-3 text-amber-800" />
 
                                 </div>
                                 <span class="s-label">Toutes les écoles</span>
@@ -129,7 +129,7 @@
                             @for ($i = 1; $i < 4; $i++)
                                 <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}" class="s-link" style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
-                                        <x-lucide-school class="w-6 h-6 text-amber-400" />
+                                        <x-lucide-school class="w-3 h-3 text-amber-400" />
                                     </div>
                                     <span class="s-label">
                                         Ecole {{ $i }}
@@ -144,18 +144,18 @@
 
                 </div>
 
-                <div class="s-section border p-3 border-gray-500 rounded-2xl">
+                <div class="s-section">
                     <div class="s-section-label">Les abonnements</div>
                     <a href="{{ route('central.subscriptions.portal') }}" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-calendar-check-2 class="w-6 h-6 text-green-400" />
+                            <x-lucide-calendar-check-2 class="w-3 h-3 text-green-400" />
                         </div>
                         <span class="s-label">Actifs</span>
                         <span class="rounded-lg px-3 bg-indigo-400/20 text-indigo-300 border border-gray-500">777</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-copy-x class="w-6 h-6 text-red-400" />
+                            <x-lucide-copy-x class="w-3 h-3 text-red-400" />
                         </div>
                         <span class="s-label">Expirés</span>
                         <span class="rounded-lg px-3 bg-indigo-400/20 text-red-300 border border-gray-500">7</span>
@@ -300,6 +300,16 @@
     </div>
 
     @livewireScripts
+
+    <script>
+        window.Echo.channel("test-channel")
+
+            .listen("TestNotification", (e) => {
+                console.log(e);
+
+                alert(e.message);
+            });
+    </script>
 </body>
 
 </html>

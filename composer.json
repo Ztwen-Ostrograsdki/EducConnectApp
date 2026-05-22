@@ -9,10 +9,12 @@
         "php": "^8.3",
         "blade-ui-kit/blade-icons": "^1.10",
         "laravel/framework": "^13.8",
+        "laravel/reverb": "^1.0",
         "laravel/tinker": "^3.0",
         "livewire/livewire": "^4.3",
         "maatwebsite/excel": "^3.1",
         "mallardduck/blade-lucide-icons": "^1.26",
+        "predis/predis": "^3.4",
         "spatie/browsershot": "^5.3",
         "spatie/laravel-permission": "^7.4",
         "stancl/tenancy": "^3.10"

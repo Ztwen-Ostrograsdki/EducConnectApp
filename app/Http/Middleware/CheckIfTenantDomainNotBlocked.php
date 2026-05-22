@@ -45,7 +45,9 @@ class CheckIfTenantDomainNotBlocked
 
             if($tenant->domain_blocked){
 
-                return abort('403', "L'accès à votre espace est temporairement impossible, veuillez consulter l'administrateur!");
+                Auth::guard('tenant')->logout();
+
+                return redirect()->route('login')->with('abort-error', "L'accès à votre espace est temporairement impossible, veuillez consulter l'administrateur!");
 
             }
         }
