@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\TenantModuleAccess;
+use App\Models\TenantStatistic;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
@@ -32,6 +34,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
             'devise',
+            'types_devoirs', //devoir1-devoir2 ou devoir-compo
+            'type_etablissement', //Privé ou public
         ];
     }
 
@@ -108,4 +112,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return $this->hasOne(TenantModuleAccess::class, 'tenant_id');
     }
+
+    public function statistics(): HasOne
+    {
+        return $this->hasOne(TenantStatistic::class, 'tenant_id');
+    }
+
+
 }

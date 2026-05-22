@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\MarkHistory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -81,7 +82,7 @@ class Mark extends Model
      */
     public function histories(): HasMany
     {
-        return $this->hasMany(MarkUpdatedsHistory::class, 'mark_id');
+        return $this->hasMany(MarkHistory::class, 'mark_id');
     }
 
     /**
@@ -90,6 +91,55 @@ class Mark extends Model
     public function scopeEditable(Builder $query): Builder
     {
         return $query->where('editable', true);
+    }
+    
+        
+    /**
+     * scopeSubject
+     *
+     * @param  mixed $query
+     * @param  mixed $subjectId
+     * @return Builder
+     */
+    public function scopeSubject(Builder $query, int $subjectId): Builder
+    {
+        return $query->where('subject_id', $subjectId);
+    }
+    
+    /**
+     * scopeStudent
+     *
+     * @param  mixed $query
+     * @param  mixed $studentId
+     * @return Builder
+     */
+    public function scopeStudent(Builder $query, int $studentId) : Builder
+    {
+        return $query->where('student_id', $studentId);
+    }
+    
+    /**
+     * scopeClasse
+     *
+     * @param  mixed $query
+     * @param  mixed $classeId
+     * @return Builder
+     */
+    public function scopeClasse(Builder $query, int $classeId): Builder
+    {
+        return $query->where('classe_id', $classeId);
+    }
+    
+    /**
+     * scopeType
+     *
+     * @param  mixed $query
+     * @param  mixed $type
+     * @return Builder
+     */
+    public function scopeType(Builder $query, string $type) : Builder
+    {
+        return $query->where('type', $type);
     }
 
     /**

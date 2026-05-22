@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Mark;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MarkUpdatedsHistory extends Model
+class MarkHistory extends Model
 {
-    protected $table = 'mark_updateds_histories';
+    protected $table = 'mark_histories';
 
     protected $fillable = [
         'mark_id', 'editor_id', 'old_value', 'new_value',

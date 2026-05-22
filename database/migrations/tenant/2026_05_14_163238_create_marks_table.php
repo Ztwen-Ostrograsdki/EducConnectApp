@@ -32,7 +32,6 @@ return new class extends Migration
                 'compo',
                 'devoir1',
                 'devoir2',
-                'devoir3',
                 'examen',
             ]);
             $table->decimal('value', 5, 2);                    // valeur de la note
@@ -52,7 +51,19 @@ return new class extends Migration
             ], 'uniq_mark');
 
             $table->index(['student_id', 'school_year_id', 'period']);
-            $table->index(['classe_id', 'subject_id', 'period']);
+            $table->index(['classe_id', 'subject_id', 'school_year_id', 'period']);
+            $table->index([
+                'student_id',
+                'school_year_id'
+            ]);
+
+            $table->index([
+                'student_id',
+                'subject_id',
+                'school_year_id',
+                'period',
+                'type'
+            ]);
         });
         Schema::enableForeignKeyConstraints();
     }

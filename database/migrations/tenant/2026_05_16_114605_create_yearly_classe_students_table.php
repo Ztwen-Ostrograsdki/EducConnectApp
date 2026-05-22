@@ -23,6 +23,10 @@ return new class extends Migration
             $table->date('started_at')->nullable();
             $table->date('ended_at')->nullable()->default(null);
             $table->timestamps();
+            $table->unique([
+                'student_id',
+                'school_year_id'
+            ]);
 
         });
         Schema::enableForeignKeyConstraints();

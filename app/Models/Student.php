@@ -197,4 +197,132 @@ class Student extends Model
             ->wherePivot('status', 'actif')
             ->first();
     }
+
+    
+    /**
+     * interrogationAverage
+     *
+     * @param  mixed $subjectId
+     * @param  mixed $schoolYearId
+     * @param  mixed $period
+     * @return float
+     */
+    public function interrogationAverage(int $subjectId, int $schoolYearId, string $period): float 
+    {
+        $average = $this->marks()
+
+            ->subject($subjectId)
+
+            ->schoolYear($schoolYearId)
+
+            ->period($period)
+
+            ->interrogations()
+
+            ->avg('mark');
+
+        return round($average ?? 0, 2);
+    }
+
+    
+    /**
+     * subjectAverage
+     *
+     * @param  mixed $subjectId
+     * @param  mixed $schoolYearId
+     * @param  mixed $period
+     * @return float
+     */
+    public function subjectAverage(int $subjectId, int $schoolYearId, string $period
+    ): float {
+
+        $interrogationAverage = $this->interrogationAverage(
+            $subjectId,
+            $schoolYearId,
+            $period
+        );
+
+        $tenant = tenant();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cas 1 : Devoir 1 + Devoir 2
+        |--------------------------------------------------------------------------
+        */
+
+        if ($tenant->type_devoirs === 'devoir1-devoir2') {
+
+            $devoir1 = $this->marks()
+
+                ->subject($subjectId)
+
+                ->schoolYear($schoolYearId)
+
+                ->period($period)
+
+                ->type('devoir1')
+
+                ->avg('mark') ?? 0;
+
+            $devoir2 = $this->marks()
+
+                ->subject($subjectId)
+
+                ->schoolYear($schoolYearId)
+
+                ->period($period)
+
+                ->type('devoir2')
+
+                ->avg('mark') ?? 0;
+
+            $average = (
+                $devoir1 +
+                $devoir2 +
+                $interrogationAverage
+            ) / 3;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cas 2 : Devoir + Composition
+        |--------------------------------------------------------------------------
+        */
+
+        else {
+
+            $devoir = $this->marks()
+
+                ->subject($subjectId)
+
+                ->schoolYear($schoolYearId)
+
+                ->period($period)
+
+                ->type('devoir')
+
+                ->avg('mark') ?? 0;
+
+            $composition = $this->marks()
+
+                ->subject($subjectId)
+
+                ->schoolYear($schoolYearId)
+
+                ->period($period)
+
+                ->type('composition')
+
+                ->avg('mark') ?? 0;
+
+            $average = (
+                $devoir +
+                $composition +
+                $interrogationAverage
+            ) / 3;
+        }
+
+        return round($average, 2);
+    }
+    
 }

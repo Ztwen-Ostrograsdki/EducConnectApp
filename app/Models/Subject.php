@@ -19,6 +19,7 @@ class Subject extends Model
         'level',
         'name',
         'code',
+        'type',
         'description',
         'is_active',
     ];

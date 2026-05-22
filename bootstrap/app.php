@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\SyncTenantStatistics;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -19,11 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
 
         then: function () {
-            foreach (config('tenancy.central_domains') as $domain) {
+            $domains = config('tenancy.central_domains');
+            if(count($domains)){
+                foreach ($domains as $domain) {
 
                 Route::middleware('web')
                     ->domain($domain)
                     ->group(base_path('routes/web.php'));
+            }
             }
 
             Route::middleware('web')
@@ -51,6 +55,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
     })
+    ->withCommands([
+        SyncTenantStatistics::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

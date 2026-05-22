@@ -31,9 +31,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Pas d'unique — géré par logique métier (ended_at = null = actuel)
+            
             $table->index(['classe_id', 'subject_id', 'school_year_id'], 'cssy_classe_subject_year_idx');
             $table->index(['teacher_id', 'school_year_id']);
-            $table->index('ended_at');                      // pour filtrer les actifs rapidement
+            $table->index('ended_at');                       // pour filtrer les actifs rapidement
         });
         Schema::enableForeignKeyConstraints();
     }

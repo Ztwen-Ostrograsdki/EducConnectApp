@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::create('mark_updateds_histories', function (Blueprint $table) {
+        Schema::create('mark_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mark_id')->constrained('marks')->cascadeOnDelete();
             $table->foreignId('editor_id')->nullable()         // qui a modifié
@@ -38,7 +38,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('mark_updateds_histories');
+        Schema::dropIfExists('mark_histories');
         Schema::enableForeignKeyConstraints();
     }
 };

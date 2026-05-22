@@ -17,6 +17,7 @@ class SchoolProfilComponent extends Component
 
     }
 
+    
     public function render()
     {
         return view('livewire.central.school-profil-component');

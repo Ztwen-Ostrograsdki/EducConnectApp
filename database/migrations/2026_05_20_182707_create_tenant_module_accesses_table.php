@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('tenant_module_accesses', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
@@ -19,7 +20,6 @@ return new class extends Migration
             // ─── Pack souscrit ────────────────────────────────────────
             $table->enum('pack', ['starter', 'pro', 'premium', 'custom'])
                 ->default('starter');
-
             $table->timestamp('pack_started_at')->nullable();
             $table->timestamp('pack_expires_at')->nullable();
 
@@ -69,10 +69,13 @@ return new class extends Migration
 
             $table->unique('tenant_id');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tenant_module_accesses');
+        Schema::enableForeignKeyConstraints();
     }
 };

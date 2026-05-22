@@ -21,6 +21,8 @@ class CreateTenantsTable extends Migration
             $table->string('name');
             $table->string('slug')->nullable();
             $table->string('type_enseignement')->default('general');
+            $table->enum('type_etablissement', ['privé', 'public'])->default('public');
+            $table->enum('types_devoirs', ['devoir1-devoir2', 'devoir-compo'])->default('devoir1-devoir2');
             $table->enum('type_periode', ['semestre', 'trimestre'])->default('semestre');
             $table->enum('statut', ['pending', 'active', 'suspended', 'cancelled'])->default('pending');
             $table->string('email')->nullable();
