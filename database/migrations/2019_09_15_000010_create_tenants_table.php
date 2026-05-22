@@ -29,6 +29,8 @@ class CreateTenantsTable extends Migration
             $table->string('devise')->nullable();
             $table->string('contacts')->nullable();
             $table->string('adresse')->nullable();
+            $table->boolean('domain_blocked')->default(false);
+            $table->boolean('open_only_for_tenant')->default(false);
             $table->string('logo')->nullable();
             $table->timestamp('date_expiration_abonnement')->nullable();
 

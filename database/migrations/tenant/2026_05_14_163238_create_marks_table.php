@@ -22,13 +22,11 @@ return new class extends Migration
             $table->foreignId('school_year_id')->constrained('school_years');
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
             $table->integer('period');                         // 1, 2 (semestre) ou 1, 2, 3 (trimestre)
-            $table->enum('mark_type', [
+            $table->enum('type', [
                 'interro1',
                 'interro2',
                 'interro3',
                 'interro4',
-                'interro5',
-                'interro6',
                 'compo',
                 'devoir1',
                 'devoir2',
@@ -47,7 +45,7 @@ return new class extends Migration
             // Un élève ne peut avoir qu'une note de chaque type par matière/période/année
             $table->unique([
                 'student_id', 'subject_id', 'school_year_id',
-                'period', 'mark_type',
+                'period', 'type',
             ], 'uniq_mark');
 
             $table->index(['student_id', 'school_year_id', 'period']);

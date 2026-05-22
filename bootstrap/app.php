@@ -1,6 +1,12 @@
 <?php
 
+use App\Console\Commands\CreateTenantTestCommand;
+use App\Console\Commands\DropAllTenantsCommand;
+use App\Console\Commands\InitAdminCentralCommand;
+use App\Console\Commands\RefreshEducCommand;
 use App\Console\Commands\SyncTenantStatistics;
+use App\Http\Middleware\CheckIfTenantDomainNotBlocked;
+use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -50,6 +56,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'check.super.admin' => CheckSuperAdmin::class,
             'tenant.init' => InitializeTenancyByDomainForLivewire::class,
+            'tenant.domain.open' => CheckIfTenantDomainNotBlocked::class,
+            'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
         ]);
@@ -57,6 +65,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withCommands([
         SyncTenantStatistics::class,
+        RefreshEducCommand::class,
+        CreateTenantTestCommand::class,
+        InitAdminCentralCommand::class,
+        DropAllTenantsCommand::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //

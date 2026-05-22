@@ -47,7 +47,7 @@ Route::middleware([
     })->name('logout')->middleware('auth:tenant');
 
     // ─── Pages authentifiées ──────────────────────────────────────────
-    Route::middleware(['auth:tenant'])->group(function () {
+    Route::middleware(['auth:tenant', 'tenant.domain.open'])->group(function () {
 
         Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
 
@@ -93,21 +93,24 @@ Route::middleware([
 
         Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('tenant.teacher.profil');
 
-        // ── Enseignant ────────────────────────────────────────────────
-        Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {
-            // sera rempli au fur et à mesure
-        });
+        
+        Route::middleware('tenant.domain.open.for.others.too')->group(function () {
+            // ── Enseignant ────────────────────────────────────────────────
+            Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {
+                // sera rempli au fur et à mesure
+            });
 
-        // ── Tuteur ────────────────────────────────────────────────────
-        Route::middleware('role:tuteur')->prefix('tutor')->name('tutor.')->group(function () {
-            // sera rempli au fur et à mesure
-        });
+            // ── Tuteur ────────────────────────────────────────────────────
+            Route::middleware('role:tuteur')->prefix('tutor')->name('tutor.')->group(function () {
+                // sera rempli au fur et à mesure
+            });
 
-        // ── Élève ─────────────────────────────────────────────────────
-        Route::middleware('role:eleve')->prefix('student')->name('student.')->group(function () {
-            // sera rempli au fur et à mesure
-        });
+            // ── Élève ─────────────────────────────────────────────────────
+            Route::middleware('role:eleve')->prefix('student')->name('student.')->group(function () {
+                // sera rempli au fur et à mesure
+            }); 
 
+        });
     });
 
 });

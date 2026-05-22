@@ -36,8 +36,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'devise',
             'types_devoirs', //devoir1-devoir2 ou devoir-compo
             'type_etablissement', //Privé ou public
+            'domain_blocked',
+            'open_only_for_tenant',
         ];
     }
+
 
     /**
      * Valeurs par défaut
@@ -62,6 +65,18 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('statut', 'active');
+    }
+
+    /** Écoles accessibles aux enseigants, parents, eleves */
+    public function scopeNotOnlyOpenForTenant(Builder $query): Builder
+    {
+        return $query->where('open_only_for_tenant', false);
+    }
+
+    /** Écoles accessibles  */
+    public function scopeDomainIsOpen(Builder $query): Builder
+    {
+        return $query->where('domain_blocked', false);
     }
 
     /** Écoles en attente de validation */

@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
-            $table->enum('type', ['scientifique', 'litteraire', 'sportive', 'informatique', 'culture'])->default('secondaire');
+            $table->enum('type', ['scientifique', 'litteraire', 'sportive', 'informatique', 'culture'])->default('scientifique');
             $table->enum('level', ['primaire', 'secondaire', 'superieur'])->default('secondaire');
             $table->string('slug');
             $table->string('name');                              // ex: Mathématiques
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique('name');
+            
             $table->index('is_active');
         });
         Schema::enableForeignKeyConstraints();

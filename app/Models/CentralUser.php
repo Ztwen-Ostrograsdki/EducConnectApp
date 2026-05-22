@@ -16,6 +16,8 @@ class CentralUser extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
+    protected string $guard_name = 'central';
+
     /**
      * Get the attributes that should be cast.
      *

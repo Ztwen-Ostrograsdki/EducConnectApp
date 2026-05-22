@@ -17,7 +17,7 @@ class Mark extends Model
 
     protected $fillable = [
         'uuid', 'student_id', 'classe_id', 'subject_id', 'school_year_id',
-        'teacher_id', 'period', 'mark_type', 'value', 'comments',
+        'teacher_id', 'period', 'type', 'value', 'comments',
         'editable', 'validated', 'locked_at', 'locked_by',
     ];
 
@@ -173,7 +173,7 @@ class Mark extends Model
     {
         return match ($this->mark_type) {
             'interro1', 'interro2', 'interro3',
-            'interro4', 'interro5', 'interro6' => 10,
+            'interro4' => 10,
             default => 20,
         };
     }
@@ -186,5 +186,48 @@ class Mark extends Model
         $max = $this->maxValue();
 
         return $max === 20 ? $this->value : ($this->value * 20 / $max);
+    }
+    
+    /**
+     * scopeInterrogations
+     *
+     * @param  mixed $query
+     * @return Builder
+     */
+    public function scopeInterrogations(Builder $query): Builder
+    {
+        return $query->whereIn('type', [
+            'interro1',
+            'interro2',
+            'interro3',
+            'interro4',
+        ]);
+    }
+
+    /**
+     * scopeDevoirs
+     *
+     * @param  mixed $query
+     * @return Builder
+     */
+    public function scopeDevoirs(Builder $query): Builder
+    {
+        $tenant = tenant();
+
+
+        if($tenant->type_devoirs === 'devoir1-devoir2'){
+            $query->whereIn('type', [
+                'devoir1',
+                'devoir2',
+            ]);
+        }
+        elseif($tenant->type_devoirs === 'devoir-compo'){
+            $query->whereIn('type', [
+                'devoir1',
+                'compo',
+            ]);
+        }
+
+        return $query;
     }
 }

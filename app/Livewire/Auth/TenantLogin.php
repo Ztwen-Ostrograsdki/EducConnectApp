@@ -28,11 +28,6 @@ class TenantLogin extends Component
      */
     public function login()
     {
-        // dd(
-        //     request()->getHost(),
-        //     request()->getHttpHost(),
-        //     request()->url(),
-        // );
 
         $this->validate();
 
@@ -59,13 +54,27 @@ class TenantLogin extends Component
 
         Auth::shouldUse('tenant');
 
-        // dd('Auth réussi !', Auth::user(), Auth::user()->name);
+        if (Auth::guard('tenant')->user()) {
 
-        RateLimiter::clear($key);
+            $tenant = tenant();
+            
+            if($tenant->domain_blocked){
 
-        session()->regenerate();
+                $this->errorMessage = "L'accès à votre espace est temporairement bloqué!";
 
-        return $this->redirectRoute('dashboard');
+                Auth::guard('tenant')->logout();
+
+                return;
+
+            }
+
+            RateLimiter::clear($key);
+
+            session()->regenerate();
+
+            return $this->redirectRoute('dashboard');
+        }
+
     }
 
     /**

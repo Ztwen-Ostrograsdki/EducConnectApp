@@ -125,7 +125,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Créer toutes les permissions
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'tenant']);
         }
 
         // ─── Rôles & attribution des permissions ──────────────────────
@@ -133,13 +133,13 @@ class RolesAndPermissionsSeeder extends Seeder
         /**
          * Directeur — accès complet à l'école
          */
-        $directeur = Role::firstOrCreate(['name' => 'directeur']);
+        $directeur = Role::firstOrCreate(['name' => 'directeur', 'guard_name' => 'tenant']);
         $directeur->syncPermissions(Permission::all());
 
         /**
          * Assistant Directeur — accès limité à ses classes et matières
          */
-        $enseignant = Role::firstOrCreate(['name' => 'assistant directeur']);
+        $enseignant = Role::firstOrCreate(['name' => 'assistant directeur', 'guard_name' => 'tenant']);
         $enseignant->syncPermissions([
             'classes.view',
             'teachers.view',
@@ -164,7 +164,7 @@ class RolesAndPermissionsSeeder extends Seeder
         /**
          * Enseignant — accès limité à ses classes et matières
          */
-        $enseignant = Role::firstOrCreate(['name' => 'enseignant']);
+        $enseignant = Role::firstOrCreate(['name' => 'enseignant', 'guard_name' => 'tenant']);
         $enseignant->syncPermissions([
             'classes.view',
             'students.view',
@@ -185,7 +185,7 @@ class RolesAndPermissionsSeeder extends Seeder
         /**
          * Parent/Tuteur — accès limité à ses enfants
          */
-        $tuteur = Role::firstOrCreate(['name' => 'tuteur']);
+        $tuteur = Role::firstOrCreate(['name' => 'tuteur', 'guard_name' => 'tenant']);
         $tuteur->syncPermissions([
             'students.view_own',
             'marks.view_own',
@@ -198,7 +198,7 @@ class RolesAndPermissionsSeeder extends Seeder
         /**
          * Élève — accès à ses propres données uniquement
          */
-        $eleve = Role::firstOrCreate(['name' => 'eleve']);
+        $eleve = Role::firstOrCreate(['name' => 'eleve', 'guard_name' => 'tenant']);
         $eleve->syncPermissions([
             'students.view_own',
             'marks.view_own',
