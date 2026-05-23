@@ -22,45 +22,6 @@ class RefreshEducCommand extends Command
     {
         $this->warn('⚠️ Réinitialisation de la plateforme');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Sauvegardes
-        |--------------------------------------------------------------------------
-        */
-
-        $centralUsers = [];
-        $tenants = [];
-        $domains = [];
-
-        if ($this->option('reset')) {
-
-            $this->info('Sauvegarde des données centrales...');
-
-            $centralUsers = CentralUser::query()
-                ->get()
-                ->makeVisible([
-                    'password',
-                    'remember_token',
-                ])
-                ->map(fn ($user) => collect($user)
-                    ->except('id')
-                    ->toArray())
-                ->toArray();
-
-            $tenants = Tenant::all()
-                ->map(fn ($tenant) => collect($tenant)
-                    ->except('id')
-                    ->toArray())
-                ->toArray();
-
-            $domains = DB::table('domains')
-                ->get()
-                ->map(fn ($domain) => collect((array) $domain)
-                    ->except('id')
-                    ->toArray())
-                ->toArray();
-        }
-
         try {
 
             /*
@@ -79,27 +40,15 @@ class RefreshEducCommand extends Command
 
                 $this->line(Artisan::output());
 
-                DB::transaction(function () use (
-                    $centralUsers,
-                    $tenants,
-                    $domains
-                ) {
+            }
+            else {
 
-                    if (! empty($centralUsers)) {
+                $this->warn('Reset de la base des tenants...');
 
-                        CentralUser::insert($centralUsers);
-                    }
+                Artisan::call('tenants:migrate-fresh');
 
-                    if (! empty($tenants)) {
+                $this->line(Artisan::output());
 
-                        Tenant::insert($tenants);
-                    }
-
-                    if (! empty($domains)) {
-
-                        DB::table('domains')->insert($domains);
-                    }
-                });
             }
 
             /*
@@ -107,24 +56,6 @@ class RefreshEducCommand extends Command
             | RESET TENANTS
             |--------------------------------------------------------------------------
             */
-
-            $allTenants = Tenant::all();
-
-            foreach ($allTenants as $tenant) {
-
-                $this->warn("Reset tenant : {$tenant->id}");
-
-                tenancy()->initialize($tenant);
-
-                Artisan::call('migrate:fresh', [
-                    '--path' => 'database/migrations/tenant',
-                    '--force' => true,
-                ]);
-
-                $this->line(Artisan::output());
-
-                tenancy()->end();
-            }
 
             $this->info('✅ Réinitialisation terminée.');
 

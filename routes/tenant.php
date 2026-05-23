@@ -24,6 +24,7 @@ use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -33,6 +34,10 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
     'web',
 ])->group(function () {
+
+    Route::post('/broadcasting/auth', function () {
+        return Broadcast::auth(request());
+    });
 
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest:tenant');

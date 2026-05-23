@@ -7,12 +7,22 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>ADMINISTRATION CENTRALE - {{ $title ?? config('app.name') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    {{-- <script>
+        window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
+    </script> --}}
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @wireUiScripts
     @livewireStyles
 </head>
 
 <body>
     <div class="shell">
+
+        @livewire('app-guard')
+
+        <x-notifications />
 
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
@@ -119,7 +129,7 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="#" class="s-link" style="font-size:.78rem;">
+                            <a href="{{ route('central.schools.portal') }}" class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-sliders-vertical class="w-3 h-3 text-amber-800" />
 
@@ -300,16 +310,6 @@
     </div>
 
     @livewireScripts
-
-    <script>
-        window.Echo.channel("test-channel")
-
-            .listen("TestNotification", (e) => {
-                console.log(e);
-
-                alert(e.message);
-            });
-    </script>
 </body>
 
 </html>

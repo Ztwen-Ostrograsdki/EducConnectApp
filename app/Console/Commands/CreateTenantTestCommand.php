@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Faker\Factory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -35,19 +36,25 @@ class CreateTenantTestCommand extends Command
             |--------------------------------------------------------------------------
             */
 
-            $schoolName = trim($this->argument('name'));
+            $n = trim($this->argument('name'));
 
-            $slug = Str::slug($schoolName);
+            $school_name = str_replace('-', ' ', ucwords(trim($this->argument('name'))));
 
-            $id = Str::slug($schoolName);
+            $slug = Str::slug($n);
 
-            $email = Str::lower(
-                str_replace('-', '', $slug)
-            ) . '@example.com';
+            $id = Str::slug($n);
 
             $domain = $slug . '.test';
 
-            $tenantName = str_replace('-', ' ', ucwords($schoolName));
+            $faker = Factory::create('fr_FR');
+
+            $enseignement_type = getRandomValueFromArray(config('app.enseignement_types'), 'secondaire');
+
+            $periode_type = getRandomValueFromArray(config('app.periode_types'));
+
+            $school_type = getRandomValueFromArray(config('app.school_types'));
+
+            $devoirs_type = getRandomValueFromArray(config('app.devoirs_types'));
 
             /*
             |--------------------------------------------------------------------------
@@ -78,7 +85,20 @@ class CreateTenantTestCommand extends Command
 
             $tenant = Tenant::create([
                 'id' => $id,
-                'name' => $tenantName,
+                'name' => $faker->firstName(),
+                'prenames' => $faker->lastName(),
+                'school_name' => $school_name,
+                'enseignement_type' => $enseignement_type,
+                'periode_type' => $periode_type,
+                'school_type' => $school_type,
+                'devoirs_type' => $devoirs_type,
+                'school_slug' => $slug,
+                'email' => $faker->email(),
+                'contacts' => $faker->e164PhoneNumber(),
+                'country' => $faker->country(),
+                'city' => $faker->city(),
+                'school_devise' => 'TRAVAIL - EXCELLENCE - REUSSITE',
+                'job_name' => $faker->jobTitle() . '(' . $faker->company() . ')',
             ]);
 
             $this->info('✅ Tenant créé avec succès.');
@@ -118,9 +138,17 @@ class CreateTenantTestCommand extends Command
             */
 
             $user = User::create([
-                'name' => 'Admin ' . $schoolName,
-                'email' => $email,
+                'name' => $tenant->name,
+                'prenames' => $tenant->prenames,
+                'email' => $tenant->email,
                 'password' => Hash::make('password'),
+                'school_name' => $tenant->school_name,
+                'school_slug' => $tenant->school_slug,
+                'contacts' => $tenant->contacts,
+                'country' => $tenant->country,
+                'city' => $tenant->city,
+                'tenant_id' => $tenant->id,
+                'job_name' => $tenant->job_name,
             ]);
 
             /*
@@ -137,6 +165,8 @@ class CreateTenantTestCommand extends Command
             if (method_exists($user, 'assignRole')) {
 
                 $user->assignRole('directeur');
+
+                $tenant->update(['role' => 'directeur']);
             }
 
 
@@ -171,9 +201,9 @@ class CreateTenantTestCommand extends Command
                 ['Champ', 'Valeur'],
                 [
                     ['Tenant', $tenant->id],
-                    ['Ecole', $tenantName],
+                    ['Ecole', $tenant->school_name],
                     ['Domaine', $domain],
-                    ['Email', $email],
+                    ['Email', $tenant->email],
                     ['Password', 'password'],
                 ]
             );

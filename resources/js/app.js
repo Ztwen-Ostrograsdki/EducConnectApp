@@ -9,8 +9,8 @@ import "./layouts/dashboards-layouts";
 
 // Alpine.js (complément naturel de Livewire)
 import Alpine from "alpinejs";
-window.Alpine = Alpine;
-Alpine.start();
+// window.Alpine = Alpine;
+// Alpine.start();
 
 // import { createIcons, icons } from "lucide";
 
@@ -54,6 +54,19 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+    // inView("[data-sidebar-item]", ({ target }) => {
+    //     animate(
+    //         target,
+    //         {
+    //             opacity: [0, 1],
+    //             x: [-12, 0],
+    //         },
+    //         {
+    //             duration: 0.3,
+    //         },
+    //     );
+    // });
+
     const reveals = document.querySelectorAll("[data-animate='reveal']");
 
     if (reveals.length) {
@@ -61,19 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
             animate(target, { opacity: [0, 1], y: [30, 0] }, { duration: 0.5 });
         });
     }
-
-    inView("[data-sidebar-item]", ({ target }) => {
-        animate(
-            target,
-            {
-                opacity: [0, 1],
-                x: [-12, 0],
-            },
-            {
-                duration: 0.3,
-            },
-        );
-    });
 });
 
 // ─── Hook Livewire : ré-animer après les mises à jour DOM ────
@@ -150,5 +150,13 @@ document.addEventListener("livewire:initialized", () => {
         requestAnimationFrame(() => {
             animateLoginCard();
         });
+
+        window.dispatchEvent(new Event("wireui:load"));
     });
 });
+
+// Dans la console du navigateur
+console.log(import.meta.env.VITE_REVERB_APP_KEY); // doit afficher "localkey"
+console.log(import.meta.env.VITE_REVERB_HOST); // doit afficher "localhost"
+console.log(import.meta.env.VITE_REVERB_PORT); // doit afficher "8080"
+console.log(import.meta.env.VITE_REVERB_SCHEME); // doit afficher "http"

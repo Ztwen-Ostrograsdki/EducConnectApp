@@ -19,6 +19,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 @source '../../app/Livewire/**/*.php';
+@import "../../vendor/wireui/wireui/ts/global.css";
+@source '../../vendor/wireui/wireui';
 
 @theme {
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;

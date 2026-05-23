@@ -123,4 +123,41 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'enseignement_types' => [
+        'technique' => 'Technique',
+        'industriel' => 'Industriel',
+        'general' => 'Général',
+        'hybride' => 'Hybride',
+    ],
+
+
+    
+    'periode_types' => [
+        'prive' => 'Privé',
+        'public' => 'Public',
+    ],
+    
+    'devoirs_types' => [
+        'devoir1-devoir2' => 'devoir1-devoir2',
+        'devoir-compo' => 'devoir-compo',
+    ],
+    
+    
+    'school_types' => [
+        'semestre' => 'Semestre',
+        'trimestre' => 'Trimestre'
+    ],
+    
+    'tenant_request_statuses' => [
+        'pending' => 'pending',
+        'active' => 'active',
+        'suspended' => 'suspended',
+        'cancelled' => 'cancelled',
+        'spam' => 'spam',
+    ],
+
+
+
+
+
 ];

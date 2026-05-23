@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\TenantModuleAccess;
 use App\Models\TenantStatistic;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
@@ -22,34 +24,45 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public static function getCustomColumns(): array
     {
         return [
+            'uuid',
             'id',
-            'name',                    // Nom de l'école
-            'slug',                    // Subdomain (ex: ecole-lumiere)
-            'type_enseignement',       // general | technique | hybride
-            'type_periode',            // semestre | trimestre
+            'name',               // Nom de Tenant
+            'prenames',               // Prénoms tenant
+            'school_name',               // Nom de l'école
+            'school_slug',                    // Subdomain (ex: ecole-lumiere)
+            'enseignement_type',       // general | technique | hybride
+            'periode_type',            // semestre | trimestre
             'statut',                  // pending | active | suspended | cancelled
             'email',                   // Email de contact de l'école
             'contacts',               // Téléphone de l'école
             'adresse',                 // Adresse physique
+            'country',                 // Pays physique
+            'city',                 // Ville physique
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
-            'devise',
+            'school_devise',
             'types_devoirs', //devoir1-devoir2 ou devoir-compo
-            'type_etablissement', //Privé ou public
+            'school_type', //Privé ou public
             'domain_blocked',
             'open_only_for_tenant',
+            'role',
+            'job_name',
+            'profil_photo'
         ];
     }
-
 
     /**
      * Valeurs par défaut
      */
     protected $attributes = [
         'statut' => 'pending',
-        'type_enseignement' => 'general',
-        'type_periode' => 'semestre',
-        'devise' => 'Votre dévise',
+        'enseignement_type' => 'general',
+        'school_type' => 'prive',
+        'periode_type' => 'semestre',
+        'school_devise' => 'Votre dévise',
+        'country' => 'Bénin',
+        'city' => 'Cotonou',
+        'role' => 'directeur',
     ];
 
     /**
@@ -58,6 +71,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected $casts = [
         'date_expiration_abonnement' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'email');
+    }
 
     // ─── Scopes ───────────────────────────────────────────────────────
 
@@ -131,6 +149,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function statistics(): HasOne
     {
         return $this->hasOne(TenantStatistic::class, 'tenant_id');
+    }
+
+
+    public function getFullName()
+    {
+        return $this->name . ' ' . $this->prenames;
     }
 
 

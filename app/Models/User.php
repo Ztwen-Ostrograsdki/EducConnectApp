@@ -12,10 +12,30 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'is_super_admin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+
+    protected $fillable = [
+        'name',
+        'prenames',
+        'job_name',
+        'country',
+        'city',
+        'email',
+        'password',
+        'profil_photo',
+        'school_name',
+        'school_devise',
+        'contacts',
+        'is_super_admin',
+        'tenant_id',
+        'email_verified_at',
+        'uuid',
+        'adresse',
+    ];
+
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable, SoftDeletes;
 

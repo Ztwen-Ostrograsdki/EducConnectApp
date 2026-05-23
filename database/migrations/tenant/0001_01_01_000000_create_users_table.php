@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,8 +14,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('name');
+            $table->string('prenames');
+            $table->string('job_name');
+            $table->string('tenant_id')->nullable()->default(null);
+            $table->string('school_name')->nullable()->default(null);
+            $table->string('contacts')->nullable()->default(null);
+            $table->string('adresse')->nullable()->default(null);
+            $table->string('country')->nullable()->default(null);
+            $table->string('city')->nullable()->default(null);
             $table->string('email')->unique();
+            $table->string('profil_photo')->nullable()->default(null);
+
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_super_admin')->default(false);
