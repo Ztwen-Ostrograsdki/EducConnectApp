@@ -111,3 +111,9 @@
     transition-all duration-200
     hover:bg-indigo-500/20;
 } */
+
+button,
+label,
+a {
+    cursor: pointer;
+}

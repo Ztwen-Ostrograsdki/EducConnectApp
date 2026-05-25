@@ -48,6 +48,8 @@ class CreateTenantTestCommand extends Command
 
             $faker = Factory::create('fr_FR');
 
+            /** @noinspection PhpUndefinedMethodInspection */
+
             $enseignement_type = getRandomValueFromArray(config('app.enseignement_types'), 'secondaire');
 
             $periode_type = getRandomValueFromArray(config('app.periode_types'));

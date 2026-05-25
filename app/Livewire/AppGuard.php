@@ -33,6 +33,7 @@ class AppGuard extends Component
             return [
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
                 'echo-private:central-admin,.tenant.blocked' => 'handleTenantBlockedAck',
+                'echo-private:central-admin,.tenant.request.created' => 'handleNewTenantRequestCreated',
             ];
         }
 
@@ -150,6 +151,21 @@ class AppGuard extends Component
             'icon'        => 'warning',
             'title'       => 'École bloquée',
             'description' => "Tenant #{$event['tenant_id']} déconnecté.",
+        ]);
+    }
+    
+    public function handleNewTenantRequestCreated(array $event): void
+    {
+        $full_name = $event['name'] . ' ' . $event['prenames'];
+
+        $email = $event['email'];
+
+        $school_name = $event['school_name'];
+
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => 'Nouvelle demande reçue',
+            'description' => "Mr/Mme {$full_name} vient de faire une demande pour son école {$school_name} sous l'adresse mail {$email}.",
         ]);
     }
 

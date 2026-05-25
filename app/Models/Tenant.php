@@ -32,7 +32,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'school_slug',                    // Subdomain (ex: ecole-lumiere)
             'enseignement_type',       // general | technique | hybride
             'periode_type',            // semestre | trimestre
-            'statut',                  // pending | active | suspended | cancelled
+            'status',                  // pending | active | suspended | cancelled
             'email',                   // Email de contact de l'école
             'contacts',               // Téléphone de l'école
             'adresse',                 // Adresse physique
@@ -47,7 +47,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'open_only_for_tenant',
             'role',
             'job_name',
-            'profil_photo'
+            'profil_photo',
+            'request_id',
         ];
     }
 
@@ -55,7 +56,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      * Valeurs par défaut
      */
     protected $attributes = [
-        'statut' => 'pending',
+        'status' => 'pending',
         'enseignement_type' => 'general',
         'school_type' => 'prive',
         'periode_type' => 'semestre',
@@ -77,12 +78,17 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasOne(User::class, 'email');
     }
 
+    public function tenant_request()
+    {
+        return $this->belongsTo(RequestToCreateNewTenant::class, 'request_id');
+    }
+
     // ─── Scopes ───────────────────────────────────────────────────────
 
     /** Écoles actives uniquement */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('statut', 'active');
+        return $query->where('status', 'active');
     }
 
     /** Écoles accessibles aux enseigants, parents, eleves */
@@ -100,7 +106,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     /** Écoles en attente de validation */
     public function scopePending(Builder $query): Builder
     {
-        return $query->where('statut', 'pending');
+        return $query->where('status', 'pending');
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────
@@ -108,13 +114,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     /** Vérifie si l'école est active */
     public function isActive(): bool
     {
-        return $this->statut === 'active';
+        return $this->status === 'active';
     }
 
     /** Vérifie si l'école est en attente */
     public function isPending(): bool
     {
-        return $this->statut === 'pending';
+        return $this->status === 'pending';
     }
 
     /** Vérifie si l'école utilise les trimestres */

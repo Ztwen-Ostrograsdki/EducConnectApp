@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\Browsershot\Browsershot;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         // Initialiser le tenant sur chaque requête
         $this->app->booted(function () {
             $request = request();
+            
+           /** @noinspection PhpUndefinedMethodInspection */
             $host = $request->getHost();
 
             // Ne pas initialiser si c'est un domaine central
@@ -40,5 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         });
+
+
     }
 }

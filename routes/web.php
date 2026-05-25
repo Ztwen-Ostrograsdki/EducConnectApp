@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Actions\RequestPage;
 use App\Livewire\Auth\CentralLogin;
 use App\Livewire\Central\CentralDashboard;
 use App\Livewire\Central\RequestsComponent;
@@ -16,14 +17,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 Route::post('/broadcasting/auth', function () {
     return Broadcast::auth(request());
 })->middleware(['web', 'auth:central']);
+
+Route::get('/demande', RequestPage::class)->name('central.request.to.create.tenant')->middleware('guest:central');
+
+
 
 // ─── Auth centrale ────────────────────────────────────────────────────
 Route::get('/login', CentralLogin::class)->name('central.login')->middleware('guest:central');
 
 Route::post('/logout', function () {
+
+    /** @noinspection PhpUndefinedMethodInspection */
 
     Auth::guard('central')->logout();
     session()->invalidate();
