@@ -22,6 +22,8 @@ class CreateTenantsTable extends Migration
             // your custom columns may go here
 
             $table->string('school_name');
+            $table->string('simple_name')->nullable()->default(null);
+            $table->string('domain_name')->unique();
             $table->string('school_slug')->nullable();
             $table->string('school_devise')->nullable();
 
@@ -32,6 +34,7 @@ class CreateTenantsTable extends Migration
             $table->string('job_name');
             $table->string('contacts')->nullable();
             $table->string('adresse')->nullable()->default(null);
+            $table->string('department')->nullable()->default(null);
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->string('email')->unique();

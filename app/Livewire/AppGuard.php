@@ -141,7 +141,7 @@ class AppGuard extends Component
         $this->notification()->send([
             'icon'        => 'success',
             'title'       => 'Nouvelle école inscrite',
-            'description' => $event['name'] ?? '',
+            'description' => "Une nouvelle école a été créée",
         ]);
     }
 

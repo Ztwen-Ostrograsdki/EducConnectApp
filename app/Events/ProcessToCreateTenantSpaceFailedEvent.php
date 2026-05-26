@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\RequestToCreateNewTenant;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TenantCreatedEvent implements ShouldBroadcast
+class ProcessToCreateTenantSpaceFailedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,7 +19,7 @@ class TenantCreatedEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public ?string $email,
+        public RequestToCreateNewTenant $demande_request
     )
     {
         //
@@ -36,15 +37,14 @@ class TenantCreatedEvent implements ShouldBroadcast
         ];
     }
 
+
     public function broadcastAs()
     {
-        return 'tenant.created';
+        return 'tenant.space.creation.failed';
     }
 
     public function broadcastWith(): array
     {
-        return ['email' => $this->email];
+        return ['request_email' => $this->demande_request->email];
     }
-
-    
 }

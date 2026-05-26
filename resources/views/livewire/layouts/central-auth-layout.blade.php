@@ -67,8 +67,32 @@
                     </a>
                 </div>
                 <div class="s-section">
-                    <div class="s-section-label">Les demandes</div>
-                    <a href="{{ route('central.requests.portal') }}" class="s-link">
+                    <div class="s-section-label">Les demandes d'espace</div>
+                    <a href="{{ route('central.requests.school.space.portal') }}" class="s-link {{ request()->routeIs('central.requests.school.space.portal') ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
+                        </div>
+                        <span class="s-label">En attentes</span>
+                        <span class="rounded-lg px-3 bg-orange-400/20 text-orange-300 border border-gray-500">100</span>
+                    </a>
+                    <a href="#" class="s-link">
+                        <div class="s-icon">
+                            <x-lucide-circle-check-big class="w-3 h-3 text-red-400" />
+                        </div>
+                        <span class="s-label">Approuvées</span>
+                        <span class="rounded-lg px-3 bg-green-400/20 text-red-300 border border-gray-500">7</span>
+                    </a>
+                    <a href="#" class="s-link">
+                        <div class="s-icon">
+                            <x-lucide-circle-x class="w-3 h-3 text-red-400" />
+                        </div>
+                        <span class="s-label">Rejetées</span>
+                        <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">7</span>
+                    </a>
+                </div>
+                <div class="s-section">
+                    <div class="s-section-label">Les demandes d'abonnement</div>
+                    <a href="{{ route('central.pendings.subscriptions.requests.portal') }}" class="s-link {{ request()->routeIs('central.pendings.subscriptions.requests.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
                         </div>
@@ -101,14 +125,14 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('central.tenants.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a href="{{ route('central.tenants.portal') }}" class="s-link {{ request()->routeIs('central.tenants.portal') ? 'active' : '' }}" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-circle-pile class="w-3 h-3 text-gray-500" />
                                 </div>
                                 <span class="s-label">Tous les tenants</span>
                             </a>
                             @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}" class="s-link" style="font-size:.78rem;">
+                                <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}" class="s-link {{ request()->routeIs('central.tenant.profil') ? 'active' : '' }}" style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         <x-lucide-user class="w-3 h-3 text-indigo-400" />
                                     </div>
@@ -129,7 +153,7 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('central.schools.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a href="{{ route('central.schools.portal') }}" class="s-link {{ request()->routeIs('central.schools.portal') ? 'active' : '' }}" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-sliders-vertical class="w-3 h-3 text-amber-800" />
 
@@ -137,7 +161,7 @@
                                 <span class="s-label">Toutes les écoles</span>
                             </a>
                             @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}" class="s-link" style="font-size:.78rem;">
+                                <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}" class="s-link {{ request()->routeIs('central.school.profil') ? 'active' : '' }}" style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         <x-lucide-school class="w-3 h-3 text-amber-400" />
                                     </div>
@@ -155,8 +179,8 @@
                 </div>
 
                 <div class="s-section">
-                    <div class="s-section-label">Les abonnements</div>
-                    <a href="{{ route('central.subscriptions.portal') }}" class="s-link">
+                    <div class="s-section-label">Les abonnements validés</div>
+                    <a href="{{ route('central.validateds.subscriptions.portal') }}" class="s-link {{ request()->routeIs('central.validateds.subscriptions.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-check-2 class="w-3 h-3 text-green-400" />
                         </div>

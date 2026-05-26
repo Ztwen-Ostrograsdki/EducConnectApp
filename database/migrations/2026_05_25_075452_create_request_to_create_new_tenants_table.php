@@ -14,14 +14,16 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::create('request_to_create_new_tenants', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
 
             // your custom columns may go here
 
             $table->string('school_name');
+            $table->string('simple_name');
             $table->string('school_slug')->nullable();
             $table->string('school_devise')->nullable();
+            $table->string('domain_name')->unique();
 
             // USER
             $table->string('role')->nullable();
@@ -30,6 +32,7 @@ return new class extends Migration
             $table->string('job_name');
             $table->string('contacts')->nullable();
             $table->string('adresse')->nullable()->default(null);
+            $table->string('department')->nullable()->default(null);
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->string('email')->unique();

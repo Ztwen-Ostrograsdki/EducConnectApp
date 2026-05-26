@@ -11,6 +11,8 @@ class RequestToCreateNewTenant extends Model
     protected $fillable = [
         'uuid',
         'id',
+        'simple_name',
+        'domain_name',
         'name',               // Nom de Tenant
         'prenames',               // Prénoms tenant
         'school_name',               // Nom de l'école
@@ -30,7 +32,8 @@ class RequestToCreateNewTenant extends Model
         'role',
         'job_name',
         'profil_photo',
-        'validated'
+        'validated',
+        'department',
     ];
 
     public function user()

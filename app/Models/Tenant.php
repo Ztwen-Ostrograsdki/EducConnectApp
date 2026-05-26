@@ -26,6 +26,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return [
             'uuid',
             'id',
+            'simple_name',
+            'domain_name',
             'name',               // Nom de Tenant
             'prenames',               // Prénoms tenant
             'school_name',               // Nom de l'école
@@ -49,6 +51,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'job_name',
             'profil_photo',
             'request_id',
+            'department',
         ];
     }
 

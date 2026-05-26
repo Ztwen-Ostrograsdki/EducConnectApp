@@ -6,6 +6,7 @@ use App\Events\NewRequestCreatedEvent;
 use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
 use App\Tools\BeninData;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -19,6 +20,8 @@ class RequestPage extends Component
     use WireUiActions;
     
     public $school_name;
+    public $simple_name;
+    public $domain_name;
     public $school_devise;
 
     public $name;
@@ -41,7 +44,9 @@ class RequestPage extends Component
 
     public $department_name, $department;
 
-    public $done = true;
+    public $done = false;
+
+    public $error_message = '';
 
     public $cities = [];
     // public $cities = [], $enseignement_types = [], $periode_types = [], $school_types = [], $devoirs_types = [], $departments = [], $countries = [];
@@ -72,6 +77,7 @@ class RequestPage extends Component
     {
         return [
             'school_name' => 'required|string|max:255',
+            'simple_name' => 'required|string|between:3,50',
             'school_devise' => 'nullable|string|max:255',
 
             'name' => 'required|string|max:255',
@@ -79,7 +85,6 @@ class RequestPage extends Component
             'job_name' => 'required|string|max:255',
 
             'contacts' => 'required|string|max:50',
-            'adresse' => 'nullable|string|max:255',
             'country' => 'required|string|max:100',
             'city' => 'required|string|max:100',
 
@@ -97,8 +102,19 @@ class RequestPage extends Component
                 }
             ],
 
-            'profil_photo' => 'nullable|string|max:255',
-            'logo' => 'nullable|string|max:255',
+            'domain_name' => [
+                'required',
+                'string',
+                'between:4,50',
+                function ($attribute, $value, $fail) {
+                    $existsInRequest = RequestToCreateNewTenant::where('domain_name', $value)->exists();
+                    $existsInTenants = Tenant::where('domain_name', $value)->exists();
+
+                    if ($existsInRequest || $existsInTenants) {
+                        $fail("Vous ne pouvez pas utiliser cet nom de domaine.");
+                    }
+                }
+            ],
 
             'enseignement_type' => 'required|string',
             'school_type' => 'required|string',
@@ -110,41 +126,71 @@ class RequestPage extends Component
 
     public function submit()
     {
-        $this->validate();
+        $this->error_message = '';
 
-        $data = [
-            'name' => $this->name,
-            'prenames' => $this->prenames,
-            'job_name' => $this->job_name,
-            'contacts' => $this->contacts,
-            'country' => $this->country,
-            'city' => $this->city,
-            'school_name' => $this->school_name,
-            'school_devise' => $this->school_devise,
-            'email' => $this->email,
-            'enseignement_type' => $this->enseignement_type,
-            'school_type' => $this->school_type,
-            'devoirs_type' => $this->devoirs_type,
-            'periode_type' => $this->periode_type,
-            'status' => 'pending',
-            'validated' => false,
-            'school_slug' => Str::slug($this->school_name),
-            'adresse' => $this->city . ' ( ' . $this->department .  ')',
-        ];
+        $this->resetErrorBag();
+        
+        if($this->validate()){
 
-        $this->done = true;
-        // $this->done = RequestToCreateNewTenant::create($data);
+            DB::beginTransaction();
 
-        if($this->done){
-            $this->notification()->success(
-                'Demande envoyée',
-                'Votre demande a été soumise avec succès! Vous recevrez un courriel contenant les information de votre espace. Veuillez cependant à ne pas partager les détails que vous recevrez!'
-            );
 
-            broadcast(new NewRequestCreatedEvent($data));
+                try {
 
-            $this->reset();
+                    $data = [
+                    'name' => $this->name,
+                    'simple_name' => $this->simple_name,
+                    'domain_name' => $this->domain_name,
+                    'department' => $this->department,
+                    'prenames' => $this->prenames,
+                    'job_name' => $this->job_name,
+                    'contacts' => $this->contacts,
+                    'country' => $this->country,
+                    'city' => $this->city,
+                    'school_name' => $this->school_name,
+                    'school_devise' => $this->school_devise,
+                    'email' => $this->email,
+                    'enseignement_type' => $this->enseignement_type,
+                    'school_type' => $this->school_type,
+                    'devoirs_type' => $this->devoirs_type,
+                    'periode_type' => $this->periode_type,
+                    'status' => 'pending',
+                    'validated' => false,
+                    'school_slug' => Str::slug($this->school_name),
+                    'adresse' => $this->city . ' (' . $this->department .  ')',
+                ];
+
+                $this->done = RequestToCreateNewTenant::create($data);
+
+                if($this->done){
+
+                    $this->notification()->success(
+                        'Demande envoyée',
+                        'Votre demande a été soumise avec succès! Vous recevrez un courriel contenant les information de votre espace. Veuillez cependant à ne pas partager les détails que vous recevrez!'
+                    );
+
+                    broadcast(new NewRequestCreatedEvent($data));
+
+                    $this->reset();
+
+                    $this->done = true;
+                }
+
+                DB::commit();
+                
+            } catch (\Throwable $th) {
+
+                $this->error_message = $th->getMessage();
+
+                $this->notification()->error('Requête echouée', $this->error_message);
+                DB::rollBack();
+            }
         }
+        else{
+
+            $this->error_message = "Formulaire incorrect!";
+        }
+        
     }
 
     public function render()
@@ -184,5 +230,17 @@ class RequestPage extends Component
 
         }
 
+    }
+
+
+    public function updatedDomainName(?string $string)
+    {
+        $this->validateOnly('domain_name');
+    }
+
+
+    public function resetForm()
+    {
+        $this->reset();
     }
 }
