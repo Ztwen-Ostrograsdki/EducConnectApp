@@ -1,0 +1,158 @@
+<!DOCTYPE {{{ page.doctype || 'html' }}}>
+<html lang="{{ page.language || 'fr' }}" xmlns:v="urn:schemas-microsoft-com:vml">
+    <head>
+        <meta charset="{{ page.charset || 'utf-8' }}" />
+        <meta name="x-apple-disable-message-reformatting" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="supported-color-schemes" content="light dark" />
+        <!--[if mso]>
+            <noscript>
+                <xml>
+                    <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
+                        <o:PixelsPerInch>96</o:PixelsPerInch>
+                    </o:OfficeDocumentSettings>
+                </xml>
+            </noscript>
+            <style>
+                td,
+                th,
+                div,
+                p,
+                a,
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                    font-family: "Segoe UI", sans-serif;
+                    mso-line-height-rule: exactly;
+                }
+            </style>
+        <![endif]-->
+        <if condition="page.title">
+            <title>{{{ page.title }}}</title>
+        </if>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="screen" />
+        <style>
+            @tailwind components;
+            @tailwind utilities;
+
+            img {
+                @apply max-w-full align-middle;
+            }
+
+            .hover-btn:hover {
+                opacity: 0.9 !important;
+            }
+            .hover-link:hover {
+                text-decoration: underline !important;
+            }
+        </style>
+        <stack name="head" />
+    </head>
+    <body class="m-0 p-0 w-full [word-break:break-word] [-webkit-font-smoothing:antialiased] bg-slate-100 {{ page.bodyClass || '' }}">
+        {{-- Preheader (texte caché visible dans les aperçus email) --}}
+        <if condition="page.preheader">
+            <div class="hidden">
+                {{{ page.preheader }}}
+                <each loop="item in Array.from(Array(150))">&#8199;&#65279;&#847;</each>
+            </div>
+        </if>
+
+        <div role="article" aria-roledescription="email" aria-label="{{{ page.title || '' }}}" lang="{{ page.language || 'fr' }}">
+            {{-- Wrapper principal --}}
+            <table class="w-full font-sans" cellpadding="0" cellspacing="0" role="none">
+                <tr>
+                    <td class="bg-slate-100 py-8 px-4">
+                        {{-- Container central --}}
+                        <table class="w-full max-w-xl mx-auto" cellpadding="0" cellspacing="0" role="none">
+                            {{-- ── HEADER EDUCCONNECT ── --}}
+                            <tr>
+                                <td class="bg-slate-900 rounded-t-2xl px-8 py-6">
+                                    <table class="w-full" cellpadding="0" cellspacing="0" role="none">
+                                        <tr>
+                                            <td>
+                                                {{-- Logo --}}
+                                                <table cellpadding="0" cellspacing="0" role="none">
+                                                    <tr>
+                                                        <td class="bg-indigo-600 rounded-xl w-10 h-10 text-center align-middle pr-0" style="width: 40px; height: 40px; background: #4f46e5; border-radius: 10px">
+                                                            <span class="text-white text-lg font-bold" style="line-height: 40px">🎓</span>
+                                                        </td>
+                                                        <td class="pl-3">
+                                                            <div class="text-white font-bold text-xl" style="font-family: &quot;Inter&quot;, sans-serif">EducConnect</div>
+                                                            <div class="text-slate-400 text-xs" style="font-family: &quot;Inter&quot;, sans-serif">
+                                                                <if condition="page.schoolName">
+                                                                    {{{ page.schoolName }}}
+                                                                    <else></else>
+                                                                    Plateforme éducative
+                                                                </if>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="text-right">
+                                                <if condition="page.badge">
+                                                    <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-family: &quot;Inter&quot;, sans-serif">{{{ page.badge }}}</span>
+                                                </if>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            {{-- ── CONTENU PRINCIPAL ── --}}
+                            <tr>
+                                <td class="bg-white px-8 py-8">
+                                    <yield />
+                                </td>
+                            </tr>
+
+                            {{-- ── FOOTER ── --}}
+                            <tr>
+                                <td class="bg-slate-800 rounded-b-2xl px-8 py-6">
+                                    <table class="w-full" cellpadding="0" cellspacing="0" role="none">
+                                        <tr>
+                                            <td class="text-center">
+                                                <p class="text-slate-400 text-xs mb-2" style="font-family: &quot;Inter&quot;, sans-serif">
+                                                    Cet email a été envoyé par
+                                                    <span class="text-slate-300 font-semibold">EducConnect</span>
+                                                    <if condition="page.schoolName">
+                                                        pour
+                                                        <span class="text-slate-300 font-semibold">{{{ page.schoolName }}}</span>
+                                                    </if>
+                                                </p>
+                                                <p class="text-slate-500 text-xs" style="font-family: &quot;Inter&quot;, sans-serif">Si vous n'êtes pas concerné(e) par cet email, vous pouvez l'ignorer.</p>
+                                                <table class="mx-auto mt-4" cellpadding="0" cellspacing="0" role="none">
+                                                    <tr>
+                                                        <td class="px-2">
+                                                            <a href="{{ page.appUrl || '#' }}" class="text-slate-400 text-xs hover-link" style="font-family: &quot;Inter&quot;, sans-serif; text-decoration: none">Accéder à l'application</a>
+                                                        </td>
+                                                        <td class="text-slate-600 text-xs">•</td>
+                                                        <td class="px-2">
+                                                            <a href="{{ page.appUrl || '#' }}/contact" class="text-slate-400 text-xs hover-link" style="font-family: &quot;Inter&quot;, sans-serif; text-decoration: none">Support</a>
+                                                        </td>
+                                                        <td class="text-slate-600 text-xs">•</td>
+                                                        <td class="px-2">
+                                                            <a href="{{ page.appUrl || '#' }}/privacy" class="text-slate-400 text-xs hover-link" style="font-family: &quot;Inter&quot;, sans-serif; text-decoration: none">Confidentialité</a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <p class="text-slate-600 text-xs mt-4" style="font-family: &quot;Inter&quot;, sans-serif">© {{ new Date().getFullYear() }} EducConnect. Tous droits réservés.</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
@@ -22,9 +23,9 @@ class AppGuard extends Component
         $this->tenantId = $this->isTenant ? tenant('id') : null;
         $this->guard    = $this->isTenant ? 'tenant' : 'central';
 
-        abort_unless(auth()->guard($this->guard)->check(), 403);
+        abort_unless(Auth::guard($this->guard)->check(), 403);
 
-        $this->userId = auth()->guard($this->guard)->id();
+        $this->userId = Auth::guard($this->guard)->id();
     }
 
     public function getListeners(): array
@@ -47,7 +48,7 @@ class AppGuard extends Component
 
         // Channels spécifiques au rôle
         /** @var User $user */
-        $user = auth()->guard('tenant')->user();
+        $user = Auth::guard('tenant')->user();
 
         if ($user->hasRole('directeur')) {
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.paiement.recu"]       = 'handlePaiement';
@@ -72,7 +73,7 @@ class AppGuard extends Component
             'description' => 'Votre accès a été révoqué.',
         ]);
 
-        auth()->guard('tenant')->logout();
+        Auth::guard('tenant')->logout();
         // $this->redirect('/login', navigate: true);
     }
 
@@ -167,6 +168,8 @@ class AppGuard extends Component
             'title'       => 'Nouvelle demande reçue',
             'description' => "Mr/Mme {$full_name} vient de faire une demande pour son école {$school_name} sous l'adresse mail {$email}.",
         ]);
+
+        $this->dispatch('LiveNewTenantRequestCreatedEvent', $email);
     }
 
     public function render(): View

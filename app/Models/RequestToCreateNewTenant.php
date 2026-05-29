@@ -34,6 +34,7 @@ class RequestToCreateNewTenant extends Model
         'profil_photo',
         'validated',
         'department',
+        'gender',
     ];
 
     public function user()

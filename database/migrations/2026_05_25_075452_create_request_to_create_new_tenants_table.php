@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('job_name');
             $table->string('contacts')->nullable();
             $table->string('adresse')->nullable()->default(null);
+            $table->string('gender')->nullable()->default('M');
             $table->string('department')->nullable()->default(null);
             $table->string('country')->nullable();
             $table->string('city')->nullable();

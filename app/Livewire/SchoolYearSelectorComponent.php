@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Tools\CentralTools;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -19,7 +20,7 @@ class SchoolYearSelectorComponent extends Component
     {
         $this->dispatch('yearChanged', $this->selectedYear);
 
-        session()->put('school_year_selected', $this->selectedYear);
+        Session::put('school_year_selected', $this->selectedYear);
     }
 
     #[On('yearChanged')]

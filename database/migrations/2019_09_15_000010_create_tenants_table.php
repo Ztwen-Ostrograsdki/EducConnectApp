@@ -39,6 +39,7 @@ class CreateTenantsTable extends Migration
             $table->string('city')->nullable();
             $table->string('email')->unique();
             $table->string('profil_photo')->nullable()->default(null);
+            $table->string('gender')->nullable()->default('M');
             
 
             $table->string('enseignement_type')->default('general');

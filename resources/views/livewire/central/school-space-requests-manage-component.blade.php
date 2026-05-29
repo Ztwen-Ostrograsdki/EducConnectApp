@@ -355,7 +355,7 @@
                                                 <li class="flex items-center gap-1.5">
                                                     <x-lucide-circle-check class="w-5 h-5 text-green-700" />
                                                     <span>
-                                                        <span class="text-green-700">Nom de de domaine : </span>
+                                                        <span class="text-green-700">Nom de domaine : </span>
                                                         <span>{{ $item->domain_name }}</span>
                                                     </span>
                                                 </li>

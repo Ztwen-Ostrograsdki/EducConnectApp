@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\RequestToCreateNewTenant;
 use App\Models\SchoolYear;
 use App\Models\Tenant;
 use App\Tools\CentralTools;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 if (! function_exists('format_price_fcfa')) {
@@ -68,15 +70,15 @@ if (! function_exists('getSchoolYearForTenants')) {
 
                 $school_year = intval(date('Y') - 1) . ' - ' . intval(date('Y'));
             }
-            if(session()->has('school_year_selected') && session('school_year_selected')){
+            if(Session::has('school_year_selected') && session('school_year_selected')){
 
                 $school_year = session('school_year_selected');
 
-                session()->put('school_year_selected', $school_year);
+                Session::put('school_year_selected', $school_year);
             }
             else{
 
-                session()->put('school_year_selected', $school_year);
+                Session::put('school_year_selected', $school_year);
             }
 
             $model = SchoolYear::where('slug', $school_year)->first();
@@ -96,7 +98,7 @@ if (! function_exists('getSchoolYearForTenants')) {
 
             }
 
-            session()->put('school_year_selected', $school_year);
+            Session::put('school_year_selected', $school_year);
 
             return $school_year;
 
@@ -122,21 +124,21 @@ if (! function_exists('getSchoolYearForCentral')) {
 
             $school_year = intval(date('Y') - 1) . ' - ' . intval(date('Y'));
         }
-        if(session()->has('school_year_selected') && session('school_year_selected')){
+        if(Session::has('school_year_selected') && session('school_year_selected')){
 
             $school_year = session('school_year_selected');
 
-            session()->put('school_year_selected', $school_year);
+            Session::put('school_year_selected', $school_year);
         }
         else{
 
-            session()->put('school_year_selected', $school_year);
+            Session::put('school_year_selected', $school_year);
         }
 
         $school_year = $school_years[$school_year];
 
 
-        session()->put('school_year_selected', $school_year);
+        Session::put('school_year_selected', $school_year);
 
         return $school_year;
 
@@ -259,6 +261,23 @@ if(!function_exists('__isConnectedToInternet')){
         } catch (\Exception $e) {
 
             return false;
+        }
+    }
+
+}
+
+if(!function_exists('getSpace_requests')){
+
+    function getSpace_requests(?string $column = null, mixed $value = null)
+    {
+        if($column){
+
+            return RequestToCreateNewTenant::where($column, $value)->get();
+
+        }
+        else{
+
+            return RequestToCreateNewTenant::all();
         }
     }
 
@@ -400,33 +419,7 @@ if(!function_exists('cutter')){
 
 }
 
-if(!function_exists('to_flash')){
 
-    function to_flash($name, $message)
-    {
-        return session()->flash($name, $message);
-    }
-
-}
-
-if(!function_exists('flash')){
-
-    function flash($name, $message)
-    {
-        return session()->flash($name, $message);
-    }
-
-}
-
-
-if(!function_exists('__flash')){
-
-    function __flash($name, $message)
-    {
-        return session()->flash($name, $message);
-    }
-
-}
 
 if(!function_exists('getYears')){
 

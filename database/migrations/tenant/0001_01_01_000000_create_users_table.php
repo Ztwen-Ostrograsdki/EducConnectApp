@@ -29,7 +29,11 @@ return new class extends Migration
 
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('logged_count')->default(0);
             $table->boolean('is_super_admin')->default(false);
+            $table->boolean('blocked')->default(false);
+            $table->boolean('cannot_edit_classes')->default(false);
+            $table->string('gender')->nullable()->default('M');
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

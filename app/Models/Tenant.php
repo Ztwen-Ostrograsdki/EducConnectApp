@@ -52,6 +52,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'profil_photo',
             'request_id',
             'department',
+            'gender',
         ];
     }
 

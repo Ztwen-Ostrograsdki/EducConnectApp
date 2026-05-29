@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\CentralUser;
-use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class RefreshEducCommand extends Command
@@ -62,8 +59,6 @@ class RefreshEducCommand extends Command
             return self::SUCCESS;
 
         } catch (Throwable $e) {
-
-            tenancy()->end();
 
             $this->error('❌ Une erreur est survenue.');
 

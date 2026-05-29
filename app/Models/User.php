@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Hidden(['password', 'remember_token'])]
@@ -33,6 +34,10 @@ class User extends Authenticatable
         'email_verified_at',
         'uuid',
         'adresse',
+        'logged_count',
+        'cannot_edit_classes',
+        'blocked',
+        'gender'
     ];
 
 
@@ -51,7 +56,86 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'cannot_edit_classes' => 'boolean',
+            'blocked' => 'boolean',
         ];
+    }
+
+    public function emailVerified()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function emailNotVerified()
+    {
+        return is_null($this->email_verified_at);
+    }
+
+    public function markAsVerified()
+    {
+        if($this->emailNotVerified()){
+    
+            $this->forceFill([
+                'email_verify_key' => null,
+                'email_verified_at' => now(),
+            ])->setRememberToken(Str::random(60));
+ 
+            $this->save();
+
+        }
+
+        return $this->emailVerified();
+    }
+
+    public function markAsNotVerified()
+    {
+        $email_verify_key = generateRandomNumber(6);
+
+        if(!$this->emailNotVerified()){
+    
+            $this->forceFill([
+                'email_verify_key' => $email_verify_key,
+                'email_verified_at' => null,
+                'remember_token' => null,
+            ]);
+ 
+            $this->save();
+
+        }
+
+        return $this->emailNotVerified();
+    }
+
+    public function getUserNamePrefix($withFullName = false, $reverseName = false)
+    {
+        $prefix = 'Mr/Mme';
+
+        if(in_array($this->gender, ['male', 'Male', 'M', 'm', 'masculin', 'Masculin'])) $prefix = 'Mr';
+
+        if(in_array($this->gender, ['female', 'Female', 'F', 'f', 'feminin', 'Féminin', 'Feminin'])) $prefix = 'Mme';
+
+        if($withFullName) return $prefix . ' ' . $this->getFullName($reverseName);
+
+        return $prefix;
+    }
+
+    public function greatingMessage()
+    {
+        $name = $this->getFullName();
+
+
+        $hour = date('G');
+        
+        if($hour >= 0 && $hour <= 12){
+
+            $greating = "Bonjour ";
+        }
+        else{
+
+            $greating = "Bonsoir ";
+        }
+
+        return $name  ? $greating . ' ' . $name : $greating;
     }
 
     public function isSuperAdmin(): bool

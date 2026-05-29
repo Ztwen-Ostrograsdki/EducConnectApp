@@ -67,27 +67,33 @@
                     </a>
                 </div>
                 <div class="s-section">
-                    <div class="s-section-label">Les demandes d'espace</div>
+                    <div class="s-section-label">Les demandes d'espace école</div>
                     <a href="{{ route('central.requests.school.space.portal') }}" class="s-link {{ request()->routeIs('central.requests.school.space.portal') ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
+                            <x-lucide-calendar-sync class="w-3 h-3 text-orange-400" />
                         </div>
                         <span class="s-label">En attentes</span>
-                        <span class="rounded-lg px-3 bg-orange-400/20 text-orange-300 border border-gray-500">100</span>
+                        <span class="rounded-lg px-3 bg-orange-400/80 text-orange-900 border border-gray-500">
+                            {{ __zero(count(getSpace_requests('status', 'pending'))) }}
+                        </span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-circle-check-big class="w-3 h-3 text-red-400" />
+                            <x-lucide-circle-check-big class="w-3 h-3 text-green-400" />
                         </div>
                         <span class="s-label">Approuvées</span>
-                        <span class="rounded-lg px-3 bg-green-400/20 text-red-300 border border-gray-500">7</span>
+                        <span class="rounded-lg px-3 bg-green-400/20 text-green-300 border border-gray-500">
+                            {{ __zero(count(getSpace_requests('validated', 1))) }}
+                        </span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
                             <x-lucide-circle-x class="w-3 h-3 text-red-400" />
                         </div>
                         <span class="s-label">Rejetées</span>
-                        <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">7</span>
+                        <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">
+                            {{ __zero(count(getSpace_requests('status', 'rejected'))) }}
+                        </span>
                     </a>
                 </div>
                 <div class="s-section">

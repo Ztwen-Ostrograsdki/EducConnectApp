@@ -6,7 +6,9 @@ use App\Events\InitProcessToCreateTenantSpaceEvent;
 use App\Models\RequestToCreateNewTenant;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -70,7 +72,6 @@ class SchoolSpaceRequestsManageComponent extends Component
             'domain_blocked' => true,
         ]);
 
-        session()->flash('success', 'Domaine ténant suspendu avec succès.');
     }
 
     public function unsuspend(string $requestId): void
@@ -116,6 +117,12 @@ class SchoolSpaceRequestsManageComponent extends Component
             'Succès',
             'Domaine du tenant bloqué!'
         );
+    }
+
+    #[On('LiveNewTenantRequestCreatedEvent')]
+    public function onLiveNewTenantRequestCreatedEvent($email)
+    {
+        $this->counter = randomNumber();
     }
 
     public function render()
