@@ -135,6 +135,11 @@ return [
     'school_types' => [
         'prive' => 'Privé',
         'public' => 'Public',
+    ]
+    
+    ,'genders' => [
+        'masculin' => 'Masculin',
+        'feminin' => 'Féminin',
     ],
     
     'devoirs_types' => [

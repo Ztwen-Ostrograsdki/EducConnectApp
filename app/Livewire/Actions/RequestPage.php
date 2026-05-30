@@ -38,6 +38,7 @@ class RequestPage extends Component
     public $school_type;
     public $devoirs_type;
     public $periode_type;
+    public $gender;
     public $logo;
 
     public $department_key;
@@ -87,6 +88,7 @@ class RequestPage extends Component
             'contacts' => 'required|string|max:50',
             'country' => 'required|string|max:100',
             'city' => 'required|string|max:100',
+            'gender' => 'required|string|max:10',
 
             'email' => [
                 'required',
@@ -142,6 +144,7 @@ class RequestPage extends Component
                     'simple_name' => $this->simple_name,
                     'domain_name' => $this->domain_name,
                     'department' => $this->department,
+                    'gender' => $this->gender,
                     'prenames' => $this->prenames,
                     'job_name' => $this->job_name,
                     'contacts' => $this->contacts,
@@ -204,12 +207,14 @@ class RequestPage extends Component
 
         $devoirs_types = config('app.devoirs_types');
 
+        $genders = config('app.genders');
+
         $departments = BeninData::getDepartments();
 
         $countries = ['Bénin' => 'Bénin'];
 
         
-        return view('livewire.actions.request-page', compact('enseignement_types', 'periode_types', 'school_types', 'devoirs_types', 'departments', 'countries'));
+        return view('livewire.actions.request-page', compact('enseignement_types', 'periode_types', 'school_types', 'devoirs_types', 'departments', 'countries', 'genders'));
     }
 
     public function updatedDepartment(?string $department)

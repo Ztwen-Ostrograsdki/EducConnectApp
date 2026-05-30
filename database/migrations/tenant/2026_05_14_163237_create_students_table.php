@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('prenames');
             // contacts: tableau associatif ['nom et prenoms parent', 'lien parenté', 'contact', 'email']
             $table->json('contacts')->nullable();
-            $table->enum('gender', ['M', 'F'])->default('M');
+            $table->string('gender')->nullable()->default('Masculin');
             $table->date('birth_date')->nullable()->default(null);
             $table->string('birth_place')->nullable()->default(null);
             $table->string('nationality')->nullable()->default(null);

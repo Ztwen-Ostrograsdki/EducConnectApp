@@ -20,11 +20,11 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('identifiant')->unique();    // matricule
             $table->json('identity_card_details')->nullable();
+            $table->string('gender')->nullable()->default('Masculin');
             $table->string('name');
             $table->string('prenames');
             $table->string('email')->unique();
             $table->string('contacts')->nullable()->default(null);
-            $table->enum('gender', ['M', 'F'])->default('M');
             $table->date('birth_date')->nullable()->default(null);
             $table->string('birth_place')->nullable()->default(null);
             $table->string('nationality')->nullable()->default(null);

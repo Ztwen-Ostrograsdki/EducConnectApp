@@ -94,7 +94,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                         <div>
                             <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
                                 <span class="text-red-500">*</span>
@@ -111,13 +111,34 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="contacts">Votre unique contacts
+                            <label class="block text-sm font-medium mb-2 text-gray-300" for="contacts">Votre contact (unique)
                                 <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <input wire:model.live='contacts' type="text" id="contacts" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
                                     placeholder="01617777777">
                                 @error('contacts')
+                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
+                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300" for="gender">Genre
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select wire:model.live='gender' id="gender" class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
+                                    <option value="">Sélectionnez le genre</option>
+                                    @foreach ($genders as $g)
+                                        <option class="bg-slate-800 text-slate-300" value="{{ $g }}">{{ $g }}</option>
+                                    @endforeach
+                                </select>
+                                @error('gender')
                                     <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
                                         <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
                                         {{ $message }}
@@ -144,6 +165,7 @@
                         <div>
                             <label class="block text-sm font-medium mb-2 text-gray-300" for="domain_name">Votre nom de domaine
                                 <span class="text-red-500">*</span>
+                                <span class="text-xs text-amber-500">NB: Le nom de domaine n'est plus modifiable après validation</span>
                             </label>
                             <div class="relative">
                                 <input type="text" wire:model.live='domain_name' id="domain_name" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"

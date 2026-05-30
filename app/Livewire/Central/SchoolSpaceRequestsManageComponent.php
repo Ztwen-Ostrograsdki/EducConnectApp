@@ -3,10 +3,15 @@
 namespace App\Livewire\Central;
 
 use App\Events\InitProcessToCreateTenantSpaceEvent;
+use App\Jobs\JobToSendCredentialsToCreatedTenant;
 use App\Models\RequestToCreateNewTenant;
+use App\Models\Tenant;
+use App\Models\User;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -85,7 +90,34 @@ class SchoolSpaceRequestsManageComponent extends Component
     }
 
 
-    public function validateRequest($requestId): void
+    public function mailBuilder(string $tenant_id)
+    {
+        $tenant = Tenant::find($tenant_id);
+
+        if($tenant){
+
+            tenancy()->initialize($tenant);
+
+            $user = User::first();
+
+            if($user){
+
+                $default_password = Str::random(8);
+
+                $user->update(['password'  => Hash::make($default_password)]);
+
+                JobToSendCredentialsToCreatedTenant::dispatch($tenant, $user, $default_password)->delay(0);
+
+            }
+
+            tenancy()->end();
+
+            
+        }
+    }
+
+
+    public function validateRequest(string $requestId): void
     {
         $req = RequestToCreateNewTenant::where('id', $requestId)->firstOrfail();
 

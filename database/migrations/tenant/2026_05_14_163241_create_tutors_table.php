@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('prenames');
             $table->string('email')->nullable()->unique();
+            $table->string('gender')->nullable()->default('Masculin');
             $table->string('contacts')->nullable();
             $table->string('whatsapp_number')->nullable();
-            $table->enum('gender', ['M', 'F'])->default('M');
             $table->string('profession')->nullable()->default(null);
             $table->string('adresse')->nullable();
             $table->enum('status', ['active', 'unactive'])->default('active');

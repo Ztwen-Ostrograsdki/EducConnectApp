@@ -101,6 +101,9 @@ class CreateTenantTestCommand extends Command
                 'city' => $faker->city(),
                 'school_devise' => 'TRAVAIL - EXCELLENCE - REUSSITE',
                 'job_name' => $faker->jobTitle() . '(' . $faker->company() . ')',
+                'simple_name' => 'CEG' . Str::random(3),
+                'domain_name' => $id,
+                'status' => 'active',
             ]);
 
             $this->info('✅ Tenant créé avec succès.');
@@ -151,6 +154,10 @@ class CreateTenantTestCommand extends Command
                 'city' => $tenant->city,
                 'tenant_id' => $tenant->id,
                 'job_name' => $tenant->job_name,
+                'gender' => $tenant->gender,
+                'email_verified_at' => now(),
+                'adresse' => $tenant->adresse,
+                'logged_count' => 0,
             ]);
 
             /*

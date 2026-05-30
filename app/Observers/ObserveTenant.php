@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Observers;
+
+use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
+use App\Jobs\JobToSeedRolesAndPermissionsIntoTenantDB;
+use App\Jobs\JobToSendCredentialsToCreatedTenant;
+use App\Models\Tenant;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
+
+class ObserveTenant
+{
+    /**
+     * Handle the Tenant "created" event.
+     */
+    public function created(Tenant $tenant): void
+    {
+        Bus::chain([
+
+            new JobToSendCredentialsToCreatedTenant($tenant),
+
+            new JobToSeedRolesAndPermissionsIntoTenantDB($tenant),
+        ])
+        ->catch(function (Throwable $e) use ($tenant) {
+            // Un des jobs a échoué après tous ses retries
+            // broadcast(new FailedToSendCredentialsToCreatedTenantEvent($tenant, $e->getMessage()));
+        })
+        ->dispatch();
+    }
+
+    /**
+     * Handle the Tenant "updated" event.
+     */
+    public function updated(Tenant $tenant): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Tenant "deleted" event.
+     */
+    public function deleted(Tenant $tenant): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Tenant "restored" event.
+     */
+    public function restored(Tenant $tenant): void
+    {
+        //
+    }
+
+    /**
+     * Handle the Tenant "force deleted" event.
+     */
+    public function forceDeleted(Tenant $tenant): void
+    {
+        //
+    }
+}

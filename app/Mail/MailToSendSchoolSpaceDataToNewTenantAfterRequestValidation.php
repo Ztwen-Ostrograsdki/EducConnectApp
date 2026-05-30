@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation extends Mailable
+class MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -20,9 +19,8 @@ class MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation extends Mailabl
      * Create a new message instance.
      */
     public function __construct(
-        public User $user,
-        public string $key,
-        public mixed $html,
+        public string $userName,
+        public $html,
     )
     {
         
@@ -30,9 +28,7 @@ class MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation extends Mailabl
 
     public function build()
     {
-        $user = $this->user;
-
-        $name = $user->getFullName(true);
+        $name = $this->userName;
 
         return $this->subject("Bonjour  $name")
                     ->html($this->html);
@@ -44,7 +40,7 @@ class MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation extends Mailabl
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Demande pour assistance de gestion d'école sur la plateforme",
+            subject: "Reception des données d'accès à son espace école",
         );
     }
 

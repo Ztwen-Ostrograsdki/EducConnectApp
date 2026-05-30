@@ -28,6 +28,16 @@ if (! function_exists('getRandomValueFromArray')) {
     }
 }
 
+if (! function_exists('getTenantLoginUrl')) {
+
+    function getTenantLoginUrl(string $domain_name)
+    {
+        return 'http://' . $domain_name . '.localhost/login';
+    }
+}
+
+
+
 if (! function_exists('initials')) {
 
     function initials(string $strings): string

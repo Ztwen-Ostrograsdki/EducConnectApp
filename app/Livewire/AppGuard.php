@@ -33,6 +33,8 @@ class AppGuard extends Component
         if (! $this->isTenant) {
             return [
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
+                'echo-private:central-admin,.tenant.credentials.failed' => 'handleTenantCredentialsFailded',
+                'echo-private:central-admin,.tenant.roles.seed.failed' => 'handleTenantRolesSeedsFailded',
                 'echo-private:central-admin,.tenant.blocked' => 'handleTenantBlockedAck',
                 'echo-private:central-admin,.tenant.request.created' => 'handleNewTenantRequestCreated',
             ];
@@ -53,6 +55,7 @@ class AppGuard extends Component
         if ($user->hasRole('directeur')) {
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.paiement.recu"]       = 'handlePaiement';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.enseignant.inscrit"]   = 'handleEnseignantInscrit';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.roles.seed.failed"]   = 'handleRolesSeedsFailed';
         }
 
         if ($user->hasRole('enseignant')) {
@@ -114,6 +117,15 @@ class AppGuard extends Component
             'description' => "{$event['name']} vient de s'inscrire.",
         ]);
     }
+    
+    public function handleRolesSeedsFailed(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'error',
+            'title'       => 'ECHEC MIGRATION ROLES - PERMISSIONS',
+            'description' => "La migration des rôles et permission a échoué. Veuillez relancer la migration ou demande de l'aide au technicien de la plateforme!",
+        ]);
+    }
 
     // ── Handlers enseignant ───────────────────────────────
 
@@ -143,6 +155,28 @@ class AppGuard extends Component
             'icon'        => 'success',
             'title'       => 'Nouvelle école inscrite',
             'description' => "Une nouvelle école a été créée",
+        ]);
+    }
+    
+    
+    public function handleTenantCredentialsFailded(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "Echec d'envoie par mail",
+            'timeout' => 0,
+            'description' => "L'envoi des données par mail au tenant " . $event['tenant'] . " a echoué! Les raisons : " . $event['error'],
+        ]);
+    }
+    
+    
+    public function handleTenantRolesSeedsFailded(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "ECHEC MIGRATIONS: ROLES ET PERMISSIONS",
+            'timeout' => 0,
+            'description' => "La migration des rôles et permissions dans la base de données du tenant : " . $event['tenant'] . ' a échoué. Les raisons : ' . $event['error'],
         ]);
     }
 

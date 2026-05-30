@@ -1,5 +1,7 @@
 <?php
-namespace App\Helpers\Services;
+
+namespace App\Services;
+
 
 use Illuminate\Support\Carbon;
 

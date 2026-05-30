@@ -61,6 +61,13 @@ class User extends Authenticatable
         ];
     }
 
+    public function getFullName(bool $reverse = false)
+    {
+        if($reverse) return $this->prenames . ' ' . $this->name;
+
+        else return $this->name . ' ' . $this->prenames;
+    }
+
     public function emailVerified()
     {
         return !is_null($this->email_verified_at);

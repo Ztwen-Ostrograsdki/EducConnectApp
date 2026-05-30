@@ -403,33 +403,31 @@
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
 
-                                    {{-- MESSAGE --}}
-                                    <button
-                                        class="flex-1
-                                   h-11 rounded-2xl
-                                   bg-slate-800 hover:bg-slate-700
-                                   border border-slate-700
-                                   text-slate-200
-                                   flex items-center justify-center gap-2
-                                   transition-all duration-200">
-
-                                        <x-lucide-message-square class="w-4 h-4" />
-
-                                        Message
-
-                                    </button>
-
-                                    <button wire:key="demande-request-{{ $item->id }}" wire:click="validateRequest('{{ $item->id }}')" wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-green-500/10 hover:bg-green-500/20 text-green-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5" wire:target="validateRequest">
-                                            <x-lucide-user-check class="w-4 h-4" />
-                                            Accepter
+                                    <button wire:key="demande-send-request-{{ $item->domain_name }}" wire:click="mailBuilder('{{ $item->domain_name }}')" wire:loading.attr="disabled"
+                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 ">
+                                        <span wire:loading.remove class="flex items-center gap-1.5" wire:target="mailBuilder">
+                                            <x-lucide-message-square class="w-4 h-4" />
+                                            Envoyer données
                                         </span>
-                                        <span wire:loading.flex wire:target="validateRequest" class="items-center gap-1.5">
+                                        <span wire:loading.flex wire:target="mailBuilder" class="items-center gap-1.5">
                                             <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                                             <span>En cours...</span>
                                         </span>
                                     </button>
+
+                                    @if (!$item->validated)
+                                        <button wire:key="demande-val-request-{{ $item->id }}" wire:click="validateRequest('{{ $item->id }}')" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-green-500/10 hover:bg-green-500/20 text-green-400 ">
+                                            <span wire:loading.remove class="flex items-center gap-1.5" wire:target="validateRequest">
+                                                <x-lucide-user-check class="w-4 h-4" />
+                                                Accepter
+                                            </span>
+                                            <span wire:loading.flex wire:target="validateRequest" class="items-center gap-1.5">
+                                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                <span>En cours...</span>
+                                            </span>
+                                        </button>
+                                    @endif
 
                                 </div>
 

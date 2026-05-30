@@ -2,28 +2,28 @@
 
 namespace App\Jobs;
 
-use App\Helpers\Services\EmailTemplateBuilder;
-use App\Mail\MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation;
 use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Throwable;
 
+
+#[Timeout(300)]
+#[Tries(3)]
 class JobToCreateTenantSpace implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, Batchable;
 
-    public $tries = 2;
-
-    public string $key;
+    public string $key, $default_password;
 
     public User $user;
 
@@ -34,7 +34,7 @@ class JobToCreateTenantSpace implements ShouldQueue
         public RequestToCreateNewTenant $demande_request
     )
     {
-        $this->key = Str::random(8);
+        $this->default_password = Str::random(8);
     }
 
     /**
@@ -42,19 +42,17 @@ class JobToCreateTenantSpace implements ShouldQueue
      */
     public function handle(): void
     {
-        DB::beginTransaction();
 
+        DB::beginTransaction();
 
         try {
 
             $demande_request = $this->demande_request;
 
-            $defaul_password = $this->key;
-
             $domain = $demande_request->domain_name; 
 
             $tenant = Tenant::create([
-                'id' => Str::uuid(),
+                'id' => $demande_request->domain_name,
                 'name' => $demande_request->name,
                 'prenames' => $demande_request->prenames,
                 'school_name' => $demande_request->school_name,
@@ -73,6 +71,7 @@ class JobToCreateTenantSpace implements ShouldQueue
                 'job_name' => $demande_request->job_name,
                 'adresse' => $demande_request->adresse,
                 'request_id' => $demande_request->id,
+                'gender' => $demande_request->gender,
                 'status' => 'active',
             ]);
 
@@ -82,17 +81,11 @@ class JobToCreateTenantSpace implements ShouldQueue
 
             tenancy()->initialize($tenant);
 
-            /*
-            |--------------------------------------------------------------------------
-            | Admin tenant
-            |--------------------------------------------------------------------------
-            */
-
             $user = User::create([
                 'name' => $tenant->name,
                 'prenames' => $tenant->prenames,
                 'email' => $tenant->email,
-                'password' => Hash::make($defaul_password),
+                'password' => Hash::make($this->default_password),
                 'school_name' => $tenant->school_name,
                 'school_slug' => $tenant->school_slug,
                 'contacts' => $tenant->contacts,
@@ -100,70 +93,130 @@ class JobToCreateTenantSpace implements ShouldQueue
                 'city' => $tenant->city,
                 'tenant_id' => $tenant->id,
                 'job_name' => $tenant->job_name,
-                'name',
-                'school_devise' => $demande_request->school_devise,
+                'gender' => $tenant->gender,
                 'email_verified_at' => now(),
-                'adresse' => $demande_request->adresse,
+                'adresse' => $tenant->adresse,
                 'logged_count' => 0,
             ]);
-
-            $this->user = $user;
 
             /*
             |--------------------------------------------------------------------------
             | Role
             |--------------------------------------------------------------------------
             */
+            // Artisan::call('db:seed', [
+            //     '--class' => RolesAndPermissionsSeeder::class,
+            //     '--force' => true,
+            // ]);
 
-            Artisan::call('db:seed', [
-                '--class' => RolesAndPermissionsSeeder::class,
-                '--force' => true,
-            ]);
+            $directeur = Role::firstOrCreate(['name' => 'directeur', 'guard_name' => 'tenant']);
 
             if (method_exists($user, 'assignRole')) {
 
                 $user->assignRole('directeur');
 
                 $tenant->update(['role' => 'directeur']);
+                
             }
+
+            tenancy()->end();
 
             DB::commit();
 
         } catch (Throwable $th) {
 
-
             DB::rollBack();
 
-            //throw $th;
+            $this->fail($th->getMessage());
+        }
+    }
+
+
+    public function handlef(): void
+{
+    $tenant = null;
+
+    try {
+        $demande_request = $this->demande_request;
+        $domain = $demande_request->domain_name;
+
+        // Vérifier si le tenant existe déjà (sécurité retry)
+        $tenant = Tenant::find($domain);
+
+        if (!$tenant) {
+            DB::beginTransaction();
+
+            $tenant = Tenant::create([
+                'id'               => $domain,
+                'name' => $demande_request->name,
+                'prenames' => $demande_request->prenames,
+                'school_name' => $demande_request->school_name,
+                'simple_name' => $demande_request->simple_name,
+                'domain_name' => $demande_request->domain_name,
+                'enseignement_type' => $demande_request->enseignement_type,
+                'periode_type' => $demande_request->periode_type,
+                'school_type' => $demande_request->school_type,
+                'devoirs_type' => $demande_request->devoirs_type,
+                'school_slug' => $domain,
+                'email' => $demande_request->email,
+                'contacts' => $demande_request->contacts,
+                'country' => $demande_request->country,
+                'city' => $demande_request->city,
+                'school_devise' => $demande_request->school_devise,
+                'job_name' => $demande_request->job_name,
+                'adresse' => $demande_request->adresse,
+                'request_id' => $demande_request->id,
+                'gender' => $demande_request->gender,
+                'status' => 'active',
+            ]);
+
+            $tenant->domains()->create(['domain' => $domain]);
+
+            DB::commit();
         }
 
+        // Contexte tenant — transaction séparée
+        tenancy()->initialize($tenant);
 
-        
+        try {
+            $user = User::firstOrCreate(
+                ['email' => $tenant->email],
+                [
+                    'name' => $tenant->name,
+                    'prenames' => $tenant->prenames,
+                    'email' => $tenant->email,
+                    'password' => Hash::make($this->default_password),
+                    'school_name' => $tenant->school_name,
+                    'school_slug' => $tenant->school_slug,
+                    'contacts' => $tenant->contacts,
+                    'country' => $tenant->country,
+                    'city' => $tenant->city,
+                    'tenant_id' => $tenant->id,
+                    'job_name' => $tenant->job_name,
+                    'gender' => $tenant->gender,
+                    'email_verified_at' => now(),
+                    'adresse' => $tenant->adresse,
+                    'logged_count' => 0,
+                ]
+            );
+
+            Role::firstOrCreate([
+                'name'       => 'directeur',
+                'guard_name' => 'tenant'
+            ]);
+
+            if (method_exists($user, 'assignRole')) {
+                $user->assignRole('directeur');
+                $tenant->update(['role' => 'directeur']);
+            }
+
+        } finally {
+            tenancy()->end(); // ← toujours exécuté, succès ou erreur
+        }
+
+    } catch (Throwable $th) {
+        DB::rollBack();
+        $this->fail($th);
     }
-
-    public function mailBuilder($key = null)
-    {
-        $key = $this->key;
-
-        $demande_request = $this->demande_request;
-
-        $lien_for_tenant = '';
-
-        $receiver_html = EmailTemplateBuilder::render('email-for-assistant-request', [
-            'lien' => $lien_for_tenant,
-            'key' => $key,
-            'full_name' => $demande_request->prenames . ' ' . $demande_request->name,
-            'school_name' => $demande_request->school_name,
-            'simple_name' => $demande_request->simple_name,
-            'domain_name' => $demande_request->domain_name,
-            'school_type' => $demande_request->school_type,
-            'enseignement_type' => $demande_request->enseignement_type,
-            'periode_type' => $demande_request->periode_type,
-            'devoirs_type' => $demande_request->devoirs_type,
-        ]);
-
-        Mail::to($this->demande_request->email)->send(new MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation($this->user, $key, $receiver_html));
-    }
-
-
+}
 }

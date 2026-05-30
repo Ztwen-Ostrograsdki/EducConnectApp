@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Tools\CentralTools;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -32,11 +33,11 @@ class SchoolYearSelectorComponent extends Component
 
     public function render()
     {
-        if(auth()->guard('central')->user()){
+        if(Auth::guard('central')->user()){
 
             $schoolYears = CentralTools::getSchoolYears();
         }
-        if(auth()->guard('tenant')->user()){
+        if(Auth::guard('tenant')->user()){
             $schoolYears = [
                 '2022 - 2023' => '2022 - 2023',
                 '2023 - 2024' => '2023 - 2024',
