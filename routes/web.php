@@ -13,6 +13,7 @@ use App\Livewire\Central\TenantsComponent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,8 +36,8 @@ Route::post('/logout', function () {
 
     /** @noinspection PhpUndefinedMethodInspection */
     Auth::guard('central')->logout();
-    session()->invalidate();
-    session()->regenerateToken();
+    Session::invalidate();
+    Session::regenerateToken();
 
     return redirect()->route('central.login');
 })->name('central.logout')->middleware('auth:central');

@@ -403,13 +403,13 @@
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
 
-                                    <button wire:key="demande-send-request-{{ $item->domain_name }}" wire:click="mailBuilder('{{ $item->domain_name }}')" wire:loading.attr="disabled"
+                                    <button wire:key="demande-send-request-{{ $item->domain_name }}" wire:click="notifyUserThatRequestHasReceived('{{ $item->domain_name }}')" wire:loading.attr="disabled"
                                         class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5" wire:target="mailBuilder">
+                                        <span wire:loading.remove class="flex items-center gap-1.5" wire:target="notifyUserThatRequestHasReceived">
                                             <x-lucide-message-square class="w-4 h-4" />
                                             Envoyer données
                                         </span>
-                                        <span wire:loading.flex wire:target="mailBuilder" class="items-center gap-1.5">
+                                        <span wire:loading.flex wire:target="notifyUserThatRequestHasReceived" class="items-center gap-1.5">
                                             <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                                             <span>En cours...</span>
                                         </span>
@@ -433,36 +433,48 @@
 
                                 {{-- ACTIONS 2 --}}
                                 <div class="mt-3 grid grid-cols-2 gap-3">
-
-                                    {{-- SUSPEND --}}
-                                    <button
-                                        class="flex-1 min-w-[120px]
-                                   h-11 rounded-2xl
-                                   bg-amber-500/10
-                                   hover:bg-amber-500/20
-                                   text-amber-400
-                                   flex items-center justify-center gap-2
-                                   transition-all duration-200">
-
-                                        <x-lucide-ban class="w-5 h-5" />
-                                        Rejeter
-
-                                    </button>
+                                    @if (!$item->validated)
+                                        <button wire:key="demande-rej-request-{{ $item->id }}" wire:click="rejectRequest('{{ $item->id }}')" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 ">
+                                            <span wire:loading.remove class="flex items-center gap-1.5" wire:target="rejectRequest">
+                                                <x-lucide-ban class="w-4 h-4" />
+                                                Rejeter
+                                            </span>
+                                            <span wire:loading.flex wire:target="rejectRequest" class="items-center gap-1.5">
+                                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                <span>En cours...</span>
+                                            </span>
+                                        </button>
+                                        <x-confirm-modal :show="$showModal" title="Rejet de requête {{ $item->domain_name }}" confirm-text="Oui, Revoquer" cancel-text="Annuler" confirm-action="ConfirmRequestReject"
+                                            close-action="closeModal">
+                                            <p>
+                                                Cette action masquera cette requête.
+                                            <p class="text-orange-500 font-semibold py-1.5">Vous pourrez à tout moment revalider cette requête!</p>
+                                            </p>
+                                        </x-confirm-modal>
+                                    @endif
 
                                     {{-- DELETE --}}
-                                    <button
-                                        class="flex-1 min-w-[120px]
-                                   h-11 rounded-2xl
-                                   bg-red-500/10
-                                   hover:bg-red-500/20
-                                   text-red-400
-                                   flex items-center justify-center gap-2
-                                   transition-all duration-200">
-
-                                        <x-lucide-trash-2 class="w-5 h-5" />
-                                        Supprimer
-
-                                    </button>
+                                    @if (!$item->validated)
+                                        <button wire:key="demande-del-request-{{ $item->id }}" wire:click="deleteRequest('{{ $item->id }}')" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
+                                            <span wire:loading.remove class="flex items-center gap-1.5" wire:target="deleteRequest">
+                                                <x-lucide-trash-2 class="w-4 h-4" />
+                                                Supprimer
+                                            </span>
+                                            <span wire:loading.flex wire:target="deleteRequest" class="items-center gap-1.5">
+                                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                <span>En cours...</span>
+                                            </span>
+                                        </button>
+                                        <x-confirm-modal :show="$showModal" title="Suppression de la requête {{ $item->domain_name }}" confirm-text="Oui, supprimer" cancel-text="Annuler" confirm-action="ConfirmRequestDeletion"
+                                            close-action="closeModal">
+                                            <p>
+                                                Cette action supprimera définitivement cette requête.
+                                            <p class="text-orange-500 font-semibold py-1.5">Cette action est irreversible!</p>
+                                            </p>
+                                        </x-confirm-modal>
+                                    @endif
 
                                 </div>
 

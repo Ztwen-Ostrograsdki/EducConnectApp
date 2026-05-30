@@ -26,6 +26,7 @@ use App\Livewire\Tenants\Users\NotificationsPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
@@ -45,14 +46,14 @@ Route::middleware([
     Route::post('/logout', function () {
 
         Auth::guard('tenant')->logout();
-        session()->invalidate();
-        session()->regenerateToken();
+        Session::invalidate();
+        Session::regenerateToken();
 
         return redirect()->route('login');
     })->name('logout')->middleware('auth:tenant');
 
     // ─── Pages authentifiées ──────────────────────────────────────────
-    Route::middleware(['auth:tenant', 'tenant.domain.open'])->group(function () {
+    Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at'])->group(function () {
 
         Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
 

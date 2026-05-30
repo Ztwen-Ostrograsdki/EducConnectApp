@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\TenantForceDeleted;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -41,10 +42,18 @@ class TenancyServiceProvider extends ServiceProvider
             Events\TenantUpdated::class => [],
             Events\DeletingTenant::class => [],
 
-            Events\TenantDeleted::class => [
+            // Events\TenantDeleted::class => [
+            //     JobPipeline::make([
+            //         Jobs\DeleteDatabase::class, // Supprime la DB de l'école
+            //     ])->send(function (Events\TenantDeleted $event) {
+            //         return $event->tenant;
+            //     })->shouldBeQueued(false),
+            // ],
+
+            TenantForceDeleted::class => [
                 JobPipeline::make([
-                    Jobs\DeleteDatabase::class, // Supprime la DB de l'école
-                ])->send(function (Events\TenantDeleted $event) {
+                    Jobs\DeleteDatabase::class,
+                ])->send(function (TenantForceDeleted $event) {
                     return $event->tenant;
                 })->shouldBeQueued(false),
             ],
@@ -141,7 +150,9 @@ class TenancyServiceProvider extends ServiceProvider
             Middleware\InitializeTenancyByRequestData::class,
         ];
 
+        /// @intelephense-ignore-next-line
         foreach (array_reverse($tenancyMiddleware) as $middleware) {
+            // @intelephense-ignore-next-line
             $this->app[Kernel::class]
                 ->prependToMiddlewarePriority($middleware);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TenantForceDeleted;
 use App\Models\TenantModuleAccess;
 use App\Models\TenantStatistic;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Observers\ObserveTenant;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
@@ -17,7 +19,9 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 #[ObservedBy(ObserveTenant::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
-    use HasDatabase, HasDomains;
+    use HasDatabase, HasDomains, SoftDeletes;
+
+    protected $connection = 'central';
 
     /**
      * Colonnes personnalisées stockées dans la colonne JSON "data"
@@ -78,6 +82,15 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected $casts = [
         'date_expiration_abonnement' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        parent::booted();
+
+        static::forceDeleted(function (self $tenant) {
+            event(new TenantForceDeleted($tenant));
+        });
+    }
 
     public function user()
     {

@@ -6,6 +6,7 @@ use App\Events\TenantAccessWasUpdatedEvent;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -35,6 +36,12 @@ class SchoolsComponent extends Component
         'type_enseignement',
         'status',
     ];
+
+    #[On('LiveReloadDashboardEvent')]
+    public function onReloadDashboard()
+    {
+        $this->counter = randomNumber();
+    }
 
     public function updatingSearch(): void
     {

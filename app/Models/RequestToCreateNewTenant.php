@@ -3,11 +3,19 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Observers\ObserveNewTenantRequest;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
+#[ObservedBy(ObserveNewTenantRequest::class)]
 class RequestToCreateNewTenant extends Model
 {
+    use CentralConnection;
+
+    protected $connection = 'central';
+
     protected $fillable = [
         'uuid',
         'id',
@@ -100,8 +108,43 @@ class RequestToCreateNewTenant extends Model
         return $this->usesTrimestres() ? 'Trimestre' : 'Semestre';
     }
 
-    public function getFullName()
+    public function getFullName(bool $reverse = false)
     {
-        return $this->name . ' ' . $this->prenames;
+        if(!$reverse) return  $this->name . ' ' . $this->prenames;
+
+        else  return $this->prenames . ' ' . $this->name;
     }
+
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
+    {
+        $prefix = 'Mr/Mme';
+
+        if(in_array($this->gender, ['male', 'Male', 'M', 'm', 'masculin', 'Masculin'])) $prefix = 'Mr';
+
+        if(in_array($this->gender, ['female', 'Female', 'F', 'f', 'feminin', 'Féminin', 'Feminin'])) $prefix = 'Mme';
+
+        if($withFullName) return $prefix . ' ' . $this->getFullName($reverseName);
+
+        return $prefix;
+    }
+
+    public function greating(bool $withFullName = true, bool $reverse = false)
+    {
+        $name = $this->getUserNamePrefix($withFullName, $reverse);
+
+        $hour = date('G');
+        
+        if($hour >= 0 && $hour <= 12){
+
+            $greating = "Bonjour ";
+        }
+        else{
+
+            $greating = "Bonsoir ";
+        }
+
+        return $name  ? $greating . ' ' . $name : $greating;
+    }
+
 }

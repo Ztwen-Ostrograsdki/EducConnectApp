@@ -22,6 +22,8 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
 {
     use Queueable;
 
+    public $deleteWhenMissingModels = true;
+
     /**
      * Create a new job instance.
      */
@@ -92,7 +94,6 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
 
             // Passer les données brutes plutôt que le modèle $user
             $userName = $user?->name;
-            $userEmail = $user?->email;
 
             // Fin du contexte tenant AVANT l'envoi du mail
             tenancy()->end();

@@ -27,6 +27,8 @@ class JobToCreateTenantSpace implements ShouldQueue
 
     public User $user;
 
+    public $deleteWhenMissingModels = true;
+
     /**
      * Create a new job instance.
      */
@@ -37,186 +39,98 @@ class JobToCreateTenantSpace implements ShouldQueue
         $this->default_password = Str::random(8);
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
 
-        DB::beginTransaction();
+    public function handle(): void 
+    {
+        $tenant = null;
 
         try {
-
             $demande_request = $this->demande_request;
+            $domain = $demande_request->domain_name;
 
-            $domain = $demande_request->domain_name; 
+            // Vérifier si le tenant existe déjà (sécurité retry)
+            $tenant = Tenant::find($domain);
 
-            $tenant = Tenant::create([
-                'id' => $demande_request->domain_name,
-                'name' => $demande_request->name,
-                'prenames' => $demande_request->prenames,
-                'school_name' => $demande_request->school_name,
-                'simple_name' => $demande_request->simple_name,
-                'domain_name' => $demande_request->domain_name,
-                'enseignement_type' => $demande_request->enseignement_type,
-                'periode_type' => $demande_request->periode_type,
-                'school_type' => $demande_request->school_type,
-                'devoirs_type' => $demande_request->devoirs_type,
-                'school_slug' => $domain,
-                'email' => $demande_request->email,
-                'contacts' => $demande_request->contacts,
-                'country' => $demande_request->country,
-                'city' => $demande_request->city,
-                'school_devise' => $demande_request->school_devise,
-                'job_name' => $demande_request->job_name,
-                'adresse' => $demande_request->adresse,
-                'request_id' => $demande_request->id,
-                'gender' => $demande_request->gender,
-                'status' => 'active',
-            ]);
+            if (!$tenant) {
+                DB::beginTransaction();
 
-            $tenant->domains()->create([
-                'domain' => $domain,
-            ]);
+                $tenant = Tenant::create([
+                    'id'               => $domain,
+                    'name' => $demande_request->name,
+                    'prenames' => $demande_request->prenames,
+                    'school_name' => $demande_request->school_name,
+                    'simple_name' => $demande_request->simple_name,
+                    'domain_name' => $demande_request->domain_name,
+                    'enseignement_type' => $demande_request->enseignement_type,
+                    'periode_type' => $demande_request->periode_type,
+                    'school_type' => $demande_request->school_type,
+                    'devoirs_type' => $demande_request->devoirs_type,
+                    'school_slug' => $domain,
+                    'email' => $demande_request->email,
+                    'contacts' => $demande_request->contacts,
+                    'country' => $demande_request->country,
+                    'city' => $demande_request->city,
+                    'school_devise' => $demande_request->school_devise,
+                    'job_name' => $demande_request->job_name,
+                    'adresse' => $demande_request->adresse,
+                    'request_id' => $demande_request->id,
+                    'gender' => $demande_request->gender,
+                    'status' => 'active',
+                ]);
 
-            tenancy()->initialize($tenant);
+                $tenant->domains()->create(['domain' => $domain]);
 
-            $user = User::create([
-                'name' => $tenant->name,
-                'prenames' => $tenant->prenames,
-                'email' => $tenant->email,
-                'password' => Hash::make($this->default_password),
-                'school_name' => $tenant->school_name,
-                'school_slug' => $tenant->school_slug,
-                'contacts' => $tenant->contacts,
-                'country' => $tenant->country,
-                'city' => $tenant->city,
-                'tenant_id' => $tenant->id,
-                'job_name' => $tenant->job_name,
-                'gender' => $tenant->gender,
-                'email_verified_at' => now(),
-                'adresse' => $tenant->adresse,
-                'logged_count' => 0,
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Role
-            |--------------------------------------------------------------------------
-            */
-            // Artisan::call('db:seed', [
-            //     '--class' => RolesAndPermissionsSeeder::class,
-            //     '--force' => true,
-            // ]);
-
-            $directeur = Role::firstOrCreate(['name' => 'directeur', 'guard_name' => 'tenant']);
-
-            if (method_exists($user, 'assignRole')) {
-
-                $user->assignRole('directeur');
-
-                $tenant->update(['role' => 'directeur']);
-                
+                DB::commit();
             }
 
-            tenancy()->end();
+            // Contexte tenant — transaction séparée
+            tenancy()->initialize($tenant);
 
-            DB::commit();
+            try {
+                $user = User::firstOrCreate(
+                    ['email' => $tenant->email],
+                    [
+                        'name' => $tenant->name,
+                        'prenames' => $tenant->prenames,
+                        'email' => $tenant->email,
+                        'password' => Hash::make($this->default_password),
+                        'school_name' => $tenant->school_name,
+                        'school_slug' => $tenant->school_slug,
+                        'contacts' => $tenant->contacts,
+                        'country' => $tenant->country,
+                        'city' => $tenant->city,
+                        'tenant_id' => $tenant->id,
+                        'job_name' => $tenant->job_name,
+                        'gender' => $tenant->gender,
+                        'email_verified_at' => now(),
+                        'adresse' => $tenant->adresse,
+                        'logged_count' => 0,
+                    ]
+                );
+
+                Role::firstOrCreate([
+                    'name'       => 'directeur',
+                    'guard_name' => 'tenant'
+                ]);
+
+                if (method_exists($user, 'assignRole')) {
+                    $user->assignRole('directeur');
+                    $tenant->update(['role' => 'directeur']);
+                }
+
+            } finally {
+                tenancy()->end(); // ← toujours exécuté, succès ou erreur
+            }
 
         } catch (Throwable $th) {
 
+            $tenant = Tenant::find($domain);
+
+            if($tenant) $tenant->forceDelete();
+
             DB::rollBack();
-
-            $this->fail($th->getMessage());
+            
+            $this->fail($th);
         }
     }
-
-
-    public function handlef(): void
-{
-    $tenant = null;
-
-    try {
-        $demande_request = $this->demande_request;
-        $domain = $demande_request->domain_name;
-
-        // Vérifier si le tenant existe déjà (sécurité retry)
-        $tenant = Tenant::find($domain);
-
-        if (!$tenant) {
-            DB::beginTransaction();
-
-            $tenant = Tenant::create([
-                'id'               => $domain,
-                'name' => $demande_request->name,
-                'prenames' => $demande_request->prenames,
-                'school_name' => $demande_request->school_name,
-                'simple_name' => $demande_request->simple_name,
-                'domain_name' => $demande_request->domain_name,
-                'enseignement_type' => $demande_request->enseignement_type,
-                'periode_type' => $demande_request->periode_type,
-                'school_type' => $demande_request->school_type,
-                'devoirs_type' => $demande_request->devoirs_type,
-                'school_slug' => $domain,
-                'email' => $demande_request->email,
-                'contacts' => $demande_request->contacts,
-                'country' => $demande_request->country,
-                'city' => $demande_request->city,
-                'school_devise' => $demande_request->school_devise,
-                'job_name' => $demande_request->job_name,
-                'adresse' => $demande_request->adresse,
-                'request_id' => $demande_request->id,
-                'gender' => $demande_request->gender,
-                'status' => 'active',
-            ]);
-
-            $tenant->domains()->create(['domain' => $domain]);
-
-            DB::commit();
-        }
-
-        // Contexte tenant — transaction séparée
-        tenancy()->initialize($tenant);
-
-        try {
-            $user = User::firstOrCreate(
-                ['email' => $tenant->email],
-                [
-                    'name' => $tenant->name,
-                    'prenames' => $tenant->prenames,
-                    'email' => $tenant->email,
-                    'password' => Hash::make($this->default_password),
-                    'school_name' => $tenant->school_name,
-                    'school_slug' => $tenant->school_slug,
-                    'contacts' => $tenant->contacts,
-                    'country' => $tenant->country,
-                    'city' => $tenant->city,
-                    'tenant_id' => $tenant->id,
-                    'job_name' => $tenant->job_name,
-                    'gender' => $tenant->gender,
-                    'email_verified_at' => now(),
-                    'adresse' => $tenant->adresse,
-                    'logged_count' => 0,
-                ]
-            );
-
-            Role::firstOrCreate([
-                'name'       => 'directeur',
-                'guard_name' => 'tenant'
-            ]);
-
-            if (method_exists($user, 'assignRole')) {
-                $user->assignRole('directeur');
-                $tenant->update(['role' => 'directeur']);
-            }
-
-        } finally {
-            tenancy()->end(); // ← toujours exécuté, succès ou erreur
-        }
-
-    } catch (Throwable $th) {
-        DB::rollBack();
-        $this->fail($th);
-    }
-}
 }

@@ -23,6 +23,7 @@
         @livewire('app-guard')
 
         <x-notifications />
+        <x-dialog />
 
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 

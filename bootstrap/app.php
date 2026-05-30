@@ -8,6 +8,7 @@ use App\Console\Commands\SyncTenantStatistics;
 use App\Http\Middleware\CheckIfTenantDomainNotBlocked;
 use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
+use App\Http\Middleware\EnsureTenantNotDeletedAt;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TenantAuthenticate;
@@ -59,6 +60,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.init' => InitializeTenancyByDomainForLivewire::class,
             'tenant.domain.open' => CheckIfTenantDomainNotBlocked::class,
             'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
+            'tenant.domain.not.deleted.at' => EnsureTenantNotDeletedAt::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
         ]);

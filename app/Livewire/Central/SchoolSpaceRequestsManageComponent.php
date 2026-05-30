@@ -3,22 +3,19 @@
 namespace App\Livewire\Central;
 
 use App\Events\InitProcessToCreateTenantSpaceEvent;
-use App\Jobs\JobToSendCredentialsToCreatedTenant;
+use App\Jobs\JobToNotifyUserOfNewTenantRequest;
 use App\Models\RequestToCreateNewTenant;
-use App\Models\Tenant;
-use App\Models\User;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.central-auth-layout')]
+#[Title("Gestion des demandes d'espace école")]
 class SchoolSpaceRequestsManageComponent extends Component
 {
     
@@ -47,6 +44,11 @@ class SchoolSpaceRequestsManageComponent extends Component
     public string $status = '';
 
     public int $perPage = 6;
+
+
+    public $showModal = false;
+
+    public ?string $targetRequest;
 
     protected $queryString = [
         'search',
@@ -90,28 +92,21 @@ class SchoolSpaceRequestsManageComponent extends Component
     }
 
 
-    public function mailBuilder(string $tenant_id)
+    public function notifyUserThatRequestHasReceived(string $domain)
     {
-        $tenant = Tenant::find($tenant_id);
+        $req = RequestToCreateNewTenant::firstWhere('domain_name', $domain);
 
-        if($tenant){
+        if($req){
 
-            tenancy()->initialize($tenant);
+            JobToNotifyUserOfNewTenantRequest::dispatch($req);
+        }
+        else{
 
-            $user = User::first();
-
-            if($user){
-
-                $default_password = Str::random(8);
-
-                $user->update(['password'  => Hash::make($default_password)]);
-
-                JobToSendCredentialsToCreatedTenant::dispatch($tenant, $user, $default_password)->delay(0);
-
-            }
-
-            tenancy()->end();
-
+            $this->notification()->send([
+                'icon'        => 'negative',
+                'title'       => 'Requête introuvable',
+                'description' => "La reqûete n'existe pas dnas la base de données",
+            ]);
             
         }
     }
@@ -134,21 +129,99 @@ class SchoolSpaceRequestsManageComponent extends Component
 
     }
 
-    public function unblockAll(): void
+
+    public function deleteRequest(string $requestId): void
     {
-         $this->notification()->success(
-            'Succès',
-            'Domaine du tenant bloqué!'
-        );
+        $this->showModal = true;
+
+        $this->targetRequest = $requestId;
 
     }
 
-    public function delete(string $requestId): void
+    public function ConfirmRequestDeletion(): void
     {
-         $this->notification()->success(
-            'Succès',
-            'Domaine du tenant bloqué!'
-        );
+        $req = RequestToCreateNewTenant::find($this->targetRequest);
+
+        if($req){
+
+            $del = $req->delete();
+
+            if($del){
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Suppression terminée',
+                    'description' => "La reqûete a été supprimée avec succès!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => 'Echec de la suppression',
+                    'description' => "La reqûete n'a pas été supprimer!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Requête introuvable',
+                'description' => "La reqûete n'existe pas dnas la base de données",
+            ]);
+            
+        }
+        $this->showModal = false;
+        
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+    }
+    
+    
+    public function rejectRequest(string $requestId): void
+    {
+        $this->showModal = true;
+
+        $this->targetRequest = $requestId;
+    }
+
+    public function ConfirmRequestReject(): void
+    {
+        $req = RequestToCreateNewTenant::find($this->targetRequest);
+
+        if($req){
+
+            $del = $req->update(['status' => 'rejected']);
+
+            if($del){
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Revocation terminée',
+                    'description' => "La reqûete a été révoquée avec succès!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => 'Echec de la Revocation',
+                    'description' => "La reqûete n'a pas été Revoquée!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Requête introuvable',
+                'description' => "La reqûete n'existe pas dnas la base de données",
+            ]);
+            
+        }
+        $this->showModal = false;
     }
 
     #[On('LiveNewTenantRequestCreatedEvent')]

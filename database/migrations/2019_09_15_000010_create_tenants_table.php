@@ -55,6 +55,8 @@ class CreateTenantsTable extends Migration
 
             $table->unsignedBigInteger('request_id')->nullable()->default(null);
 
+            $table->softDeletes();
+
             $table->timestamps();
             $table->json('data')->nullable();
         });

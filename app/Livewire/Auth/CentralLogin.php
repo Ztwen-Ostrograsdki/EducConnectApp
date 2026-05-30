@@ -55,7 +55,7 @@ class CentralLogin extends Component
 
         session()->regenerate();
 
-        return $this->redirect(route('central.dashboard'));
+        return redirect()->route('central.dashboard');
 
     }
 

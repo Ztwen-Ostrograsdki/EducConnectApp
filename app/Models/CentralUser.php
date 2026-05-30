@@ -18,6 +18,8 @@ class CentralUser extends Authenticatable
 
     protected string $guard_name = 'central';
 
+    protected $connection = 'central';
+
     /**
      * Get the attributes that should be cast.
      *

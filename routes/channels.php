@@ -4,15 +4,10 @@ use App\Models\CentralUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
-// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-//     return (int) $user->id === (int) $id;
-// });
-
 // Guard dynamique selon le contexte
 if (tenant() === null) {
     Broadcast::routes(['middleware' => ['web', 'auth:central']]);
 }
-// Broadcast::routes(['middleware' => ['web', 'auth:' . $guard]]);
 
 // ── Channel commun à tous les users du tenant ─────────────
 // ex: maintenance, annonces globales

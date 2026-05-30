@@ -33,10 +33,12 @@ class AppGuard extends Component
         if (! $this->isTenant) {
             return [
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
+                'echo-private:central-admin,.any.error' => 'handleAnyError',
                 'echo-private:central-admin,.tenant.credentials.failed' => 'handleTenantCredentialsFailded',
                 'echo-private:central-admin,.tenant.roles.seed.failed' => 'handleTenantRolesSeedsFailded',
                 'echo-private:central-admin,.tenant.blocked' => 'handleTenantBlockedAck',
                 'echo-private:central-admin,.tenant.request.created' => 'handleNewTenantRequestCreated',
+                'echo-private:central-admin,.tenant.init.errors' => 'handleSomeErrorsOccurWhenInitialyzeTenantSpace',
             ];
         }
 
@@ -156,8 +158,19 @@ class AppGuard extends Component
             'title'       => 'Nouvelle école inscrite',
             'description' => "Une nouvelle école a été créée",
         ]);
+        $this->dispatch('LiveReloadDashboardEvent');
     }
     
+    
+    public function handleAnyError(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'negative',
+            'title'       => $event['target'] ? $event['target'] : "Une erreure est survenue!",
+            'timeout' => 0,
+            'description' => $event['error'],
+        ]);
+    }
     
     public function handleTenantCredentialsFailded(array $event): void
     {
@@ -178,6 +191,19 @@ class AppGuard extends Component
             'timeout' => 0,
             'description' => "La migration des rôles et permissions dans la base de données du tenant : " . $event['tenant'] . ' a échoué. Les raisons : ' . $event['error'],
         ]);
+        $this->dispatch('LiveReloadDashboardEvent');
+    }
+    
+    public function handleSomeErrorsOccurWhenInitialyzeTenantSpace(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'negative',
+            'title'       => "ECHEC INITIALISATION DU TENANT",
+            'timeout' => 0,
+            'description' => "L'initialisation du tenant : " . $event['tenant'] . ' a échoué. Les raisons : ' . $event['error'],
+        ]);
+
+        $this->dispatch('LiveReloadDashboardEvent');
     }
 
     public function handleTenantBlockedAck(array $event): void
