@@ -69,7 +69,8 @@
                 </div>
                 <div class="s-section">
                     <div class="s-section-label">Les demandes d'espace école</div>
-                    <a href="{{ route('central.requests.school.space.portal') }}" class="s-link {{ request()->routeIs('central.requests.school.space.portal') ? 'active' : '' }}">
+                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'tout']) }}"
+                        class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'tout' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3 h-3 text-orange-400" />
                         </div>
@@ -78,7 +79,8 @@
                             {{ __zero(count(getSpace_requests('status', 'pending'))) }}
                         </span>
                     </a>
-                    <a href="#" class="s-link">
+                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'active']) }}"
+                        class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-circle-check-big class="w-3 h-3 text-green-400" />
                         </div>
@@ -87,13 +89,14 @@
                             {{ __zero(count(getSpace_requests('validated', 1))) }}
                         </span>
                     </a>
-                    <a href="#" class="s-link">
+                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'suspended']) }}"
+                        class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'suspended' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-circle-x class="w-3 h-3 text-red-400" />
                         </div>
                         <span class="s-label">Rejetées</span>
                         <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">
-                            {{ __zero(count(getSpace_requests('status', 'rejected'))) }}
+                            {{ __zero(count(getSpace_requests('status', 'suspended'))) }}
                         </span>
                     </a>
                 </div>
@@ -119,6 +122,27 @@
                         </div>
                         <span class="s-label">Rejetées</span>
                         <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">7</span>
+                    </a>
+                </div>
+                <div class="s-section">
+                    <div class="s-section-label">Les écoles</div>
+                    <a href="{{ route('central.schools.portal', ['status' => 'active']) }}" class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-school class="w-3 h-3 text-green-400" />
+                        </div>
+                        <span class="s-label">Actives</span>
+                        <span class="rounded-lg px-3 bg-orange-400/80 text-orange-900 border border-gray-500">
+                            {{ __zero(count(getNotDeletedTenants())) }}
+                        </span>
+                    </a>
+                    <a href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}" class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'corbeille' ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-trash class="w-3 h-3 text-red-400" />
+                        </div>
+                        <span class="s-label">Inactives | Corbeille</span>
+                        <span class="rounded-lg px-3 bg-green-400/20 text-green-300 border border-gray-500">
+                            {{ __zero(count(getDeletedTenants())) }}
+                        </span>
                     </a>
                 </div>
                 <div class="s-section">

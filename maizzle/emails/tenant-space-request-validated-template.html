@@ -1,184 +1,102 @@
----
-layout: educconnect
-title: "Félicitations — Votre espace école est actif !"
-preheader: "Votre demande a été validée. Votre espace école EducConnect est maintenant actif et prêt à l'emploi."
-badge: "Espace École Activé ✓"
----
+<x-main>
+    <table class="w-full font-sans" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td class="bg-blue-700 p-8 text-center">
+                <img src="{{ logo_url }}" alt="Logo {{ app_name }}" class="mx-auto mb-4 h-24 w-24 rounded-full" width="96" height="96" />
+                <h1 class="m-0 text-2xl font-bold text-white">{{ app_name }}</h1>
+                <p class="m-0 mt-1 text-sm text-blue-200">{{ app_devise }}</p>
+            </td>
+        </tr>
 
-{{-- Icône succès --}}
-<table class="w-full mb-6" cellpadding="0" cellspacing="0" role="none">
-    <tr>
-        <td class="text-center">
-            <div class="inline-block rounded-full p-4" style="background: #f0fdf4">
-                <span style="font-size: 48px">🎉</span>
-            </div>
-        </td>
-    </tr>
-</table>
+        <tr>
+            <td class="bg-white px-8 py-6">
+                <h2 class="mb-4 text-xl font-semibold text-gray-800">{{ for_greating }}</h2>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Nous sommes heureux de vous annoncer que votre demande a été approuvée.</p>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Votre espace école est à présent actif et accessible.</p>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Notre équipe est disponible 24h/24 et 7j/7 pour vous accompagner dans la prise en main de votre espace&nbsp;!</p>
+                <p class="m-0 text-base leading-relaxed text-orange-800">Veuillez après connexion modifier immédiatement votre mot de passe !</p>
 
-{{-- Titre --}}
-<h1 class="text-2xl font-bold text-slate-800 text-center mb-2" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0 0 8px 0">Félicitations, {{ page.full_name || 'Directeur(trice)' }} !</h1>
-<p class="text-slate-500 text-center text-sm mb-2" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0 0 8px 0">
-    Votre demande a été
-    <strong class="text-emerald-600">validée avec succès</strong>
-    .
-</p>
-<p class="text-slate-500 text-center text-sm mb-6" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0 0 24px 0">
-    Votre espace école est à présent
-    <strong class="text-emerald-600">actif</strong>
-    et prêt à l'emploi. Nous sommes ravis de vous compter parmi nous !
-</p>
+                <table class="mt-6 w-full rounded-2xl shadow" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="rounded-t-2xl bg-sky-400 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gray-900">Détails de votre espace directeur</td>
+                    </tr>
+                    <tr>
+                        <td class="rounded-b-2xl bg-sky-50 px-4 py-4">
+                            <table class="w-full" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Nom et prénoms</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ full_name }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Contact</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ contacts }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">École</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">
+                                            {{ school_name }}
+                                            <span class="ml-1 text-xs font-normal text-gray-500">({{ simple_name }})</span>
+                                        </p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Domaine</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ domain }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Email / Nom utilisateur</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ email }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Clé lors de la première connexion</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ key }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
 
-<hr class="border-slate-100 mb-6" style="border: none; border-top: 1px solid #f1f5f9; margin: 0 0 24px 0" />
+                <table class="mt-8 w-full" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="text-center">
+                            <a href="{{ space_url }}" class="inline-block rounded-xl bg-blue-700 px-8 py-4 text-base font-bold text-white no-underline" target="_blank" rel="noopener noreferrer">Accéder à mon espace →</a>
+                        </td>
+                    </tr>
 
-{{-- Bloc infos école --}}
-<table class="w-full mb-6" cellpadding="0" cellspacing="0" role="none">
-    <tr>
-        <td class="rounded-2xl overflow-hidden" style="border-radius: 16px; border: 1px solid #e2e8f0">
-            {{-- Header bloc --}}
-            <table class="w-full" cellpadding="0" cellspacing="0" role="none">
-                <tr>
-                    <td class="px-6 py-3 text-center" style="background: #f97316">
-                        <p class="text-white text-xs font-bold uppercase tracking-widest m-0" style="font-family: &quot;Inter&quot;, sans-serif">Informations de votre espace école</p>
-                    </td>
-                </tr>
-            </table>
+                    <tr>
+                        <td class="pt-4 text-center text-xs text-gray-400">Si le bouton ne fonctionne pas, ou si vous avez un doute sur le bouton, vous pouvez copier et coller le lien ci-dessous dans votre navigateur&nbsp;:</td>
+                    </tr>
 
-            {{-- Contenu infos --}}
-            <table class="w-full" cellpadding="0" cellspacing="0" role="none">
-                {{-- Ligne 1 --}}
-                <tr style="border-bottom: 1px solid #f1f5f9">
-                    <td class="px-6 py-3 w-1/2" style="border-right: 1px solid #f1f5f9">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Nom de l'école</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.school_name || '—' }}</p>
-                    </td>
-                    <td class="px-6 py-3 w-1/2">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Nom abrégé</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.simple_name || '—' }}</p>
-                    </td>
-                </tr>
+                    <tr>
+                        <td class="pt-2 text-center">
+                            <table class="mx-auto" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                                        <p class="m-0 break-all font-mono text-xs text-blue-700">{{ space_url }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
 
-                {{-- Ligne 2 --}}
-                <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc">
-                    <td class="px-6 py-3 w-1/2" style="border-right: 1px solid #f1f5f9">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Nom de domaine</p>
-                        <p class="text-indigo-600 font-mono font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.domain_name || '—' }}</p>
-                    </td>
-                    <td class="px-6 py-3 w-1/2">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Type d'école</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.school_type || '—' }}</p>
-                    </td>
-                </tr>
+                <p class="mt-8 text-sm text-gray-600">
+                    Cordialement,
+                    <br />
+                    <strong class="text-gray-800">L'équipe {{ app_name }}</strong>
+                </p>
+            </td>
+        </tr>
 
-                {{-- Ligne 3 --}}
-                <tr style="border-bottom: 1px solid #f1f5f9">
-                    <td class="px-6 py-3 w-1/2" style="border-right: 1px solid #f1f5f9">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Type d'enseignement</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.enseignement_type || '—' }}</p>
-                    </td>
-                    <td class="px-6 py-3 w-1/2">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Type de période</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.periode_type || '—' }}</p>
-                    </td>
-                </tr>
-
-                {{-- Ligne 4 --}}
-                <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc">
-                    <td class="px-6 py-3 w-1/2" style="border-right: 1px solid #f1f5f9">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Type de devoirs</p>
-                        <p class="text-slate-800 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.devoirs_type || '—' }}</p>
-                    </td>
-                    <td class="px-6 py-3 w-1/2">
-                        <p class="text-slate-400 text-xs uppercase tracking-wide m-0 mb-1" style="font-family: &quot;Inter&quot;, sans-serif">Pack souscrit</p>
-                        <p class="text-emerald-600 font-semibold text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">{{ page.pack || 'Starter' }}</p>
-                    </td>
-                </tr>
-
-                {{-- Clé école --}}
-                <tr>
-                    <td colspan="2" class="px-6 py-4 text-center" style="background: linear-gradient(135deg, #1e293b, #334155); border-radius: 0 0 14px 14px">
-                        <p class="text-slate-400 text-xs uppercase tracking-widest m-0 mb-2" style="font-family: &quot;Inter&quot;, sans-serif">Votre clé d'accès unique</p>
-                        <p class="text-yellow-400 font-mono font-bold text-2xl m-0 tracking-widest" style="font-family: &quot;Inter&quot;, sans-serif; letter-spacing: 0.15em">{{ page.key || '——————' }}</p>
-                        <p class="text-slate-500 text-xs m-0 mt-2" style="font-family: &quot;Inter&quot;, sans-serif">Conservez cette clé précieusement — elle identifie votre établissement.</p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-
-{{-- Message --}}
-<p class="text-slate-600 text-sm mb-6" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0 0 24px 0; line-height: 1.7">
-    Cliquez sur le bouton ci-dessous pour accéder à votre espace école et commencer à configurer votre établissement (classes, enseignants, apprenants...).
-</p>
-
-{{-- CTA Principal --}}
-<table class="w-full mb-6" cellpadding="0" cellspacing="0" role="none">
-    <tr>
-        <td class="text-center">
-            <a
-                href="{{ page.lien || '#' }}"
-                class="hover-btn inline-block text-white font-bold text-base px-10 py-4 rounded-xl no-underline"
-                style="background: #1d4ed8; color: #ffffff; font-family: &quot;Inter&quot;, sans-serif; text-decoration: none; border-radius: 12px; padding: 16px 40px; font-weight: 700; display: inline-block; font-size: 15px"
-            >
-                🏫 Accéder à mon espace école
-            </a>
-        </td>
-    </tr>
-</table>
-
-{{-- Lien alternatif --}}
-<p class="text-slate-400 text-xs text-center mb-6" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0 0 24px 0">
-    Ou copiez ce lien dans votre navigateur :
-    <br />
-    <a href="{{ page.lien || '#' }}" class="text-indigo-500 hover-link" style="color: #6366f1; text-decoration: none; word-break: break-all">{{ page.lien || '#' }}</a>
-</p>
-
-{{-- Prochaines étapes --}}
-<table class="w-full mb-4" cellpadding="0" cellspacing="0" role="none">
-    <tr>
-        <td class="bg-indigo-50 rounded-xl px-6 py-4" style="background: #eef2ff; border-radius: 12px">
-            <p class="text-indigo-800 font-semibold text-sm m-0 mb-3" style="font-family: &quot;Inter&quot;, sans-serif">🚀 Prochaines étapes recommandées</p>
-            <table class="w-full" cellpadding="0" cellspacing="0" role="none">
-                <tr>
-                    <td class="py-1">
-                        <p class="text-indigo-700 text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">
-                            <strong>1.</strong>
-                            Configurez votre année scolaire
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="py-1">
-                        <p class="text-indigo-700 text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">
-                            <strong>2.</strong>
-                            Créez vos classes et promotions
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="py-1">
-                        <p class="text-indigo-700 text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">
-                            <strong>3.</strong>
-                            Invitez vos enseignants
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="py-1">
-                        <p class="text-indigo-700 text-sm m-0" style="font-family: &quot;Inter&quot;, sans-serif">
-                            <strong>4.</strong>
-                            Inscrivez vos apprenants
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-
-{{-- Support --}}
-<p class="text-slate-400 text-xs text-center" style="font-family: &quot;Inter&quot;, sans-serif; margin: 0">
-    Besoin d'aide ? Contactez notre support à
-    <a href="mailto:support@educconnect.com" class="text-indigo-500 hover-link" style="color: #6366f1; text-decoration: none">support@educconnect.com</a>
-</p>
+        <tr>
+            <td class="bg-gray-100 px-8 py-5 text-center">
+                <p class="m-0 text-xs text-gray-400">&copy; {{ date }} {{ app_name }}. Tous droits réservés.</p>
+            </td>
+        </tr>
+    </table>
+</x-main>

@@ -41,12 +41,14 @@ class SchoolSpaceRequestsManageComponent extends Component
 
     public string $prenames = '';
 
-    public string $status = '';
+    public ?string $status = null;
 
     public int $perPage = 6;
 
 
-    public $showModal = false;
+    public $showConfirmDeleteModal = false;
+    public $showConfirmValidateModal = false;
+    public $showConfirmRejectModal = false;
 
     public ?string $targetRequest;
 
@@ -60,6 +62,24 @@ class SchoolSpaceRequestsManageComponent extends Component
         'periode_type',
         'status',
     ];
+
+
+    public function mount(?string $status = 'tout')
+    {
+        if($status){
+
+            $this->status = $status;
+
+            if($status == 'tout'){
+                $this->status = null;
+            }
+
+        }
+        else{
+
+            $this->status = null;
+        }
+    }
 
     public function updatingSearch(): void
     {
@@ -99,11 +119,17 @@ class SchoolSpaceRequestsManageComponent extends Component
         if($req){
 
             JobToNotifyUserOfNewTenantRequest::dispatch($req);
+
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Accusé de reception envoyé',
+                'description' => "Les détails de la demande ont été envoyés à " . $req->getUserNamePrefix(true, false),
+            ]);
         }
         else{
 
             $this->notification()->send([
-                'icon'        => 'negative',
+                'icon'        => 'error',
                 'title'       => 'Requête introuvable',
                 'description' => "La reqûete n'existe pas dnas la base de données",
             ]);
@@ -114,25 +140,45 @@ class SchoolSpaceRequestsManageComponent extends Component
 
     public function validateRequest(string $requestId): void
     {
-        $req = RequestToCreateNewTenant::where('id', $requestId)->firstOrfail();
+        $this->showConfirmValidateModal = true;
+
+        $this->targetRequest = $requestId;
+
+    }
+
+    public function ConfirmRequestValidation(): void
+    {
+        
+        $req = RequestToCreateNewTenant::find($this->targetRequest);
 
         if($req){
 
             broadcast(new InitProcessToCreateTenantSpaceEvent($req));
 
-            $this->notification()->success(
-                'Validation lancée avec succès!',
-                "Le processus de creation d'espace a été lancée avec succès. Une fois terminée vous aurez le rapport!"
-            );
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Validation lancée avec succès!',
+                'description' => "Le processus de la validation de la demande a été lancée avec succès.",
+            ]);
 
         }
+        else{
 
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Requête introuvable',
+                'description' => "La reqûete n'existe pas dnas la base de données",
+            ]);
+            
+        }
+        $this->showConfirmValidateModal = false;
+        
     }
 
 
     public function deleteRequest(string $requestId): void
     {
-        $this->showModal = true;
+        $this->showConfirmDeleteModal = true;
 
         $this->targetRequest = $requestId;
 
@@ -157,7 +203,7 @@ class SchoolSpaceRequestsManageComponent extends Component
                 $this->notification()->send([
                     'icon'        => 'warning',
                     'title'       => 'Echec de la suppression',
-                    'description' => "La reqûete n'a pas été supprimer!",
+                    'description' => "La reqûete n'a pas été supprimée!",
                 ]);
             }
 
@@ -167,23 +213,26 @@ class SchoolSpaceRequestsManageComponent extends Component
             $this->notification()->send([
                 'icon'        => 'error',
                 'title'       => 'Requête introuvable',
-                'description' => "La reqûete n'existe pas dnas la base de données",
+                'description' => "La reqûete n'existe pas dans la base de données",
             ]);
             
         }
-        $this->showModal = false;
+        $this->showConfirmDeleteModal = false;
         
     }
 
     public function closeModal()
     {
-        $this->showModal = false;
+        $this->showConfirmDeleteModal = false;
+        $this->showConfirmValidateModal = false;
+        $this->showConfirmRejectModal = false;
+
     }
     
     
     public function rejectRequest(string $requestId): void
     {
-        $this->showModal = true;
+        $this->showConfirmRejectModal = true;
 
         $this->targetRequest = $requestId;
     }
@@ -192,11 +241,11 @@ class SchoolSpaceRequestsManageComponent extends Component
     {
         $req = RequestToCreateNewTenant::find($this->targetRequest);
 
-        if($req){
+        if($req && !$req->validated){
 
-            $del = $req->update(['status' => 'rejected']);
+            $suspended = $req->update(['status' => 'suspended']);
 
-            if($del){
+            if($suspended){
                 $this->notification()->send([
                     'icon'        => 'success',
                     'title'       => 'Revocation terminée',
@@ -217,11 +266,11 @@ class SchoolSpaceRequestsManageComponent extends Component
             $this->notification()->send([
                 'icon'        => 'error',
                 'title'       => 'Requête introuvable',
-                'description' => "La reqûete n'existe pas dnas la base de données",
+                'description' => "La reqûete n'existe pas dans la base de données",
             ]);
             
         }
-        $this->showModal = false;
+        $this->showConfirmRejectModal = false;
     }
 
     #[On('LiveNewTenantRequestCreatedEvent')]
@@ -248,6 +297,9 @@ class SchoolSpaceRequestsManageComponent extends Component
 
         
         $demandes_requests = RequestToCreateNewTenant::query()
+            ->when($this->status, function (Builder $query) {
+                $query->where('status', $this->status);
+            })
             ->when($this->search, function (Builder $query) {
                 $query->where(function ($query) {
                     $query

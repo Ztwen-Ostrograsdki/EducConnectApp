@@ -3,6 +3,7 @@
 namespace App\Livewire\Central;
 
 use App\Events\TenantAccessWasUpdatedEvent;
+use App\Jobs\JobToNotifyUserOfNewTenantRequest;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
@@ -26,9 +27,19 @@ class SchoolsComponent extends Component
 
     public string $type_enseignement = '';
 
-    public string $status = '';
+    public ?string $status = null;
 
     public int $perPage = 12;
+
+    public $showConfirmDeleteModal = false;
+
+    public $showConfirmRestorationModal = false;
+
+    public $showConfirmForceDeleteModal = false;
+
+    public ?string $targetedTenantID = null;
+
+
 
     protected $queryString = [
         'search',
@@ -36,6 +47,11 @@ class SchoolsComponent extends Component
         'type_enseignement',
         'status',
     ];
+
+    public function mount(?string $status = null)
+    {
+        if($status) $this->status = $status;
+    }
 
     #[On('LiveReloadDashboardEvent')]
     public function onReloadDashboard()
@@ -107,29 +123,176 @@ class SchoolsComponent extends Component
         broadcast(new TenantAccessWasUpdatedEvent($tenantId));
     }
 
-    public function blockAll(): void
-    {
-        Tenant::query()->update([
-            'domain_blocked' => true,
-        ]);
+    // public function notifyUserThatRequestHasReceived(string $domain)
+    // {
+    //     $req = RequestToCreateNewTenant::firstWhere('domain_name', $domain);
 
-        session()->flash('success', 'Tous les tenants ont été bloqués.');
+    //     if($req){
+
+    //         JobToNotifyUserOfNewTenantRequest::dispatch($req);
+
+    //         $this->notification()->send([
+    //             'icon'        => 'success',
+    //             'title'       => 'Accusé de reception envoyé',
+    //             'description' => "Les détails de la demande ont été envoyés à " . $req->getUserNamePrefix(true, false),
+    //         ]);
+    //     }
+    //     else{
+
+    //         $this->notification()->send([
+    //             'icon'        => 'error',
+    //             'title'       => 'Requête introuvable',
+    //             'description' => "La reqûete n'existe pas dnas la base de données",
+    //         ]);
+            
+    //     }
+    // }
+
+
+
+    public function deleteTenant(string $tenantId): void
+    {
+        $this->showConfirmDeleteModal = true;
+
+        $this->targetedTenantID = $tenantId;
+
     }
 
-    public function unblockAll(): void
+    public function ConfirmSchoolDeletion(): void
     {
-        Tenant::query()->update([
-            'domain_blocked' => false,
-        ]);
+        $tenant = Tenant::find($this->targetedTenantID);
 
-        session()->flash('success', 'Tous les tenants ont été débloqués.');
+        if($tenant){
+
+            $del = $tenant->delete();
+
+            if($del){
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Suppression terminée',
+                    'description' => "Le tenant a été supprimé avec succès!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => 'Echec de la suppression',
+                    'description' => "Le tenant n'a pas été supprimé!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'tenant introuvable',
+                'description' => "Le tenant n'existe pas dans la base de données",
+            ]);
+            
+        }
+        $this->closeModal();
+        
     }
 
-    public function delete(string $tenantId): void
+    public function restoreTenant(string $tenantId): void
     {
-        Tenant::findOrFail($tenantId)->delete();
+        $this->showConfirmRestorationModal = true;
 
-        session()->flash('success', 'Tenant supprimé avec succès.');
+        $this->targetedTenantID = $tenantId;
+
+    }
+
+    public function ConfirmSchoolRestoration(): void
+    {
+        $tenant = Tenant::withTrashed()->whereId($this->targetedTenantID)->first();
+
+        if($tenant){
+
+            $restored = $tenant->restore();
+
+            if($restored){
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Restauration terminée',
+                    'description' => "Le tenant a été restauré avec succès!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => 'Echec de la restauration',
+                    'description' => "Le tenant n'a pas été restauré!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'tenant introuvable',
+                'description' => "Le tenant n'existe pas dans la base de données",
+            ]);
+            
+        }
+        $this->closeModal();
+        
+    }
+
+    public function forceDelete(string $tenantId): void
+    {
+        $this->showConfirmForceDeleteModal = true;
+
+        $this->targetedTenantID = $tenantId;
+
+    }
+
+    public function ConfirmSchoolForceDelete(): void
+    {
+        $tenant = Tenant::withTrashed()->whereId($this->targetedTenantID)->first();
+
+        if($tenant){
+
+            $force_del = $tenant->forceDelete();
+
+            if($force_del){
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Suppresion terminée',
+                    'description' => "Le tenant a été définitivement supprimé avec succès!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => 'Echec de la suppresion définitive',
+                    'description' => "Le tenant n'a pas été supprimé!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'tenant introuvable',
+                'description' => "Le tenant n'existe pas dans la base de données",
+            ]);
+            
+        }
+        $this->closeModal();
+        
+    }
+
+    public function closeModal()
+    {
+        $this->showConfirmDeleteModal = false;
+
+        $this->showConfirmRestorationModal = false;
+
+        $this->showConfirmForceDeleteModal = false;
+
     }
 
 
@@ -138,6 +301,7 @@ class SchoolsComponent extends Component
     public function render()
     {
         $tenants = Tenant::query()
+            ->withTrashed()
             ->when($this->search, function (Builder $query) {
                 $query->where(function ($query) {
                     $query
@@ -154,12 +318,20 @@ class SchoolsComponent extends Component
                 $query->where('school_type', $this->type_enseignement);
             })
             ->when($this->status, function (Builder $query) {
-                if ($this->status === 'blocked') {
+                if ($this->status === 'fermee') {
                     $query->where('domain_blocked', true);
                 }
-
-                if ($this->status === 'active') {
+                if ($this->status === 'ouverte') {
                     $query->where('domain_blocked', false);
+                }
+                if ($this->status === 'ouverte-pour-directeurs') {
+                    $query->where('only_for_', true);
+                }
+                if ($this->status === 'active') {
+                    $query->withoutTrashed();
+                }
+                if ($this->status === 'corbeille') {
+                    $query->onlyTrashed();
                 }
             })
             ->latest()

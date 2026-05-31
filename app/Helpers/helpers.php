@@ -667,6 +667,32 @@ if(!function_exists('getTenant')){
 
 }
 
+if(!function_exists('getTenants')){
+
+    function getTenants($value, $column = "id")
+    {
+        return Tenant::where($column, $value)->get();
+    }
+
+}
+
+if(!function_exists('getNotDeletedTenants')){
+
+    function getNotDeletedTenants()
+    {
+        return Tenant::withoutTrashed()->get();
+    }
+
+}
+
+if(!function_exists('getDeletedTenants')){
+
+    function getDeletedTenants()
+    {
+        return Tenant::onlyTrashed()->get();
+    }
+
+}
 
 
 if(!function_exists('__moneyFormat')){

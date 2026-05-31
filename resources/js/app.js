@@ -154,9 +154,3 @@ document.addEventListener("livewire:initialized", () => {
         window.dispatchEvent(new Event("wireui:load"));
     });
 });
-
-// Dans la console du navigateur
-console.log(import.meta.env.VITE_REVERB_APP_KEY); // doit afficher "localkey"
-console.log(import.meta.env.VITE_REVERB_HOST); // doit afficher "localhost"
-console.log(import.meta.env.VITE_REVERB_PORT); // doit afficher "8080"
-console.log(import.meta.env.VITE_REVERB_SCHEME); // doit afficher "http"

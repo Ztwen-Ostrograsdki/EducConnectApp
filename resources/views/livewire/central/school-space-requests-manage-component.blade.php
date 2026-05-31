@@ -22,7 +22,11 @@
 
                     <x-lucide-credit-card class="w-4 h-4" />
 
-                    Gestion des demandes d'espace école
+                    @if ($status)
+                        Gestion des demandes avec le statut <span class="text-orange-500 font-semibold">{{ $status }}</span>
+                    @else
+                        Gestion de toutes les demandes d'espace école
+                    @endif
 
                 </div>
 
@@ -35,7 +39,11 @@
 
                 <p class="mt-3 text-sm sm:text-base
                            text-slate-400 max-w-3xl">
-                    Gérez les demandes d'espace école
+                    @if ($status)
+                        Gérer les demandes avec le statut <span class="text-orange-500 font-semibold">{{ $status }}</span>
+                    @else
+                        Gérer toutes les demandes d'espace école
+                    @endif
                 </p>
 
             </div>
@@ -98,7 +106,7 @@
                        xl:grid-cols-5 gap-3
                        w-full">
 
-                <select class="h-12 px-4 rounded-2xl
+                <select wire:model.live='status' class="h-12 px-4 rounded-2xl
                            bg-slate-800 border border-slate-700
                            text-sm">
                     <option value="">Tous les statuts</option>
@@ -138,7 +146,11 @@
         <div class="p-5 sm:p-6 border-b border-slate-800 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
             <div>
                 <h2 class="text-xl font-bold">
-                    Liste des demandes
+                    @if ($status)
+                        Liste des demandes avec le statut <span class="text-orange-500 font-semibold">{{ $status }}</span>
+                    @else
+                        Liste de toutes les demandes
+                    @endif
                 </h2>
                 <p class="mt-1 text-sm text-slate-400">
                     Validation et supervision des abonnements
@@ -427,8 +439,37 @@
                                                 <span>En cours...</span>
                                             </span>
                                         </button>
+                                        <x-confirm-modal wire:key="confirm-val-request-{{ $item->id }}" :show="$showConfirmValidateModal" title="Validation de la requête {{ $item->domain_name }}" confirm-text="Oui, Valider la demande"
+                                            cancel-text="Annuler" confirm-action="ConfirmRequestValidation" close-action="closeModal">
+                                            <p>Cette action permettra : </p>
+                                            <ul class="text-green-500 text-xs">
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>de mattre le status validated de la demande d'espace à oui</span>
+                                                </li>
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>de mettre le status de la demande d'espace à actif.</span>
+                                                </li>
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>de créer le tenant et de lancer la création de son espace et de sa base de données</span>
+                                                </li>
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>de créer le user lié au tenant avec les infos de la demande avec le rôle directeur</span>
+                                                </li>
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>de lancer les migrations et de seed les rôles et permissions.</span>
+                                                </li>
+                                                <li class="flex items-center gap-x-1">
+                                                    <x-lucide-check class="w-5 h-5 text-green-800" />
+                                                    <span>d'envoyez les infos de son espace au tenant par mail.</span>
+                                                </li>
+                                            </ul>
+                                        </x-confirm-modal>
                                     @endif
-
                                 </div>
 
                                 {{-- ACTIONS 2 --}}
@@ -445,8 +486,8 @@
                                                 <span>En cours...</span>
                                             </span>
                                         </button>
-                                        <x-confirm-modal :show="$showModal" title="Rejet de requête {{ $item->domain_name }}" confirm-text="Oui, Revoquer" cancel-text="Annuler" confirm-action="ConfirmRequestReject"
-                                            close-action="closeModal">
+                                        <x-confirm-modal wire:key="confirm-rej-request-{{ $item->id }}" :show="$showConfirmRejectModal" title="Rejet de requête {{ $item->domain_name }}" confirm-text="Oui, Revoquer" cancel-text="Annuler"
+                                            confirm-action="ConfirmRequestReject" close-action="closeModal">
                                             <p>
                                                 Cette action masquera cette requête.
                                             <p class="text-orange-500 font-semibold py-1.5">Vous pourrez à tout moment revalider cette requête!</p>
@@ -467,8 +508,8 @@
                                                 <span>En cours...</span>
                                             </span>
                                         </button>
-                                        <x-confirm-modal :show="$showModal" title="Suppression de la requête {{ $item->domain_name }}" confirm-text="Oui, supprimer" cancel-text="Annuler" confirm-action="ConfirmRequestDeletion"
-                                            close-action="closeModal">
+                                        <x-confirm-modal wire:key="confirm-del-request-{{ $item->id }}" :show="$showConfirmDeleteModal" title="Suppression de la requête {{ $item->domain_name }}" confirm-text="Oui, supprimer"
+                                            cancel-text="Annuler" confirm-action="ConfirmRequestDeletion" close-action="closeModal">
                                             <p>
                                                 Cette action supprimera définitivement cette requête.
                                             <p class="text-orange-500 font-semibold py-1.5">Cette action est irreversible!</p>

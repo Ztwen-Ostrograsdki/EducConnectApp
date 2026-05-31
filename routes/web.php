@@ -49,10 +49,10 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
     Route::get('/dashboard', CentralDashboard::class)->name('dashboard');
 
     // Gestion des demendes d'espace ecole
-    Route::get('/les-demandes-espace/gestion', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');
+    Route::get('/les-demandes-espace/gestion/{status?}', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');
 
     // Gestion des écoles (tenants)
-    Route::get('/ecoles/gestion', SchoolsComponent::class)->name('schools.portal');
+    Route::get('/ecoles/gestion/{status?}', SchoolsComponent::class)->name('schools.portal');
 
     // Gestion des directeurs ou tenants inscrits
     Route::get('/tenants/gestion', TenantsComponent::class)->name('tenants.portal');

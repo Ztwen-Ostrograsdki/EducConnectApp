@@ -177,9 +177,43 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
 
-    public function getFullName()
+    public function getFullName(bool $reverse = false)
     {
-        return $this->name . ' ' . $this->prenames;
+        if(!$reverse) return  $this->name . ' ' . $this->prenames;
+
+        else  return $this->prenames . ' ' . $this->name;
+    }
+
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
+    {
+        $prefix = 'Mr/Mme';
+
+        if(in_array($this->gender, ['male', 'Male', 'M', 'm', 'masculin', 'Masculin'])) $prefix = 'Mr';
+
+        if(in_array($this->gender, ['female', 'Female', 'F', 'f', 'feminin', 'Féminin', 'Feminin'])) $prefix = 'Mme';
+
+        if($withFullName) return $prefix . ' ' . $this->getFullName($reverseName);
+
+        return $prefix;
+    }
+
+    public function greating(bool $withFullName = true, bool $reverse = false)
+    {
+        $name = $this->getUserNamePrefix($withFullName, $reverse);
+
+        $hour = date('G');
+        
+        if($hour >= 0 && $hour <= 12){
+
+            $greating = "Bonjour ";
+        }
+        else{
+
+            $greating = "Bonsoir ";
+        }
+
+        return $name  ? $greating . ' ' . $name : $greating;
     }
 
 

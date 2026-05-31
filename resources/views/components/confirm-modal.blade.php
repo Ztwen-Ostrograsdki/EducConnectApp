@@ -1,5 +1,5 @@
 @if ($show)
-    <div class="fixed inset-0 z-50 flex items-center justify-center" wire:key="confirm-modal">
+    <div class="fixed inset-0 z-50 flex items-center justify-center">
 
         {{-- Overlay --}}
         <div class="absolute inset-0 bg-black/90" wire:click="{{ $closeAction }}">

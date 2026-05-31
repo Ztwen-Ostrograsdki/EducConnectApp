@@ -1,90 +1,107 @@
-<x-main class="bg-gray-100 text-gray-800 flex items-center justify-center">
-    <table class="max-w-6xl font-roboto sm:w-5/6 xs:w-5/6 mx-auto bg-white my-5 rounded-xl shadow-lg overflow-hidden" cellpadding="0" cellspacing="0">
+<x-main>
+    <table class="w-full font-sans" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
-            <td class="bg-blue-700 text-white text-center p-6">
-                <img src="{{ logo_url }}" alt="Logo " class="h-28 w-28 rounded-full mx-auto mb-2" />
-                <h1 class="text-2xl font-bold my-0">{{ app_name }}</h1>
-                <h6 class="my-0 py-2">{{ app_devise }}</h6>
-            </td>
-        </tr>
-        <tr>
-            <td class="p-6">
-                <h2 class="text-xl font-semibold mb-4">{{ greating }}</h2>
-                <p class="mb-4">Une nouvelle demande vient d'être récue sur la plateforme</p>
-                <p>Veuillez vous connecter à votre dashboard afin d'analyser et de traiter cette demande</p>
-                <div class="text-center my-6 shadow-md p-2 rounded-2xl border border-solid border-gray-500">
-                    <h5 class="text-sm mb-4 my-0 uppercase text-gray-900 bg-green-400 text-center p-3 rounded-2xl">Détails de la requête: Les infos personnelles</h5>
-                    <div class="flex flex-col">
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Nom et prénoms</span>
-                            <span>{{ full_name }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>contact</span>
-                            <span>{{ contacts }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Email</span>
-                            <span>{{ email }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Genre</span>
-                            <span>{{ gender }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center my-6 shadow-md p-2 rounded-2xl border border-solid border-gray-500">
-                    <h5 class="text-sm mb-4 my-0 uppercase text-gray-900 bg-lime-400 text-center p-3 rounded-2xl">Détails de la requête: L'établissement</h5>
-                    <div class="flex flex-col">
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Nom de domaine</span>
-                            <span>{{ domain }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Ecole</span>
-                            <span>
-                                {{ school_name }}
-                                <span class="mx-2 text-gray-700">({{ simple_name }})</span>
-                            </span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Localisation</span>
-                            <span>{{ adresse }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Type d'enseignement</span>
-                            <span>{{ enseignement_type }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Type d'école</span>
-                            <span>{{ school_type }}</span>
-                        </div>
-                        <div class="flex justify-start gap-x-5 items-center">
-                            <span class="rounded-full h-2 w-2 bg-black"></span>
-                            <span>Type de période par année</span>
-                            <span>{{ periode_type }}</span>
-                        </div>
-                    </div>
-                </div>
+            <td class="bg-blue-700 p-8 text-center">
+                <img src="{{ logo_url }}" alt="Logo {{ app_name }}" class="mx-auto mb-4 h-24 w-24 rounded-full" width="96" height="96" />
+                <h1 class="m-0 text-2xl font-bold text-white">{{ app_name }}</h1>
+                <p class="m-0 mt-1 text-sm text-blue-200">{{ app_devise }}</p>
             </td>
         </tr>
 
-        <tr class="">
-            <td class="">
-                <div class="bg-gray-100 text-center p-4 text-gray-500">
-                    <p class="text-center mx-auto w-full text-xs">&copy; {{ date }} {{ app_name }}.</p>
-                    <p class="text-center">Tous droits réservés.</p>
-                </div>
+        <tr>
+            <td class="bg-white px-8 py-6">
+                <h2 class="mb-4 text-xl font-semibold text-gray-800">{{ for_greating }}</h2>
+                <p class="text-base leading-relaxed text-gray-600">Vous avez une nouvelle demande d'espace&nbsp;!</p>
+                <p class="mb-1 text-base leading-relaxed text-gray-600">VVeuillez vous connecter afin de d'analyser et de traiter cette demande.</p>
+
+                <table class="w-full rounded-2xl shadow" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="rounded-t-2xl bg-sky-400 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gray-900">Détails de la requête&nbsp;: Les infos personnelles du demandeur</td>
+                    </tr>
+                    <tr>
+                        <td class="rounded-b-2xl bg-sky-50 px-4 py-4">
+                            <table class="w-full" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Nom et prénoms</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ full_name }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Contact</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ contacts }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Email</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ email }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Genre</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ gender }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="mt-6 w-full rounded-2xl shadow" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="rounded-t-2xl bg-purple-400 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gray-900">Détails de la requête&nbsp;: L'établissement</td>
+                    </tr>
+                    <tr>
+                        <td class="rounded-b-2xl bg-purple-50 px-4 py-4">
+                            <table class="w-full" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Nom de domaine</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ domain }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">École</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">
+                                            {{ school_name }}
+                                            <span class="ml-1 text-xs font-normal text-gray-500">({{ simple_name }})</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Localisation</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ adresse }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Type d'enseignement</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ enseignement_type }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Type d'école</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ school_type }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Période par année</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ periode_type }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <p class="mt-8 text-sm text-gray-600">
+                    Cordialement,
+                    <br />
+                    <strong class="text-gray-800">notre équipe {{ app_name }}</strong>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="bg-gray-100 px-8 py-5 text-center">
+                <p class="m-0 text-xs text-gray-400">&copy; {{ date }} {{ app_name }}. Tous droits réservés.</p>
             </td>
         </tr>
     </table>

@@ -22,13 +22,20 @@
 
                     <x-lucide-credit-card class="w-4 h-4" />
 
-                    Gestion des établissements
+                    @if ($status)
+                        Gestion des établissements <span class="text-orange-500 font-semibold">{{ $status }}</span>
+                    @else
+                        Gestion de tous les établissements
+                    @endif
 
                 </div>
 
-                <h2 class="mt-4 text-2xl sm:text-3xl font-black">
+                <h2 class="mt-4 text-2xl sm:text-3xl font-sans">
 
-                    établissements des établissements
+                    Etablissements
+                    @if ($status)
+                        <span class="text-orange-500 font-semibold">{{ $status }}</span>
+                    @endif
 
                 </h2>
 
@@ -402,61 +409,146 @@
 
                     {{-- ACTIONS 2 --}}
                     <div class="mt-3 grid grid-cols-4 gap-3">
-
-                        {{-- EXTEND --}}
-                        <button
-                            class="h-11 rounded-2xl
+                        @if (!$tenant->deleted_at)
+                            {{-- EXTEND --}}
+                            <button
+                                class="h-11 rounded-2xl
                                    bg-indigo-500/10
                                    hover:bg-indigo-500/20
                                    text-indigo-400
                                    flex items-center justify-center">
 
-                            <x-lucide-calendar-plus class="w-5 h-5" />
+                                <x-lucide-calendar-plus class="w-5 h-5" />
 
-                        </button>
+                            </button>
 
-                        {{-- LOCK DOMAIN --}}
-                        {{-- LOCK DOMAIN --}}
-                        <button wire:key="tenant-domain-{{ $tenant->id }}" wire:click="{{ $tenant->domain_blocked ? 'unblockDomain' : 'blockDomain' }}('{{ $tenant->id }}')" wire:loading.attr="disabled"
-                            class="h-11 rounded-2xl flex items-center justify-center cursor-pointer {{ $tenant->domain_blocked ? 'bg-green-500/10 hover:bg-green-500/20 text-green-400' : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400' }}">
-                            {{-- NORMAL STATE --}}
-                            <span wire:loading.remove wire:target="blockDomain,unblockDomain">
-                                @if ($tenant->domain_blocked)
-                                    <x-lucide-lock-open class="w-5 h-5" />
-                                @else
-                                    <x-lucide-lock class="w-5 h-5" />
-                                @endif
-                            </span>
-                            {{-- LOADING --}}
-                            <span wire:loading.flex wire:target="blockDomain,unblockDomain" class="items-center gap-1.5">
-                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                <span>En cours...</span>
-                            </span>
-                        </button>
+                            {{-- LOCK DOMAIN --}}
+                            {{-- LOCK DOMAIN --}}
+                            <button wire:key="tenant-domain-{{ $tenant->id }}" wire:click="{{ $tenant->domain_blocked ? 'unblockDomain' : 'blockDomain' }}('{{ $tenant->id }}')" wire:loading.attr="disabled"
+                                class="h-11 rounded-2xl flex items-center justify-center cursor-pointer {{ $tenant->domain_blocked ? 'bg-green-500/10 hover:bg-green-500/20 text-green-400' : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400' }}">
+                                {{-- NORMAL STATE --}}
+                                <span wire:loading.remove wire:target="blockDomain,unblockDomain">
+                                    @if ($tenant->domain_blocked)
+                                        <x-lucide-lock-open class="w-5 h-5" />
+                                    @else
+                                        <x-lucide-lock class="w-5 h-5" />
+                                    @endif
+                                </span>
+                                {{-- LOADING --}}
+                                <span wire:loading.flex wire:target="blockDomain,unblockDomain" class="items-center gap-1.5">
+                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                    <span>En cours...</span>
+                                </span>
+                            </button>
 
-                        {{-- SUSPEND --}}
-                        <button
-                            class="h-11 rounded-2xl
+                            {{-- SUSPEND --}}
+                            <button
+                                class="h-11 rounded-2xl
                                    bg-orange-500/10
                                    hover:bg-orange-500/20
                                    text-orange-400
                                    flex items-center justify-center">
 
-                            <x-lucide-ban class="w-5 h-5" />
+                                <x-lucide-ban class="w-5 h-5" />
 
-                        </button>
+                            </button>
 
-                        {{-- DELETE --}}
-                        <button
-                            class="h-11 rounded-2xl
-                                   bg-rose-500/10
-                                   hover:bg-rose-500/20
-                                   text-rose-400
-                                   flex items-center justify-center">
+                            {{-- DELETE --}}
 
-                            <x-lucide-trash-2 class="w-5 h-5" />
+                            <button wire:key="del-tenant-{{ $tenant->id }}" wire:click="deleteTenant('{{ $tenant->id }}')" wire:loading.attr="disabled"
+                                class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
+                                <span wire:loading.remove class="flex items-center gap-1.5" wire:target="deleteTenant">
+                                    <x-lucide-trash class="w-4 h-4" />
+                                    Corbeille
+                                </span>
+                                <span wire:loading.flex wire:target="deleteTenant" class="items-center gap-1.5">
+                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                    <span>En cours...</span>
+                                </span>
+                            </button>
+                            <x-confirm-modal wire:key="confirm-del-tenant-{{ $tenant->id }}" :show="$showConfirmDeleteModal" title="Placer le tenant {{ $tenant->domain_name }}dans la Corbeille" confirm-text="Oui, placer dans la corbeille"
+                                cancel-text="Annuler" confirm-action="ConfirmSchoolDeletion" close-action="closeModal">
+                                <p>Cette action entrainera : </p>
+                                <ul class="text-green-500 text-xs">
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La mise en corbeille du tenant</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La suppression surperficielle de l'école</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>L'innacessiblité au domaine par le directeur et les autres users du domaine</span>
+                                    </li>
+                                </ul>
+                            </x-confirm-modal>
+                        @else
+                            <button wire:key="restore-tenant-{{ $tenant->id }}" wire:click="restoreTenant('{{ $tenant->id }}')" wire:loading.attr="disabled"
+                                class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 ">
+                                <span wire:loading.remove class="flex items-center gap-1.5" wire:target="restoreTenant">
+                                    <x-lucide-recycle class="w-4 h-4" />
+                                    Restaurer
+                                </span>
+                                <span wire:loading.flex wire:target="restoreTenant" class="items-center gap-1.5">
+                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                    <span>En cours...</span>
+                                </span>
+                            </button>
+                            <x-confirm-modal wire:key="confirm-restore-tenant-{{ $tenant->id }}" :show="$showConfirmRestorationModal" title="restauration du tenant {{ $tenant->domain_name }}" confirm-text="Oui, restaurer le tenant"
+                                cancel-text="Annuler" confirm-action="ConfirmSchoolRestoration" close-action="closeModal">
+                                <p>Cette action entrainera : </p>
+                                <ul class="text-green-500 text-xs">
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La restauration du tenant</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La restauration de l'école</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>L'acessiblité au domaine par le directeur et les autres users du domaine</span>
+                                    </li>
+                                </ul>
+                            </x-confirm-modal>
 
-                        </button>
+                            <button wire:key="force-del-tenant-{{ $tenant->id }}" wire:click="forceDelete('{{ $tenant->id }}')" wire:loading.attr="disabled"
+                                class="h-11 rounded-2xl col-span-3 flex items-center flex-1 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
+                                <span wire:loading.remove class="flex items-center gap-1.5" wire:target="forceDelete">
+                                    <x-lucide-trash-2 class="w-4 h-4" />
+                                    Supprimer déf.
+                                </span>
+                                <span wire:loading.flex wire:target="forceDelete" class="items-center gap-1.5">
+                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                    <span>En cours...</span>
+                                </span>
+                            </button>
+                            <x-confirm-modal wire:key="confirm-force-del-tenant-{{ $tenant->id }}" :show="$showConfirmForceDeleteModal" title="Suppression définitive du tenant {{ $tenant->domain_name }}" confirm-text="Oui, Supprimer Déf."
+                                cancel-text="Annuler" confirm-action="ConfirmSchoolForceDelete" close-action="closeModal">
+                                <p>Cette action entrainera : </p>
+                                <ul class="text-green-500 text-xs">
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La suppresion définitive du tenant</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La suppresion définitive de l'école</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La suppression définitive de la base de données ainsi que les données stockées dans cette base</span>
+                                    </li>
+                                    <li class="flex items-center gap-x-1">
+                                        <x-lucide-check class="w-5 h-5 text-green-800" />
+                                        <span>La suppresion du domaine</span>
+                                    </li>
+                                </ul>
+                            </x-confirm-modal>
+                        @endif
 
                     </div>
 
