@@ -7,6 +7,7 @@ use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
+use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
@@ -42,6 +43,8 @@ Route::middleware([
 
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest:tenant');
+
+    Route::get('/', HomePage::class)->name('tenants.home');
 
     Route::post('/logout', function () {
 

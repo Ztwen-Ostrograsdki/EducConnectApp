@@ -77,20 +77,22 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
                 $this->user = $user;
             }
 
-            $lien_for_tenant = getTenantLoginUrl($tenant->domain_name);
+            $lien_for_tenant = route('login');
 
             $greating = $tenant?->greating();
 
             $userName = $tenant?->getFullName();
 
             $receiver_html = EmailTemplateBuilder::render('tenant-space-request-validated-template', [
-                'space_url'             => $lien_for_tenant,
+                'space_url'              => $lien_for_tenant,
                 'for_greating'           => $greating,
                 'key'                    => $this->default_password,
                 'full_name'              => $userName,
+                'contacts'               => $tenant->contacts,
+                'email'                  => $tenant->email,
                 'school_name'            => $tenant->school_name,
                 'simple_name'            => $tenant->simple_name,
-                'domain'                 => $tenant->domain_name,
+                'domain'                 => $tenant->getDomainName(),
             ]);
 
             // Fin du contexte tenant AVANT l'envoi du mail

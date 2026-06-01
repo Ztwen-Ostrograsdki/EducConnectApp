@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Events\TenantForceDeleted;
+use App\Models\Tenant;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\DatabaseConfig;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
@@ -101,7 +103,9 @@ class TenancyServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        DatabaseConfig::generateDatabaseNamesUsing(
+            fn (Tenant $tenant) => $tenant->generateDatabaseName()
+        );
     }
 
     public function boot()

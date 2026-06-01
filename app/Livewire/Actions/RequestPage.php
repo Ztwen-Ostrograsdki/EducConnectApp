@@ -50,6 +50,18 @@ class RequestPage extends Component
     public $error_message = '';
 
     public $cities = [];
+
+    public $reserved = [
+        'www',
+        'mail',
+        'admin',
+        'api',
+        'dashboard',
+        'support',
+        'blog',
+        'ftp',
+        'cpanel',
+    ];
     // public $cities = [], $enseignement_types = [], $periode_types = [], $school_types = [], $devoirs_types = [], $departments = [], $countries = [];
 
 
@@ -114,6 +126,9 @@ class RequestPage extends Component
 
                     if ($existsInRequest || $existsInTenants) {
                         $fail("Vous ne pouvez pas utiliser cet nom de domaine.");
+                    }
+                    if (in_array($value, $this->reserved)) {
+                        $fail("Ce domaine est réservé.");
                     }
                 }
             ],

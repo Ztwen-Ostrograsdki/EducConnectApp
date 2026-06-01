@@ -15,6 +15,7 @@ use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
+use Stancl\Tenancy\DatabaseConfig;
 
 #[ObservedBy(ObserveTenant::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
@@ -82,6 +83,20 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected $casts = [
         'date_expiration_abonnement' => 'datetime',
     ];
+
+    /**
+ * Override le nom de la DB pour remplacer les tirets par des underscores.
+ * ex: "ecole-lumiere" → DB: "tenant_ecole_lumiere"
+ */
+    public function generateDatabaseName() : string
+    {
+        return config('tenancy.database.prefix') . str_replace('-', '_', $this->getTenantKey()) . config('tenancy.database.suffix');
+    }
+
+    public function getDomainName(): ?string
+    {
+        return $this->domains()->value('domain');
+    }
 
     protected static function booted(): void
     {

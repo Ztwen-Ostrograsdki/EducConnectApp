@@ -33,6 +33,7 @@ class AppGuard extends Component
         if (! $this->isTenant) {
             return [
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
+                'echo-private:central-admin,.tenant.creation.failed' => 'handleTenantCreationFailed',
                 'echo-private:central-admin,.any.error' => 'handleAnyError',
                 'echo-private:central-admin,.tenant.credentials.failed' => 'handleTenantCredentialsFailded',
                 'echo-private:central-admin,.tenant.roles.seed.failed' => 'handleTenantRolesSeedsFailded',
@@ -159,6 +160,15 @@ class AppGuard extends Component
             'description' => "Une nouvelle école a été créée",
         ]);
         $this->dispatch('LiveReloadDashboardEvent');
+    }
+    
+    public function handleTenantCreationFailed(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'error',
+            'title'       => 'Echec Création Tenant',
+            'description' => "La création du tenant " . $event['tenant'] . " dont le domaine est " . $event['domain_name'] . ". Les raisons : " . $event['error'],
+        ]);
     }
     
     

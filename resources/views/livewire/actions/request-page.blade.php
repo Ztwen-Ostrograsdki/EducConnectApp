@@ -165,7 +165,7 @@
                         <div>
                             <label class="block text-sm font-medium mb-2 text-gray-300" for="domain_name">Votre nom de domaine
                                 <span class="text-red-500">*</span>
-                                <span class="text-xs text-amber-500">NB: Le nom de domaine n'est plus modifiable après validation</span>
+                                <span class="text-xs text-amber-500">NB: Le nom de domaine n'est plus modifiable après validation et ne doit contenir ni d'espace ni de masjuscules</span>
                             </label>
                             <div class="relative">
                                 <input type="text" wire:model.live='domain_name' id="domain_name" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"

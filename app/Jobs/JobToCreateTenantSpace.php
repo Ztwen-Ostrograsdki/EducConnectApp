@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\TenantHelper;
 use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
 use App\Models\User;
@@ -46,8 +47,8 @@ class JobToCreateTenantSpace implements ShouldQueue
 
         try {
             $demande_request = $this->demande_request;
-            $domain = $demande_request->domain_name;
 
+            $domain = $demande_request->domain_name;
             // Vérifier si le tenant existe déjà (sécurité retry)
             $tenant = Tenant::find($domain);
 
@@ -78,7 +79,9 @@ class JobToCreateTenantSpace implements ShouldQueue
                     'status' => 'active',
                 ]);
 
-                $tenant->domains()->create(['domain' => $domain]);
+                $tenant->domains()->create([
+                    'domain' => TenantHelper::generateDomain($domain),
+                ]);
 
                 DB::commit();
             }
