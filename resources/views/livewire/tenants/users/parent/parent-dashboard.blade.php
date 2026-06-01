@@ -3,7 +3,7 @@
     <div class="mx-auto
                 w-full
                 max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
+                ">
 
         {{-- ===================================================== --}}
         {{-- HERO --}}
@@ -40,7 +40,8 @@
                             {{-- AVATAR --}}
                             <div class="flex justify-center lg:block">
 
-                                <div class="w-32 h-32 sm:w-36 sm:h-36
+                                <div
+                                    class="w-32 h-32 sm:w-36 sm:h-36
                                             rounded-[30px]
                                             overflow-hidden
                                             bg-slate-800
@@ -155,34 +156,25 @@
                         2xl:grid-cols-6
                         gap-4">
 
-                @foreach([
-                    ['Enfants','3','text-indigo-400'],
-                    ['Présence Moyenne','96%','text-emerald-400'],
-                    ['Moyenne Générale','14.22','text-sky-400'],
-                    ['Notifications','5','text-amber-400'],
-                    ['Bulletins','12','text-violet-400'],
-                    ['Paiements','À jour','text-rose-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Enfants', '3', 'text-indigo-400'], ['Présence Moyenne', '96%', 'text-emerald-400'], ['Moyenne Générale', '14.22', 'text-sky-400'], ['Notifications', '5', 'text-amber-400'], ['Bulletins', '12', 'text-violet-400'], ['Paiements', 'À jour', 'text-rose-400']] as $kpi)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
+                        <p class="text-sm text-slate-400">
 
-                        {{ $kpi[0] }}
+                            {{ $kpi[0] }}
 
-                    </p>
+                        </p>
 
-                    <h2 class="mt-3 text-2xl font-bold {{ $kpi[2] }}">
+                        <h2 class="mt-3 text-2xl font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -203,76 +195,6 @@
                 {{-- LEFT --}}
                 {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
-
-                    {{-- ===================================================== --}}
-                    {{-- ETAT CIVIL --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-[32px]
-                                bg-slate-900
-                                border border-slate-800
-                                p-6">
-
-                        <div class="flex items-center justify-between">
-
-                            <div>
-
-                                <h2 class="text-xl font-semibold">
-
-                                    Informations Parent
-
-                                </h2>
-
-                                <p class="mt-1 text-sm text-slate-400">
-
-                                    Informations personnelles
-                                    et administratives.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div class="mt-6 grid
-                                    grid-cols-1
-                                    md:grid-cols-2
-                                    xl:grid-cols-3
-                                    gap-5">
-
-                            @foreach([
-                                ['Téléphone','+229 01 00 00 00 00'],
-                                ['Email','parent@email.com'],
-                                ['Adresse','Cotonou, Bénin'],
-                                ['Profession','Ingénieur'],
-                                ['Sexe','Masculin'],
-                                ['Nationalité','Béninoise']
-                            ] as $info)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800
-                                        p-4">
-
-                                <p class="text-sm text-slate-400">
-
-                                    {{ $info[0] }}
-
-                                </p>
-
-                                <h3 class="mt-2 font-medium">
-
-                                    {{ $info[1] }}
-
-                                </h3>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
                     {{-- ===================================================== --}}
                     {{-- ENFANTS --}}
                     {{-- ===================================================== --}}
@@ -281,7 +203,8 @@
                                 border border-slate-800
                                 p-6">
 
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                                     lg:flex-row
                                     lg:items-center
                                     lg:justify-between
@@ -315,98 +238,100 @@
 
                         <div class="mt-6 space-y-5">
 
-                            @foreach(range(1,3) as $child)
-
-                            <div class="rounded-3xl
+                            @foreach (range(1, 3) as $child)
+                                <div class="rounded-3xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-5">
 
-                                <div class="flex flex-col
+                                    <div
+                                        class="flex flex-col
                                             xl:flex-row
                                             xl:items-center
                                             xl:justify-between
                                             gap-5">
 
-                                    {{-- LEFT --}}
-                                    <div class="flex items-center gap-4 min-w-0">
+                                        {{-- LEFT --}}
+                                        <div class="flex items-center gap-4 min-w-0">
 
-                                        <div class="w-20 h-20
+                                            <div
+                                                class="w-20 h-20
                                                     rounded-2xl
                                                     bg-slate-800
                                                     shrink-0">
-                                        </div>
+                                            </div>
 
-                                        <div class="min-w-0">
+                                            <div class="min-w-0">
 
-                                            <h3 class="text-lg font-semibold">
+                                                <h3 class="text-lg font-semibold">
 
-                                                KOUASSI Sarah
+                                                    KOUASSI Sarah
 
-                                            </h3>
+                                                </h3>
 
-                                            <p class="mt-1 text-sm text-slate-400">
+                                                <p class="mt-1 text-sm text-slate-400">
 
-                                                Terminale F2-1 —
-                                                Matricule :
-                                                MAT-2026-001
+                                                    Terminale F2-1 —
+                                                    Matricule :
+                                                    MAT-2026-001
 
-                                            </p>
+                                                </p>
 
-                                            <div class="mt-3 flex flex-wrap gap-2">
+                                                <div class="mt-3 flex flex-wrap gap-2">
 
-                                                <span class="px-3 py-1 rounded-full
+                                                    <span
+                                                        class="px-3 py-1 rounded-full
                                                              bg-emerald-500/10
                                                              text-emerald-400 text-xs">
 
-                                                    Moyenne : 14.22
+                                                        Moyenne : 14.22
 
-                                                </span>
+                                                    </span>
 
-                                                <span class="px-3 py-1 rounded-full
+                                                    <span
+                                                        class="px-3 py-1 rounded-full
                                                              bg-indigo-500/10
                                                              text-indigo-400 text-xs">
 
-                                                    Présence : 96%
+                                                        Présence : 96%
 
-                                                </span>
+                                                    </span>
+
+                                                </div>
 
                                             </div>
 
                                         </div>
 
-                                    </div>
+                                        {{-- ACTIONS --}}
+                                        <div class="flex flex-wrap gap-3">
 
-                                    {{-- ACTIONS --}}
-                                    <div class="flex flex-wrap gap-3">
-
-                                        <button class="h-11 px-4 rounded-2xl
+                                            <button class="h-11 px-4 rounded-2xl
                                                        bg-sky-500 hover:bg-sky-600">
 
-                                            Emploi du Temps
+                                                Emploi du Temps
 
-                                        </button>
+                                            </button>
 
-                                        <button class="h-11 px-4 rounded-2xl
+                                            <button class="h-11 px-4 rounded-2xl
                                                        bg-emerald-500 hover:bg-emerald-600">
 
-                                            Bulletin
+                                                Bulletin
 
-                                        </button>
+                                            </button>
 
-                                        <button class="h-11 px-4 rounded-2xl
+                                            <button class="h-11 px-4 rounded-2xl
                                                        bg-indigo-500 hover:bg-indigo-600">
 
-                                            Notes
+                                                Notes
 
-                                        </button>
+                                            </button>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
@@ -434,28 +359,26 @@
 
                         <div class="mt-5 space-y-4">
 
-                            @foreach(range(1,5) as $notif)
-
-                            <div class="rounded-2xl
+                            @foreach (range(1, 5) as $notif)
+                                <div class="rounded-2xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-4">
 
-                                <h3 class="font-medium">
+                                    <h3 class="font-medium">
 
-                                    Nouvelle note publiée
+                                        Nouvelle note publiée
 
-                                </h3>
+                                    </h3>
 
-                                <p class="mt-1 text-sm text-slate-400">
+                                    <p class="mt-1 text-sm text-slate-400">
 
-                                    Mathématiques —
-                                    Aujourd’hui
+                                        Mathématiques —
+                                        Aujourd’hui
 
-                                </p>
+                                    </p>
 
-                            </div>
-
+                                </div>
                             @endforeach
 
                         </div>
@@ -463,7 +386,8 @@
                     </div>
 
                     {{-- ACTIONS --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 bg-gradient-to-br
                                 from-indigo-500/20
                                 to-slate-900
@@ -478,25 +402,18 @@
 
                         <div class="mt-5 space-y-3">
 
-                            @foreach([
-                                'Télécharger Bulletins',
-                                'Voir Présences',
-                                'Contacter École',
-                                'Historique Paiements',
-                                'Notifications'
-                            ] as $action)
-
-                            <button class="w-full
+                            @foreach (['Télécharger Bulletins', 'Voir Présences', 'Contacter École', 'Historique Paiements', 'Notifications'] as $action)
+                                <button
+                                    class="w-full
                                            h-11
                                            rounded-2xl
                                            bg-slate-900/70
                                            hover:bg-slate-800
                                            border border-slate-800">
 
-                                {{ $action }}
+                                    {{ $action }}
 
-                            </button>
-
+                                </button>
                             @endforeach
 
                         </div>
@@ -512,3 +429,4 @@
     </div>
 
 </div>
+

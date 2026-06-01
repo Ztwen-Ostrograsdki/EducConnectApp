@@ -51,10 +51,10 @@
 
             <div class="s-school">
                 <div class="s-school-inner">
-                    <div class="s-school-name">{{ tenant()?->name ?? 'Mon École' }}</div>
-                    <div class="s-school-year">
-                        <span class="s-school-dot"></span>
-                        Année {{ session('school_year_selected') }}
+                    <div class="s-school-name">
+                        <a class="hover:text-orange-500" href="{{ route('tenants.home') }}">
+                            {{ tenant()?->school_name ?? 'Mon École' }}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -62,11 +62,8 @@
             <nav class="s-nav">
                 <div class="s-section">
                     <div class="s-section-label">Général</div>
-                    <a data-sidebar-item href="{{ route('dashboard') }}" class="s-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <div class="s-icon">📊</div><span class="s-label">Vue d'ensemble</span>
-                    </a>
-                    <a href="#" class="s-link">
-                        <div class="s-icon">📅</div><span class="s-label">Années scolaires</span>
+                    <a data-sidebar-item href="{{ route('tenant.dashboard') }}" class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
+                        <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                     </a>
                 </div>
 

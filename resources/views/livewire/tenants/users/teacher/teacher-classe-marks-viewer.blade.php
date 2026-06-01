@@ -3,7 +3,7 @@
     <div class="mx-auto
                 w-full
                 max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
+                ">
 
         {{-- ===================================================== --}}
         {{-- HEADER --}}
@@ -40,7 +40,8 @@
                             {{-- PHOTO --}}
                             <div class="flex justify-center lg:block">
 
-                                <div class="w-32 h-32 sm:w-36 sm:h-36
+                                <div
+                                    class="w-32 h-32 sm:w-36 sm:h-36
                                             rounded-[30px]
                                             bg-slate-800
                                             border border-slate-700
@@ -159,34 +160,25 @@
                         2xl:grid-cols-6
                         gap-4">
 
-                @foreach([
-                    ['Classes','5','text-indigo-400'],
-                    ['Évaluations','38','text-sky-400'],
-                    ['Notes','1 482','text-emerald-400'],
-                    ['Moyenne Générale','12.44','text-amber-400'],
-                    ['Retards Notes','3','text-rose-400'],
-                    ['Présence','96%','text-violet-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Classes', '5', 'text-indigo-400'], ['Évaluations', '38', 'text-sky-400'], ['Notes', '1 482', 'text-emerald-400'], ['Moyenne Générale', '12.44', 'text-amber-400'], ['Retards Notes', '3', 'text-rose-400'], ['Présence', '96%', 'text-violet-400']] as $kpi)
+                    <div class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
 
-                    <p class="text-sm text-slate-400">
+                        <p class="text-sm text-slate-400">
 
-                        {{ $kpi[0] }}
+                            {{ $kpi[0] }}
 
-                    </p>
+                        </p>
 
-                    <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
+                        <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -258,9 +250,8 @@
                     </select>
 
                     {{-- SEARCH --}}
-                    <input type="text"
-                           placeholder="Rechercher apprenant..."
-                           class="h-12 rounded-2xl
+                    <input type="text" placeholder="Rechercher apprenant..."
+                        class="h-12 rounded-2xl
                                   bg-slate-950
                                   border border-slate-800
                                   px-4">
@@ -305,7 +296,8 @@
                         {{-- HEADER --}}
                         <div class="p-5 border-b border-slate-800">
 
-                            <div class="flex flex-col
+                            <div
+                                class="flex flex-col
                                         xl:flex-row
                                         xl:items-center
                                         xl:justify-between
@@ -414,106 +406,103 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,15) as $student)
+                                    @foreach (range(1, 15) as $student)
+                                        <tr class="hover:bg-slate-800/40">
 
-                                    <tr class="hover:bg-slate-800/40">
+                                            {{-- STUDENT --}}
+                                            <td class="px-6 py-5">
 
-                                        {{-- STUDENT --}}
-                                        <td class="px-6 py-5">
+                                                <div class="flex items-center gap-4">
 
-                                            <div class="flex items-center gap-4">
-
-                                                <div class="w-14 h-14
+                                                    <div class="w-14 h-14
                                                             rounded-2xl
                                                             bg-slate-800">
+                                                    </div>
+
+                                                    <div>
+
+                                                        <h3 class="font-medium">
+
+                                                            KOUASSI Sarah
+
+                                                        </h3>
+
+                                                        <p class="text-sm text-slate-400">
+
+                                                            MAT-2026-001
+
+                                                        </p>
+
+                                                    </div>
+
                                                 </div>
 
-                                                <div>
+                                            </td>
 
-                                                    <h3 class="font-medium">
+                                            {{-- SEX --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                                        KOUASSI Sarah
+                                                F
 
-                                                    </h3>
+                                            </td>
 
-                                                    <p class="text-sm text-slate-400">
+                                            {{-- NOTES --}}
+                                            @foreach (range(1, 5) as $note)
+                                                <td class="px-4 py-5">
 
-                                                        MAT-2026-001
-
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- SEX --}}
-                                        <td class="px-4 py-5 text-center">
-
-                                            F
-
-                                        </td>
-
-                                        {{-- NOTES --}}
-                                        @foreach(range(1,5) as $note)
-
-                                        <td class="px-4 py-5">
-
-                                            <input type="number"
-                                                   step="0.25"
-                                                   class="w-20 h-10
+                                                    <input type="number" step="0.25"
+                                                        class="w-20 h-10
                                                           rounded-xl
                                                           bg-slate-950
                                                           border border-slate-800
                                                           text-center">
-                                        </td>
+                                                </td>
+                                            @endforeach
 
-                                        @endforeach
-
-                                        {{-- AVG --}}
-                                        <td class="px-4 py-5 text-center
+                                            {{-- AVG --}}
+                                            <td class="px-4 py-5 text-center
                                                    font-semibold
                                                    text-emerald-400">
 
-                                            15.42
+                                                15.42
 
-                                        </td>
+                                            </td>
 
-                                        {{-- RANK --}}
-                                        <td class="px-4 py-5 text-center">
+                                            {{-- RANK --}}
+                                            <td class="px-4 py-5 text-center">
 
-                                            #2
+                                                #2
 
-                                        </td>
+                                            </td>
 
-                                        {{-- ACTIONS --}}
-                                        <td class="px-6 py-5">
+                                            {{-- ACTIONS --}}
+                                            <td class="px-6 py-5">
 
-                                            <div class="flex justify-end gap-2">
+                                                <div class="flex justify-end gap-2">
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-indigo-500/10
                                                                text-indigo-400">
 
-                                                    Historique
+                                                        Historique
 
-                                                </button>
+                                                    </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                    <button
+                                                        class="h-10 px-4 rounded-xl
                                                                bg-emerald-500/10
                                                                text-emerald-400">
 
-                                                    Bulletin
+                                                        Bulletin
 
-                                                </button>
+                                                    </button>
 
-                                            </div>
+                                                </div>
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -547,30 +536,22 @@
 
                         <div class="mt-5 space-y-5">
 
-                            @foreach([
-                                ['Effectif','48'],
-                                ['Garçons','30'],
-                                ['Filles','18'],
-                                ['Moyenne Classe','12.44'],
-                                ['Taux Réussite','84%']
-                            ] as $item)
+                            @foreach ([['Effectif', '48'], ['Garçons', '30'], ['Filles', '18'], ['Moyenne Classe', '12.44'], ['Taux Réussite', '84%']] as $item)
+                                <div class="flex items-center justify-between">
 
-                            <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">
 
-                                <span class="text-slate-400">
+                                        {{ $item[0] }}
 
-                                    {{ $item[0] }}
+                                    </span>
 
-                                </span>
+                                    <span class="font-semibold">
 
-                                <span class="font-semibold">
+                                        {{ $item[1] }}
 
-                                    {{ $item[1] }}
+                                    </span>
 
-                                </span>
-
-                            </div>
-
+                                </div>
                             @endforeach
 
                         </div>
@@ -580,7 +561,8 @@
                     {{-- ===================================================== --}}
                     {{-- QUICK ACTIONS --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 bg-gradient-to-br
                                 from-indigo-500/20
                                 to-slate-900
@@ -595,25 +577,18 @@
 
                         <div class="mt-5 space-y-3">
 
-                            @foreach([
-                                'Nouvelle Interrogation',
-                                'Ajouter Devoir',
-                                'Exporter Notes',
-                                'Imprimer Tableau',
-                                'Notifier Parents'
-                            ] as $action)
-
-                            <button class="w-full
+                            @foreach (['Nouvelle Interrogation', 'Ajouter Devoir', 'Exporter Notes', 'Imprimer Tableau', 'Notifier Parents'] as $action)
+                                <button
+                                    class="w-full
                                            h-11
                                            rounded-2xl
                                            bg-slate-900/70
                                            hover:bg-slate-800
                                            border border-slate-800">
 
-                                {{ $action }}
+                                    {{ $action }}
 
-                            </button>
-
+                                </button>
                             @endforeach
 
                         </div>
@@ -636,28 +611,26 @@
 
                         <div class="mt-5 space-y-4">
 
-                            @foreach(range(1,5) as $activity)
-
-                            <div class="rounded-2xl
+                            @foreach (range(1, 5) as $activity)
+                                <div class="rounded-2xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-4">
 
-                                <h3 class="font-medium">
+                                    <h3 class="font-medium">
 
-                                    Notes ajoutées —
-                                    Terminale F2-1
+                                        Notes ajoutées —
+                                        Terminale F2-1
 
-                                </h3>
+                                    </h3>
 
-                                <p class="mt-1 text-sm text-slate-400">
+                                    <p class="mt-1 text-sm text-slate-400">
 
-                                    Aujourd’hui — 10:42
+                                        Aujourd’hui — 10:42
 
-                                </p>
+                                    </p>
 
-                            </div>
-
+                                </div>
                             @endforeach
 
                         </div>

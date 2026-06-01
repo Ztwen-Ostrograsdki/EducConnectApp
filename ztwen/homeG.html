@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>École Horizon - Excellence & Innovation</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+            body {
+                font-family: "Poppins", sans-serif;
+            }
+
+            .hero-bg {
+                background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=2000");
+                background-size: cover;
+                background-position: center;
+            }
+
+            .nav-link {
+                transition: all 0.3s ease;
+            }
+
+            .nav-link:hover {
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50 text-gray-800">
+        <!-- Navbar -->
+        <nav class="bg-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-20">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-md">EH</div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">École Horizon</h1>
+                            <p class="text-xs text-gray-500 -mt-1">Excellence depuis 1998</p>
+                        </div>
+                    </div>
+
+                    <!-- Menu Desktop -->
+                    <div class="hidden md:flex items-center gap-8">
+                        <a href="#" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Accueil</a>
+                        <a href="#" class="nav-link text-gray-700 hover:text-blue-600 font-medium">L'école</a>
+
+                        <!-- Dropdown -->
+                        <div class="relative group">
+                            <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 font-medium">
+                                Nos Formations
+                                <i class="fas fa-chevron-down text-xs transition-transform group-hover:rotate-180"></i>
+                            </button>
+                            <div class="absolute hidden group-hover:block pt-4 w-64">
+                                <div class="bg-white rounded-2xl shadow-2xl py-4 px-5 border border-gray-100">
+                                    <a href="#" class="block px-4 py-3 hover:bg-blue-50 rounded-xl text-sm font-medium">Maternelle</a>
+                                    <a href="#" class="block px-4 py-3 hover:bg-blue-50 rounded-xl text-sm font-medium">Primaire</a>
+                                    <a href="#" class="block px-4 py-3 hover:bg-blue-50 rounded-xl text-sm font-medium">Collège</a>
+                                    <a href="#" class="block px-4 py-3 hover:bg-blue-50 rounded-xl text-sm font-medium">Lycée</a>
+                                    <hr class="my-2" />
+                                    <a href="#" class="block px-4 py-3 hover:bg-blue-50 rounded-xl text-sm font-medium text-blue-600">Inscription 2026-2027 →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="#" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Vie Étudiante</a>
+                        <a href="#" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Admissions</a>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="flex items-center gap-3">
+                        <button class="hidden sm:block px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-400 rounded-2xl transition-all">Connexion</button>
+                        <button class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-2xl hover:scale-105 transition-all shadow-lg shadow-blue-500/30">S'inscrire</button>
+
+                        <!-- Mobile Menu Button -->
+                        <button class="md:hidden text-2xl text-gray-700">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-bg h-screen flex items-center text-white">
+            <div class="max-w-7xl mx-auto px-6 text-center" data-aos="fade-up">
+                <h2 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Former les leaders
+                    <br />
+                    de demain
+                </h2>
+                <p class="text-xl md:text-2xl mb-10 max-w-2xl mx-auto opacity-90">Une éducation d'excellence qui allie tradition, innovation et valeurs humaines.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="px-10 py-4 bg-white text-blue-700 font-semibold rounded-2xl text-lg hover:bg-gray-100 transition-all">Visite virtuelle</button>
+                    <button class="px-10 py-4 border-2 border-white font-semibold rounded-2xl text-lg hover:bg-white/10 transition-all">Journées Portes Ouvertes</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section À propos -->
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div data-aos="fade-right">
+                        <h2 class="text-4xl font-bold mb-6">
+                            Bienvenue à
+                            <span class="text-blue-600">École Horizon</span>
+                        </h2>
+                        <p class="text-lg text-gray-600 leading-relaxed">
+                            Depuis plus de 25 ans, nous accompagnons chaque enfant dans son épanouissement académique, émotionnel et social. Notre mission : révéler le potentiel unique de chaque élève.
+                        </p>
+                        <div class="mt-8 flex gap-6">
+                            <div>
+                                <span class="text-4xl font-bold text-blue-600">1200+</span>
+                                <p class="text-gray-500">Élèves</p>
+                            </div>
+                            <div>
+                                <span class="text-4xl font-bold text-blue-600">98%</span>
+                                <p class="text-gray-500">Réussite au Bac</p>
+                            </div>
+                            <div>
+                                <span class="text-4xl font-bold text-blue-600">45</span>
+                                <p class="text-gray-500">Nationalités</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-aos="fade-left">
+                        <img src="https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?w=800" class="rounded-3xl shadow-2xl" alt="École" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Programmes -->
+        <section class="py-20 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Nos Cycles de Formation</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-3xl p-8 shadow hover:shadow-xl transition-all hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                        <h3 class="text-2xl font-semibold mb-4">Maternelle & Primaire</h3>
+                        <p class="text-gray-600">Éveil, créativité et bases solides dans un environnement bienveillant.</p>
+                    </div>
+                    <div class="bg-white rounded-3xl p-8 shadow hover:shadow-xl transition-all hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                        <h3 class="text-2xl font-semibold mb-4">Collège</h3>
+                        <p class="text-gray-600">Développement intellectuel et personnel avec un accompagnement personnalisé.</p>
+                    </div>
+                    <div class="bg-white rounded-3xl p-8 shadow hover:shadow-xl transition-all hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                        <h3 class="text-2xl font-semibold mb-4">Lycée</h3>
+                        <p class="text-gray-600">Préparation aux études supérieures avec filières générales et internationales.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-gray-400">
+            <div class="max-w-7xl mx-auto px-6 pt-16 pb-8">
+                <div class="grid md:grid-cols-4 gap-10">
+                    <div>
+                        <div class="flex items-center gap-3 text-white mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-2xl font-bold">EH</div>
+                            <h3 class="text-2xl font-bold">École Horizon</h3>
+                        </div>
+                        <p class="text-sm">Former des esprits éclairés, responsables et innovants.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Navigation</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-white">L'école</a></li>
+                            <li><a href="#" class="hover:text-white">Nos formations</a></li>
+                            <li><a href="#" class="hover:text-white">Admissions</a></li>
+                            <li><a href="#" class="hover:text-white">Vie étudiante</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Contact</h4>
+                        <p class="text-sm">
+                            12 Avenue des Champs-Élysées
+                            <br />
+                            75008 Paris, France
+                        </p>
+                        <p class="text-sm mt-3">+33 1 42 56 78 90</p>
+                        <p class="text-sm">contact@ecolehorizon.fr</p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-semibold mb-4">Suivez-nous</h4>
+                        <div class="flex gap-4 text-2xl">
+                            <i class="fab fa-facebook hover:text-blue-500 cursor-pointer"></i>
+                            <i class="fab fa-instagram hover:text-pink-500 cursor-pointer"></i>
+                            <i class="fab fa-linkedin hover:text-blue-600 cursor-pointer"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm">© 2026 École Horizon - Tous droits réservés</div>
+            </div>
+        </footer>
+
+        <script>
+            AOS.init({
+                duration: 800,
+                once: true,
+            });
+        </script>
+    </body>
+</html>

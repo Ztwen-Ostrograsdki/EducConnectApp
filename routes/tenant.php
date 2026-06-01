@@ -8,6 +8,7 @@ use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
 use App\Livewire\Tenants\HomePage;
+use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
@@ -24,6 +25,12 @@ use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
+use App\Livewire\Tenants\Users\Parent\ParentDashboard;
+use App\Livewire\Tenants\Users\Parent\ParentStudentsMarksViewer;
+use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksManagerComponent;
+use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksViewer;
+use App\Livewire\Tenants\Users\Teacher\TeacherClasseStudentsViewer;
+use App\Livewire\Tenants\Users\Teacher\TeacherDashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -58,10 +65,12 @@ Route::middleware([
     // ─── Pages authentifiées ──────────────────────────────────────────
     Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at'])->group(function () {
 
-        Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
+        
 
         // ── Directeur ─────────────────────────────────────────────────
         Route::middleware('role:directeur')->prefix('ecole')->name('tenant.')->group(function () {
+            Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
+            
             Route::get('/dashboard/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
             Route::get('/dashboard/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
@@ -101,6 +110,24 @@ Route::middleware([
         Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('tenant.student.marks');
 
         Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('tenant.teacher.profil');
+
+
+        // ESPACE PARENT
+        Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
+
+        Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
+
+         Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
+
+        //ESPACE ENSEIGNANT
+        Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('tenant.my.teacher.space');
+        Route::get('/mon-espace-enseignant/les-notes', TeacherClasseMarksViewer::class)->name('tenant.my.teacher.space.marks');
+        Route::get('/mon-espace-enseignant/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('tenant.my.teacher.space.marks.manager');
+        Route::get('/mon-espace-enseignant/liste-apprenants', TeacherClasseStudentsViewer::class)->name('tenant.my.teacher.space.students');
+
+
+
+       
 
         
         Route::middleware('tenant.domain.open.for.others.too')->group(function () {

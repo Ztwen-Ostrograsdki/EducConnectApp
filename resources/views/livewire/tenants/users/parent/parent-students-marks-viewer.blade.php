@@ -3,7 +3,7 @@
     <div class="mx-auto
                 w-full
                 max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
+                ">
 
         {{-- ===================================================== --}}
         {{-- HEADER --}}
@@ -25,7 +25,7 @@
 
                         <h1 class="text-2xl sm:text-3xl font-bold">
 
-                            Notes de l’Apprenant
+                            Espace parent : Notes apprenants
 
                         </h1>
 
@@ -41,7 +41,8 @@
                     <div class="flex flex-wrap gap-3">
 
                         {{-- SELECT ENFANT --}}
-                        <select class="h-12 min-w-[250px]
+                        <select
+                            class="h-12 min-w-[250px]
                                        rounded-2xl
                                        bg-slate-950
                                        border border-slate-800
@@ -128,62 +129,60 @@
 
                         <tbody class="divide-y divide-slate-800">
 
-                            @foreach(range(1,12) as $note)
+                            @foreach (range(1, 12) as $note)
+                                <tr class="hover:bg-slate-800/40">
 
-                            <tr class="hover:bg-slate-800/40">
+                                    <td class="px-6 py-5 font-medium">
 
-                                <td class="px-6 py-5 font-medium">
+                                        Mathématiques
 
-                                    Mathématiques
+                                    </td>
 
-                                </td>
+                                    <td class="px-4 py-5 text-center">
 
-                                <td class="px-4 py-5 text-center">
+                                        14
 
-                                    14
+                                    </td>
 
-                                </td>
+                                    <td class="px-4 py-5 text-center">
 
-                                <td class="px-4 py-5 text-center">
+                                        16
 
-                                    16
+                                    </td>
 
-                                </td>
-
-                                <td class="px-4 py-5 text-center
+                                    <td class="px-4 py-5 text-center
                                            text-emerald-400
                                            font-semibold">
 
-                                    15
+                                        15
 
-                                </td>
+                                    </td>
 
-                                <td class="px-4 py-5 text-center">
+                                    <td class="px-4 py-5 text-center">
 
-                                    4
+                                        4
 
-                                </td>
+                                    </td>
 
-                                <td class="px-4 py-5 text-center">
+                                    <td class="px-4 py-5 text-center">
 
-                                    60
+                                        60
 
-                                </td>
+                                    </td>
 
-                                <td class="px-6 py-5">
+                                    <td class="px-6 py-5">
 
-                                    M. AHOLOU
+                                        M. AHOLOU
 
-                                </td>
+                                    </td>
 
-                                <td class="px-6 py-5">
+                                    <td class="px-6 py-5">
 
-                                    Très Bien
+                                        Très Bien
 
-                                </td>
+                                    </td>
 
-                            </tr>
-
+                                </tr>
                             @endforeach
 
                         </tbody>
@@ -201,32 +200,25 @@
                                 xl:grid-cols-4
                                 gap-4">
 
-                        @foreach([
-                            ['Moyenne Générale','14.22'],
-                            ['Rang','5ème'],
-                            ['Taux Réussite','87%'],
-                            ['Appréciation','Très Bien']
-                        ] as $stat)
-
-                        <div class="rounded-2xl
+                        @foreach ([['Moyenne Générale', '14.22'], ['Rang', '5ème'], ['Taux Réussite', '87%'], ['Appréciation', 'Très Bien']] as $stat)
+                            <div class="rounded-2xl
                                     bg-slate-950
                                     border border-slate-800
                                     p-4">
 
-                            <p class="text-sm text-slate-400">
+                                <p class="text-sm text-slate-400">
 
-                                {{ $stat[0] }}
+                                    {{ $stat[0] }}
 
-                            </p>
+                                </p>
 
-                            <h3 class="mt-2 text-xl font-bold">
+                                <h3 class="mt-2 text-xl font-bold">
 
-                                {{ $stat[1] }}
+                                    {{ $stat[1] }}
 
-                            </h3>
+                                </h3>
 
-                        </div>
-
+                            </div>
                         @endforeach
 
                     </div>
@@ -240,3 +232,4 @@
     </div>
 
 </div>
+
