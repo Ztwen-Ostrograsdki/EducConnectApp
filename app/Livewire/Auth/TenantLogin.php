@@ -74,7 +74,28 @@ class TenantLogin extends Component
 
             session()->regenerate();
 
-            return $this->redirectRoute('dashboard');
+            $logged_count = Auth::guard('tenant')->user()->logged_count;
+
+
+            if($logged_count){
+
+                return $this->redirectRoute('tenant.update.password');
+
+            }
+            else{
+
+                Auth::guard('tenant')->user()->update(['logged_count' => $logged_count + 1]);
+
+                if(Auth::guard('tenant')->user()->hasRole('directeur')){
+
+                    return $this->redirectRoute('tenant.dashboard');
+
+                }
+                else{
+
+                    return $this->redirectRoute('tenant.my.profil');
+                }
+            }
         }
 
     }

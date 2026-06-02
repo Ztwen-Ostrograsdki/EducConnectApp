@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Auth\PasswordForgotPage;
+use App\Livewire\Auth\PasswordUpdatePage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
@@ -24,6 +26,7 @@ use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
+use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsMarksViewer;
@@ -51,6 +54,8 @@ Route::middleware([
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest:tenant');
 
+    Route::get('/mot-de-passe-oublie', PasswordForgotPage::class)->middleware('guest:tenant')->name('tenant.password.forgot');
+
     Route::get('/', HomePage::class)->name('tenants.home');
 
     Route::post('/logout', function () {
@@ -65,7 +70,7 @@ Route::middleware([
     // ─── Pages authentifiées ──────────────────────────────────────────
     Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at'])->group(function () {
 
-        
+        Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
         // ── Directeur ─────────────────────────────────────────────────
         Route::middleware('role:directeur')->prefix('ecole')->name('tenant.')->group(function () {
@@ -114,6 +119,8 @@ Route::middleware([
 
         // ESPACE PARENT
         Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
+
+        Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
         Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
 

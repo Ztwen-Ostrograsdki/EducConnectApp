@@ -30,7 +30,8 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
     public function __construct(
         public Tenant $tenant,
         public ?User $user = null,
-        public ?string $default_password = null
+        public ?string $default_password = null,
+        public ?string $http = null
     )
     {
         if(!$default_password){

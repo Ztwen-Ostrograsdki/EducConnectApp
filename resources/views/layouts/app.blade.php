@@ -131,7 +131,13 @@
                 </nav>
                 <div class="s-footer">
                     <div class="s-user">
-                        <div class="s-avatar">{{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}</div>
+                        <div class="s-avatar">
+                            @if (auth()->guard('tenant')->user()->profil_photo)
+                                <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                            @else
+                                {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
+                            @endif
+                        </div>
                         <div class="s-user-info">
                             <div class="s-user-name">{{ Auth::guard('tenant')->user()?->name ?? 'Utilisateur' }}</div>
                             <div class="s-user-role">
@@ -202,7 +208,13 @@
 
                         <div class="dd">
                             <div class="user-trigger" onclick="toggleDD('user-menu')">
-                                <div class="ut-avatar">{{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}</div>
+                                <div class="ut-avatar">
+                                    @if (auth()->guard('tenant')->user()->profil_photo)
+                                        <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                                    @else
+                                        {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
+                                    @endif
+                                </div>
                                 <div>
                                     <div class="ut-name">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                     <div class="ut-role">Directeur</div>

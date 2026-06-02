@@ -159,8 +159,14 @@
 
             <div class="s-footer">
                 <div class="s-user">
-                    <div class="s-avatar">{{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}</div>
-                    <div class="s-user-info">
+                    <div class="s-avatar">
+                        @if (auth()->guard('tenant')->user()->profil_photo)
+                            <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                        @else
+                            {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
+                        @endif
+                    </div>
+                    <a href="{{ route('tenant.my.profil') }}" class="s-user-info">
                         <div class="s-user-name">{{ Auth::guard('tenant')->user()?->name ?? 'Utilisateur' }}</div>
                         <div class="s-user-role">
                             @php $u = Auth::guard('tenant')->user(); @endphp
@@ -176,10 +182,12 @@
                                 Utilisateur
                             @endif
                         </div>
-                    </div>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="s-logout" title="Déconnexion">⏻</button>
+                        <button type="submit" class="s-logout" title="Déconnexion">
+                            <x-lucide-log-out class="w-4 h-4 text-red-500" />
+                        </button>
                     </form>
                 </div>
             </div>
@@ -238,7 +246,13 @@
 
                     <div class="dd">
                         <div class="user-trigger" onclick="toggleDD('user-menu')">
-                            <div class="ut-avatar">{{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}</div>
+                            <div class="ut-avatar">
+                                @if (auth()->guard('tenant')->user()->profil_photo)
+                                    <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-6.5 w-8 rounded-full object-cover">
+                                @else
+                                    {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
+                                @endif
+                            </div>
                             <div>
                                 <div class="ut-name">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                 <div class="ut-role">Directeur</div>
@@ -250,13 +264,15 @@
                                 <div class="dd-title">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                 <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                             </div>
-                            <a href="#" class="dd-item">👤 Mon profil</a>
+                            <a href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
                             <a href="#" class="dd-item">⚙️ Paramètres du compte</a>
                             <a href="#" class="dd-item">❓ Support</a>
                             <div class="dd-sep"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="dd-item danger">⏻ Déconnexion</button>
+                                <button type="submit" class="dd-item danger"> Déconnexion
+                                    <x-lucide-log-out class="w-4 h-4 text-red-500" />
+                                </button>
                             </form>
                         </div>
                     </div>

@@ -19,7 +19,7 @@ class RedirectIfAuthenticated
 
                     'central' => redirect()->route('central.dashboard'),
 
-                    'tenant' => redirect()->route('dashboard'),
+                    'tenant' => redirect()->route('tenant.dashboard'),
 
                     default => redirect('/'),
                 };

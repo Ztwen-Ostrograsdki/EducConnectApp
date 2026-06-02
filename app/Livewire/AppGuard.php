@@ -175,7 +175,7 @@ class AppGuard extends Component
     public function handleAnyError(array $event): void
     {
         $this->notification()->send([
-            'icon'        => 'negative',
+            'icon'        => 'error',
             'title'       => $event['target'] ? $event['target'] : "Une erreure est survenue!",
             'timeout' => 0,
             'description' => $event['error'],
@@ -185,7 +185,7 @@ class AppGuard extends Component
     public function handleTenantCredentialsFailded(array $event): void
     {
         $this->notification()->send([
-            'icon'        => 'success',
+            'icon'        => 'error',
             'title'       => "Echec d'envoie par mail",
             'timeout' => 0,
             'description' => "L'envoi des données par mail au tenant " . $event['tenant'] . " a echoué! Les raisons : " . $event['error'],

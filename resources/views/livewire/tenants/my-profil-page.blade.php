@@ -26,21 +26,22 @@
 
                     <div class="relative">
 
-                        <img src="https://i.pravatar.cc/250?img=15" alt=""
+                        <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" alt=""
                             class="w-40 h-40
                                rounded-full
                                object-cover
                                border-4
                                border-slate-700">
 
-                        <button class="absolute bottom-2 right-2
+                        <a href="{{ route('tenant.update.profil.photo') }}"
+                            class="absolute bottom-2 right-2
                                w-12 h-12 rounded-full
                                bg-indigo-500
                                flex items-center justify-center">
 
                             <x-lucide-camera class="w-5 h-5" />
 
-                        </button>
+                        </a>
 
                     </div>
 
@@ -56,19 +57,27 @@
 
                         <x-lucide-circle-check class="w-4 h-4" />
 
-                        Compte Actif
+                        @if (!$user->blocked)
+                            Compte actif
+                        @else
+                            Compte bloqué
+                        @endif
 
                     </div>
 
                     <h1 class="mt-4 text-4xl
                            font-black">
 
-                        Vincent HOUNDEKINDO
+                        {{ $user->getFullName(true) }}
 
                     </h1>
 
-                    <p class="text-slate-400 mt-2">
-                        Administrateur • Enseignant • Parent
+                    <p class="text-slate-400 mt-2 flex flex-wrap gap-x-2">
+                        @foreach ($user->roles as $role)
+                            <span class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-400">
+                                {{ $role->name }}
+                            </span>
+                        @endforeach
                     </p>
 
                     <div class="mt-6
@@ -82,7 +91,7 @@
                             </p>
 
                             <p>
-                                vincent@mail.com
+                                {{ $user->email }}
                             </p>
 
                         </div>
@@ -94,7 +103,7 @@
                             </p>
 
                             <p>
-                                +229 01 97 00 00 00
+                                +229 {{ $user->contacts }}
                             </p>
 
                         </div>
@@ -106,7 +115,7 @@
                             </p>
 
                             <p>
-                                Masculin
+                                {{ $user->gender }}
                             </p>
 
                         </div>
@@ -118,7 +127,7 @@
                             </p>
 
                             <p>
-                                Cotonou
+                                {{ $user->adresse }} , {{ $user->country }}
                             </p>
 
                         </div>
@@ -137,7 +146,7 @@
            xl:grid-cols-4
            gap-5">
 
-        @foreach ([['Rôles', '4', 'shield'], ['Permissions', '38', 'key-round'], ['Connexions', '124', 'activity'], ['Notifications', '12', 'bell']] as $card)
+        @foreach ([['Rôles', __zero(count($user->roles)), 'shield'], ['Permissions', __zero(count($user->getAllPermissions())), 'key-round'], ['Connexions', __zero($user->logged_count), 'activity'], ['Notifications', 0, 'bell']] as $card)
             <div class="rounded-3xl
                    border border-slate-800
                    bg-slate-900/80
@@ -200,7 +209,7 @@
                 </label>
 
                 <p class="mt-2 font-medium">
-                    Vincent HOUNDEKINDO
+                    {{ $user->getFullName(1) }}
                 </p>
             </div>
 
@@ -210,7 +219,7 @@
                 </label>
 
                 <p class="mt-2">
-                    15/08/1998
+                    ---
                 </p>
             </div>
 
@@ -220,7 +229,7 @@
                 </label>
 
                 <p class="mt-2">
-                    Béninoise
+                    {{ $user->country }}
                 </p>
             </div>
 
@@ -230,7 +239,7 @@
                 </label>
 
                 <p class="mt-2">
-                    Cotonou
+                    {{ $user->adresse }}
                 </p>
             </div>
 
@@ -240,7 +249,7 @@
                 </label>
 
                 <p class="mt-2">
-                    +229 XX XX XX XX
+                    {{ $user->contacts }}
                 </p>
             </div>
 
@@ -250,7 +259,7 @@
                 </label>
 
                 <p class="mt-2">
-                    12 Mars 2026
+                    {{ __formatDateTime($user->created_at) }}
                 </p>
             </div>
 
@@ -269,21 +278,17 @@
 
             <div class="mt-5 flex flex-wrap gap-3">
 
-                <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                    Directeur
-                </span>
+                @foreach ($user->roles as $rl)
+                    <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
+                        {{ $rl->name }}
+                    </span>
+                @endforeach
 
-                <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                    Enseignant
-                </span>
-
-                <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                    Parent
-                </span>
-
-                <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                    Administrateur
-                </span>
+                @if ($user->hasRole('directeur'))
+                    <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
+                        {{ 'Administrateur du domaine' }}
+                    </span>
+                @endif
 
             </div>
 
@@ -299,14 +304,22 @@
 
             <div class="mt-5 gap-2 flex items-center
                            flex-wrap">
-
-                @foreach (range(1, 8) as $i)
-                    <span class="flex justify-center items-center p-2 bg-green-400 text-green-950 rounded-2xl">
+                @if ($user->hasRole('directeur'))
+                    <span class="flex w-full justify-center items-center p-2 bg-green-400 text-green-950 rounded-2xl">
                         <span>
-                            Permission {{ $i }}
+                            Toutes les Permissions
                         </span>
                     </span>
-                @endforeach
+                @else
+                    @foreach ($user->getAllPermissions() as $p)
+                        <span class="flex justify-center items-center p-2 bg-green-400 text-green-950 rounded-2xl">
+                            <span>
+                                {{ $p->name }}
+                            </span>
+                        </span>
+                    @endforeach
+
+                @endif
 
             </div>
 
@@ -315,7 +328,7 @@
     </section>
     <section class="rounded-3xl
            border border-slate-800
-           bg-slate-900/80 p-6">
+           bg-slate-900/80 p-6 mb-32">
 
         <h2 class="text-xl font-bold">
             Actions rapides
@@ -327,45 +340,39 @@
             <button class="h-12 px-5 rounded-2xl
                    bg-indigo-500
                    text-white
-                   flex items-center gap-2">
-
+                   flex items-center gap-2 hover:bg-indigo-900">
                 <x-lucide-user-pen class="w-5 h-5" />
-
                 Modifier le profil
-
             </button>
 
-            <button class="h-12 px-5 rounded-2xl
-                   bg-sky-500/10
-                   text-sky-400
-                   flex items-center gap-2">
-
+            <a href="{{ route('tenant.update.profil.photo') }}" class="h-12 px-5 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center gap-2 hover:bg-sky-800">
                 <x-lucide-camera class="w-5 h-5" />
-
                 Modifier la photo
+            </a>
 
-            </button>
-
-            <button class="h-12 px-5 rounded-2xl
-                   bg-amber-500/10
-                   text-amber-400
-                   flex items-center gap-2">
-
+            <a href="{{ route('tenant.update.password') }}" class="h-12 px-5 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center gap-2 hover:bg-amber-800 hover:text-white">
                 <x-lucide-key-round class="w-5 h-5" />
-
                 Changer le mot de passe
+            </a>
 
+            <button type="button" wire:loading.attr="disabled" class="h-12 px-5 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center gap-2 hover:bg-orange-800 hover:text-white">
+
+                <svg wire:loading wire:target="removePhoto" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25" />
+                    <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+
+                <span class="flex items-center gap-x-1" wire:loading.remove wire:target="removePhoto">
+                    <x-lucide-trash class="w-5 h-5" />
+                    Retirer photo de profil
+                </span>
+                <span wire:loading wire:target="removePhoto">
+                    En cours...
+                </span>
             </button>
-
-            <button class="h-12 px-5 rounded-2xl
-                   bg-rose-500/10
-                   text-rose-400
-                   flex items-center gap-2">
-
+            <button class="h-12 px-5 rounded-2xl bg-rose-500/10 hover:bg-rose-700 text-rose-400 flex items-center gap-2">
                 <x-lucide-log-out class="w-5 h-5" />
-
                 Déconnexion
-
             </button>
 
         </div>

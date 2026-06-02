@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
 use App\Events\SomesErrorsOccurWhenInitializeTenantSpaceEvent;
+use App\Jobs\JobToCreateTenantDirectories;
 use App\Jobs\JobToSeedRolesAndPermissionsIntoTenantDB;
 use App\Jobs\JobToSendCredentialsToCreatedTenant;
 use App\Models\Tenant;
@@ -22,6 +23,8 @@ class ObserveTenant
             new JobToSendCredentialsToCreatedTenant($tenant),
 
             new JobToSeedRolesAndPermissionsIntoTenantDB($tenant),
+
+            new JobToCreateTenantDirectories($tenant),
         ])
         ->catch(function (Throwable $e) use ($tenant) {
             //Un des jobs a échoué après tous ses retries

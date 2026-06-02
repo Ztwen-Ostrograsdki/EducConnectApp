@@ -2,20 +2,20 @@
 
     <div class="login-card w-full max-w-md rounded-2xl my-2 mb-4 font-semibold text-sm">
         @if (session('abort-error'))
-            <div class="alert alert-danger">
+            <div class="mb-4 p-3 bg-red-300 border border-red-800 text-center rounded-lg text-sm text-red-700">
                 {{ session('abort-error') }}
             </div>
         @endif
 
         @if (session('success'))
-            <div class="alert alert-success">
+            <div class="mb-4 p-3 bg-green-300 border border-green-800 text-center rounded-lg text-sm text-red-700">
                 {{ session('success') }}
             </div>
         @endif
 
         {{-- Message d'erreur global --}}
         @if ($errorMessage)
-            <div class="mb-4 p-3 bg-red-50 bg-red-300 border border-red-800 text-center rounded-lg text-sm text-red-700">
+            <div class="mb-4 p-3 bg-red-300 border border-red-800 text-center rounded-lg text-sm text-red-700">
                 {{ $errorMessage }}
             </div>
         @endif
@@ -61,9 +61,7 @@
                     <label for="password" class="block text-sm font-medium text-sky-500">
                         Mot de passe
                     </label>
-                    <a href="#" class="text-xs text-primary-600 hover:text-primary-700 transition">
-                        Mot de passe oublié ?
-                    </a>
+
                 </div>
                 <input id="password" type="password" wire:model="password" autocomplete="current-password" placeholder="••••••••"
                     class="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-400 text-sm
@@ -109,6 +107,11 @@
 
                 </span>
             </button>
+            <div class="w-full flex justify-center">
+                <a href="{{ route('tenant.password.forgot') }}" class="text-sm text-primary-600 hover:text-primary-700 transition  text-center font-semibold mx-auto w-full">
+                    Mot de passe oublié ?
+                </a>
+            </div>
         </form>
     </div>
 </div>

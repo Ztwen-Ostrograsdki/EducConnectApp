@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Helpers\Support\TenantStorage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -51,6 +52,10 @@ class User extends Authenticatable
 
     protected string $guard_name = 'tenant';
 
+    protected $appends = [
+        'profil_photo_url'
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -66,12 +71,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function getFullName(bool $reverse = false)
-    {
-        if($reverse) return $this->prenames . ' ' . $this->name;
-
-        else return $this->name . ' ' . $this->prenames;
-    }
 
     public function emailVerified()
     {
@@ -118,7 +117,15 @@ class User extends Authenticatable
         return $this->emailNotVerified();
     }
 
-    public function getUserNamePrefix($withFullName = false, $reverseName = false)
+    public function getFullName(bool $reverse = false)
+    {
+        if(!$reverse) return  $this->name . ' ' . $this->prenames;
+
+        else  return $this->prenames . ' ' . $this->name;
+    }
+
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
     {
         $prefix = 'Mr/Mme';
 
@@ -131,10 +138,9 @@ class User extends Authenticatable
         return $prefix;
     }
 
-    public function greatingMessage()
+    public function greating(bool $withFullName = true, bool $reverse = false)
     {
-        $name = $this->getFullName();
-
+        $name = $this->getUserNamePrefix($withFullName, $reverse);
 
         $hour = date('G');
         
@@ -149,6 +155,14 @@ class User extends Authenticatable
 
         return $name  ? $greating . ' ' . $name : $greating;
     }
+
+    public function getProfilPhotoUrlAttribute(): ?string
+    {
+        return TenantStorage::url(
+            $this->profil_photo
+        );
+    }
+
 
     public function isSuperAdmin(): bool
     {
