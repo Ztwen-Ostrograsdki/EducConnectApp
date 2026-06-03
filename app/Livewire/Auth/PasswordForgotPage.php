@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.guest')]
 class PasswordForgotPage extends Component
 {
+
+    use WireUiActions;
+    
     public $step = 1;
 
     public string $email;
@@ -31,6 +35,9 @@ class PasswordForgotPage extends Component
     ==========================*/
     public function sendReset()
     {
+        session()->forget('reset_email');
+
+        session()->forget('email');
 
         $this->validate([
             'email' => ['required', 'email']
@@ -39,14 +46,14 @@ class PasswordForgotPage extends Component
         $user = User::where('email', $this->email)->first();
 
         if (! $user) {
-            $this->addError('email', 'Aucun compte trouvé.');
+            $this->addError('email', "Veuillez vérifier votre adresse mail");
             return;
         }
 
         $token = Str::random(64);
         $otp = random_int(100000, 999999);
 
-        $password = PasswordTokenForReset::updateOrCreate(
+        $password_token_model = PasswordTokenForReset::updateOrCreate(
             ['email' => $this->email],
             [
                 'token' => Hash::make($token),
@@ -56,11 +63,33 @@ class PasswordForgotPage extends Component
             ]
         );
 
-        $domain = request()->getSchemeAndHttpHost();
+        if($password_token_model){
+            $domain = request()->getSchemeAndHttpHost();
 
-        JobToSendPasswordResetTokenToUser::dispatch($password, $otp, $domain);
+            session()->put('email', $this->email);
 
-        $this->step = 2;
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Un code vous été envoyé sur le ' . cutter($this->email, 9),
+                'timeout'     => 0,
+                'description' => "Veuillez consulter votre boîte mail"
+            ]);
+
+            JobToSendPasswordResetTokenToUser::dispatch($password_token_model, $otp, $token, $domain);
+
+            $this->step = 2;
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => "Une erreure s'est produite",
+                'timeout'     => 0,
+                'description' => "Veuillez réessayer!"
+            ]);
+
+
+        }
     }
 
     /* =========================
@@ -96,7 +125,17 @@ class PasswordForgotPage extends Component
             return;
         }
 
+        $this->notification()->send([
+            'icon'        => 'info',
+            'title'       => 'Reinitialisation du mot de passe',
+            'delay'       => 0,
+            'description' => "Veuillez à présent choisir un nouveau mot de passe"
+        ]);
+
+
         session(['reset_email' => $this->email]);
+
+        session()->forget('email');
 
         $this->step = 3;
     }
@@ -113,43 +152,91 @@ class PasswordForgotPage extends Component
         $user = User::where('email', session('reset_email'))->first();
 
         if (! $user) {
+            $this->reset('step');
+
+            session()->forget('reset_email');
+
+            session()->forget('email');
             return;
         }
 
-        $user->update([
+        $done = $user->update([
             'password' => Hash::make($this->password)
         ]);
 
-        PasswordTokenForReset::where('email', $user->email)->delete();
+        if($done){
 
-        $domain = request()->getSchemeAndHttpHost();
+            PasswordTokenForReset::where('email', $user->email)->delete();
 
-        JobToNotifyUserAfterPasswordUpdated::dispatch($user, $domain);
+            $domain = request()->getSchemeAndHttpHost();
 
-        session()->forget('reset_email');
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Mot de passe mis à jour',
+                'delay'       => 0,
+                'description' => "Votre mot de passe a été réinitialisé avec succès!"
+            ]);
 
-        return redirect()->route('login')
+            JobToNotifyUserAfterPasswordUpdated::dispatch($user, $domain);
+
+            session()->forget('reset_email');
+
+            session()->forget('email');
+
+            return redirect()->route('login')
             ->with('success', 'Mot de passe mis à jour.');
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Echec de mise à jour du mot de passe',
+                'description' => "La mise à jour de votre mot de passe a échoué!",
+            ]);
+
+        }
     }
 
     /* =========================
         HANDLE LINK CLICK
     ==========================*/
-    public function mount()
+    public function mount(?string $token = null, ?string $email = null)
     {
-        if (request()->has('token') && request()->has('email')) {
+        if(session()->has('email')){
 
-            $reset = PasswordTokenForReset::where('email', request('email'))->first();
+            $this->step = 2;
+        }
+        elseif(session()->has('reset_email')){
 
-            if ($reset && Hash::check(request('token'), $reset->token)) {
+            $this->step = 3;
+        }
+        if ($token && $email) {
+
+            $reset = PasswordTokenForReset::where('email', $email)->first();
+
+            if ($reset && Hash::check($token, $reset->token)) {
 
                 session(['reset_email' => request('email')]);
 
-                $this->email = request('email');
+                $this->email = $email;
 
                 $this->step = 3;
+
             }
         }
+    }
+
+    public function comeBack()
+    {
+        $this->reset();
+
+        session()->forget('reset_email');
+
+        session()->forget('email');
+
+        $this->resetErrorBag();
+
+
     }
 
     public function render()

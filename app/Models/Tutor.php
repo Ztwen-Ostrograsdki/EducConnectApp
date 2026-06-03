@@ -31,11 +31,13 @@ class Tutor extends Model
         'blocked',
         'blocked_reasons',
         'account_created_at',
+        'birth_date',
     ];
 
     protected $casts = [
         'blocked' => 'boolean',
         'account_created_at' => 'datetime',
+        'birth_date' => 'date',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────

@@ -27,6 +27,7 @@ class JobToSendPasswordResetTokenToUser implements ShouldQueue
     public function __construct(
         public PasswordTokenForReset $password_reset_token,
         public string $code,
+        public string $token,
         public string $domain,
     )
     {
@@ -60,13 +61,15 @@ class JobToSendPasswordResetTokenToUser implements ShouldQueue
 
             $greating = $user?->greating();
 
+            $url = $domain . "/" . "password-reset/" . $this->token . "/" . $user->email;
+
             $receiver_html = EmailTemplateBuilder::render('send-password-reset-token-template', [
                 'for_greating'           => $greating,
                 'key'                    => $this->code,
                 'email'                  => $user->email,
                 'school_name'            => $user->school_name,
                 'domain'                 => $domain,
-                'url'                    => $domain . '/reset-password',
+                'url'                    => $url,
             ]);
 
             Mail::to($this->password_reset_token->email)->queue(

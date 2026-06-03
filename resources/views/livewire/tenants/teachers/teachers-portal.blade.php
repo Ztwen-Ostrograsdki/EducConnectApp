@@ -53,7 +53,7 @@
                 </div>
 
                 {{-- ACTIONS --}}
-                <div class="flex flex-wrap gap-3">
+                <div class="flex flex-wrap items-center gap-3">
 
                     <button class="h-11 px-5 rounded-2xl
                                    bg-slate-800
@@ -64,14 +64,14 @@
 
                     </button>
 
-                    <button class="h-11 px-5 rounded-2xl
+                    <a href="{{ route('tenant.teachers.create') }}"
+                        class="py-2.5 px-5 rounded-2xl
                                    bg-indigo-500
                                    hover:bg-indigo-600
                                    transition-all text-sm">
-
                         Ajouter Enseignant
 
-                    </button>
+                    </a>
 
                 </div>
 

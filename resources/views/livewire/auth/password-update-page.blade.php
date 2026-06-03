@@ -42,7 +42,7 @@
         </div>
 
         {{-- FORM --}}
-        <form wire:submit="updatePassword" class="p-6 space-y-6">
+        <form wire:submit.prevent="updatePassword" class="p-6 space-y-6">
 
             {{-- PASSWORD ACTUEL --}}
             <div>
@@ -116,22 +116,14 @@
 
                 {{-- FORCE PASSWORD --}}
                 <div class="mt-4">
-
                     <div class="h-2 rounded-full
                                bg-slate-800 overflow-hidden">
-
-                        <div class="h-full rounded-full
-                                   bg-emerald-500" style="width: 75%">
+                        <div class="h-full rounded-full transition-all {{ $password_strength_bg }} {{ $password_strength_with }}">
                         </div>
-
                     </div>
-
-                    <p class="mt-2 text-xs text-emerald-400">
-
-                        Mot de passe fort
-
+                    <p class="mt-2 text-xs {{ $password_strength_text_color }}">
+                        {{ $password_strength_text }}
                     </p>
-
                 </div>
 
                 @error('password')
@@ -152,7 +144,7 @@
                 </label>
 
                 <div class="relative">
-                    <input type="password" wire:model="password_confirmation" class="w-full h-12 rounded-2xl border border-slate-700 bg-slate-800 px-4 pr-12 focus:border-indigo-500 focus:ring-0">
+                    <input type="password" wire:model.live="password_confirmation" class="w-full h-12 rounded-2xl border border-slate-700 bg-slate-800 px-4 pr-12 focus:border-indigo-500 focus:ring-0">
                 </div>
 
             </div>
@@ -160,30 +152,21 @@
             {{-- ACTIONS --}}
             <div class="flex flex-col sm:flex-row
                        justify-end gap-3">
-
-                <button type="button" class="h-12 px-6
-                           rounded-2xl
-                           border border-slate-700
-                           bg-slate-800">
-
+                <a href="{{ route('tenant.my.profil') }}" type="button" class="py-2 px-6 rounded-2xl border border-slate-700 bg-slate-800 hover:bg-slate-900">
                     Annuler
-
-                </button>
-
-                <button type="submit"
-                    class="h-12 px-6
-                           rounded-2xl
-                           bg-indigo-500
-                           hover:bg-indigo-400
-                           text-white
-                           font-semibold
-                           flex items-center justify-center gap-2">
-
-                    <x-lucide-save class="w-5 h-5" />
-
-                    Enregistrer le mot de passe
-
-                </button>
+                </a>
+                @if ($current_password && $password && $password_confirmation)
+                    <button type="submit" wire:loading.attr="disabled" class="py-2 px-6 rounded-2xl bg-indigo-700 hover:bg-indigo-900 text-white font-semibold flex items-center justify-center gap-2">
+                        <span class="flex items-center gap-1.5" wire:target='updatePassword' wire:loading.remove>
+                            <x-lucide-save class="w-5 h-5" />
+                            Enregistrer le mot de passe
+                        </span>
+                        <span wire:target='updatePassword' wire:loading.flex class="items-center gap-1.5">
+                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                            <span>Enregistrement...</span>
+                        </span>
+                    </button>
+                @endif
 
             </div>
 

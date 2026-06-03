@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('adresse')->nullable()->default(null);
             $table->string('country')->nullable()->default(null);
             $table->string('city')->nullable()->default(null);
+            $table->string('department')->nullable()->default(null);
             $table->string('email')->unique();
             $table->string('profil_photo')->nullable()->default(null);
 

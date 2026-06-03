@@ -59,6 +59,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'profil_photo',
             'request_id',
             'department',
+            'birth_date',
             'gender',
         ];
     }
@@ -82,6 +83,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      */
     protected $casts = [
         'date_expiration_abonnement' => 'datetime',
+        'birth_date' => 'date',
     ];
 
     /**

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('contacts')->nullable();
             $table->string('whatsapp_number')->nullable();
             $table->string('profession')->nullable()->default(null);
+            $table->date('birth_date')->nullable()->default(null);
             $table->string('adresse')->nullable();
             $table->enum('status', ['active', 'unactive'])->default('active');
             $table->boolean('blocked')->default(false);

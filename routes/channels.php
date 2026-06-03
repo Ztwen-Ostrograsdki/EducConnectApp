@@ -24,6 +24,8 @@ Broadcast::channel('tenant.{tenantId}.directeur', function (User $user, string $
         && $user->hasRole('directeur');
 });
 
+
+
 // ── Channel réservé aux enseignants ───────────────────────
 // ex: emploi du temps, notes, absences
 Broadcast::channel('tenant.{tenantId}.enseignant', function (User $user, string $tenantId) {

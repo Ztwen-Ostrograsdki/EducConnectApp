@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Livewire\Auth\PasswordForgotPage;
 use App\Livewire\Auth\PasswordUpdatePage;
+use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
@@ -23,6 +24,7 @@ use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsPortal;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
+use App\Livewire\Tenants\Teachers\CreateTeachers;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
@@ -54,7 +56,9 @@ Route::middleware([
     // ─── Auth ─────────────────────────────────────────────────────────
     Route::get('/login', TenantLogin::class)->name('login')->middleware('guest:tenant');
 
-    Route::get('/mot-de-passe-oublie', PasswordForgotPage::class)->middleware('guest:tenant')->name('tenant.password.forgot');
+    Route::get('/mot-de-passe-oublie/{token?}/{email?}', PasswordForgotPage::class)->middleware('guest:tenant')->name('tenant.password.forgot');
+
+    Route::get('/password-reset/{?token}/{?email}', ResetPasswordPage::class)->middleware('guest:tenant')->name('tenant.password.reset');
 
     Route::get('/', HomePage::class)->name('tenants.home');
 
@@ -73,36 +77,40 @@ Route::middleware([
         Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
         // ── Directeur ─────────────────────────────────────────────────
-        Route::middleware('role:directeur')->prefix('ecole')->name('tenant.')->group(function () {
-            Route::get('/dashboard', TenantDashboard::class)->name('dashboard');
+        Route::middleware('role:directeur')->prefix('administration')->name('tenant.')->group(function () {
+            Route::get('/', TenantDashboard::class)->name('dashboard');
+
+
             
-            Route::get('/dashboard/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
+            Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
-            Route::get('/dashboard/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
+            Route::get('/enseignants/ajout', CreateTeachers::class)->name('teachers.create');
 
-            Route::get('/dashboard/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
+            Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
 
-            Route::get('/dashboard/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
+            Route::get('/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
 
-            Route::get('/dashboard/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
+            Route::get('/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
-            Route::get('/dashboard/promotions/portail-des-promotions', PromotionsPortal::class)->name('promotions.portal');
+            Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
-            Route::get('/dashboard/promotions/portail-des-promotions/profil-promotion/ID={promotion_slug}', PromotionProfil::class)->name('promotion.profil');
+            Route::get('/promotions/portail-des-promotions', PromotionsPortal::class)->name('promotions.portal');
 
-            Route::get('/dashboard/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
+            Route::get('/promotions/portail-des-promotions/profil-promotion/ID={promotion_slug}', PromotionProfil::class)->name('promotion.profil');
 
-            Route::get('/dashboard/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
+            Route::get('/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
 
-            Route::get('/dashboard/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
+            Route::get('/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
 
-            Route::get('/dashboard/filieres/portail-des-filieres/profil-filiere/ID={filiar_slug}', FiliarProfil::class)->name('filiar.profil');
+            Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
 
-            Route::get('/dashboard/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
+            Route::get('/filieres/portail-des-filieres/profil-filiere/ID={filiar_slug}', FiliarProfil::class)->name('filiar.profil');
 
-            Route::get('/dashboard/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
+            Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
 
-            Route::get('/dashboard/statistiques-semestrielles/', PeriodicalStatistiqueComponent::class)->name('stats.general');
+            Route::get('/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
+
+            Route::get('/statistiques-semestrielles/', PeriodicalStatistiqueComponent::class)->name('stats.general');
 
         });
 

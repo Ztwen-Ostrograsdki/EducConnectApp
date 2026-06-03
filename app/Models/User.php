@@ -29,6 +29,7 @@ class User extends Authenticatable
         'job_name',
         'country',
         'city',
+        'department',
         'email',
         'password',
         'profil_photo',
@@ -43,6 +44,7 @@ class User extends Authenticatable
         'logged_count',
         'cannot_edit_classes',
         'blocked',
+        'birth_date',
         'gender'
     ];
 
@@ -65,6 +67,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'birthdate' => 'date',
             'password' => 'hashed',
             'cannot_edit_classes' => 'boolean',
             'blocked' => 'boolean',
