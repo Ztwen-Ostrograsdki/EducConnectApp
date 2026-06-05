@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Teachers;
 
+use App\Events\ATeacherCreationFailedEvent;
 use App\Events\InitProcessToCreateTeachersEvent;
 use App\Events\TeacherBatchProgressUpdatedEvent;
 use App\Jobs\JobToCreateTeacher;
@@ -12,12 +13,14 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class CreateTeachers extends Component
 {
-    use WireUiActions;
+    use WireUiActions, WithFileUploads;
 
     public $adresse;
 
@@ -53,6 +56,10 @@ class CreateTeachers extends Component
     public string $gender = '';
 
     public ?string $editingUuid = null;
+
+    public $excelFile = null;
+    public bool $showImportMode = false;
+    public array $importErrors = [];
 
 
     public int $step = 1;
@@ -120,6 +127,14 @@ class CreateTeachers extends Component
 
         $countries = ['Bénin' => 'Bénin'];
 
+        if(session()->has('showImportMode')){
+
+            $this->showImportMode = session('showImportMode');
+
+            session()->put('showImportMode', $this->showImportMode);
+            
+        }
+
 
         return view('livewire.tenants.teachers.create-teachers', compact('imports', 'countries', 'departments', 'genders'));
     }
@@ -144,8 +159,6 @@ class CreateTeachers extends Component
 
     public function addTeacher(): void
     {
-        $this->validate();
-
         $teachers = session(
             'pending_teachers',
             []
@@ -190,13 +203,13 @@ class CreateTeachers extends Component
 
         $teachers[] = [
             'uuid' => (string) Str::uuid(),
-            'name' => $this->name,
+            'name' => Str::upper($this->name),
             'department' => $this->department,
             'gender' => $this->gender,
-            'prenames' => $this->prenames,
+            'prenames' => ucwords($this->prenames),
             'job_name' => $this->job_name,
             'contacts' => $this->contacts,
-            'country' => $this->country,
+            'country' => Str::upper($this->country),
             'city' => $this->city,
             'birth_date' => $this->birth_date,
             'email' => $this->email,
@@ -362,6 +375,8 @@ class CreateTeachers extends Component
         );
     }
 
+
+
     public function resetForm(): void
     {
         $this->reset([
@@ -393,13 +408,128 @@ class CreateTeachers extends Component
         }
 
         InitProcessToCreateTeachersEvent::dispatch(tenant('id'), $teachers);
+    }
+    
+    public function clearAddedData()
+    {
+        
+        $this->resetExcept('showImportMode');
+
+        $this->resetErrorBag();
+
+        session()->forget('pending_teachers');
 
         $this->notification()->success(
-            title: 'Lancement',
-            description: 'Création des enseignants en cours...'
+            title: 'Nettoyage effectué!',
+            description: 'Les données ajoutées sont été nettoyées'
         );
+        
+    }
 
 
+
+    /**
+     * Déclenché quand un fichier est uploadé
+     */
+    public function updatedExcelFile(): void
+    {
+        $this->importErrors = [];
+
+        $this->validate([
+            'excelFile' => 'required|file|mimes:xlsx,xls|max:2048',
+        ]);
+
+        try {
+            $path = $this->excelFile->getRealPath();
+
+            $spreadsheet = IOFactory::load($path);
+            $sheet       = $spreadsheet->getActiveSheet();
+            $rows        = $sheet->toArray(null, true, true, true);
+
+            // Retire la ligne d'en-tête
+            array_shift($rows);
+
+            $teachers        = session('pending_teachers', []);
+            $existingEmails  = collect($teachers)->pluck('email')->map('strtolower')->toArray();
+            $errors          = [];
+
+            foreach ($rows as $index => $row) {
+                $line  = $index + 2; // ligne Excel (header = 1)
+                $email = strtolower(trim($row['C'] ?? ''));
+
+                // Colonnes attendues dans le fichier Excel :
+                // A = name, B = prenames, C = email, D = contacts,
+                // E = gender, F = country, G = department, H = city,
+                // I = job_name, J = birth_date
+
+                if (empty($email)) {
+                    $errors[] = "Ligne {$line} : email manquant.";
+                    continue;
+                }
+
+                if (in_array($email, $existingEmails)) {
+                    $errors[] = "Ligne {$line} : email {$email} déjà dans la liste.";
+                    continue;
+                }
+
+                if (User::where('email', $email)->exists()) {
+                    $errors[] = "Ligne {$line} : email {$email} déjà en base.";
+                    continue;
+                }
+
+                $teachers[] = [
+                    'uuid'       => (string) Str::uuid(),
+                    'name'       => Str::upper(trim($row['A']) ?? ''),
+                    'prenames'   => ucwords(trim($row['B'] ) ?? ''),
+                    'email'      => $email,
+                    'contacts'   => trim($row['D'] ?? ''),
+                    'gender'     => trim($row['E'] ?? ''),
+                    'country'    => Str::upper(trim($row['F']) ?? ''),
+                    'department' => trim($row['G'] ?? ''),
+                    'city'       => trim($row['H'] ?? ''),
+                    'job_name'   => trim($row['I'] ?? ''),
+                    'birth_date' => trim($row['J'] ?? '') ?: null,
+                ];
+
+                $existingEmails[] = $email;
+            }
+
+            session(['pending_teachers' => $teachers]);
+
+            $this->importErrors = $errors;
+            $this->excelFile    = null;
+            $this->showImportMode = false;
+
+            $successCount = count($teachers) - (count(session('pending_teachers', [])) - count($teachers));
+
+            $this->notification()->success(
+                title: 'Import réussi',
+                description: count($teachers) . ' enseignant(s) chargé(s) depuis le fichier.',
+            );
+
+            if (! empty($errors)) {
+                $this->notification()->warning(
+                    title: 'Lignes ignorées',
+                    description: count($errors) . ' ligne(s) ignorée(s). Voir les détails.',
+                );
+            }
+
+        } catch (\Throwable $e) {
+            $this->notification()->error(
+                title: 'Erreur de lecture',
+                description: 'Impossible de lire le fichier : ' . $e->getMessage(),
+            );
+        }
+    }
+
+    public function toggleImportMode(): void
+    {
+        $this->showImportMode = ! $this->showImportMode;
+
+        session()->put('showImportMode', $this->showImportMode);
+
+        $this->importErrors   = [];
+        $this->excelFile      = null;
     }
 
 }

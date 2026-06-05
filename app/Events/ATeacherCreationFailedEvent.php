@@ -45,8 +45,25 @@ class ATeacherCreationFailedEvent implements ShouldBroadcast
 
         $data = $task->payload;
 
+        $error = null;
+
+        if($this->error){
+
+            $error = $this->error;
+        }
+        else{
+
+            $this->error = $task->error;
+        }
+
         $name = $data['name'] . ' ' . $data['prenames'] . '(' . $data['email'] . ')';
 
-        return ['tenantId' => $this->tenantId, 'error' => $task->error, 'userName' => $name];
+        return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
+    }
+
+
+    public function broadcastAs(): string
+    {
+        return 'teacher.creation.failed'; 
     }
 }

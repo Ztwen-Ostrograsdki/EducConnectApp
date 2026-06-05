@@ -65,8 +65,16 @@ class JobToCreateTeacher implements ShouldQueue
 
             // Anti-doublon
             if (User::where('email', $payload['email'])->exists()) {
+
                 $task->update(['status' => 'success']);
+
                 $this->dispatchStatus();
+
+                ATeacherCreationFailedEvent::dispatch(
+                    $this->tenantId,
+                    $this->taskId,
+                    "Ce compte est déjà existant dans la base de données!",
+                );
                 return;
             }
 

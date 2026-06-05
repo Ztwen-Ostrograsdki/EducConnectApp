@@ -26,6 +26,7 @@ use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
+use App\Livewire\Tenants\Teachers\TeachersCreationMonitorComponent;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\UpdateProfilePhoto;
@@ -85,6 +86,8 @@ Route::middleware([
             Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
             Route::get('/enseignants/ajout', CreateTeachers::class)->name('teachers.create');
+
+            Route::get('/enseignants/status-des-ajouts', TeachersCreationMonitorComponent::class)->name('teachers.crud.tasks');
 
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
 

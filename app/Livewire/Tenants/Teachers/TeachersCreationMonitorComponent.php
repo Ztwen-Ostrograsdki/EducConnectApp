@@ -5,13 +5,19 @@ namespace App\Livewire\Tenants\Teachers;
 use App\Jobs\JobToCreateTeacher;
 use App\Models\ImportTask;
 use Illuminate\Support\Facades\Bus;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
+#[Layout('livewire.layouts.tenant-auth-layout')]
 class TeachersCreationMonitorComponent extends Component
 {
+    use WireUiActions;
 
     public ?string $batchId = null;
     public string $tenantId;
+    public int $counter = 3;
 
     public function mount(?string $batchId = null): void
     {
@@ -26,21 +32,23 @@ class TeachersCreationMonitorComponent extends Component
     public function getListeners(): array
     {
         $listeners = [
-            "echo-private:tenant.{$this->tenantId},TeachersCreationTaskStartedEvent" => 'onBatchStarted',
-            "echo-private:tenant.{$this->tenantId},ATeacherCreationFailedEvent" => 'teacherCreationFailed',
+            "echo-private:tenant.{$this->tenantId}.directeur,TeachersCreationTaskStartedEvent" => 'onBatchStarted',
         ];
 
         if ($this->batchId) {
-            $listeners["echo-private:tenant.{$this->tenantId},TeachersCreationProcessProgressEvent"] = 'refreshTask';
-            $listeners["echo-private:tenant.{$this->tenantId},ProcessToCreateTeachersCompletedSuccesfullyEvent"] = '$refresh';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,TeachersCreationProcessProgressEvent"] = 'refreshTask';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,ProcessToCreateTeachersCompletedSuccesfullyEvent"] = '$refresh';
         }
 
         return $listeners;
     }
 
+
     public function onBatchStarted(array $data): void
     {
         $this->batchId = $data['batchId'];
+
+        $this->counter = randNumber();
 
         session(['current_batch_id' => $this->batchId]);
         $this->notification()->send([
@@ -52,14 +60,22 @@ class TeachersCreationMonitorComponent extends Component
         // Les listeners se mettent à jour automatiquement car getListeners() est rappelé
     }
 
-    public function teacherCreationFailed(array $data)
+    #[On("RechargerEvent")]
+    public function recharger($data)
     {
         $this->notification()->send([
             'icon'        => 'error',
-            'title'       => "L'insertion de " . $data['userName'] . " a échoué",
+            'title'       => "L'insertion de ",
             'delay'       => 0,
-            'description' => "Les raisons: " . $data['error']
+            'description' => "Les raisons: "
         ]);
+    }
+    
+    #[On("ATeacherCreationFailedLiveEvent")]
+    public function teacherCreationFailed(array $data)
+    {
+        $this->counter = randNumber();
+        
     }
 
 
@@ -87,6 +103,8 @@ class TeachersCreationMonitorComponent extends Component
 
     public function refreshTask(array $data): void
     {
+        $this->counter = randNumber();
+
         $this->dispatch('task-updated', id: $data['task']['id']);
 
         $this->notification()->send([
@@ -116,6 +134,7 @@ class TeachersCreationMonitorComponent extends Component
     {
         $task = ImportTask::findOrFail($taskId);
         $task->update(['status' => 'pending']);
+         $this->counter = randNumber();
 
         dispatch(new JobToCreateTeacher(tenant('id'), $task->id));
     }
@@ -123,6 +142,7 @@ class TeachersCreationMonitorComponent extends Component
     public function deleteOne(int $taskId): void
     {
         ImportTask::destroy($taskId);
+         $this->counter = randNumber();
     }
 
 }

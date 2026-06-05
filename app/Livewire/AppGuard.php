@@ -59,6 +59,7 @@ class AppGuard extends Component
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.paiement.recu"]       = 'handlePaiement';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.enseignant.inscrit"]   = 'handleEnseignantInscrit';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.roles.seed.failed"]   = 'handleRolesSeedsFailed';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teacher.creation.failed"]   = 'teacherCreationFailed';
         }
 
         if ($user->hasRole('enseignant')) {
@@ -103,6 +104,19 @@ class AppGuard extends Component
 
     // ── Handlers directeur ────────────────────────────────
 
+    public function teacherCreationFailed(array $data)
+    {
+        $this->notification()->send([
+            'icon'        => 'error',
+            'title'       => "L'insertion de " . $data['userName'] . " a échoué",
+            'delay'       => 0,
+            'description' => "Les raisons: " . $data['error']
+        ]);
+
+        $this->dispatch("ATeacherCreationFailedLiveEvent", $data);
+    }
+    
+    
     public function handlePaiement(array $event): void
     {
         $this->notification()->send([
