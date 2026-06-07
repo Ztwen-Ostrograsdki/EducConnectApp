@@ -40,4 +40,22 @@ class TeachersCreationProcessProgressEvent implements ShouldBroadcast
             new PrivateChannel('tenant.' . $this->tenantId . '.directeur'),
         ];
     }
+
+    public function broadcastWith() : array
+    {
+
+        return [
+            'tenantId' => $this->tenantId,
+            'batchId' => $this->batchId,
+            'totalJobs' => $this->totalJobs,
+            'processed' => $this->processed,
+            'percentage' => $this->percentage,
+            'failed' => $this->failed,
+
+        ];
+    }
+    public function broadcastAs()
+    {
+        return 'teachers.creation.tasks.progress';
+    }
 }

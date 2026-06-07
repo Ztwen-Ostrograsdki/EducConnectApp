@@ -29,11 +29,19 @@ class RefreshEducCommand extends Command
 
             if ($this->option('reset')) {
 
+                $this->warn('Reset de la base des tenants...');
+
+                Artisan::call('tenants:migrate-fresh');
+
                 $this->warn('Reset de la base centrale...');
+
 
                 Artisan::call('migrate:fresh', [
                     '--force' => true,
                 ]);
+
+
+
 
                 $this->line(Artisan::output());
 

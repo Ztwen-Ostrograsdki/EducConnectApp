@@ -10,17 +10,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeachersCreationTaskStartedEvent implements ShouldBroadcast
+class StudentsCreationProcessProgressEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
+     /**
      * Create a new event instance.
      */
     public function __construct(
         public string $tenantId, 
         public string $batchId, 
         public int $totalJobs, 
+        public float $processed, 
+        public float $percentage,
+        public int $failed,
     )
     {
         //
@@ -45,11 +48,14 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
             'tenantId' => $this->tenantId,
             'batchId' => $this->batchId,
             'totalJobs' => $this->totalJobs,
+            'processed' => $this->processed,
+            'percentage' => $this->percentage,
+            'failed' => $this->failed,
 
         ];
     }
     public function broadcastAs()
     {
-        return 'teachers.creations.tasks.started';
+        return 'students.creation.tasks.progress';
     }
 }

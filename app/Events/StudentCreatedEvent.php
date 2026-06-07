@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\ImportTask;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeachersCreationTaskStartedEvent implements ShouldBroadcast
+class StudentCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,8 +20,8 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
      */
     public function __construct(
         public string $tenantId, 
-        public string $batchId, 
-        public int $totalJobs, 
+        public int $taskId,
+        public ?string $error = null,
     )
     {
         //
@@ -38,18 +39,31 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastWith() : array
+    public function broadcastWith(): array
     {
+        $task = ImportTask::findOrFail($this->taskId);
 
-        return [
-            'tenantId' => $this->tenantId,
-            'batchId' => $this->batchId,
-            'totalJobs' => $this->totalJobs,
+        $data = $task->payload;
 
-        ];
+        $error = null;
+
+        if($this->error){
+
+            $error = $this->error;
+        }
+        else{
+
+            $this->error = $task->error;
+        }
+
+        $name = $data['name'] . ' ' . $data['prenames'];
+
+        return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
     }
-    public function broadcastAs()
+
+
+    public function broadcastAs(): string
     {
-        return 'teachers.creations.tasks.started';
+        return 'student.creation.success'; 
     }
 }

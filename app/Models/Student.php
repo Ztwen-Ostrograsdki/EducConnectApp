@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Helpers\HasQrCode;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasQrCode;
 
     protected $table = 'students';
 
@@ -25,14 +28,35 @@ class Student extends Model
         'gender',
         'birth_date',
         'birth_place',
-        'nationality',
-        'address',
+        'country',
+        'adresse',
+        'city',
+        'department',
+        'email',
+        'profil_photo',
+        'user_id',
+        'mother_full_name',
+        'father_full_name',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
-        'contacts' => 'array',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            
+            
+        });
+
+        static::created(function ($model) {
+            
+        });
+    }
+
+
 
     // ─── Relations ────────────────────────────────────────────────────
 
@@ -42,6 +66,11 @@ class Student extends Model
     public function classes(): HasMany
     {
         return $this->hasMany(YearlyClasseStudent::class, 'student_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

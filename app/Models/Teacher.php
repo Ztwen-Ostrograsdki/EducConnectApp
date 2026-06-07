@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HasQrCode;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Teacher extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasQrCode;
 
     protected $table = 'teachers';
 
@@ -20,16 +21,8 @@ class Teacher extends Model
         'user_id',
         'identifiant',
         'identity_card_details',
-        'name',
-        'prenames',
         'email',
-        'contacts',
-        'gender',
-        'birth_date',
-        'birth_place',
-        'nationality',
-        'address',
-        'photo',
+        'adresse',
         'specialties',
         'diploma',
         'blocked',
@@ -39,11 +32,9 @@ class Teacher extends Model
     ];
 
     protected $casts = [
-        'birth_date' => 'date',
         'affiliated_at' => 'datetime',
         'blocked' => 'boolean',
         'identity_card_details' => 'array',
-        'contacts' => 'array',
         'specialties' => 'array',
         'diploma' => 'array',
     ];
@@ -51,6 +42,20 @@ class Teacher extends Model
     protected $hidden = [
         'identity_card_details',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            
+            
+        });
+
+        static::created(function ($model) {
+            
+        });
+    }
+
 
     // ─── Relations ────────────────────────────────────────────────────
 

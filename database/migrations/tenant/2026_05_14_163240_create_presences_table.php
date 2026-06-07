@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('presences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
+            $table->text('qr_code')->nullable();
             $table->foreignId('classe_id')->constrained('classes')->cascadeOnDelete();
             $table->foreignId('school_year_id')->constrained('school_years');
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();

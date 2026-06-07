@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\ImportTask;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,14 +11,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeacherCreatedEvent
+class TeacherCreatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(
+        public string $tenantId, 
+        public int $taskId,
+        public ?string $error = null,
+    )
     {
         //
     }
@@ -30,7 +35,35 @@ class TeacherCreatedEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('tenant.' . $this->tenantId . '.directeur'),
         ];
+    }
+
+    public function broadcastWith(): array
+    {
+        $task = ImportTask::findOrFail($this->taskId);
+
+        $data = $task->payload;
+
+        $error = null;
+
+        if($this->error){
+
+            $error = $this->error;
+        }
+        else{
+
+            $this->error = $task->error;
+        }
+
+        $name = $data['name'] . ' ' . $data['prenames'] . '(' . $data['email'] . ')';
+
+        return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
+    }
+
+
+    public function broadcastAs(): string
+    {
+        return 'teacher.creation.success'; 
     }
 }

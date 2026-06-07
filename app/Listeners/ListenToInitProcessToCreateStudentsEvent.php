@@ -2,23 +2,22 @@
 
 namespace App\Listeners;
 
-use App\Events\InitProcessToCreateTeachersEvent;
-use App\Events\ProcessToCreateTeachersCompletedSuccesfullyEvent;
-use App\Events\TeachersCreationProcessProgressEvent;
-use App\Events\TeachersCreationTaskStartedEvent;
-use App\Jobs\JobToCreateTeacher;
+use App\Events\InitProcessToCreateStudentsEvent;
+use App\Events\ProcessToCreateStudentsCompletedSuccesfullyEvent;
+use App\Events\StudentsCreationTaskStartedEvent;
+use App\Jobs\JobToCreateStudent;
 use App\Models\ImportTask;
 use Illuminate\Bus\Batch;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Bus;
-use Throwable;
 
-class ListenToInitProcessToCreateTeachers
+class ListenToInitProcessToCreateStudentsEvent
 {
     /**
-     * @param InitProcessToCreateTeachersEvent $event
-     * @return void
+     * Handle the event.
      */
-    public function handle(InitProcessToCreateTeachersEvent $event): void
+    public function handle(InitProcessToCreateStudentsEvent $event): void
     {
         $tenantId = $event->tenantId;
 
@@ -27,7 +26,7 @@ class ListenToInitProcessToCreateTeachers
                 
             })
             ->finally(function (Batch $batch) use ($tenantId) {
-                ProcessToCreateTeachersCompletedSuccesfullyEvent::dispatch(
+                ProcessToCreateStudentsCompletedSuccesfullyEvent::dispatch(
                     tenantId:   $tenantId,
                     batchId:    $batch->id,
                     totalJobs:  $batch->totalJobs,
@@ -40,32 +39,30 @@ class ListenToInitProcessToCreateTeachers
             ->name('teachers_creation')
             ->dispatch();
 
-        $jobs = collect($event->teachers)->map(function ($teacherData) use ($batch, $tenantId, $event) {
+        $jobs = collect($event->students)->map(function ($studentsData) use ($batch, $tenantId, $event) {
             $task = ImportTask::create([
                 'batch_id'  => $batch->id,
-                'payload'   => $teacherData,
+                'payload'   => $studentsData,
                 'status'    => 'pending',
-                'task_name' => 'teachers-creation',
+                'task_name' => 'students-creation',
                 'error'     => null,
                 'attempts'  => 0,
                 'crud'      => 'create',
             ]);
 
-            return new JobToCreateTeacher(
+            return new JobToCreateStudent(
                 tenantId: $tenantId,
                 taskId:   $task->id,
-                domain:   $event->domain,
+                domain: $event->domain,
             );
         });
 
-        TeachersCreationTaskStartedEvent::dispatch(
+        StudentsCreationTaskStartedEvent::dispatch(
             tenantId:  $tenantId,
             batchId:   $batch->id,
             totalJobs: $jobs->count(),
         );
 
         $batch->add($jobs);
-
-        
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeachersCreationTaskStartedEvent implements ShouldBroadcast
+class StudentsCreationTaskStartedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -50,6 +50,6 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
     }
     public function broadcastAs()
     {
-        return 'teachers.creations.tasks.started';
+        return 'students.creations.tasks.started';
     }
 }

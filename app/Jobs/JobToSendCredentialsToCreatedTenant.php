@@ -78,7 +78,7 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
                 $this->user = $user;
             }
 
-            $lien_for_tenant = route('login');
+            $lien_for_tenant = $tenant->getDomainName() . "/login";
 
             $greating = $tenant?->greating();
 

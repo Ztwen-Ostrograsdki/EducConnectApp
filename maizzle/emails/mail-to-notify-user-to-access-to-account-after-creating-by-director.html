@@ -1,0 +1,102 @@
+<x-main>
+    <table class="w-full font-sans" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td class="bg-blue-700 p-8 text-center">
+                <img src="{{ logo_url }}" alt="Logo {{ app_name }}" class="mx-auto mb-4 h-24 w-24 rounded-full" width="96" height="96" />
+                <h1 class="m-0 text-2xl font-bold text-white">{{ app_name }}</h1>
+                <p class="m-0 mt-1 text-sm text-blue-200">{{ app_devise }}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="bg-white px-8 py-6">
+                <h2 class="mb-4 text-xl font-semibold text-gray-800">{{ for_greating }}</h2>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Vous avez été ajouté par le l'administration de l'école {{ school_name }}</p>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Votre espace personnel est à présent actif et accessible.</p>
+                <p class="m-0 text-base leading-relaxed text-gray-600">Notre équipe est disponible 24h/24 et 7j/7 pour vous accompagner dans la prise en main de votre espace&nbsp;!</p>
+                <p class="m-0 text-base leading-relaxed text-orange-800">Veuillez après connexion modifier immédiatement votre mot de passe !</p>
+
+                <table class="mt-6 w-full rounded-2xl shadow" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="rounded-t-2xl bg-sky-400 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gray-900">Détails de votre espace {{ role }}</td>
+                    </tr>
+                    <tr>
+                        <td class="rounded-b-2xl bg-sky-50 px-4 py-4">
+                            <table class="w-full" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Nom et prénoms</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ full_name }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Contact</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ contacts }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">École</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">
+                                            {{ school_name }}
+                                            <span class="ml-1 text-xs font-normal text-gray-500">({{ simple_name }})</span>
+                                        </p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Domaine</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ domain }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/2 py-2 pr-4 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Email / Nom utilisateur</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ email }}</p>
+                                    </td>
+                                    <td class="w-1/2 py-2 align-top">
+                                        <p class="m-0 text-xs font-medium uppercase text-gray-500">Clé lors de la première connexion</p>
+                                        <p class="m-0 mt-1 text-sm font-semibold text-gray-800">{{ key }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="mt-8 w-full" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="text-center">
+                            <a href="{{ space_url }}" class="inline-block rounded-xl bg-blue-700 px-8 py-4 text-base font-bold text-white no-underline" target="_blank" rel="noopener noreferrer">Accéder à mon espace →</a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="pt-4 text-center text-xs text-gray-400">Si le bouton ne fonctionne pas, ou si vous avez un doute sur le bouton, vous pouvez copier et coller le lien ci-dessous dans votre navigateur&nbsp;:</td>
+                    </tr>
+
+                    <tr>
+                        <td class="pt-2 text-center">
+                            <table class="mx-auto" cellpadding="0" cellspacing="0" role="presentation">
+                                <tr>
+                                    <td class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+                                        <p class="m-0 break-all font-mono text-xs text-blue-700">{{ space_url }}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <p class="mt-8 text-sm text-gray-600">
+                    Cordialement,
+                    <br />
+                    <strong class="text-gray-800">L'équipe {{ app_name }}</strong>
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="bg-gray-100 px-8 py-5 text-center">
+                <p class="m-0 text-xs text-gray-400">&copy; {{ date }} {{ app_name }}. Tous droits réservés.</p>
+            </td>
+        </tr>
+    </table>
+</x-main>

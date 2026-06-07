@@ -7,10 +7,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeachersCreationTaskStartedEvent implements ShouldBroadcast
+class DefaultForAnyEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,8 +20,7 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
      */
     public function __construct(
         public string $tenantId, 
-        public string $batchId, 
-        public int $totalJobs, 
+        public ?string $message = null,
     )
     {
         //
@@ -38,18 +38,16 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastWith() : array
+    public function broadcastWith(): array
     {
 
-        return [
-            'tenantId' => $this->tenantId,
-            'batchId' => $this->batchId,
-            'totalJobs' => $this->totalJobs,
 
-        ];
+        return ['tenantId' => $this->tenantId, 'message' => $this->message];
     }
-    public function broadcastAs()
+
+
+    public function broadcastAs(): string
     {
-        return 'teachers.creations.tasks.started';
+        return 'tenant.any.event'; 
     }
 }

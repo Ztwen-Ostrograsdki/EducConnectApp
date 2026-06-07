@@ -19,8 +19,10 @@ use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
+use App\Livewire\Tenants\Students\CreateStudents;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
+use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
 use App\Livewire\Tenants\Students\StudentsPortal;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
@@ -88,6 +90,11 @@ Route::middleware([
             Route::get('/enseignants/ajout', CreateTeachers::class)->name('teachers.create');
 
             Route::get('/enseignants/status-des-ajouts', TeachersCreationMonitorComponent::class)->name('teachers.crud.tasks');
+
+
+            Route::get('/eleves/ajout', CreateStudents::class)->name('students.create');
+
+            Route::get('/eleves/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
 
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
 

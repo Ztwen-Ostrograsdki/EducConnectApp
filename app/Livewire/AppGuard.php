@@ -59,7 +59,15 @@ class AppGuard extends Component
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.paiement.recu"]       = 'handlePaiement';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.enseignant.inscrit"]   = 'handleEnseignantInscrit';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.roles.seed.failed"]   = 'handleRolesSeedsFailed';
+
+
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.any.event"]   = 'handleAnyEventer';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teacher.creation.failed"]   = 'teacherCreationFailed';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teacher.creation.success"]   = 'teacherCreationDone';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teachers.creation.completed"]   = 'teachersCreationsCompleted';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teachers.creations.tasks.started"]   = 'teachersCreationsTasksStarted';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teachers.creation.tasks.progress"]   = 'teachersCreationsTasksProgress';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teachers.creation.tasks.statuses.updated"]   = 'teachersCreationsTasksStatusesUpdated';
         }
 
         if ($user->hasRole('enseignant')) {
@@ -109,11 +117,54 @@ class AppGuard extends Component
         $this->notification()->send([
             'icon'        => 'error',
             'title'       => "L'insertion de " . $data['userName'] . " a échoué",
-            'delay'       => 0,
+            'timeout'       => 0,
             'description' => "Les raisons: " . $data['error']
         ]);
 
         $this->dispatch("ATeacherCreationFailedLiveEvent", $data);
+    } 
+    
+    public function teacherCreationDone(array $data)
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "L'insertion enseignant réussie!",
+            'description' => "L'enseignant : " . $data['userName'] . " a bien été inséré dans la base de données!"
+        ]);
+
+        $this->dispatch("TeacherCreatedSucessfullyLiveEvent", $data);
+    }
+    
+    public function handleAnyEventer(array $data)
+    {
+        $this->dispatch("HandleAnyLiveEvent", $data);
+    }
+    
+    public function teachersCreationsTasksStarted(array $data)
+    {
+        $this->dispatch("TeachersCreationsTasksStartedLiveEvent", $data);
+    }
+    
+    public function teachersCreationsTasksProgress(array $data)
+    {
+        $this->dispatch("TeachersCreationsTasksProgressLiveEvent", $data);
+    }
+    
+    public function teachersCreationsTasksStatusesUpdated(array $data)
+    {
+        $this->dispatch("TeachersCreationsTasksProgressLiveEvent", $data);
+    }
+    
+    public function teachersCreationsCompleted(array $data)
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "L'insertion des enseignants terminée ",
+            'timeout'       => 0,
+            'description' => "Total lancé : " . $data['totalJobs'] . " - Réussis: " . $data['totalJobs'] - $data['failed'] . " - Echecs : " . $data['failed'],
+        ]);
+
+        $this->dispatch("TeachersCreationsCompletedLiveEvent", $data);
     }
     
     

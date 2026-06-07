@@ -16,6 +16,7 @@
         "mallardduck/blade-lucide-icons": "^1.26",
         "phpoffice/phpspreadsheet": "^1.30",
         "predis/predis": "^3.4",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/browsershot": "^5.3",
         "spatie/laravel-permission": "^7.4",
         "stancl/tenancy": "^3.10",

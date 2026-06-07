@@ -19,25 +19,19 @@ class Tutor extends Model
         'uuid',
         'qr_code',
         'user_id',
-        'name',
-        'prenames',
         'email',
-        'contacts',
         'whatsapp_number',
-        'gender',
-        'profession',
-        'adresse',
+        'job_name',
         'status',
         'blocked',
         'blocked_reasons',
-        'account_created_at',
+        'affiliated_at',
         'birth_date',
     ];
 
     protected $casts = [
         'blocked' => 'boolean',
-        'account_created_at' => 'datetime',
-        'birth_date' => 'date',
+        'affiliated_at' => 'datetime',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────

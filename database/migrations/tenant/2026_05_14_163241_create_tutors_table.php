@@ -16,23 +16,17 @@ return new class extends Migration
         Schema::create('tutors', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
-            $table->string('qr_code')->nullable();
+            $table->text('qr_code')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name');
-            $table->string('prenames');
             $table->string('email')->nullable()->unique();
-            $table->string('gender')->nullable()->default('Masculin');
-            $table->string('contacts')->nullable();
             $table->string('whatsapp_number')->nullable();
-            $table->string('profession')->nullable()->default(null);
-            $table->date('birth_date')->nullable()->default(null);
-            $table->string('adresse')->nullable();
+            $table->string('job_name')->nullable()->default(null);
             $table->enum('status', ['active', 'unactive'])->default('active');
             $table->boolean('blocked')->default(false);
             $table->string('blocked_reasons')->default('Non précisée');
+            $table->timestamp('affiliated_at')->nullable(); 
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['name', 'prenames']);
             $table->index('status');
         });
         Schema::enableForeignKeyConstraints();

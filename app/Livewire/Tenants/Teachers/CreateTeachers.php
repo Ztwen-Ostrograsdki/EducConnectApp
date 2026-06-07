@@ -17,6 +17,8 @@ use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use WireUi\Traits\WireUiActions;
 
+use function React\Promise\Timer\timeout;
+
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class CreateTeachers extends Component
 {
@@ -204,13 +206,13 @@ class CreateTeachers extends Component
         $teachers[] = [
             'uuid' => (string) Str::uuid(),
             'name' => Str::upper($this->name),
-            'department' => $this->department,
+            'department' => Str::upper($this->department),
             'gender' => $this->gender,
             'prenames' => ucwords($this->prenames),
             'job_name' => $this->job_name,
             'contacts' => $this->contacts,
             'country' => Str::upper($this->country),
-            'city' => $this->city,
+            'city' => Str::upper($this->city),
             'birth_date' => $this->birth_date,
             'email' => $this->email,
         ];
@@ -407,7 +409,17 @@ class CreateTeachers extends Component
             return;
         }
 
-        InitProcessToCreateTeachersEvent::dispatch(tenant('id'), $teachers);
+        $domain = request()->getSchemeAndHttpHost();
+
+        InitProcessToCreateTeachersEvent::dispatch(tenant('id'), $teachers, $domain);
+
+        $this->redirectRoute('tenant.teachers.crud.tasks');
+
+        $this->resetExcept('showImportMode');
+
+        $this->resetErrorBag();
+
+        session()->forget('pending_teachers');
     }
     
     public function clearAddedData()
@@ -485,8 +497,8 @@ class CreateTeachers extends Component
                     'contacts'   => trim($row['D'] ?? ''),
                     'gender'     => trim($row['E'] ?? ''),
                     'country'    => Str::upper(trim($row['F']) ?? ''),
-                    'department' => trim($row['G'] ?? ''),
-                    'city'       => trim($row['H'] ?? ''),
+                    'department' => Str::upper(trim($row['G']) ?? ''),
+                    'city'       => Str::upper(trim($row['H']) ?? ''),
                     'job_name'   => trim($row['I'] ?? ''),
                     'birth_date' => trim($row['J'] ?? '') ?: null,
                 ];
@@ -502,17 +514,31 @@ class CreateTeachers extends Component
 
             $successCount = count($teachers) - (count(session('pending_teachers', [])) - count($teachers));
 
-            $this->notification()->success(
-                title: 'Import réussi',
-                description: count($teachers) . ' enseignant(s) chargé(s) depuis le fichier.',
-            );
-
-            if (! empty($errors)) {
-                $this->notification()->warning(
-                    title: 'Lignes ignorées',
-                    description: count($errors) . ' ligne(s) ignorée(s). Voir les détails.',
-                );
+            if(count($teachers)){
+                if (! empty($errors)) {
+                    $this->notification()->warning(
+                        title: 'Importation partiellement réussi',
+                        description: count($teachers) . ' enseignant(s) chargé(s) depuis le fichier. Avec ' . count($errors) . ' ligne(s) ignorée(s). Voir les détails.',
+                    );
+                }
+                else{
+                    $this->notification()->success(
+                        title: 'Importation des données réussie',
+                        description: count($teachers) . ' enseignant(s) chargé(s) depuis le fichier.',
+                    );
+                }
             }
+            else{
+
+                if (! empty($errors)) {
+                    $this->notification()->error(
+                        title: 'Echec du chargement des données depuis le fichier',
+                        description: count($errors) . ' ligne(s) ignorée(s). Voir les détails.',
+                    );
+                }
+            }
+
+            
 
         } catch (\Throwable $e) {
             $this->notification()->error(

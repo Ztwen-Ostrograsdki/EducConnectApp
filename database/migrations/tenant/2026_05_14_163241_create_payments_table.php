@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
-            $table->string('qr_code')->nullable();
+            $table->text('qr_code')->nullable();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('classe_id')->constrained('classes');
             $table->foreignId('school_year_id')->constrained('school_years');

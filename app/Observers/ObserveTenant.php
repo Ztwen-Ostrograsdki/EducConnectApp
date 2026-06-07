@@ -27,7 +27,6 @@ class ObserveTenant
             new JobToCreateTenantDirectories($tenant),
         ])
         ->catch(function (Throwable $e) use ($tenant) {
-            //Un des jobs a échoué après tous ses retries
             broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant, $e->getMessage()));
         })
         ->dispatch();

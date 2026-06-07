@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class InitProcessToCreateTeachersEvent
+class InitProcessToCreateStudentsEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,10 +19,12 @@ class InitProcessToCreateTeachersEvent
      */
     public function __construct(
         public string $tenantId,
-        public array $teachers,
+        public array $students,
         public ?string $domain,
     )
     {
         //
     }
+
+   
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Tenants\Teachers;
+namespace App\Livewire\Tenants\Students;
 
-use App\Events\TeachersCreationTaskStartedEvent;
-use App\Jobs\JobToCreateTeacher;
+use App\Events\StudentsCreationTaskStartedEvent;
+use App\Jobs\JobToCreateStudent;
 use App\Models\ImportTask;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Layout;
@@ -12,7 +12,7 @@ use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
-class TeachersCreationMonitorComponent extends Component
+class StudentsCreationMonitorComponent extends Component
 {
     use WireUiActions;
 
@@ -47,8 +47,8 @@ class TeachersCreationMonitorComponent extends Component
         $this->renderKey++;
     }
 
-    #[On('TeachersCreationsTasksStartedLiveEvent')]
-    public function teachersTasksStarted(array $data): void
+    #[On('StudentsCreationsTasksStartedLiveEvent')]
+    public function studentsTasksStarted(array $data): void
     {
         $this->batchId = $data['batchId'];
 
@@ -57,7 +57,6 @@ class TeachersCreationMonitorComponent extends Component
         $this->notification()->send([
             'icon'        => 'success',
             'title'       => "File d'attente initialisée",
-            'timeout'     => 5000,
             'description' => "{$data['totalJobs']} insertion(s) lancée(s) !",
         ]);
 
@@ -70,25 +69,25 @@ class TeachersCreationMonitorComponent extends Component
         $this->forceRefresh();
     }
     
-    #[On('TeacherCreatedSucessfullyLiveEvent')]
-    public function teacherCreated(array $data): void
+    #[On('StudentCreatedSucessfullyLiveEvent')]
+    public function studentCreated(array $data): void
     {
         $this->forceRefresh();
     }
 
-    #[On('ATeacherCreationFailedLiveEvent')]
-    public function teacherCreationFailed(array $data): void
+    #[On('AStudentCreationFailedLiveEvent')]
+    public function studentCreationFailed(array $data): void
     {
         $this->forceRefresh();
     }
 
-    #[On('TeachersCreationsTasksProgressLiveEvent')]
-    public function teacherCreationProgress(array $data): void
+    #[On('StudentsCreationsTasksProgressLiveEvent')]
+    public function studentCreationProgress(array $data): void
     {
         $this->forceRefresh();
     }
 
-    #[On('TeachersCreationsCompletedLiveEvent')]
+    #[On('StudentsCreationsCompletedLiveEvent')]
     public function taskCompleted(array $data): void
     {
         $failed  = $data['failed'] ?? 0;
@@ -147,7 +146,7 @@ class TeachersCreationMonitorComponent extends Component
         });
 
         return view(
-            'livewire.tenants.teachers.teachers-creation-monitor-component',
+            'livewire.tenants.students.students-creation-monitor-component',
             compact('batches')
         );
     }
@@ -202,7 +201,7 @@ class TeachersCreationMonitorComponent extends Component
                 return;
             }
 
-            $jobs = $tasks->map(fn($t) => new JobToCreateTeacher(tenant('id'), $t->id));
+            $jobs = $tasks->map(fn($t) => new JobToCreateStudent(tenant('id'), $t->id));
 
             $newBatch = Bus::batch([])->allowFailures()->dispatch();
 
@@ -211,7 +210,7 @@ class TeachersCreationMonitorComponent extends Component
                 'status'   => 'pending',
             ]);
 
-            TeachersCreationTaskStartedEvent::dispatch(
+            StudentsCreationTaskStartedEvent::dispatch(
                 tenantId:  tenant('id'),
                 batchId:   $newBatch->id,
                 totalJobs: $jobs->count(),
@@ -259,7 +258,7 @@ class TeachersCreationMonitorComponent extends Component
 
         $task->update(['status' => 'pending', 'error' => null]);
 
-        dispatch(new JobToCreateTeacher(tenant('id'), $task->id));
+        dispatch(new JobToCreateStudent(tenant('id'), $task->id));
 
         $this->forceRefresh();
     }
