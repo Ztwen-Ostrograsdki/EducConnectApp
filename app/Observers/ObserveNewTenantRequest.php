@@ -13,9 +13,9 @@ class ObserveNewTenantRequest
      */
     public function created(RequestToCreateNewTenant $requestToCreateNewTenant): void
     {
-        JobToNotifyUserOfNewTenantRequest::dispatch($requestToCreateNewTenant);
+        JobToNotifyUserOfNewTenantRequest::dispatch($requestToCreateNewTenant->id);
 
-        JobToNotifyCentralAdminOfNewTenantRequest::dispatch($requestToCreateNewTenant);
+        JobToNotifyCentralAdminOfNewTenantRequest::dispatch($requestToCreateNewTenant->id);
     }
 
     /**

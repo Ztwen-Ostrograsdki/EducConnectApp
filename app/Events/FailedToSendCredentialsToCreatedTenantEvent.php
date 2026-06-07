@@ -19,7 +19,7 @@ class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public Tenant $tenant,
+        public string $tenantId,
         public string $error,
     )
     {
@@ -46,7 +46,7 @@ class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        return ['tenant' => $this->tenant->id, 'error' => $this->error];
+        return ['tenant' => $this->tenantId, 'error' => $this->error];
     }
 
     

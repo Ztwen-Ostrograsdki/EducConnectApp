@@ -15,7 +15,7 @@ class JobToCreateTenantDirectories implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public Tenant $tenant,
+        public string $tenantId,
     )
     {
         //
@@ -26,20 +26,25 @@ class JobToCreateTenantDirectories implements ShouldQueue
      */
     public function handle(): void
     {
-        $directories = [
-            'profiles',
-            'documents',
-            'bulletins',
-            'epreuves',
-            'schools',
-            'temp',
-        ];
+        $tenant = Tenant::find($this->tenantId);
 
-        foreach ($directories as $directory) {
+        if($tenant){
 
-            Storage::disk('public')->makeDirectory(
-                "tenants/{$this->tenant->id}/{$directory}"
-            );
+            $directories = [
+                'profiles',
+                'documents',
+                'bulletins',
+                'epreuves',
+                'schools',
+                'temp',
+            ];
+
+            foreach ($directories as $directory) {
+
+                Storage::disk('public')->makeDirectory(
+                    "tenants/{$tenant?->id}/{$directory}"
+                );
+            }
         }
     }
 }

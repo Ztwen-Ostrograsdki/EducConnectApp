@@ -77,7 +77,7 @@ class TenantLogin extends Component
             $logged_count = Auth::guard('tenant')->user()->logged_count;
 
 
-            if($logged_count){
+            if($logged_count < 1){
 
                 return $this->redirectRoute('tenant.update.password');
 

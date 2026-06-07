@@ -19,7 +19,7 @@ class FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent implements ShouldB
      * Create a new event instance.
      */
     public function __construct(
-        public Tenant $tenant,
+        public string $tenantId,
         public string $error,
     )
     {
@@ -35,7 +35,7 @@ class FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent implements ShouldB
     {
         return [
             new PrivateChannel('central-admin'),
-            new PrivateChannel('tenant.' . $this->tenant->id . '.directeur')
+            new PrivateChannel('tenant.' . $this->tenantId . '.directeur')
         ];
     }
 
@@ -47,6 +47,6 @@ class FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent implements ShouldB
 
     public function broadcastWith(): array
     {
-        return ['tenant' => $this->tenant->id, 'error' => $this->error];
+        return ['tenant' => $this->tenantId, 'error' => $this->error];
     }
 }

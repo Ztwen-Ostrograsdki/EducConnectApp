@@ -110,19 +110,22 @@ class JobToCreateTeacher implements ShouldQueue
                 'password'               => Hash::make(Str::random(10)),
             ]);
 
-            $teacher = Teacher::create([
-                'name'                   => $payload['name'],
-                'prenames'               => $payload['prenames'],
-                'job_name'               => $payload['job_name'],
-                'country'                => $payload['country'] ?? null,
-                'city'                   => $payload['city'] ?? null,
+            $qr_code_payload = [
+                'nom'                    => $payload['name'],
+                'prenoms'                => $payload['prenames'],
+                'pays'                   => $payload['country'] ?? null,
                 'email'                  => $payload['email'],
                 'contacts'               => $payload['contacts'] ?? null,
-                'gender'                 => $payload['gender'] ?? null,
-                'birth_date'             => $payload['birth_date'] ?? null,
-                'adresse'                => $adresse,
-                'identifiant'            => Robot::makeIdentifier(),
-                'qr_code'                => Robot::makeQrcode(),
+                'addresse'               => $adresse,
+                'ecole'                  => tenant($this->tenantId)->school_name,
+                'domaine'                => tenant($this->tenantId)->getDomainName(),
+            ];
+
+            $teacher = Teacher::create([
+                'email'                  => $payload['email'],
+                'contacts'               => $payload['contacts'] ?? null,
+                'identifiant'            => Robot::makeIdentifier(tenant($this->tenantId)->school_name),
+                'qr_code'                => Robot::makeQrCode($qr_code_payload),
                 'affiliated_at'          => now(),
                 'status'                 => 'active',
             ]);

@@ -123,32 +123,6 @@ class SchoolsComponent extends Component
         broadcast(new TenantAccessWasUpdatedEvent($tenantId));
     }
 
-    // public function notifyUserThatRequestHasReceived(string $domain)
-    // {
-    //     $req = RequestToCreateNewTenant::firstWhere('domain_name', $domain);
-
-    //     if($req){
-
-    //         JobToNotifyUserOfNewTenantRequest::dispatch($req);
-
-    //         $this->notification()->send([
-    //             'icon'        => 'success',
-    //             'title'       => 'Accusé de reception envoyé',
-    //             'description' => "Les détails de la demande ont été envoyés à " . $req->getUserNamePrefix(true, false),
-    //         ]);
-    //     }
-    //     else{
-
-    //         $this->notification()->send([
-    //             'icon'        => 'error',
-    //             'title'       => 'Requête introuvable',
-    //             'description' => "La reqûete n'existe pas dnas la base de données",
-    //         ]);
-            
-    //     }
-    // }
-
-
 
     public function deleteTenant(string $tenantId): void
     {

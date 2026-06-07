@@ -7,15 +7,13 @@ use App\Observers\ObserveNewTenantRequest;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 #[ObservedBy(ObserveNewTenantRequest::class)]
 class RequestToCreateNewTenant extends Model
 {
-    use CentralConnection;
 
     protected $connection = 'central';
-
+    
     protected $fillable = [
         'uuid',
         'id',

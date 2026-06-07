@@ -19,7 +19,7 @@ class ProcessToCreateTenantSpaceFailedEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public RequestToCreateNewTenant $demande_request
+        public int $demande_request_id
     )
     {
         //
@@ -45,6 +45,8 @@ class ProcessToCreateTenantSpaceFailedEvent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        return ['request_email' => $this->demande_request->email];
+        $demande_request = RequestToCreateNewTenant::findOrFail($this->demande_request_id);
+
+        return ['request_email' => $demande_request?->email];
     }
 }

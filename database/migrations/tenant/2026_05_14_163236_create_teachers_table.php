@@ -37,7 +37,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['status', 'name']);
+            $table->index(['status']);
             $table->index('email');
         });
         Schema::enableForeignKeyConstraints();

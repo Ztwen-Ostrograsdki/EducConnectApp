@@ -46,7 +46,7 @@ Route::post('/logout', function () {
 Route::middleware(['auth:central'])->prefix('administration/master')->name('central.')->group(function () {
 
     // Dashboard central
-    Route::get('/dashboard', CentralDashboard::class)->name('dashboard');
+    Route::get('/', CentralDashboard::class)->name('dashboard');
 
     // Gestion des demendes d'espace ecole
     Route::get('/les-demandes-espace/gestion/{status?}', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');

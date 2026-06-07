@@ -2,16 +2,23 @@
 
 namespace App\Livewire\Central;
 
-use App\Events\InitProcessToCreateTenantSpaceEvent;
+use App\Events\SomesErrorsOccurWhenInitializeTenantSpaceEvent;
+use App\Jobs\JobToCreateTenantDirectories;
+use App\Jobs\JobToCreateTenantSpace;
 use App\Jobs\JobToNotifyUserOfNewTenantRequest;
+use App\Jobs\JobToSeedRolesAndPermissionsIntoTenantDB;
+use App\Jobs\JobToSendCredentialsToCreatedTenant;
 use App\Models\RequestToCreateNewTenant;
+use App\Models\Tenant;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Throwable;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.central-auth-layout')]
@@ -118,7 +125,20 @@ class SchoolSpaceRequestsManageComponent extends Component
 
         if($req){
 
-            JobToNotifyUserOfNewTenantRequest::dispatch($req);
+            $tenant = Tenant::where('email', $req->email)->firstOrFail();
+
+            Bus::chain([
+
+                new JobToSendCredentialsToCreatedTenant($tenant->id),
+
+                new JobToSeedRolesAndPermissionsIntoTenantDB($tenant->id),
+
+                new JobToCreateTenantDirectories($tenant->id),
+            ])
+            ->catch(function (Throwable $e) use ($tenant) {
+                broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant->id, $e->getMessage()));
+            })
+            ->dispatch();
 
             $this->notification()->send([
                 'icon'        => 'success',
@@ -153,7 +173,7 @@ class SchoolSpaceRequestsManageComponent extends Component
 
         if($req){
 
-            broadcast(new InitProcessToCreateTenantSpaceEvent($req));
+            JobToCreateTenantSpace::dispatch($req->id);
 
             $this->notification()->send([
                 'icon'        => 'success',

@@ -126,7 +126,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300" for="birth_date">Date de naissance
+                            </label>
+                            <div class="relative">
+                                <input wire:model.live='birth_date' type="date" id="birth_date" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all">
+                                @error('birth_date')
+                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
+                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium mb-2 text-gray-300" for="gender">Genre
                                 <span class="text-red-500">*</span>

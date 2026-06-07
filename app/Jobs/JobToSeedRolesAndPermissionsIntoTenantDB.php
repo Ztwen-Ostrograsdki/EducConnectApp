@@ -22,7 +22,7 @@ class JobToSeedRolesAndPermissionsIntoTenantDB implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public Tenant $tenant,
+        public string $tenantId,
     )
     {
         //
@@ -35,7 +35,7 @@ class JobToSeedRolesAndPermissionsIntoTenantDB implements ShouldQueue
     {
         DB::beginTransaction();
 
-        $tenant = $this->tenant;
+        $tenant = Tenant::find($this->tenantId);
 
         tenancy()->initialize($tenant);
 
@@ -54,7 +54,7 @@ class JobToSeedRolesAndPermissionsIntoTenantDB implements ShouldQueue
         } 
         catch (\Throwable $th) {
 
-            broadcast(new FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent($this->tenant, $th->getMessage()));
+            broadcast(new FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent($this->tenantId, $th->getMessage()));
 
             DB::rollBack();
         }

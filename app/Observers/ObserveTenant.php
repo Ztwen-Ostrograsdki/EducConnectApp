@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
 use App\Events\SomesErrorsOccurWhenInitializeTenantSpaceEvent;
 use App\Jobs\JobToCreateTenantDirectories;
 use App\Jobs\JobToSeedRolesAndPermissionsIntoTenantDB;
@@ -20,14 +19,14 @@ class ObserveTenant
     {
         Bus::chain([
 
-            new JobToSendCredentialsToCreatedTenant($tenant),
+            new JobToSendCredentialsToCreatedTenant($tenant->id),
 
-            new JobToSeedRolesAndPermissionsIntoTenantDB($tenant),
+            new JobToSeedRolesAndPermissionsIntoTenantDB($tenant->id),
 
-            new JobToCreateTenantDirectories($tenant),
+            new JobToCreateTenantDirectories($tenant->id),
         ])
         ->catch(function (Throwable $e) use ($tenant) {
-            broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant, $e->getMessage()));
+            broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant->id, $e->getMessage()));
         })
         ->dispatch();
     }

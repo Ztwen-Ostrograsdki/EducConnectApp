@@ -7,6 +7,7 @@ use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
 use App\Tools\BeninData;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -40,6 +41,7 @@ class RequestPage extends Component
     public $periode_type;
     public $gender;
     public $logo;
+    public $birth_date;
 
     public $department_key;
 
@@ -62,26 +64,10 @@ class RequestPage extends Component
         'ftp',
         'cpanel',
     ];
-    // public $cities = [], $enseignement_types = [], $periode_types = [], $school_types = [], $devoirs_types = [], $departments = [], $countries = [];
-
-
 
     public function mount()
     {
         
-        // $this->enseignement_types = BeninData::getSytems();
-
-        // $this->periode_types = config('app.periode_types');
-
-        // $this->school_types = config('app.school_types');
-
-        // $this->devoirs_types = config('app.devoirs_types');
-
-        // $this->departments = BeninData::getDepartments();
-
-        // $this->countries = ['Bénin' => 'Bénin'];
-
-
     }
 
 
@@ -101,6 +87,7 @@ class RequestPage extends Component
             'country' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'gender' => 'required|string|max:10',
+            'birth_date' => 'date',
 
             'email' => [
                 'required',
@@ -146,8 +133,8 @@ class RequestPage extends Component
         $this->error_message = '';
 
         $this->resetErrorBag();
-        
-        if($this->validate()){
+
+        if($this->validate() && $this->validatePhoneNumber()){
 
             DB::beginTransaction();
 
@@ -263,5 +250,85 @@ class RequestPage extends Component
     public function resetForm()
     {
         $this->reset();
+    }
+
+    public function validatePhoneNumber()
+    {
+        $contacts = $this->contacts;
+
+        $this->resetErrorBag('contacts');
+
+        if(!$this->contacts){
+
+            $this->addError('contacts', "Vous devez renseigner votre contact!");
+
+            return false;
+        }
+
+        if(strlen($contacts) >= 10){
+
+            if(strpos($contacts, "-")){
+
+                $validator = true;
+
+                $parts = explode("-", $contacts);
+
+                foreach($parts as $number){
+
+                    $validator = Validator::make(
+                        data: [
+                            'contacts' => $number
+                        ],
+                        rules: [
+                            'contacts' => ['required', 'numeric', 'starts_with:01', 'digits:10']
+                        ],
+                    );
+
+                    if($validator->fails()){
+
+                        $this->addError('contacts', "Chaque numéro doit contenir au moins 10 chiffres");
+
+                        return false;
+                    }
+                }
+            }
+            else{
+                if(strlen($contacts) == 10){
+
+                    $validator = Validator::make(
+                        data: [
+                            'contacts' => $contacts
+                        ],
+                        rules: [
+                            'contacts' => ['required', 'numeric', 'starts_with:01', 'digits:10']
+                        ],
+                    );
+
+                    if($validator->fails()){
+
+                        $this->addError('contacts', "Chaque numéro doit contenir au moins 10 chiffres et commencer par 01");
+
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }
+                else{
+                    $this->addError('contacts', "Le formats n'est pas conforme séparer vos numéros pas des tirets");
+
+                    return false;
+                }
+            }
+
+        }
+        else{
+
+            $this->addError('contacts', "Le formats des contacts n'est pas conforme");
+
+            return false;
+        }
+
+        return true;
     }
 }

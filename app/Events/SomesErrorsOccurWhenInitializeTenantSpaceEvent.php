@@ -44,6 +44,6 @@ class SomesErrorsOccurWhenInitializeTenantSpaceEvent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        return ['tenantId' => $this->tenantId, 'error' => $this->error];
+        return ['tenant' => $this->tenantId, 'error' => $this->error];
     }
 }
