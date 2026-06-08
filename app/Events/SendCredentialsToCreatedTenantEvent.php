@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Tenant;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
+class SendCredentialsToCreatedTenantEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,7 +19,8 @@ class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
      */
     public function __construct(
         public string $tenantId,
-        public string $error,
+        public string $space_url,
+        public bool $seedRoles = false,
     )
     {
         //
@@ -34,20 +34,7 @@ class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('central-admin'),
+            new PrivateChannel('channel-name'),
         ];
     }
-
-
-    public function broadcastAs(): string
-    {
-        return 'tenant.credentials.failed'; 
-    }
-
-    public function broadcastWith(): array
-    {
-        return ['tenantId' => $this->tenantId, 'error' => $this->error];
-    }
-
-    
 }

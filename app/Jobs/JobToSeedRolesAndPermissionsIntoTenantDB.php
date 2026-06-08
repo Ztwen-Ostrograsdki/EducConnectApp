@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 #[Timeout(500)]
-#[Delay(600)]
 class JobToSeedRolesAndPermissionsIntoTenantDB implements ShouldQueue
 {
     use Queueable;
@@ -45,9 +44,6 @@ class JobToSeedRolesAndPermissionsIntoTenantDB implements ShouldQueue
                     '--class' => RolesAndPermissionsSeeder::class,
                     '--force' => true,
                 ]);
-
-            
-
             DB::commit();
 
 

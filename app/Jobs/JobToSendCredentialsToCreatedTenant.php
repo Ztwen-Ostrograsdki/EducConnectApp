@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\CredentialsSentToCreatedTenantSucessfullyEvent;
 use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
 use App\Mail\MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation;
 use App\Models\RequestToCreateNewTenant;
@@ -24,7 +25,8 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
 
     public function __construct(
         public string $tenantId,
-        public ?string $default_password = null
+        public ?string $default_password = null,
+        public ?string $space_url = null
     ) {
         if (!$default_password) {
             $this->default_password = Str::random(8);
@@ -42,7 +44,7 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
             $user = User::first();
 
             if (!$user) {
-                throw new \Exception("Aucun utilisateur trouvé pour le tenant {$this->tenantId}");
+                broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, "Aucun utilisateur trouvé pour le tenant {$this->tenantId}"));
             }
 
             // Mise à jour du statut de la demande
@@ -53,10 +55,8 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
             // Mise à jour du mot de passe
             $user->update(['password' => Hash::make($this->default_password)]);
 
-            $lien_for_tenant = $tenant->getDomainName() . "/login";
-
             $receiver_html = EmailTemplateBuilder::render('tenant-space-request-validated-template', [
-                'space_url'    => $lien_for_tenant,
+                'space_url'    => $this->space_url,
                 'for_greating' => $tenant?->greating(),
                 'key'          => $this->default_password,
                 'full_name'    => $tenant?->getFullName(),
@@ -74,8 +74,10 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
                 )
             );
 
+            CredentialsSentToCreatedTenantSucessfullyEvent::dispatch($this->tenantId);
+
         } catch (\Throwable $th) {
-            broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, $th->getMessage()));
+            broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, cutter($th->getMessage(), 100)));
             throw $th; // Permet à Laravel de réessayer ou de marquer comme échoué
         } finally {
             tenancy()->end(); // Très important

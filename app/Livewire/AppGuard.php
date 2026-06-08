@@ -40,6 +40,7 @@ class AppGuard extends Component
                 'echo-private:central-admin,.tenant.blocked' => 'handleTenantBlockedAck',
                 'echo-private:central-admin,.tenant.request.created' => 'handleNewTenantRequestCreated',
                 'echo-private:central-admin,.tenant.init.errors' => 'handleSomeErrorsOccurWhenInitialyzeTenantSpace',
+                'echo-private:central-admin,.created.tenant.credentials.sent' => 'handleCreatedTenantCredentialsSent',
             ];
         }
 
@@ -47,8 +48,11 @@ class AppGuard extends Component
         $listeners = [
             "echo-private:tenant.{$this->tenantId},.tenant.blocked"      => 'handleBlocked',
             "echo-private:tenant.{$this->tenantId},.maintenance"          => 'handleMaintenance',
+            
+            
             // Channel personnel
             "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.user.notification" => 'handlePersonalNotification',
+            "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.any.error" => 'handleAnyError',
         ];
 
         // Channels spécifiques au rôle
@@ -227,6 +231,18 @@ class AppGuard extends Component
         $this->dispatch('LiveReloadDashboardEvent');
     }
     
+    public function handleCreatedTenantCredentialsSent(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => 'Données envoyées au tenant',
+            'timeout'     => 0,
+            'description' => "Les données du tenant " . $event['tenantId'] . " lui ont envoyées avec succès!",
+        ]);
+
+        $this->dispatch('LiveReloadDashboardEvent');
+    }
+    
     public function handleTenantCreationFailed(array $event): void
     {
         $this->notification()->send([
@@ -251,9 +267,9 @@ class AppGuard extends Component
     {
         $this->notification()->send([
             'icon'        => 'error',
-            'title'       => "Echec d'envoie par mail",
+            'title'       => "Echec d'envoi des données par mail",
             'timeout' => 0,
-            'description' => "L'envoi des données par mail au tenant " . $event['tenant'] . " a echoué! Les raisons : " . $event['error'],
+            'description' => "L'envoi des données par mail au tenant " . $event['tenantId'] . " a echoué! Les raisons : " . $event['error'],
         ]);
     }
     

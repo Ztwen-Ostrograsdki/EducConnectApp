@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\AnyErrorEvent;
 use App\Mail\MailToSendPasswordResetTokenToUser;
 use App\Models\PasswordTokenForReset;
 use App\Models\User;
@@ -29,6 +30,7 @@ class JobToSendPasswordResetTokenToUser implements ShouldQueue
         public string $code,
         public string $token,
         public string $domain,
+        public ?string $tenantId = null,
     )
     {
         $this->user = User::where('email', $password_reset_token->email)->first();
@@ -79,6 +81,13 @@ class JobToSendPasswordResetTokenToUser implements ShouldQueue
             );
 
         } catch (\Throwable $th) {
+
+            broadcast(new AnyErrorEvent(
+                "Une erreur s'est produite lors de l'envoie de la clé de restauration du mot de passe au " . $this->password_reset_token->email,
+                cutter($th?->getMessage(), 100),
+                $this->tenantId,
+                $this->user->id,
+            ));
             
         }
     }

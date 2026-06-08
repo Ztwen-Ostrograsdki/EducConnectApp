@@ -415,17 +415,19 @@
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
 
-                                    <button wire:key="demande-send-request-{{ $item->domain_name }}" wire:click="notifyUserThatRequestHasReceived('{{ $item->domain_name }}')" wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5" wire:target="notifyUserThatRequestHasReceived">
-                                            <x-lucide-message-square class="w-4 h-4" />
-                                            Envoyer données
-                                        </span>
-                                        <span wire:loading.flex wire:target="notifyUserThatRequestHasReceived" class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
-                                        </span>
-                                    </button>
+                                    @if ($item->validated)
+                                        <button wire:key="demande-send-request-{{ $item->domain_name }}" wire:click="sendCredentialsToTenant('{{ $item->domain_name }}')" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-gray-500/10 hover:bg-gray-500/20 text-gray-400 ">
+                                            <span wire:loading.remove class="flex items-center gap-1.5" wire:target="sendCredentialsToTenant">
+                                                <x-lucide-message-square class="w-4 h-4" />
+                                                Envoyer données
+                                            </span>
+                                            <span wire:loading.flex wire:target="sendCredentialsToTenant" class="items-center gap-1.5">
+                                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                <span>En cours...</span>
+                                            </span>
+                                        </button>
+                                    @endif
 
                                     @if (!$item->validated)
                                         <button wire:key="demande-val-request-{{ $item->id }}" wire:click="validateRequest('{{ $item->id }}')" wire:loading.attr="disabled"

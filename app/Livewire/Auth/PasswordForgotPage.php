@@ -75,7 +75,7 @@ class PasswordForgotPage extends Component
                 'description' => "Veuillez consulter votre boîte mail"
             ]);
 
-            JobToSendPasswordResetTokenToUser::dispatch($password_token_model, $otp, $token, $domain);
+            JobToSendPasswordResetTokenToUser::dispatch($password_token_model, $otp, $token, $domain, tenant('id'));
 
             $this->step = 2;
         }

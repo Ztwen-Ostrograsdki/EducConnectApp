@@ -95,7 +95,7 @@ class JobToNotifyUserOfNewTenantRequest implements ShouldQueue
 
         broadcast(new AnyErrorEvent(
             "Erreur de l'envoie par mail de l'accusé de reception à " . $req?->domain_name,
-            $exception?->getMessage()
+            cutter($exception?->getMessage(), 100)
         ));
     }
 }

@@ -16,6 +16,44 @@ if (! function_exists('format_price_fcfa')) {
     }
 }
 
+if (!function_exists('get_tenant_url')) {
+    function get_tenant_url(?string $domain_name = null, string $path = '', ?int $tenantId = null): string
+    {
+        if($domain_name){
+
+            $scheme = request()->getScheme() ?? 'http';
+
+            $port   = request()->getPort() && request()->getPort() != 80 && request()->getPort() != 443 
+                    ? ':' . request()->getPort() 
+                    : '';
+
+            $baseUrl = $scheme . '://' . $domain_name . $port;
+
+            return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+
+
+        }
+        else{
+
+            $tenant = null;
+
+            if($tenantId) $tenant = Tenant::find($tenantId);
+
+            if (!$tenant) return url($path); // fallback central
+
+            $scheme = request()->getScheme() ?? 'http';
+
+            $port   = request()->getPort() && request()->getPort() != 80 && request()->getPort() != 443 
+                    ? ':' . request()->getPort() 
+                    : '';
+
+            $baseUrl = $scheme . '://' . $tenant->getDomainName() . $port;
+
+            return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+        }
+    }
+}
+
 if (! function_exists('getRandomValueFromArray')) {
 
     function getRandomValueFromArray(array $array, $default = null)

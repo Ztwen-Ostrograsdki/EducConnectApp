@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AnyErrorEvent implements ShouldBroadcast
+class CredentialsSentToCreatedTenantSucessfullyEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,10 +18,7 @@ class AnyErrorEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public ?string $target,
-        public ?string $message,
-        public ?string $tenantId = null,
-        public ?int $userId = null,
+        public string $tenantId,
     )
     {
         //
@@ -34,27 +31,18 @@ class AnyErrorEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        if($this->tenantId && $this->userId){
-            return [
-                new PrivateChannel('tenant.' . $this->tenantId . '.user.' . $this->userId),
-            ];
-        }
-        else{
-
-            return [
-                new PrivateChannel('central-admin'),
-            ];
-        }
+        return [
+            new PrivateChannel('central-admin'),
+        ];
     }
 
-
-    public function broadcastAs(): string
+    public function broadcastAs()
     {
-        return 'any.error'; 
+        return 'created.tenant.credentials.sent';
     }
 
     public function broadcastWith(): array
     {
-        return ['target' => $this->target, 'error' => $this->message];
+        return ['tenantId' => $this->tenantId];
     }
 }

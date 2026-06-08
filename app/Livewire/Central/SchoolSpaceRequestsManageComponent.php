@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Central;
 
+use App\Events\SendCredentialsToCreatedTenantEvent;
 use App\Events\SomesErrorsOccurWhenInitializeTenantSpaceEvent;
+use App\Helpers\TenantHelper;
 use App\Jobs\JobToCreateTenantDirectories;
 use App\Jobs\JobToCreateTenantSpace;
 use App\Jobs\JobToNotifyUserOfNewTenantRequest;
@@ -13,6 +15,7 @@ use App\Models\Tenant;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -119,39 +122,32 @@ class SchoolSpaceRequestsManageComponent extends Component
     }
 
 
-    public function notifyUserThatRequestHasReceived(string $domain)
+    public function sendCredentialsToTenant(string $domain)
     {
         $req = RequestToCreateNewTenant::firstWhere('domain_name', $domain);
 
-        if($req){
+        if($req && $req->validated){
 
-            $tenant = Tenant::where('email', $req->email)->firstOrFail();
+            $domain = $req->domain_name;
 
-            Bus::chain([
+            $space_url = get_tenant_url($domain, 'login');
 
-                new JobToSendCredentialsToCreatedTenant($tenant->id),
+            $tenant = Tenant::where('domain_name', $domain)->firstOrFail();
 
-                new JobToSeedRolesAndPermissionsIntoTenantDB($tenant->id),
-
-                new JobToCreateTenantDirectories($tenant->id),
-            ])
-            ->catch(function (Throwable $e) use ($tenant) {
-                broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant->id, $e->getMessage()));
-            })
-            ->dispatch();
+            SendCredentialsToCreatedTenantEvent::dispatch($tenant->id, $space_url, false);
 
             $this->notification()->send([
                 'icon'        => 'success',
-                'title'       => 'Accusé de reception envoyé',
-                'description' => "Les détails de la demande ont été envoyés à " . $req->getUserNamePrefix(true, false),
+                'title'       => "Envoi des données espaces ",
+                'description' => "Les détails de l'espace tenant ont été envoyés à " . $req->getUserNamePrefix(true, false),
             ]);
         }
         else{
 
             $this->notification()->send([
                 'icon'        => 'error',
-                'title'       => 'Requête introuvable',
-                'description' => "La reqûete n'existe pas dnas la base de données",
+                'title'       => 'Erreur processus',
+                'description' => "La reqûete n'existe pas ou n'a pas encore été validée!",
             ]);
             
         }
@@ -173,12 +169,16 @@ class SchoolSpaceRequestsManageComponent extends Component
 
         if($req){
 
-            JobToCreateTenantSpace::dispatch($req->id);
+            $domain = $req->domain_name;
+
+            $space_url = get_tenant_url($domain, 'login');
+
+            JobToCreateTenantSpace::dispatch($req->id, $space_url);
 
             $this->notification()->send([
                 'icon'        => 'success',
-                'title'       => 'Validation lancée avec succès!',
-                'description' => "Le processus de la validation de la demande a été lancée avec succès.",
+                'title'       => 'Validation lancée...!',
+                'description' => "Le processus de la validation de la demande a été lancée.",
             ]);
 
         }

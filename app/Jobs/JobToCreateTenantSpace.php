@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\ProcessToCreateTenantSpaceFailedEvent;
+use App\Events\SendCredentialsToCreatedTenantEvent;
 use App\Helpers\TenantHelper;
 use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
@@ -37,7 +38,8 @@ class JobToCreateTenantSpace implements ShouldQueue
      * @param string $default_password
      */
     public function __construct(
-        public int $demande_request_id
+        public int $demande_request_id,
+        public string $space_url,
     ) {
         $this->default_password = Str::random(8);
     }
@@ -130,6 +132,11 @@ class JobToCreateTenantSpace implements ShouldQueue
                 if (method_exists($user, 'assignRole')) {
                     $user->assignRole('directeur');
                     $tenant->update(['role' => 'directeur']);
+                }
+
+                if($tenant && $user){
+
+                    SendCredentialsToCreatedTenantEvent::dispatch($tenant->id, $this->space_url, true);
                 }
 
             } finally {

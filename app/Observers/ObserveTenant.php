@@ -2,13 +2,7 @@
 
 namespace App\Observers;
 
-use App\Events\SomesErrorsOccurWhenInitializeTenantSpaceEvent;
-use App\Jobs\JobToCreateTenantDirectories;
-use App\Jobs\JobToSeedRolesAndPermissionsIntoTenantDB;
-use App\Jobs\JobToSendCredentialsToCreatedTenant;
 use App\Models\Tenant;
-use Illuminate\Support\Facades\Bus;
-use Throwable;
 
 class ObserveTenant
 {
@@ -17,18 +11,7 @@ class ObserveTenant
      */
     public function created(Tenant $tenant): void
     {
-        Bus::chain([
-
-            new JobToSendCredentialsToCreatedTenant($tenant->id),
-
-            new JobToSeedRolesAndPermissionsIntoTenantDB($tenant->id),
-
-            new JobToCreateTenantDirectories($tenant->id),
-        ])
-        ->catch(function (Throwable $e) use ($tenant) {
-            broadcast(new SomesErrorsOccurWhenInitializeTenantSpaceEvent($tenant->id, $e->getMessage()));
-        })
-        ->dispatch();
+        
     }
 
     /**
