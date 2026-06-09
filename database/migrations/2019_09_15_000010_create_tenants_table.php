@@ -50,6 +50,8 @@ class CreateTenantsTable extends Migration
             
             $table->boolean('domain_blocked')->default(false);
             $table->boolean('open_only_for_tenant')->default(false);
+            $table->boolean('completed')->default(false);
+            $table->integer('stage')->default(1);
             $table->string('logo')->nullable();
             $table->timestamp('date_expiration_abonnement')->nullable();
 

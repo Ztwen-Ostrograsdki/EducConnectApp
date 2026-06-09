@@ -12,14 +12,17 @@ use App\Tools\BeninData;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Tenancy;
 use WireUi\Traits\WireUiActions;
 
 use function React\Promise\Timer\timeout;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Créations | ajout des enseignants")]
 class CreateTeachers extends Component
 {
     use WireUiActions, WithFileUploads;
@@ -328,9 +331,11 @@ class CreateTeachers extends Component
         // Vérifier doublon email (hors lui-même)
         $emailExists = collect($teachers)
             ->where('uuid', '!=', $this->editingUuid)
-            ->contains(fn ($t) =>
-                strtolower($t['email']) === strtolower($this->email)
-            );
+            ->contains(fn ($t) => strtolower($t['email']) === strtolower($this->email));
+
+        $nameExists = collect($teachers)
+            ->where('uuid', '!=', $this->editingUuid)
+            ->contains(fn ($t) => strtolower($t['name']) === $this->name && strtolower($t['prenames']) === $this->prenames);
 
         if ($emailExists) {
             $this->notification()->error(
@@ -340,6 +345,16 @@ class CreateTeachers extends Component
 
             return;
         }
+        
+        if ($nameExists) {
+            $this->notification()->error(
+                title: 'Erreur',
+                description: 'Nom et Prénoms déjà utilisés dans la liste.'
+            );
+
+            return;
+        }
+        
 
         $teachers = collect($teachers)
             ->map(function ($teacher) {
@@ -373,7 +388,7 @@ class CreateTeachers extends Component
 
         $this->notification()->success(
             title: 'Mis à jour',
-            description: 'Enseignant modifié avec succès.'
+            description: 'Données enseignant modifiées avec succès.'
         );
     }
 
@@ -413,7 +428,7 @@ class CreateTeachers extends Component
 
         InitProcessToCreateTeachersEvent::dispatch(tenant('id'), $teachers, $domain);
 
-        $this->redirectRoute('tenant.teachers.crud.tasks');
+        // $this->redirectRoute('tenant.teachers.crud.tasks');
 
         $this->resetExcept('showImportMode');
 

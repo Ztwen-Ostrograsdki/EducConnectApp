@@ -21,6 +21,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains, SoftDeletes;
 
+
+    protected $connection = 'central';
+
     /**
      * Colonnes personnalisées stockées dans la colonne JSON "data"
      * de la table tenants (fonctionnement natif de stancl/tenancy)
@@ -58,6 +61,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'department',
             'birth_date',
             'gender',
+            'completed',
+            'stage',
         ];
     }
 
@@ -81,6 +86,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected $casts = [
         'date_expiration_abonnement' => 'datetime',
         'birth_date' => 'date',
+        'completed' => 'boolean',
+        'stage' => 'integer',
     ];
 
     /**

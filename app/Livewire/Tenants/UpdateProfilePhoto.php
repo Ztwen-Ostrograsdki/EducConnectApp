@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use WireUi\Traits\WireUiActions;
 
 class UpdateProfilePhoto extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WireUiActions;
 
     public $photo;
 

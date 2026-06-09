@@ -8,10 +8,12 @@ use App\Models\ImportTask;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Tâches de migrations enseignants")]
 class TeachersCreationMonitorComponent extends Component
 {
     use WireUiActions;

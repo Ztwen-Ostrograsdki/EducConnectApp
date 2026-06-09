@@ -23,10 +23,11 @@ class ListenToInitProcessToCreateTeachers
         $tenantId = $event->tenantId;
 
         $batch = Bus::batch([])
-            ->progress(function (Batch $batch) use ($tenantId) {
+            ->then(function (Batch $batch) use ($tenantId) {
                 
             })
             ->finally(function (Batch $batch) use ($tenantId) {
+
                 ProcessToCreateTeachersCompletedSuccesfullyEvent::dispatch(
                     tenantId:   $tenantId,
                     batchId:    $batch->id,
@@ -35,6 +36,7 @@ class ListenToInitProcessToCreateTeachers
                     percentage: $batch->progress(),
                     failed:     $batch->failedJobs,
                 );
+                
             })
             ->allowFailures()
             ->name('teachers_creation')

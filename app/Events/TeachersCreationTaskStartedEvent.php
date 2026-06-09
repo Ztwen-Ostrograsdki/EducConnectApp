@@ -40,7 +40,6 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
 
     public function broadcastWith() : array
     {
-
         return [
             'tenantId' => $this->tenantId,
             'batchId' => $this->batchId,

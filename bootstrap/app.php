@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -74,5 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
         DropAllTenantsCommand::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function(TenantCouldNotBeIdentifiedOnDomainException $e, $request){
+            abort(404);
+        });
     })->create();

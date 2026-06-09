@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImportTask extends Model
 {
+    protected $connection = 'tenant';
+
+
     protected $fillable = [
         'batch_id',
         'payload',

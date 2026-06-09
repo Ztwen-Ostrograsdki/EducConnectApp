@@ -9,6 +9,7 @@ use App\Events\TeachersCreationStatusUpdatedEvent;
 use App\Helpers\Robot;
 use App\Models\ImportTask;
 use App\Models\Teacher;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +30,7 @@ class JobToCreateTeacher implements ShouldQueue
     /**
      * Nombre de tentatives max (retry manuel via bouton).
      */
-    public int $tries = 2;
+    public int $tries = 1;
 
     /**
      * @param string $tenantId
@@ -38,7 +39,7 @@ class JobToCreateTeacher implements ShouldQueue
     public function __construct(
         public string $tenantId,
         public int    $taskId,
-        public ?string $domain,
+        public ?string $domain = null,
     ) {}
 
     /**
@@ -48,6 +49,9 @@ class JobToCreateTeacher implements ShouldQueue
     {
 
         try {
+
+            tenancy()->initialize($this->tenantId);
+
             // Vide le cache Spatie immédiatement après init de la tenancy
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 
@@ -65,16 +69,13 @@ class JobToCreateTeacher implements ShouldQueue
 
             $payload = $task->payload;
 
+
             // Anti-doublon
-            if (User::where('email', $payload['email'])->exists()) {
+            if (User::where('email', $payload['email'])->first()) {
 
-                $task->update(['status' => 'success']);
+                $task->update(['status' => 'failed']);
 
-                ATeacherCreationFailedEvent::dispatch(
-                    $this->tenantId,
-                    $this->taskId,
-                    "Ce compte est déjà existant dans la base de données!",
-                );
+                $this->fail("Compte est déjà existant dans la base de données!");
                 return;
             }
 
@@ -110,37 +111,52 @@ class JobToCreateTeacher implements ShouldQueue
                 'password'               => Hash::make(Str::random(10)),
             ]);
 
-            $qr_code_payload = [
-                'nom'                    => $payload['name'],
-                'prenoms'                => $payload['prenames'],
-                'pays'                   => $payload['country'] ?? null,
-                'email'                  => $payload['email'],
-                'contacts'               => $payload['contacts'] ?? null,
-                'addresse'               => $adresse,
-                'ecole'                  => tenant($this->tenantId)->school_name,
-                'domaine'                => tenant($this->tenantId)->getDomainName(),
-            ];
+            $user->assignRole($role);
 
-            $teacher = Teacher::create([
-                'email'                  => $payload['email'],
-                'contacts'               => $payload['contacts'] ?? null,
-                'identifiant'            => Robot::makeIdentifier(tenant($this->tenantId)->school_name),
-                'qr_code'                => Robot::makeQrCode($qr_code_payload),
-                'affiliated_at'          => now(),
-                'status'                 => 'active',
-            ]);
+            try {
 
-            // 5. Assignation via objet directement
-            if($user && $teacher){
+                $tenant = tenancy()->tenant;
 
-                $user->assignRole($role);
+                $qr_code_payload =
+                [
+                    'nom'                    => $payload['name'],
+                    'prenoms'                => $payload['prenames'],
+                    'pays'                   => $payload['country'] ?? null,
+                    'email'                  => $payload['email'],
+                    'contacts'               => $payload['contacts'] ?? null,
+                    'addresse'               => $adresse,
+                    'ecole'                  => $tenant->school_name,
+                    'domaine'                => $tenant->domain_name,
+                ];
 
-                $task->update(['status' => 'success']);
+                Teacher::create([
+                    'email'                  => $user->email,
+                    'identifiant'            => Robot::makeIdentifier($tenant->school_name),
+                    'qr_code'                => Robot::makeQrCode($qr_code_payload),
+                    'affiliated_at'          => now(),
+                    'status'                 => 'active',
+                    'user_id'                => $user->id,
+                ]);
+            } catch (\Throwable $th) {
+                ATeacherCreationFailedEvent::dispatch(
+                    $this->tenantId,
+                    $this->taskId,
+                    $th->getMessage(),
+                );
 
-                TeacherCreatedEvent::dispatch($this->tenantId, $task->id, null);
+                $this->fail($th->getMessage());
+                return;
             }
 
+            // 5. Assignation via objet directement
+            
+            $task->update(['status' => 'success']);
+
+            TeacherCreatedEvent::dispatch($this->tenantId, $task->id, null);
+
         } finally {
+
+            tenancy()->end();
 
             $batch = $this->batch();
 

@@ -24,7 +24,7 @@ use Throwable;
 #[Tries(1)]
 class JobToCreateTenantSpace implements ShouldQueue
 {
-    use Queueable, Batchable;
+    use Queueable;
 
     public string $default_password;
 

@@ -38,6 +38,7 @@ class User extends Authenticatable
         'cannot_edit_classes',
         'blocked',
         'birth_date',
+        'birth_place',
         'gender'
     ];
 

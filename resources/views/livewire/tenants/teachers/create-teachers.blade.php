@@ -110,10 +110,11 @@
                         class="block w-full text-sm text-slate-400
                    file:mr-4 file:py-2 file:px-4
                    file:rounded-lg file:border-0
-                   file:bg-indigo-600 file:text-white
+                   file:bg-indigo-600 file:cursor-pointer file:w-2/5 file:text-white
                    hover:file:bg-indigo-700 cursor-pointer" />
 
-                    <div wire:loading wire:target="excelFile" class="mt-3 text-sm text-indigo-400">
+                    <div wire:loading wire:target="excelFile" class="mt-3 text-sm text-indigo-400 flex items-center gap-x-2.5">
+                        <x-lucide-loader class="w-10 h-10 animate-spin text-center" />
                         Lecture du fichier en cours...
                     </div>
 

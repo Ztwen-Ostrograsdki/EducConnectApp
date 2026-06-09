@@ -27,7 +27,8 @@ return new class extends Migration
             $table->string('department')->nullable()->default(null);
             $table->string('email')->unique();
             $table->string('profil_photo')->nullable()->default(null);
-
+            $table->date('birth_date')->nullable()->default(null);
+            $table->string('birth_place')->nullable()->default(null);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->unsignedBigInteger('logged_count')->default(0);

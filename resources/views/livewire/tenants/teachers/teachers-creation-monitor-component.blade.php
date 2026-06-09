@@ -21,37 +21,39 @@
 
         {{-- ACTIONS GLOBALES --}}
         <div class="flex flex-wrap gap-3 mt-6">
-            <a href="{{ route('tenant.teachers.create') }}" class="p-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 font-medium gap-2 inline-flex items-center">
+            <a href="{{ route('tenant.teachers.create') }}" class="p-2 rounded-2xl bg-indigo-600 hover:bg-indigo-800 transition-all active:scale-95 font-medium gap-2 inline-flex items-center">
                 <x-lucide-plus class="w-4 h-4" />
                 Ajouter des enseignants
             </a>
 
-            <button wire:click="clearAllBatches" wire:loading.attr="disabled" wire:target="clearAllBatches" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95 inline-flex items-center gap-2">
-                <span wire:loading.remove wire:target="clearAllBatches" class="inline-flex items-center gap-2">
-                    <x-lucide-trash class="w-4 h-4" />
-                    <span>Vider tous les batches</span>
-                </span>
-                <span wire:loading wire:target="clearAllBatches" class="inline-flex items-center gap-2">
-                    <x-lucide-loader class="w-4 h-4 animate-spin" />
-                    <span>Suppression...</span>
-                </span>
-            </button>
+            @if (!$batches->isEmpty())
+                <button wire:click="clearAllBatches" wire:loading.attr="disabled" wire:target="clearAllBatches" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95 inline-flex items-center gap-2">
+                    <span wire:loading.remove wire:target="clearAllBatches" class="inline-flex items-center gap-2">
+                        <x-lucide-trash class="w-4 h-4" />
+                        <span>Vider tous les batches</span>
+                    </span>
+                    <span wire:loading wire:target="clearAllBatches" class="inline-flex items-center gap-2">
+                        <x-lucide-loader class="w-4 h-4 animate-spin" />
+                        <span>Suppression...</span>
+                    </span>
+                </button>
 
-            <button wire:click="deleteAllSuccess" wire:loading.attr="disabled" wire:target="deleteAllSuccess" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95">
-                <span wire:loading.remove wire:target="deleteAllSuccess">Supprimer tous les succès</span>
-                <span wire:loading wire:target="deleteAllSuccess">
-                    <x-lucide-loader class="w-4 h-4 animate-spin" />
-                    <span> En cours...</span>
-                </span>
-            </button>
+                <button wire:click="deleteAllSuccess" wire:loading.attr="disabled" wire:target="deleteAllSuccess" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95">
+                    <span wire:loading.remove wire:target="deleteAllSuccess">Supprimer tous les succès</span>
+                    <span wire:loading wire:target="deleteAllSuccess">
+                        <x-lucide-loader class="w-4 h-4 animate-spin" />
+                        <span> En cours...</span>
+                    </span>
+                </button>
 
-            <button wire:click="deleteAllFailures" wire:loading.attr="disabled" wire:target="deleteAllFailures" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95">
-                <span wire:loading.remove wire:target="deleteAllFailures">Supprimer tous les échecs</span>
-                <span wire:loading wire:target="deleteAllFailures">
-                    <x-lucide-loader class="w-4 h-4 animate-spin" />
-                    <span> En cours...</span>
-                </span>
-            </button>
+                <button wire:click="deleteAllFailures" wire:loading.attr="disabled" wire:target="deleteAllFailures" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95">
+                    <span wire:loading.remove wire:target="deleteAllFailures">Supprimer tous les échecs</span>
+                    <span wire:loading wire:target="deleteAllFailures">
+                        <x-lucide-loader class="w-4 h-4 animate-spin" />
+                        <span> En cours...</span>
+                    </span>
+                </button>
+            @endif
         </div>
     </section>
 
@@ -59,7 +61,7 @@
     @if ($batches->isEmpty())
         <div class="bg-slate-900/70 border border-slate-700 rounded-3xl p-16 text-center">
             <x-lucide-inbox class="mx-auto h-16 w-16 text-slate-500 mb-4" />
-            <p class="text-slate-400 text-lg">Aucun batch trouvé</p>
+            <p class="text-slate-400 text-lg">Aucune tâches de migrations | Création des enseignants trouvées</p>
         </div>
     @else
         <div wire:poll.5s.visible class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

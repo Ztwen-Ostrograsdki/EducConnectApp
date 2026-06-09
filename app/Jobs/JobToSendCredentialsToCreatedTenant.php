@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\AnyErrorEvent;
 use App\Events\CredentialsSentToCreatedTenantSucessfullyEvent;
 use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
 use App\Mail\MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation;
@@ -37,6 +38,10 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
     {
         try {
             $tenant = Tenant::findOrFail($this->tenantId);
+
+            if (!$tenant) {
+                broadcast(new AnyErrorEvent("TENANT INEXISTANT", "Le tenant n'existe pas"));
+            }
 
             // Initialisation du tenant
             tenancy()->initialize($tenant);
@@ -75,6 +80,8 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
             );
 
             CredentialsSentToCreatedTenantSucessfullyEvent::dispatch($this->tenantId);
+
+            $tenant->update(['completed' => true]);
 
         } catch (\Throwable $th) {
             broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, cutter($th->getMessage(), 100)));
