@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\HasQrCode;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Teacher extends Model
 {
-    use SoftDeletes, HasQrCode;
+    use SoftDeletes;
+
+    protected $connection = 'tenant';
 
     protected $table = 'teachers';
 
@@ -22,7 +23,6 @@ class Teacher extends Model
         'identifiant',
         'identity_card_details',
         'email',
-        'adresse',
         'specialties',
         'diploma',
         'blocked',

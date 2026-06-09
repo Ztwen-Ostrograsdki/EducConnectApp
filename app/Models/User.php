@@ -155,9 +155,9 @@ class User extends Authenticatable
 
     public function getProfilPhotoUrlAttribute(): ?string
     {
-        return TenantStorage::url(
-            $this->profil_photo
-        );
+       if($this->profil_photo)  return TenantStorage::url( $this->profil_photo);
+
+       else return asset('images/default-avatar.jpg') ;
     }
 
 

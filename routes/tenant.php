@@ -122,17 +122,19 @@ Route::middleware([
 
             Route::get('/statistiques-semestrielles/', PeriodicalStatistiqueComponent::class)->name('stats.general');
 
-        });
+            Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');
 
-        Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('tenant.student.profil');
+            Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('parent.profil');
+
+            Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('student.marks');
+
+            Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('teacher.profil');
+
+        });
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
 
-        Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('tenant.parent.profil');
-
-        Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('tenant.student.marks');
-
-        Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('tenant.teacher.profil');
+        
 
 
         // ESPACE PARENT

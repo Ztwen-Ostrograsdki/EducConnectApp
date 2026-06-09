@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\HasQrCode;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
-    use SoftDeletes, HasQrCode;
+    use SoftDeletes;
+
+    protected $connection = 'tenant'; 
 
     protected $table = 'students';
 
