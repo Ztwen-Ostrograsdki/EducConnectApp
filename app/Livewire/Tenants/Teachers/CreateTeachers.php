@@ -19,7 +19,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tenancy;
 use WireUi\Traits\WireUiActions;
 
-use function React\Promise\Timer\timeout;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Créations | ajout des enseignants")]
@@ -427,8 +426,6 @@ class CreateTeachers extends Component
         $domain = request()->getSchemeAndHttpHost();
 
         InitProcessToCreateTeachersEvent::dispatch(tenant('id'), $teachers, $domain);
-
-        // $this->redirectRoute('tenant.teachers.crud.tasks');
 
         $this->resetExcept('showImportMode');
 

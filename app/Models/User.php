@@ -16,6 +16,8 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
 
+    use HasFactory, HasRoles, Notifiable, SoftDeletes;
+
     protected $fillable = [
         'name',
         'prenames',
@@ -39,12 +41,10 @@ class User extends Authenticatable
         'blocked',
         'birth_date',
         'birth_place',
-        'gender'
+        'gender',
+        'credentials_sent',
     ];
 
-
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     protected string $guard_name = 'tenant';
 
@@ -65,7 +65,32 @@ class User extends Authenticatable
             'password' => 'hashed',
             'cannot_edit_classes' => 'boolean',
             'blocked' => 'boolean',
+            'credentials_sent' => 'boolean',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            
+            
+        });
+
+        static::created(function ($model) {
+
+            if($model->gender){
+                if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
+
+                    $model->update(['gender' => 'Masculin']);
+                }
+                elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
+
+                    $model->update(['gender' => 'Féminin']);
+                }
+            }
+            
+        });
     }
 
 
@@ -160,9 +185,32 @@ class User extends Authenticatable
        else return asset('images/default-avatar.jpg') ;
     }
 
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
 
     public function isSuperAdmin(): bool
     {
         return 0;
+    }
+
+
+    public function myRoles()
+    {
+        $roles = [];
+
+        if($this->roles){
+
+            foreach($this->roles as $role){
+
+                $roles[] = $role->name;
+            }
+
+            return implode(' - ', $roles);
+        }
+
+        return null;
     }
 }

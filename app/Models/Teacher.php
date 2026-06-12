@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -202,5 +203,17 @@ class Teacher extends Model
         }
 
         return ! $access->isSuspended() && $this->isActive();
+    }
+
+
+    public function getFullName(bool $reverse = false)
+    {
+        return $this->user->getFullName($reverse);
+    }
+
+
+    public function profil_photo_url() 
+    {
+        return $this->user->profil_photo_url;
     }
 }

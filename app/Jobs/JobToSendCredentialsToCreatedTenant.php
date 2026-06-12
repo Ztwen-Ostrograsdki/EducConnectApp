@@ -83,11 +83,13 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
 
             $tenant->update(['completed' => true]);
 
+            $user->update(['credentials_sent' => true]);
+
         } catch (\Throwable $th) {
             broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, cutter($th->getMessage(), 100)));
-            throw $th; // Permet à Laravel de réessayer ou de marquer comme échoué
+            throw $th; 
         } finally {
-            tenancy()->end(); // Très important
+            tenancy()->end(); 
         }
     }
 }

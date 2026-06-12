@@ -2,40 +2,16 @@
 
 namespace App\Livewire\Tenants\Teachers;
 
+use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\Teacher;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\WithPagination;
-use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class TeachersPortal extends Component
 {
-    use WithPagination, WireUiActions;
-    
-    public $counter = 3;
-    
-    public string $search = '';
-
-    public string $city = '';
-
-    public string $gender = '';
-
-    public string $department = '';
-
-    public ?string $status = null;
-
-    public int $perPage = 12;
-
-    public $showConfirmDeleteModal = false;
-
-    public $showConfirmRestorationModal = false;
-
-    public $showConfirmForceDeleteModal = false;
-
-    public ?string $targetedTeacherID = null;
+    use TeachersActions;
 
 
 
@@ -59,70 +35,12 @@ class TeachersPortal extends Component
         $this->resetPage();
     }
 
-    public function suspend(string $tenantId): void
-    {
-        $tenant = getTenant($tenantId);
-
-        $tenant->update([
-            'domain_blocked' => true,
-        ]);
-
-        session()->flash('success', 'Domaine ténant suspendu avec succès.');
-    }
-
-    public function unsuspend(string $tenantId): void
-    {
-        $tenant = getTenant($tenantId);
-
-        $tenant->update([
-            'domain_blocked' => false,
-        ]);
-
-        session()->flash('success', 'Domaine Tenant réactivé avec succès.');
-    }
-
-    public function blockDomain(string $tenantId): void
-    {
-        $tenant = getTenant($tenantId);
-
-        $tenant->update([
-            'domain_blocked' => true,
-        ]);
-
-        $this->notification()->success(
-            'Succès',
-            'Domaine du tenant bloqué!'
-        );
-
-        // broadcast(new TenantAccessWasUpdatedEvent($tenantId));
-    }
-
-    public function unblockDomain(string $tenantId): void
-    {
-        $tenant = getTenant($tenantId);
-
-        $tenant->update([
-            'domain_blocked' => false,
-        ]);
-
-        $this->notification()->success(
-            'Succès',
-            'Domaine du tenant débloqué!'
-        );
-
-        // broadcast(new TenantAccessWasUpdatedEvent($tenantId));
-    }
-
-    public function clearFilters()
-    {
-        $this->reset('search', 'gender', 'city', 'gender', 'department');
-    }
-
-
 
     public function render()
     {
         $allTeachersCounter = Teacher::all()->count();
+
+        $genders = config('app.genders');
 
         $activesTeachersCounter = Teacher::whereStatus('active')->count();
 
@@ -168,8 +86,11 @@ class TeachersPortal extends Component
         ->orderBy('users.prenames')
         ->paginate($this->perPage);
 
-        return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter'));
+        return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter', 'genders'));
     }
+
+
+
 
 
 }

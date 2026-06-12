@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('birth_place')->nullable()->default(null);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('credentials_sent')->default(false);
             $table->unsignedBigInteger('logged_count')->default(0);
             $table->boolean('is_super_admin')->default(false);
             $table->boolean('blocked')->default(false);

@@ -51,8 +51,9 @@ class AppGuard extends Component
             
             
             // Channel personnel
-            "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.user.notification" => 'handlePersonalNotification',
+            "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.notification.received" => 'handlePersonalNotification',
             "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.any.error" => 'handleAnyError',
+            "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.teacher.blocked" => 'handleTeacherBlocked',
         ];
 
         // Channels spécifiques au rôle
@@ -61,7 +62,8 @@ class AppGuard extends Component
 
         if ($user->hasRole('directeur')) {
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.paiement.recu"]       = 'handlePaiement';
-            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.enseignant.inscrit"]   = 'handleEnseignantInscrit';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.credentials.sent.to.user.successfully"]   = 'handleCredentialsSentToUser';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.send.credentials.to.teacher.failed"]   = 'handleSendCredentialsToUserFailed';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.roles.seed.failed"]   = 'handleRolesSeedsFailed';
 
 
@@ -108,10 +110,12 @@ class AppGuard extends Component
     public function handlePersonalNotification(array $event): void
     {
         $this->notification()->send([
-            'icon'        => 'info',
-            'title'       => $event['title'] ?? 'Notification',
+            'icon'        => $event['type'],
+            'title'       => "Vous avez reçu une notification",
             'description' => $event['message'] ?? '',
         ]);
+
+        $this->dispatch("NewNotificationReceivedLiveEvent");
     }
 
     // ── Handlers directeur ────────────────────────────────
@@ -181,12 +185,21 @@ class AppGuard extends Component
         ]);
     }
 
-    public function handleEnseignantInscrit(array $event): void
+    public function handleCredentialsSentToUser(array $event): void
     {
         $this->notification()->send([
             'icon'        => 'success',
-            'title'       => 'Nouvel enseignant',
-            'description' => "{$event['name']} vient de s'inscrire.",
+            'title'       => 'Données de connexion envoyées',
+            'description' => $event['msg'],
+        ]);
+    }
+    
+    public function handleSendCredentialsToUserFailed(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'error',
+            'title'       => "Echec de l'envoie des Données de connexion",
+            'description' => $event['msg'],
         ]);
     }
     
@@ -201,6 +214,17 @@ class AppGuard extends Component
 
     // ── Handlers enseignant ───────────────────────────────
 
+    public function handleTeacherBlocked(array $event)
+    {
+        $this->notification()->send([
+            'icon'        => 'info',
+            'title'       => 'Vous avez été déconnecté expressement!',
+            'description' => "Vous serez redirigé vers votre profil!",
+        ]);
+
+        return $this->redirectRoute('tenant.my.profil');
+    }
+    
     public function handleEmploiUpdated(array $event): void
     {
         $this->notification()->send([

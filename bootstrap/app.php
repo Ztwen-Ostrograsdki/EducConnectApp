@@ -9,6 +9,7 @@ use App\Http\Middleware\CheckIfTenantDomainNotBlocked;
 use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\EnsureTenantNotDeletedAt;
+use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TenantAuthenticate;
@@ -62,6 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.domain.open' => CheckIfTenantDomainNotBlocked::class,
             'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
             'tenant.domain.not.deleted.at' => EnsureTenantNotDeletedAt::class,
+            'teacher.not.blocked' => EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
         ]);

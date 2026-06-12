@@ -1,6 +1,108 @@
 <div class="w-full overflow-x-hidden p-2">
 
-    <div class="mx-auto
+    {{-- resources/views/livewire/notification-bell.blade.php --}}
+    <div class="relative" x-data="{ open: @entangle('open') }">
+
+        {{-- Bouton cloche --}}
+        <button @click="open = !open" class="relative p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition">
+            <x-lucide-bell class="w-5 h-5" />
+
+            @if ($unreadCount > 0)
+                <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center
+                         rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                </span>
+            @endif
+        </button>
+
+        {{-- Panneau --}}
+        <div x-show="open" x-transition @click.outside="open = false" class="absolute right-0 mt-2 w-96 rounded-xl border border-white/10 bg-gray-900 shadow-2xl z-50">
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <span class="text-sm font-semibold text-white">Notifications</span>
+                <div class="flex gap-2">
+                    @if ($unreadCount > 0)
+                        <button wire:click="toutMarquerLu" class="text-xs text-indigo-400 hover:text-indigo-300 transition">
+                            Tout lire
+                        </button>
+                    @endif
+                    @if ($notifications->count() > 0)
+                        <button wire:click="toutSupprimer" class="text-xs text-red-400 hover:text-red-300 transition">
+                            Tout effacer
+                        </button>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Liste --}}
+            <div class="max-h-80 overflow-y-auto divide-y divide-white/5">
+                @forelse($notifications as $notif)
+                    <div class="flex gap-3 px-4 py-3 hover:bg-white/5 transition
+                           {{ is_null($notif['read_at']) ? 'bg-white/[0.03]' : '' }}">
+                        {{-- Icône selon type --}}
+                        <div class="mt-0.5 shrink-0">
+                            @php
+                                $iconClass = match ($notif['type']) {
+                                    'success' => 'text-emerald-400',
+                                    'warning' => 'text-amber-400',
+                                    'error' => 'text-red-400',
+                                    default => 'text-indigo-400',
+                                };
+                            @endphp
+                            <div class="w-2 h-2 rounded-full mt-1.5 {{ $iconClass }} bg-current"></div>
+                        </div>
+
+                        {{-- Contenu --}}
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-white truncate">{{ $notif['titre'] }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ $notif['message'] }}</p>
+                            <p class="text-[10px] text-gray-600 mt-1">{{ $notif['created_at'] }}</p>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="flex flex-col gap-1 shrink-0">
+                            @if (is_null($notif['read_at']))
+                                <button wire:click="marquerLue('{{ $notif['id'] }}')" title="Marquer comme lu" class="text-gray-500 hover:text-indigo-400 transition">
+                                    <x-lucide-check class="w-3.5 h-3.5" />
+                                </button>
+                            @endif
+                            <button wire:click="supprimer('{{ $notif['id'] }}')" title="Supprimer" class="text-gray-500 hover:text-red-400 transition">
+                                <x-lucide-x class="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="px-4 py-8 text-center text-sm text-gray-500">
+                        Aucune notification
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Echo listener --}}
+        {{-- <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const userId = {{ auth('tenant')->id() }};
+                const tenantId = '{{ tenant('id') }}';
+
+                window.Echo
+                    .private(`tenant.${tenantId}.user.${userId}`)
+                    .listen('.notification.received', (e) => {
+                        // Notifie le composant Livewire
+                        Livewire.dispatch('notification-received', e);
+
+                        // Toast optionnel (WireUI)
+                        $wireui.notify({
+                            title: e.titre,
+                            description: e.message,
+                            icon: e.type === 'error' ? 'error' : e.type,
+                        });
+                    });
+            });
+        </script> --}}
+    </div>
+
+    <div class="hidden mx-auto
                 w-full
                 max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
@@ -402,7 +504,8 @@
 
                                             <td class="px-4 py-5 text-center">
 
-                                                <span class="px-3 py-1 rounded-full
+                                                <span
+                                                    class="px-3 py-1 rounded-full
                                                          bg-indigo-500/10
                                                          text-indigo-400 text-xs">
 
