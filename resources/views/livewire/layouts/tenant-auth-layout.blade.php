@@ -259,7 +259,11 @@
                                 <div class="notif-title">💳 Paiement reçu — Kofi A.</div>
                                 <div class="notif-time">il y a 3h</div>
                             </div>
-                            <div class="dd-item" style="justify-content:center;color:var(--accent);font-size:.73rem;">Voir toutes →</div>
+                            <div class="dd-item" style="justify-content:center;color:var(--accent);font-size:.73rem;">
+                                <a class="w-full text-center hover:underline py-1.5" href="{{ route('tenant.notifications.center') }}">
+                                    Voir toutes →
+                                </a>
+                            </div>
                         </div>
                     </div>
 

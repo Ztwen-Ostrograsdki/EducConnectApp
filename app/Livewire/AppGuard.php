@@ -32,6 +32,7 @@ class AppGuard extends Component
     {
         if (! $this->isTenant) {
             return [
+                'echo-private:central-admin,.central.notifications' => 'handleNewNotificationForCentral',
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
                 'echo-private:central-admin,.tenant.creation.failed' => 'handleTenantCreationFailed',
                 'echo-private:central-admin,.any.error' => 'handleAnyError',
@@ -245,6 +246,16 @@ class AppGuard extends Component
 
     // ── Handlers central ──────────────────────────────────
 
+    public function handleNewNotificationForCentral(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => 'Nouvelle école inscrite',
+            'description' => "Une nouvelle école a été créée",
+        ]);
+        $this->dispatch('LiveNewNotificationForCentral');
+    }
+    
     public function handleTenantCreated(array $event): void
     {
         $this->notification()->send([

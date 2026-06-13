@@ -18,6 +18,8 @@ class User extends Authenticatable
 
     use HasFactory, HasRoles, Notifiable, SoftDeletes;
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'name',
         'prenames',

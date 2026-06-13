@@ -49,7 +49,9 @@ class JobToSendCredentialsToUser implements ShouldQueue
             // Initialisation du tenant
             tenancy()->initialize($tenant);
 
-            $user = User::firstWhere($this->userEmail);
+            $user = User::firstWhere('email', $this->userEmail);
+
+            $director = User::firstWhere('tenant_id', $this->tenantId);
 
             if (!$user) {
 
@@ -97,8 +99,8 @@ class JobToSendCredentialsToUser implements ShouldQueue
 
             CredentialsToUserSuccessfullyEvent::dispatch($this->tenantId, $this->userEmail, 'Enseignant');
 
-            $tenant->user->notify(new RealTimeNotification(
-                userEmail: $tenant->email,
+            $director->notify(new RealTimeNotification(
+                userEmail: $director->email,
                 tenantId: $this->tenantId,
                 title:             "Envoi des données de connexion à " . $this->userEmail,
                 message:           'Données envoyées avec succès.',
@@ -110,8 +112,8 @@ class JobToSendCredentialsToUser implements ShouldQueue
         } catch (\Throwable $th) {
             broadcast(new FailedToSendCredentialsToUserEvent($this->tenantId, $this->userEmail, 'Enseignant', cutter($th->getMessage(), 100)));
 
-            $tenant->user->notify(new RealTimeNotification(
-                userEmail: $tenant->email,
+            $director->notify(new RealTimeNotification(
+                userEmail: $director->email,
                 tenantId: $this->tenantId,
                 title:             "Echec de l'envoi des données de connexion à " . $this->userEmail,
                 message:           cutter($th->getMessage(), 100),

@@ -43,7 +43,7 @@ class CredentialsToUserSuccessfullyEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         
-        $user = User::firstWhere($this->userEmail);
+        $user = User::firstWhere('email', $this->userEmail);
 
         $email = $this->userEmail;
 

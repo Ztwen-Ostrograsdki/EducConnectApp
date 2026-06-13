@@ -2,15 +2,16 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
+use App\Models\CentralUser;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RealTimeNotification extends Notification implements ShouldQueue, ShouldBroadcast
+class CentralRealTimeNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 
@@ -22,13 +23,12 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
      * @param array  $meta       Données supplémentaires
      */
     public function __construct(
-        public readonly string  $userEmail,
-        public readonly string  $tenantId,
         public readonly string  $title,
         public readonly string  $message,
         public readonly string  $type = 'info',
         public readonly ?string $url = null,
         public readonly ?array   $meta = null,
+        public readonly ?string  $tenantId = null,
     ) {}
 
     /**
@@ -74,12 +74,8 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
      */
     public function broadcastOn(): array
     {
-        $userId = User::where('email', $this->userEmail)->value('id');
-
         return [
-            new PrivateChannel(
-                'tenant.' . $this->tenantId . '.user.' . $userId,
-            ),
+            new PrivateChannel('central-admin'),
         ];
     }
 
@@ -88,6 +84,6 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
      */
     public function broadcastAs(): string
     {
-        return 'notification.received';
+        return 'central.notifications';
     }
 }

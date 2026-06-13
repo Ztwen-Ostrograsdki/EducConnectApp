@@ -6,6 +6,7 @@ use App\Events\AnyErrorEvent;
 use App\Mail\MailToNotifyCentralAdminOfNewTenantRequest;
 use App\Models\CentralUser;
 use App\Models\RequestToCreateNewTenant;
+use App\Notifications\CentralRealTimeNotification;
 use App\Services\EmailTemplateBuilder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -72,14 +73,23 @@ class JobToNotifyCentralAdminOfNewTenantRequest implements ShouldQueue
             'contacts'          => $req->contacts,
         ]);
 
-        $centralMail = CentralUser::first()?->email;
+        $central = CentralUser::first();
 
-        Mail::to($centralMail)->queue(
+        Mail::to($central?->email)->queue(
             new MailToNotifyCentralAdminOfNewTenantRequest(
                 $userName,
                 $receiver_html
             )
         );
+
+        $url = route('requests.school.space.portal');
+
+        $central->notify(new CentralRealTimeNotification(
+            title:             "Nouvelle de demande d'espace école",
+            message:           $userName . " vient de lancer une demande d'espace école pour son école " . $req->school_name . " sous l'adresse mail " . $req->email,
+            type:              'success',
+            url:               $url,
+        ));
     }
 
     /**

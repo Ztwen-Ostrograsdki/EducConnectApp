@@ -7,10 +7,12 @@ use App\Events\DefaultForAnyEvent;
 use App\Events\TeacherCreatedEvent;
 use App\Events\TeachersCreationStatusUpdatedEvent;
 use App\Helpers\Robot;
+use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\ImportTask;
 use App\Models\Teacher;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Notifications\RealTimeNotification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -69,6 +71,8 @@ class JobToCreateTeacher implements ShouldQueue
 
             $payload = $task->payload;
 
+            $tenant = tenancy()->tenant;
+
 
             // Anti-doublon
             if (User::where('email', $payload['email'])->first()) {
@@ -76,6 +80,15 @@ class JobToCreateTeacher implements ShouldQueue
                 $task->update(['status' => 'failed']);
 
                 $this->fail("Compte est déjà existant dans la base de données!");
+
+                $tenant->user->notify(new RealTimeNotification(
+                    userEmail: $tenant->email,
+                    tenantId: $this->tenantId,
+                    title:             "Le Compte " . $payload['email'] . " déjà existant dans la base de données!",
+                    message:           "Compte est déjà existant dans la base de données!",
+                    type:              'error',
+                ));
+
                 return;
             }
 
@@ -115,8 +128,6 @@ class JobToCreateTeacher implements ShouldQueue
 
             try {
 
-                $tenant = tenancy()->tenant;
-
                 $qr_code_payload =
                 [
                     'nom'                    => $payload['name'],
@@ -144,6 +155,14 @@ class JobToCreateTeacher implements ShouldQueue
                     $th->getMessage(),
                 );
 
+                $tenant->user->notify(new RealTimeNotification(
+                    userEmail: $tenant->email,
+                    tenantId: $this->tenantId,
+                    title:             "Erreur création du compte " . $payload['email'],
+                    message:           $th->getMessage(),
+                    type:              'error',
+                ));
+
                 $this->fail($th->getMessage());
                 return;
             }
@@ -153,6 +172,18 @@ class JobToCreateTeacher implements ShouldQueue
             $task->update(['status' => 'success']);
 
             TeacherCreatedEvent::dispatch($this->tenantId, $task->id, null);
+
+            $tenant->user->notify(new RealTimeNotification(
+                userEmail: $tenant->user->email,
+                tenantId: $this->tenantId,
+                title:             "COMPTE ENSEIGNANT CREE AVEC SUCCES",
+                message:           "Le compte de l'enseignant " . $user->getUserNamePrefix(true, true) . " a été créé avec succès!",
+                type:              'success',
+            ));
+
+            $space_url = get_tenant_url($this->domain, 'login');
+
+            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url)->delay(now()->addMinutes(2));
 
         } finally {
 
@@ -202,6 +233,16 @@ class JobToCreateTeacher implements ShouldQueue
             $this->taskId,
             $exception->getMessage(),
         );
+
+        $director = User::firstWhere('tenant_id', $this->tenantId);
+
+        $director->notify(new RealTimeNotification(
+            userEmail: $director->email,
+            tenantId: $this->tenantId,
+            title:             "ECHEC CREATION DES COMPTES ENSEIGNANTS",
+            message:           $exception->getMessage(),
+            type:              'error',
+        ));
     }
 
 }

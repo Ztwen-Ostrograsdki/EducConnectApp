@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Livewire\Tenants\Users;
+namespace App\Livewire\Central;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
-class NotificationsPage extends Component
+#[Layout('livewire.layouts.central-auth-layout')]
+class NotificationsCenter extends Component
 {
     use WireUiActions;
 
     public int $counter = 0;
 
-    #[On("NewNotificationReceivedLiveEvent")]
+    #[On("LiveNewNotificationForCentral")]
     public function newNotificationsReceived()
     {
         $this->relaodNotifications();
@@ -39,7 +41,7 @@ class NotificationsPage extends Component
      */
     public function relaodNotifications(): void
     {
-        $user = Auth::guard('tenant')->user();
+        $user = Auth::guard('central')->user();
 
         $this->notifications = $user
             ->notifications()
@@ -64,7 +66,7 @@ class NotificationsPage extends Component
      */
     public function marquerLue(string $id): void
     {
-        Auth::guard('tenant')->user()
+        Auth::guard('central')->user()
             ->notifications()
             ->where('id', $id)
             ->first()
@@ -78,7 +80,7 @@ class NotificationsPage extends Component
      */
     public function toutMarquerLu(): void
     {
-        Auth::guard('tenant')->user()->unreadNotifications()->markAsRead();
+        Auth::guard('central')->user()->unreadNotifications()->markAsRead();
 
         $this->relaodNotifications();
     }
@@ -88,7 +90,7 @@ class NotificationsPage extends Component
      */
     public function supprimer(string $id): void
     {
-        Auth::guard('tenant')->user()
+        Auth::guard('central')->user()
             ->notifications()
             ->where('id', $id)
             ->delete();
@@ -101,14 +103,13 @@ class NotificationsPage extends Component
      */
     public function toutSupprimer(): void
     {
-        Auth::guard('tenant')->user()->notifications()->delete();
+        Auth::guard('central')->user()->notifications()->delete();
 
         $this->relaodNotifications();
     }
-
-
+    
     public function render()
     {
-        return view('livewire.tenants.users.notifications-page');
+        return view('livewire.central.notifications-center');
     }
 }

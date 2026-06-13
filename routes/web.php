@@ -3,6 +3,7 @@
 use App\Livewire\Actions\RequestPage;
 use App\Livewire\Auth\CentralLogin;
 use App\Livewire\Central\CentralDashboard;
+use App\Livewire\Central\NotificationsCenter;
 use App\Livewire\Central\SchoolProfilComponent;
 use App\Livewire\Central\SchoolsComponent;
 use App\Livewire\Central\SchoolSpaceRequestsManageComponent;
@@ -48,7 +49,7 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
     // Dashboard central
     Route::get('/', CentralDashboard::class)->name('dashboard');
 
-    // Gestion des demendes d'espace ecole
+    // Gestion des demandes d'espace ecole
     Route::get('/les-demandes-espace/gestion/{status?}', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');
 
     // Gestion des écoles (tenants)
@@ -69,6 +70,9 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
 
 
     Route::get('/les-ecoles/profil/ID={school_uuid}', SchoolProfilComponent::class)->name('school.profil');
+
+
+    Route::get('/centre-de-notifications', NotificationsCenter::class)->name('notifications.center');
 
 });
 

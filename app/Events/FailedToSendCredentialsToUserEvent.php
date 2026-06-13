@@ -42,7 +42,7 @@ class FailedToSendCredentialsToUserEvent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        $user = User::firstWhere($this->userEmail);
+        $user = User::firstWhere('email',  $this->userEmail);
 
         $error = "Une erreur est survenue";
 

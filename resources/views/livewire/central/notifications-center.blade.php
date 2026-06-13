@@ -153,28 +153,6 @@
                     @endif
                 </div>
             </div>
-
-            {{-- Echo listener --}}
-            {{-- <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const userId = {{ auth('tenant')->id() }};
-                const tenantId = '{{ tenant('id') }}';
-
-                window.Echo
-                    .private(`tenant.${tenantId}.user.${userId}`)
-                    .listen('.notification.received', (e) => {
-                        // Notifie le composant Livewire
-                        Livewire.dispatch('notification-received', e);
-
-                        // Toast optionnel (WireUI)
-                        $wireui.notify({
-                            title: e.titre,
-                            description: e.message,
-                            icon: e.type === 'error' ? 'error' : e.type,
-                        });
-                    });
-            });
-        </script> --}}
         </div>
 
     </div>
