@@ -33,6 +33,7 @@ class AppGuard extends Component
         if (! $this->isTenant) {
             return [
                 'echo-private:central-admin,.central.notifications' => 'handleNewNotificationForCentral',
+                'echo-private:central-admin,.pdf.ready' => 'handleNewPDFNotificationForCentral',
                 'echo-private:central-admin,.tenant.created' => 'handleTenantCreated',
                 'echo-private:central-admin,.tenant.creation.failed' => 'handleTenantCreationFailed',
                 'echo-private:central-admin,.any.error' => 'handleAnyError',
@@ -53,6 +54,7 @@ class AppGuard extends Component
             
             // Channel personnel
             "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.notification.received" => 'handlePersonalNotification',
+            "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.pdf.ready" => 'handlePersonalPDFNotification',
             "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.any.error" => 'handleAnyError',
             "echo-private:tenant.{$this->tenantId}.user.{$this->userId},.teacher.blocked" => 'handleTeacherBlocked',
         ];
@@ -69,6 +71,7 @@ class AppGuard extends Component
 
 
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.tenant.any.event"]   = 'handleAnyEventer';
+            $listeners["echo-private:tenant.{$this->tenantId}.directeur,.pdf.ready"]   = 'handlePersonalPDFNotification';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teacher.creation.failed"]   = 'teacherCreationFailed';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teacher.creation.success"]   = 'teacherCreationDone';
             $listeners["echo-private:tenant.{$this->tenantId}.directeur,.teachers.creation.completed"]   = 'teachersCreationsCompleted';
@@ -108,12 +111,22 @@ class AppGuard extends Component
         ]);
     }
 
+    public function handlePersonalPDFNotification(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => "success",
+            'title'       => "Votre PDF est prêt",
+            'description' => "Votre document  a été généré et est prêt!",
+        ]);
+
+        $this->dispatch("NewNotificationReceivedLiveEvent");
+    }
+    
     public function handlePersonalNotification(array $event): void
     {
         $this->notification()->send([
-            'icon'        => $event['type'],
+            'icon'        => "info",
             'title'       => "Vous avez reçu une notification",
-            'description' => $event['message'] ?? '',
         ]);
 
         $this->dispatch("NewNotificationReceivedLiveEvent");
@@ -250,8 +263,18 @@ class AppGuard extends Component
     {
         $this->notification()->send([
             'icon'        => 'success',
-            'title'       => 'Nouvelle école inscrite',
-            'description' => "Une nouvelle école a été créée",
+            'title'       => 'Nouvelle Notification',
+            'description' => "Vous avez une nouvelle notification",
+        ]);
+        $this->dispatch('LiveNewNotificationForCentral');
+    } 
+    
+    public function handleNewPDFNotificationForCentral(array $event): void
+    {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => 'DOCUMENT PDF PRET',
+            'description' => "Votre document est prêt!",
         ]);
         $this->dispatch('LiveNewNotificationForCentral');
     }

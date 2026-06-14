@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\Teachers;
 
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\Teacher;
+use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -12,8 +13,6 @@ use Livewire\Component;
 class TeachersPortal extends Component
 {
     use TeachersActions;
-
-
 
     public function mount(?string $status = null)
     {
@@ -35,6 +34,36 @@ class TeachersPortal extends Component
         $this->resetPage();
     }
 
+    public function printTeachersList()
+    {
+        $teachers = $this->getTeachersData()->get();
+
+        $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
+
+        $pdf_title = "Liste des enseignants";
+
+        $viewData = [
+            'teachers' => $teachers,
+            'printed_at' => $printed_at,
+            'allTeachers' => $teachers->count(),
+            'totalActifs'      => $teachers->where('status', 'active')->count(),
+            'pdf_title' => $pdf_title,
+        ];
+
+        PDFFactory::dispatch(
+            view:         'livewire.tenants.teachers.printable-list-component',
+            data:         $viewData,
+            outputPath:   PDFFactory::outputPath('teachers', $pdf_title),
+            overrides:    ['landscape' => true],
+            tenantId:     tenant('id'),
+            notifiableId: auth('tenant')->user()->id,
+        );
+
+        $this->notification()->success(
+            title: 'Génération du document lancée',
+        );
+    }
+
 
     public function render()
     {
@@ -44,7 +73,15 @@ class TeachersPortal extends Component
 
         $activesTeachersCounter = Teacher::whereStatus('active')->count();
 
-        $teachers = Teacher::query()
+        $teachers = $this->getTeachersData()->paginate($this->perPage);
+
+        return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter', 'genders'));
+    }
+
+
+    public function getTeachersData()
+    {
+        return Teacher::query()
         ->select('teachers.*')
         ->join('users', 'users.id', '=', 'teachers.user_id')
         ->with(['user'])
@@ -83,14 +120,8 @@ class TeachersPortal extends Component
             });
         })
         ->orderBy('users.name')
-        ->orderBy('users.prenames')
-        ->paginate($this->perPage);
-
-        return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter', 'genders'));
+        ->orderBy('users.prenames');
+        
     }
-
-
-
-
 
 }

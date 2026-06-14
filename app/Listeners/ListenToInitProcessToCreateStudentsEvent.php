@@ -36,6 +36,7 @@ class ListenToInitProcessToCreateStudentsEvent
                 );
             })
             ->allowFailures()
+            ->onQueue('default')
             ->name('teachers_creation')
             ->dispatch();
 

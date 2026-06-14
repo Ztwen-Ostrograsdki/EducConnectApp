@@ -838,7 +838,7 @@ body {
 .notif-time {
     font-family: "DM Mono", monospace;
     font-size: 0.58rem;
-    color: var(--text3);
+    /* color: var(--text3); */
 }
 
 /* Content */

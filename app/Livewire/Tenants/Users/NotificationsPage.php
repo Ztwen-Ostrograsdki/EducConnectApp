@@ -78,7 +78,7 @@ class NotificationsPage extends Component
      */
     public function toutMarquerLu(): void
     {
-        Auth::guard('tenant')->user()->unreadNotifications()->markAsRead();
+        Auth::guard('tenant')->user()->unreadNotifications()->limit(20)->markAsRead();
 
         $this->relaodNotifications();
     }
@@ -101,7 +101,7 @@ class NotificationsPage extends Component
      */
     public function toutSupprimer(): void
     {
-        Auth::guard('tenant')->user()->notifications()->delete();
+        Auth::guard('tenant')->user()->notifications()->limit(10)->delete();
 
         $this->relaodNotifications();
     }

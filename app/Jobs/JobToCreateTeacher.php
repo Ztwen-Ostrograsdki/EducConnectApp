@@ -73,6 +73,8 @@ class JobToCreateTeacher implements ShouldQueue
 
             $tenant = tenancy()->tenant;
 
+            $director = User::first();
+
 
             // Anti-doublon
             if (User::where('email', $payload['email'])->first()) {
@@ -81,7 +83,7 @@ class JobToCreateTeacher implements ShouldQueue
 
                 $this->fail("Compte est déjà existant dans la base de données!");
 
-                $tenant->user->notify(new RealTimeNotification(
+                User::first()->notify(new RealTimeNotification(
                     userEmail: $tenant->email,
                     tenantId: $this->tenantId,
                     title:             "Le Compte " . $payload['email'] . " déjà existant dans la base de données!",
@@ -155,8 +157,8 @@ class JobToCreateTeacher implements ShouldQueue
                     $th->getMessage(),
                 );
 
-                $tenant->user->notify(new RealTimeNotification(
-                    userEmail: $tenant->email,
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
                     tenantId: $this->tenantId,
                     title:             "Erreur création du compte " . $payload['email'],
                     message:           $th->getMessage(),
@@ -173,8 +175,8 @@ class JobToCreateTeacher implements ShouldQueue
 
             TeacherCreatedEvent::dispatch($this->tenantId, $task->id, null);
 
-            $tenant->user->notify(new RealTimeNotification(
-                userEmail: $tenant->user->email,
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director?->email,
                 tenantId: $this->tenantId,
                 title:             "COMPTE ENSEIGNANT CREE AVEC SUCCES",
                 message:           "Le compte de l'enseignant " . $user->getUserNamePrefix(true, true) . " a été créé avec succès!",
@@ -186,8 +188,6 @@ class JobToCreateTeacher implements ShouldQueue
             JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url)->delay(now()->addMinutes(2));
 
         } finally {
-
-            tenancy()->end();
 
             $batch = $this->batch();
 
@@ -204,6 +204,8 @@ class JobToCreateTeacher implements ShouldQueue
                 failed:     $batch->failedJobs,
             );
 
+            tenancy()->end();
+
         }
     }
 
@@ -214,35 +216,40 @@ class JobToCreateTeacher implements ShouldQueue
     public function failed(Throwable $exception): void
     {
 
-        $task = ImportTask::find($this->taskId);
+        tenancy()->initialize($this->tenantId);
 
-        if ($task) {
-            $task->update([
-                'status' => 'failed',
-                'error'  => $exception->getMessage(),
-            ]);
+        try {
+            $task = ImportTask::find($this->taskId);
 
+            if ($task) {
+                $task->update([
+                    'status' => 'failed',
+                    'error'  => $exception->getMessage(),
+                ]);
+
+                User::where('email', $task->payload['email'])->forceDelete();
+                Teacher::where('email', $task->payload['email'])->forceDelete();
+            }
+
+            ATeacherCreationFailedEvent::dispatch(
+                $this->tenantId,
+                $this->taskId,
+                $exception->getMessage(),
+            );
+
+            $director = User::firstWhere('tenant_id', $this->tenantId);
+
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director->email,
+                tenantId:  $this->tenantId,
+                title:     "ECHEC CRÉATION DES COMPTES ENSEIGNANTS",
+                message:   $exception->getMessage(),
+                type:      'error',
+            ));
+
+        } finally {
+            tenancy()->end();
         }
-
-        User::where('email', $task->payload['email'])?->forceDelete();
-
-        Teacher::where('email', $task->payload['email'])?->forceDelete();
-
-        ATeacherCreationFailedEvent::dispatch(
-            $this->tenantId,
-            $this->taskId,
-            $exception->getMessage(),
-        );
-
-        $director = User::firstWhere('tenant_id', $this->tenantId);
-
-        $director->notify(new RealTimeNotification(
-            userEmail: $director->email,
-            tenantId: $this->tenantId,
-            title:             "ECHEC CREATION DES COMPTES ENSEIGNANTS",
-            message:           $exception->getMessage(),
-            type:              'error',
-        ));
     }
 
 }

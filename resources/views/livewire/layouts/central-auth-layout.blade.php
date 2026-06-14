@@ -290,30 +290,7 @@
 
                     <button class="h-btn" title="Thème">🌙</button>
 
-                    <div class="dd">
-                        <button class="h-btn" onclick="toggleDD('notif-menu')">
-                            🔔 <span class="h-notif-dot">3</span>
-                        </button>
-                        <div class="dd-menu" id="notif-menu">
-                            <div class="dd-head">
-                                <div class="dd-title">Notifications</div>
-                                <div class="dd-sub">3 non lues</div>
-                            </div>
-                            <div class="notif-item notif-unread">
-                                <div class="notif-title">📝 Nouvelles demandes d'abonnement</div>
-                                <div class="notif-time">il y a 5 min</div>
-                            </div>
-                            <div class="notif-item notif-unread">
-                                <div class="notif-title">👤 Nouvelle connexion</div>
-                                <div class="notif-time">il y a 1h</div>
-                            </div>
-                            <div class="notif-item notif-unread">
-                                <div class="notif-title">💳 Paiement reçu — Kofi A.</div>
-                                <div class="notif-time">il y a 3h</div>
-                            </div>
-                            <div class="dd-item" style="justify-content:center;color:var(--accent);font-size:.73rem;">Voir toutes →</div>
-                        </div>
-                    </div>
+                    @livewire('notification-badge', ['guard' => 'central'])
 
                     <div class="dd">
                         <div class="user-trigger" onclick="toggleDD('user-menu')">

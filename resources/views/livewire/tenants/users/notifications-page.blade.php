@@ -98,7 +98,7 @@
                     </div>
                 </div>
 
-                <div class="overflow-y-auto divide-y divide-white/5 flex flex-wrap p-2 gap-1.5">
+                <div class="overflow-y-auto divide-y divide-white/5 flex flex-wrap p-2 gap-5">
                     @foreach ($notifications as $notif)
                         @php
                             $iconClass = match ($notif['type']) {
@@ -115,7 +115,7 @@
                                 default => 'shadow-indigo-400',
                             };
                         @endphp
-                        <div class="flex flex-col gap-3 px-4 py-3 rounded-2xl p-3 cursor-pointer shadow-sm {{ $bg }}  hover:bg-white/5 transition
+                        <div class="flex flex-col gap-3 px-4 py-3 rounded-xl p-3 cursor-pointer shadow-sm {{ $bg }}  hover:bg-white/5 transition
                            {{ !is_null($notif['read_at']) ? 'opacity-40' : '' }}">
                             {{-- Icône selon type --}}
                             <div class="flex gap-x-2">

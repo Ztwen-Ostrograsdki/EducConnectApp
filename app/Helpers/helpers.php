@@ -430,11 +430,18 @@ if(!function_exists('substringer')){
     function substringer($string, $length = 8)
     {
 
-        if(strlen($string) <= $length) return $string;
+       if (!$string) return '';
 
-        else
+        if (mb_strlen($string) <= $length) return $string;
 
-            return Str::substr($string, 0, $length) . " ...";
+        $cut = mb_substr($string, 0, $length);
+        $lastSpace = mb_strrpos($cut, ' ');
+
+        $result = $lastSpace !== false
+            ? mb_substr($cut, 0, $lastSpace)
+            : $cut;
+
+        return $result . '...';
     }
 
 }
@@ -444,11 +451,18 @@ if(!function_exists('string_cutter')){
     function string_cutter($string, $length = 8)
     {
 
-        if(strlen($string) <= $length) return $string;
+        if (!$string) return '';
 
-        else
+        if (mb_strlen($string) <= $length) return $string;
 
-            return Str::substr($string, 0, $length) . " ...";
+        $cut = mb_substr($string, 0, $length);
+        $lastSpace = mb_strrpos($cut, ' ');
+
+        $result = $lastSpace !== false
+            ? mb_substr($cut, 0, $lastSpace)
+            : $cut;
+
+        return $result . '...';
     }
 
 }
@@ -458,11 +472,18 @@ if(!function_exists('cutter')){
     function cutter($string, $length = 8)
     {
 
-        if(strlen($string) <= $length) return $string;
+        if (!$string) return '';
 
-        else
+        if (mb_strlen($string) <= $length) return $string;
 
-            return Str::substr($string, 0, $length) . " ...";
+        $cut = mb_substr($string, 0, $length);
+        $lastSpace = mb_strrpos($cut, ' ');
+
+        $result = $lastSpace !== false
+            ? mb_substr($cut, 0, $lastSpace)
+            : $cut;
+
+        return $result . '...';
     }
 
 }

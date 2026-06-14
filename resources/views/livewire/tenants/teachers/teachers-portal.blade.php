@@ -55,22 +55,22 @@
                 {{-- ACTIONS --}}
                 <div class="flex flex-wrap items-center gap-3">
 
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-slate-800
-                                   hover:bg-slate-700
-                                   transition-all text-sm">
-
-                        Exporter
+                    <button wire:click='printTeachersList' class="py-2.5 px-5 rounded-2xl bg-orange-500/50 hover:bg-orange-600/75 transition-all text-sm">
+                        <span wire:loading.remove wire:target='printTeachersList' class="inline-flex gap-x-2 items-center">
+                            <x-lucide-download class="w-4 h-4" />
+                            Imprimer la liste
+                        </span>
+                        <span wire:loading wire:target='printTeachersList' class="inline-flex items-center gap-x-2">
+                            <span class="flex items-center gap-x-2.2">
+                                <span>Document en cours...</span>
+                                <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                            </span>
+                        </span>
 
                     </button>
 
-                    <a href="{{ route('tenant.teachers.create') }}"
-                        class="py-2.5 px-5 rounded-2xl
-                                   bg-indigo-500
-                                   hover:bg-indigo-600
-                                   transition-all text-sm">
+                    <a href="{{ route('tenant.teachers.create') }}" class="py-2.5 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
                         Ajouter Enseignant
-
                     </a>
 
                 </div>

@@ -8,27 +8,29 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RealTimeNotification extends Notification implements ShouldQueue, ShouldBroadcast
+class PDFIsReady extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 
     /**
-     * @param string $titre      Le titre de la notification
+     * @param string $title      Le titre de la notification
      * @param string $message    Le corps du message
      * @param string $type       ex: 'info' | 'success' | 'warning' | 'error'
      * @param string|null $url   Lien optionnel (redirection au clic)
-     * @param array  $meta       Données supplémentaires
      */
     public function __construct(
-        public readonly string  $userEmail,
-        public readonly string  $tenantId,
         public readonly string  $title,
         public readonly string  $message,
         public readonly string  $type = 'info',
-        public readonly ?array   $meta = null,
-    ) {}
+        public readonly ?string $url = null,
+        public readonly ?string  $tenantId = null,
+        public readonly ?string  $userEmail = null,
+    ) {
+        $this->onQueue('pdf');
+    }
 
     /**
      * Canaux de livraison.
@@ -47,7 +49,7 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
             'title'   => $this->title,
             'message' => $this->message,
             'type'    => $this->type,
-            'meta'    => $this->meta,
+            'url'     => $this->url,
         ];
     }
 
@@ -61,22 +63,36 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
             'title'      => $this->title,
             'message'    => $this->message,
             'type'       => $this->type,
+            'url'        => $this->url,
             'created_at' => now()->toISOString(),
         ]);
     }
 
     /**
      * Canal privé par utilisateur dans le tenant.
-     * Format: private-tenant.{tenantId}.user.{userId}
      */
     public function broadcastOn(): array
     {
-        $userId = User::where('email', $this->userEmail)->value('id');
+        if($this->tenantId){
+
+            if($this->userEmail){
+
+                $userId = User::where('email', $this->userEmail)->value('id');
+                
+                return [
+                    new PrivateChannel('tenant.' . $this->tenantId . '.user.' . $userId),
+                ];
+            }
+            else{
+
+                return [
+                    new PrivateChannel('tenant.' . $this->tenantId . '.directeur')
+                ];
+            }
+        }
 
         return [
-            new PrivateChannel(
-                'tenant.' . $this->tenantId . '.user.' . $userId,
-            ),
+            new PrivateChannel('central-admin'),
         ];
     }
 
@@ -85,6 +101,6 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
      */
     public function broadcastAs(): string
     {
-        return 'notification.received';
+        return 'pdf.ready';
     }
 }
