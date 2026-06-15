@@ -29,7 +29,7 @@ class PrintableListComponent extends Component
 
     public ?string $status = null;
 
-    public ?string $pdf_title = "Document ";
+    public ?string $pdf_title = "Liste des enseignants ";
  
     /**
      * Retourne la liste paginée/filtrée des enseignants.

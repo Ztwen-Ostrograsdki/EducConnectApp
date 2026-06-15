@@ -5,7 +5,28 @@
 --}}
 
 <div class="print-wrapper">
+    <div class="text-center mx-auto mt-2 px-3 border-2 border-gray-900 p-3 my-3">
+        <h6 class="letter-spacing-2 flex flex-col items-center gap-y-1">
+            <div class="text-sky-400 flex w-full">
+                <span class="flex flex-col font-bold mx-auto">
+                    <span class="uppercase text-orange-600">
+                        République du Bénin
+                    </span>
+                    <span class="text-gray-800 text-sm">
+                        Ministère de l'Enseignement Technique et de la Formation Professionnelle
+                    </span>
+                    <span class="mx-auto inline-block w-full mt-1">
+                        <span class="w-full flex mx-auto ">
+                            <span class="bg-green-500 inline-block p-0.5 w-1/3"></span>
+                            <span class="bg-yellow-500 inline-block p-0.5 w-1/3"></span>
+                            <span class="bg-red-600 inline-block p-0.5 w-1/3"></span>
+                        </span>
+                    </span>
 
+                </span>
+            </div>
+        </h6>
+    </div>
     {{-- ═══════════════════════════════════════════
          ENTÊTE INSTITUTIONNEL
     ════════════════════════════════════════════ --}}
@@ -15,18 +36,24 @@
         <div class="header-band">
             {{-- Logo / initiales --}}
             <div class="school-logo">
-                <span class="logo-initials">EC</span>
+                <span class="logo-initials">
+                    {{ str()->initials(tenancy()->tenant->school_name) }}
+                </span>
                 <div class="logo-dot"></div>
             </div>
 
             {{-- Nom & coordonnées --}}
             <div class="school-identity">
-                <h1 class="school-name">EducConnect</h1>
-                <p class="school-subtitle">Système de Gestion Scolaire</p>
+                <h1 class="school-name uppercase font-semibold font-mono">{{ tenancy()->tenant->school_name }}</h1>
+                <p class="school-subtitle">
+                    Enseignement {{ tenancy()->tenant->enseignement_type }}
+                </p>
                 <p class="school-meta">
-                    Établissement : <strong>{{ tenant('name') ?? 'Lycée Example' }}</strong>
+                    Établissement : <strong>{{ tenant('school_type') ?? 'Lycée Example' }}</strong>
                     &nbsp;•&nbsp;
-                    Académie : {{ tenant('ville') ?? 'Cotonou' }}
+                    Adresse : {{ tenant('adresse') ?? '-' }}
+                    &nbsp;•&nbsp;
+                    Contact : {{ tenant('contacts') ?? '-' }}
                 </p>
             </div>
 
@@ -49,7 +76,9 @@
         <div class="doc-title-block text-center">
 
             @if ($pdf_title)
-                <h2 class="doc-title">{{ $pdf_title }}</h2>
+                <h4 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" class="text-gray-900 my-0 uppercase letter-spacing-1 fas fa-2x">
+                    {{ $pdf_title }}
+                </h4>
             @endif
 
             {{-- Statistiques sommaires --}}
@@ -85,17 +114,16 @@
                     @foreach ($teachers as $index => $teacher)
                         <tr class="{{ $loop->even ? 'row-even' : 'row-odd' }}">
 
-                            <td class="col-num td-center">{{ $loop->iteration }}</td>
+                            <td class="">{{ $loop->iteration }}</td>
 
-                            <td class="col-matricule">
-                                <span class="matricule-badge">{{ $teacher->identifiant ?? '—' }}</span>
+                            <td class="font-semibold text-gray-800 text-sm">
+                                <span class="">{{ $teacher->identifiant ?? '—' }}</span>
                             </td>
 
-                            <td class="col-nom">
-                                <div class="teacher-name">
-
+                            <td class="">
+                                <div class="">
                                     <div>
-                                        <p class="name-full">{{ $teacher->user->name ?? '' }}, {{ $teacher->user->prenames ?? '' }}</p>
+                                        <p class="name-full">{{ $teacher->getFullName() }}</p>
                                         @if ($teacher->user->roles)
                                             <p class="name-titre">{{ $teacher->user->myRoles() }}</p>
                                         @endif
@@ -123,9 +151,9 @@
                                 {{ $teacher->affiliated_at ? \Carbon\Carbon::parse($teacher->affiliated_at)->isoFormat('DD/MM/YYYY') : '—' }}
                             </td>
 
-                            <td class="col-statut td-center">
-                                <span class="statut-badge statut-badge--{{ $teacher->status ?? 'inactif' }}">
-                                    {{ ucfirst($teacher->status ?? 'Inactif') }}
+                            <td class="italic font-semibold">
+                                <span class="statut-badge--{{ $teacher->status ?? 'inactif' }}">
+                                    {{ ucfirst($teacher->status ? 'Actif' : 'Inactif') }}
                                 </span>
                             </td>
 
@@ -140,20 +168,6 @@
     {{-- ═══════════════════════════════════════════
          PIED DE PAGE
     ════════════════════════════════════════════ --}}
-    <footer class="doc-footer">
-        <div class="footer-rule"></div>
-        <div class="footer-body">
-            <div class="footer-left">
-                <p>Document généré par <strong>EducConnect</strong> — {{ $printed_at }}</p>
-                <p class="footer-confidential">⚠ Document confidentiel — usage interne uniquement</p>
-            </div>
-
-            <div class="footer-right">
-                <p>Page <span class="page-num"></span></p>
-                <p>Total : {{ $allTeachers }} enseignant(s)</p>
-            </div>
-        </div>
-    </footer>
 
 </div>
 
@@ -345,7 +359,6 @@
     }
 
     .doc-title {
-        font-family: var(--font-serif);
         font-size: 1.25rem;
         font-weight: 700;
         color: var(--navy);
@@ -755,6 +768,11 @@
         /* Cacher les éléments non-imprimables si présents */
         .no-print {
             display: none !important;
+        }
+
+        td,
+        th {
+            text-align: center !important;
         }
     }
 </style>

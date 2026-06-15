@@ -62,7 +62,7 @@ class NotificationsPage extends Component
     /**
      * Marquer une notification comme lue.
      */
-    public function marquerLue(string $id): void
+    public function markAsRead(string $id): void
     {
         Auth::guard('tenant')->user()
             ->notifications()
@@ -76,9 +76,9 @@ class NotificationsPage extends Component
     /**
      * Tout marquer comme lu.
      */
-    public function toutMarquerLu(): void
+    public function markAllAsRead(): void
     {
-        Auth::guard('tenant')->user()->unreadNotifications()->limit(20)->markAsRead();
+        Auth::guard('tenant')->user()->unreadNotifications->limit(20)->markAsRead();
 
         $this->relaodNotifications();
     }
@@ -86,7 +86,7 @@ class NotificationsPage extends Component
     /**
      * Supprimer une notification.
      */
-    public function supprimer(string $id): void
+    public function deleteNotification(string $id): void
     {
         Auth::guard('tenant')->user()
             ->notifications()
@@ -99,7 +99,7 @@ class NotificationsPage extends Component
     /**
      * Tout supprimer.
      */
-    public function toutSupprimer(): void
+    public function deleteAll(): void
     {
         Auth::guard('tenant')->user()->notifications()->limit(10)->delete();
 

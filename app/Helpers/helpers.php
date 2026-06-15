@@ -425,6 +425,20 @@ if(!function_exists('__formatNumber3')){
 
 }
 
+if(!function_exists('initials')){
+
+    function initials(string $string)
+    {
+
+       if (!$string) return '';
+
+        if (mb_strlen($string) <= 3) return $string;
+
+        return str()->initials($string);
+    }
+
+}
+
 if(!function_exists('substringer')){
 
     function substringer($string, $length = 8)

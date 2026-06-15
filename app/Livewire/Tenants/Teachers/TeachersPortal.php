@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Tenants\Teachers;
 
+use App\Helpers\Support\TenantStorage;
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
+use App\Models\GeneratedDocument;
 use App\Models\Teacher;
 use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -51,12 +55,14 @@ class TeachersPortal extends Component
         ];
 
         PDFFactory::dispatch(
-            view:         'livewire.tenants.teachers.printable-list-component',
-            data:         $viewData,
-            outputPath:   PDFFactory::outputPath('teachers', $pdf_title),
+            view:          'livewire.tenants.teachers.printable-list-component',
+            data:           $viewData,
+            filename:      'liste-enseignants',
+            category:      'teachers',
             overrides:    ['landscape' => true],
-            tenantId:     tenant('id'),
-            notifiableId: auth('tenant')->user()->id,
+            documentType:  'teacher_list',
+            tenantId:      tenant('id'),
+            notifiableId: auth('tenant')->user()->id
         );
 
         $this->notification()->success(
@@ -76,6 +82,24 @@ class TeachersPortal extends Component
         $teachers = $this->getTeachersData()->paginate($this->perPage);
 
         return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter', 'genders'));
+    }
+
+
+    public function trackDownload(int $documentId)
+    {
+        $doc = GeneratedDocument::where('id', $documentId)
+            ->where('user_id', auth('tenant')->user()->id)
+            ->first();
+
+        if (! $doc) return abort(404, "Document introuvable ou déjà supprimé!");
+
+        $doc?->recordDownload();
+
+        $this->notification()->success(
+            title: 'Téléchargement de la liste est en cours...',
+        );
+
+        return response()->download($doc->path, $doc->filename);
     }
 
 

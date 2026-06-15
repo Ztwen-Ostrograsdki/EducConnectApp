@@ -192,19 +192,7 @@
 
                     <button class="h-btn" title="Thème">🌙</button>
                     @auth('tenant')
-                        <div class="dd">
-                            <button class="h-btn" onclick="toggleDD('notif-menu')">
-                                🔔 <span class="h-notif-dot">3</span>
-                            </button>
-                            <div class="dd-menu" id="notif-menu">
-                                <div class="dd-head">
-                                    <div class="dd-title">Notifications</div>
-                                    <div class="dd-sub">3 non lues</div>
-                                </div>
-
-                                <div class="dd-item" style="justify-content:center;color:var(--accent);font-size:.73rem;">Voir toutes →</div>
-                            </div>
-                        </div>
+                        @livewire('notification-badge', ['guard' => 'tenant'])
 
                         <div class="dd">
                             <div class="user-trigger" onclick="toggleDD('user-menu')">
@@ -241,17 +229,8 @@
                     @endauth
                 </div>
             </header>
-
-            <main class="flex-1
-            min-w-0
-            w-full
-            max-w-full
-            overflow-x-hidden p-3" id="content">
-
-                <div class="mx-auto
-                w-full
-                max-w-[1900px]
-                ">
+            <main class="flex-1 min-w-0 w-full max-w-full overflow-x-hidden p-3" id="content">
+                <div class="mx-auto w-full max-w-[1900px]">
                     <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
                         <h1 class="text-lg font-bold">
                             Mon epace
@@ -263,12 +242,10 @@
                         </div>
                     </div>
                 </div>
-
                 {{ $slot }}
             </main>
         </div>
     </div>
-
     @livewireScripts
 </body>
 
