@@ -5,14 +5,18 @@ namespace App\Jobs;
 use App\Events\AStudentCreationFailedEvent;
 use App\Events\StudentCreatedEvent;
 use App\Events\StudentsCreationStatusUpdatedEvent;
+use App\Helpers\Robot;
 use App\Models\ImportTask;
 use App\Models\Student;
+use App\Models\User;
+use App\Notifications\RealTimeNotification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Throwable;
 
 class JobToCreateStudent implements ShouldQueue
@@ -38,7 +42,9 @@ class JobToCreateStudent implements ShouldQueue
     {
 
         try {
-            // Variable locale — pas de propriété publique
+
+            tenancy()->initialize($this->tenantId);
+
             $task = ImportTask::findOrFail($this->taskId);
 
             if ($this->batch()?->cancelled()) {
@@ -52,42 +58,113 @@ class JobToCreateStudent implements ShouldQueue
 
             $payload = $task->payload;
 
+            $tenant = tenancy()->tenant;
+
+            $director = User::first();
+
+            $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
             // Anti-doublon
-            if (Student::where('name', $payload['name'])->where('prenames', $payload['prenames'])->exists()) {
+            if (Student::where('email', $payload['email'])->first() || User::where('email', $payload['email'])->first()) {
 
-                $task->update(['status' => 'success']);
+                $task->update(['status' => 'failed']);
 
-                AStudentCreationFailedEvent::dispatch(
-                    $this->tenantId,
-                    $this->taskId,
-                    "Cet apprenant est déjà existant dans la base de données!",
-                );
+                $this->fail("Données de l'apprenant est déjà existant dans la base de données!");
+
+                User::first()->notify(new RealTimeNotification(
+                    userEmail: $tenant->email,
+                    tenantId: $this->tenantId,
+                    title:             "Duplication de compte apprenant",
+                    message:           "Le Compte de l'apprenant" . $full_name . " déjà existant dans la base de données!",
+                    type:              'error',
+                ));
+
                 return;
             }
 
-           
+            $birth_date = $payload['birth_date'];
+
+            try {
+
+                $birth_date = Carbon::createFromFormat('d/m/Y', $birth_date)->format('Y-m-d');
+
+            } catch (\Exception $e) {
+
+                $birth_date = Carbon::parse($birth_date)->format('Y-m-d');
+            }
+
             $adresse = ($payload['city'] ?? null) && ($payload['department'] ?? null)
                 ? $payload['city'] . ' (' . $payload['department'] . ')'
                 : null;
 
-            Student::create([
-                'name'              => $payload['name'],
-                'prenames'          => $payload['prenames'],
-                'country'           => $payload['country'] ?? null,
-                'city'              => $payload['city'] ?? null,
-                'contacts'          => $payload['contacts'] ?? null,
-                'gender'            => $payload['gender'] ?? null,
-                'birth_date'        => $payload['birth_date'] ?? null,
-                'birth_place'       => $payload['birth_place'] ?? null,
-                'adresse'           => $adresse,
-            ]);
+            $qr_code_payload = [
+                'nom'                    => $payload['name'],
+                'prenoms'                => $payload['prenames'],
+                'pays'                   => $payload['country'] ?? null,
+                'contacts'               => $payload['contacts'] ?? null,
+                'addresse'               => $adresse,
+                'ecole'                  => $tenant->school_name,
+                'domaine'                => $tenant->domain_name,
+            ];
 
+            $student = Student::create([
+                'name'                        => $payload['name'],
+                'prenames'                    => $payload['prenames'],
+                'educMaster'                  => $payload['educMaster'],
+                'country'                     => $payload['country'] ?? null,
+                'city'                        => $payload['city'] ?? null,
+                'department'                  => $payload['department'] ?? null,
+                'email'                       => $payload['email'] ?? null,
+                'mother_full_name'            => $payload['mother_full_name'],
+                'father_full_name'            => $payload['father_full_name'],
+                'birth_place'                 => $payload['birth_place'],
+                'contacts'                    => $payload['contacts'] ?? null,
+                'gender'                      => $payload['gender'] ?? null,
+                'birth_date'                  => $birth_date ?? null,
+                'adresse'                     => $adresse,
+                'matricule'                   => Robot::makeIdentifier($tenant->school_name),
+                'qr_code'                     => Robot::makeQrCode($qr_code_payload),
+            ]);
 
             $task->update(['status' => 'success']);
 
+            $student->update(['is_active' => true, 'status' => 'active']);
+
             StudentCreatedEvent::dispatch($this->tenantId, $task->id, null);
 
-        } finally {
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director?->email,
+                tenantId: $this->tenantId,
+                title:             "COMPTE APPRENANT CREE AVEC SUCCES",
+                message:           "Le compte de l'apprenant " . $student->getUserNamePrefix(true, true) . " a été créé avec succès!",
+                type:              'success',
+            ));
+
+
+        } 
+        catch (\Throwable $th){
+
+            $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
+            AStudentCreationFailedEvent::dispatch(
+                $this->tenantId,
+                $this->taskId,
+                $th->getMessage(),
+            );
+
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director?->email,
+                tenantId: $this->tenantId,
+                title:             "Erreur création du compte apprenant " . $full_name,
+                message:           $th->getMessage(),
+                type:              'error',
+            ));
+
+            $this->fail($th->getMessage());
+
+            return;
+        }
+        finally {
 
             $batch = $this->batch();
 
@@ -104,6 +181,8 @@ class JobToCreateStudent implements ShouldQueue
                 failed:     $batch->failedJobs,
             );
 
+            tenancy()->end();
+
         }
     }
 
@@ -113,27 +192,52 @@ class JobToCreateStudent implements ShouldQueue
      */
     public function failed(Throwable $exception): void
     {
+        tenancy()->initialize($this->tenantId);
 
-        $task = ImportTask::find($this->taskId);
+        try {
 
-        if ($task) {
-            $task->update([
-                'status' => 'failed',
-                'error'  => $exception->getMessage(),
-            ]);
+            $task = ImportTask::find($this->taskId);
 
+            $student = Student::firstWhere('email', $task->payload['email']);
+
+            if ($student && !$student->is_active) {
+
+                if($task && $task->status !== 'success'){
+
+                    $student->forceDelete();
+
+                    $task->update([
+                        'status' => 'failed',
+                        'error'  => $exception->getMessage(),
+                    ]);
+                }
+
+            }
+
+            broadcast(new AStudentCreationFailedEvent(
+                    tenantId: $this->tenantId, 
+                    taskId: $this->taskId,
+                    error: $exception->getMessage(),
+                )
+            );
+
+            $director = User::firstWhere('tenant_id', $this->tenantId);
+
+            $payload = $task->payload;
+
+            $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director->email,
+                tenantId:  $this->tenantId,
+                title:     "ECHEC CRÉATION DU COMPTE APPRENANT " . $full_name,
+                message:   $exception->getMessage(),
+                type:      'error',
+            ));
+
+        } finally {
+            tenancy()->end();
         }
-
-        if (Student::where('name', $$task->payload['name'])->where('prenames', $$task->payload['prenames'])->exists()) {
-
-            Student::where('name', $$task->payload['name'])->where('prenames', $$task->payload['prenames'])->forceDelete();
-        }
-
-        AStudentCreationFailedEvent::dispatch(
-            $this->tenantId,
-            $this->taskId,
-            $exception->getMessage(),
-        );
     }
 
     

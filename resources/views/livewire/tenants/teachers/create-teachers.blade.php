@@ -92,8 +92,12 @@
 
         </div>
         <div wire:loading wire:target='toggleImportMode' class="flex gap-1.5 w-full items-center text-center text-gray-600 justify-center mt-9.5 mx-auto">
-            <x-lucide-loader class="w-10 h-10 animate-spin text-center" />
-            <span>Chargement en cours ...</span>
+            <div class="w-full flex flex-col items-center justify-center p-3">
+                <span>
+                    <x-lucide-loader class="w-10 h-10 animate-spin" />
+                </span>
+                <span>Chargement en cours ...</span>
+            </div>
         </div>
         <div wire:loading.remove wire:target='toggleImportMode'>
             {{-- Zone import Excel --}}

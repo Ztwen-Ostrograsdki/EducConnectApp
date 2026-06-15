@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('matricule')->unique();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->text('qr_code')->nullable();
-            $table->string('EducMaster')->default(null)->nullable();
+            $table->string('educMaster')->default(null)->nullable();
             $table->string('name');
             $table->string('prenames');
             $table->string('contacts')->nullable()->default(null);
@@ -34,6 +34,9 @@ return new class extends Migration
             $table->string('profil_photo')->nullable()->default(null);
             $table->string('father_full_name')->nullable()->default(null);
             $table->string('mother_full_name')->nullable()->default(null);
+            $table->enum('status', ['active', 'unactive'])->default('unactive');
+            $table->boolean('is_active')->default(false);
+            $table->boolean('blocked')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->index(['name', 'prenames']);

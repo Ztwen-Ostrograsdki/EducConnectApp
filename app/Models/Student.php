@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Support\TenantStorage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,10 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+use Spatie\Permission\Traits\HasRoles;
 
 class Student extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasRoles;
 
     protected $connection = 'tenant'; 
 
@@ -22,7 +25,7 @@ class Student extends Model
         'matricule',
         'uuid',
         'qr_code',
-        'EducMaster',
+        'educMaster',
         'name',
         'prenames',
         'contacts',
@@ -38,10 +41,15 @@ class Student extends Model
         'user_id',
         'mother_full_name',
         'father_full_name',
+        'is_active',
+        'blocked',
+        'status',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'is_active' => 'boolean',
+        'blocked' => 'boolean',
     ];
 
     protected static function boot()
@@ -53,6 +61,17 @@ class Student extends Model
         });
 
         static::created(function ($model) {
+
+            if($model->gender){
+                if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
+
+                    $model->update(['gender' => 'Masculin']);
+                }
+                elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
+
+                    $model->update(['gender' => 'Féminin']);
+                }
+            }
             
         });
     }
@@ -71,7 +90,7 @@ class Student extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -353,6 +372,90 @@ class Student extends Model
         }
 
         return round($average, 2);
+    }
+
+
+    public function getFullName(bool $reverse = false)
+    {
+        if(!$reverse) return  $this->name . ' ' . $this->prenames;
+
+        else  return $this->prenames . ' ' . $this->name;
+    }
+
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
+    {
+        $prefix = 'Mr/Mme';
+
+        if(in_array($this->gender, ['male', 'Male', 'M', 'm', 'masculin', 'Masculin'])) $prefix = 'Mr';
+
+        if(in_array($this->gender, ['female', 'Female', 'F', 'f', 'feminin', 'Féminin', 'Feminin'])) $prefix = 'Mme';
+
+        if($withFullName) return $prefix . ' ' . $this->getFullName($reverseName);
+
+        return $prefix;
+    }
+
+    public function greating(bool $withFullName = true, bool $reverse = false)
+    {
+        $name = $this->getUserNamePrefix($withFullName, $reverse);
+
+        $hour = date('G');
+        
+        if($hour >= 0 && $hour <= 12){
+
+            $greating = "Bonjour ";
+        }
+        else{
+
+            $greating = "Bonsoir ";
+        }
+
+        return $name  ? $greating . ' ' . $name : $greating;
+    }
+
+    public function getProfilPhotoUrlAttribute(): ?string
+    {
+       if($this->profil_photo)  return TenantStorage::url( $this->profil_photo);
+
+       else return asset('images/default-avatar.jpg') ;
+    }
+
+
+
+    public function myRoles()
+    {
+        $roles = [];
+
+        if($this->user){
+
+            $user = $this->user;
+
+            if($user->roles){
+
+                foreach($user->roles as $role){
+
+                    $roles[] = $role->name;
+                }
+
+                return implode(' - ', $roles);
+            }
+
+        }
+        else{
+
+            if($this->roles){
+
+                foreach($this->roles as $role){
+
+                    $roles[] = $role->name;
+                }
+
+                return implode(' - ', $roles);
+            }
+        }
+
+        return null;
     }
     
 }

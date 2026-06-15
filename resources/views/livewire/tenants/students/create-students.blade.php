@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-1 p-5 w-4/5 justify-center mx-auto">
+<div class="flex flex-col gap-1 p-5 w-full justify-center mx-auto">
     <div class="">
         <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600">
 
@@ -92,8 +92,12 @@
 
         </div>
         <div wire:loading wire:target='toggleImportMode' class="flex gap-1.5 w-full items-center text-center text-gray-600 justify-center mt-9.5 mx-auto">
-            <x-lucide-loader class="w-10 h-10 animate-spin text-center" />
-            <span>Chargement en cours ...</span>
+            <div class="w-full flex flex-col items-center justify-center p-3">
+                <span>
+                    <x-lucide-loader class="w-10 h-10 animate-spin" />
+                </span>
+                <span>Chargement en cours ...</span>
+            </div>
         </div>
         <div wire:loading.remove wire:target='toggleImportMode'>
             {{-- Zone import Excel --}}
@@ -103,8 +107,13 @@
                 </h6>
                 <div class="bg-slate-800 rounded-xl p-6 mb-6 border border-slate-700">
                     <p class="text-sm text-slate-400 mb-4">
-                        Format attendu : <span class="text-slate-300 font-mono text-xs">Nom | Prénoms | Contact | Genre | Pays | Département | Ville | Date naissance | lieu de naissance | nom et prénoms père | nom et prénoms mère | Email
+                        Format attendu : <span class="text-slate-300 font-mono text-xs">
+                            Les colonnes attendues dans le fichier Excel :
+                            A = Nom, B = Prenoms, C = Pays, D = Ville,
+                            E = Sexe, F = N° EducMaster, G = Department, H = Date de naissance,
+                            I = Lieu de naissance, J = Contacts, K = Email, L = Nom de la mère, M = Nom du Père
                         </span>
+
                     </p>
 
                     <input type="file" wire:model="excelFile" accept=".xlsx,.xls"
@@ -169,15 +178,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
                             <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
-                                    <span class="text-sky-500">facultative</span>
+                                <label class="block text-sm font-medium mb-2 text-gray-300" for="educMaster">EducMaster
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
-                                    <input type="text" wire:model.live='email' id="email" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Email personnel de l'apprenant">
-                                    @error('email')
+                                    <input type="text" wire:model.live='educMaster' id="educMaster" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
+                                        placeholder="N° educMaster de l'apprenant">
+                                    @error('educMaster')
                                         <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
                                             <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
                                             {{ $message }}
@@ -193,6 +202,21 @@
                                     <input wire:model.live='contacts' type="text" id="contacts" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
                                         placeholder="01617777777">
                                     @error('contacts')
+                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
+                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
+                                    <span class="text-sky-500">facultative</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="text" wire:model.live='email' id="email" class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
+                                        placeholder="Email personnel de l'apprenant">
+                                    @error('email')
                                         <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
                                             <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
                                             {{ $message }}
@@ -371,13 +395,13 @@
                         </div>
                     </div>
 
-                    <button type="button" wire:loading.attr="disabled" wire:click="{{ $editingUuid ? 'updateTeacher' : 'addTeacher' }}"
+                    <button type="button" wire:loading.attr="disabled" wire:click="{{ $editingUuid ? 'updateStudent' : 'addStudent' }}"
                         class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800">
-                        <span class="flex items-center gap-1.5" wire:target='updateTeacher, addTeacher' wire:loading.remove>
+                        <span class="flex items-center gap-1.5" wire:target='updateStudent, addStudent' wire:loading.remove>
                             <span>{{ $editingUuid ? 'Mettre à jour' : 'Ajouter' }}</span>
                             <x-lucide-user-plus class="w-4 h-4" />
                         </span>
-                        <span wire:target='updateTeacher, addTeacher' wire:loading.flex class="items-center gap-1.5">
+                        <span wire:target='updateStudent, addStudent' wire:loading.flex class="items-center gap-1.5">
                             <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                             <span>En cours...</span>
                         </span>
@@ -388,55 +412,82 @@
         </div>
     </div>
 
-    <div id="inserts-teachers" class="mt-5 flex flex-col w-full gap-1.5 mb-40">
-        @if (count($this->teachers))
+    <div id="inserts-students" class="mt-5 flex flex-col w-full gap-1.5 mb-40">
+        @if (count($this->students))
             <section class="w-full">
                 <h4 class="p-2 rounded-lg border border-slate-800 bg-slate-950 overflow-hidden my-2 flex justify-between items-center">
                     <div class="text-gray-400">
                         Liste des données déjà ajoutées
                         <span>
                             Nombre:
-                            {{ count($this->teachers) }}
+                            {{ count($this->students) }}
                         </span>
                     </div>
-                    <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800" wire:click="clearAddedData">
-                        <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <x-lucide-trash-2 class="w-4 h-4" />
-                            <span>Vider les données ajouter</span>
-                        </span>
-                        <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <span>En cours ...</span>
-                        </span>
-                    </button>
+                    <div class="flex justify-end items-center gap-x-3.5">
+                        <button type="button" wire:loading.attr="disabled" wire:click="{{ 'finish' }}" class="py-2 px-4 rounded-2xl flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800">
+                            <span class="flex items-center gap-1.5" wire:target='finish' wire:loading.remove>
+                                <span>Terminer</span>
+                                <x-lucide-send class="w-5 h-5" />
+                            </span>
+                            <span wire:target='finish' wire:loading.flex class="items-center gap-1.5">
+                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                <span>En cours...</span>
+                            </span>
+                        </button>
+                        <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800" wire:click="clearAddedData">
+                            <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
+                                <x-lucide-trash-2 class="w-4 h-4" />
+                                <span>Vider les données ajouter</span>
+                            </span>
+                            <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
+                                <span>En cours ...</span>
+                            </span>
+                        </button>
+                    </div>
                 </h4>
 
                 <div class="rounded-lg border border-slate-800 bg-slate-900 overflow-hidden">
 
                     <div class="overflow-x-auto">
 
-                        <table class="w-full min-w-full text-xs">
+                        <table class="w-full min-w-full text-xs text-center">
 
                             <thead class="bg-slate-950 border-b border-slate-800">
                                 <tr>
-                                    <th class="text-left p-2 font-medium text-slate-400">
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
                                         N°
                                     </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
                                         Nom et Prenoms
                                     </th>
 
-                                    <th class="text-left p-2 font-medium text-slate-400">
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
                                         Email
                                     </th>
 
-                                    <th class="text-left p-2 font-medium text-slate-400">
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
                                         contacts
                                     </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Date de naissance
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
+                                        <span class="inline-flex gap-2 flex-col">
+                                            <span>Date et lieu</span>
+                                            <span> de naissance</span>
+                                        </span>
+                                    </th>
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
+                                        Adresse
+                                    </th>
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
+                                        educMaster
+                                    </th>
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
+                                        Père
+                                    </th>
+                                    <th class=" p-2 font-medium text-slate-400 truncate">
+                                        Mère
                                     </th>
 
-                                    <th class="text-center p-2 font-medium text-slate-400">
+                                    <th class="text-center p-2 font-medium text-slate-400 truncate">
                                         Actions
                                     </th>
                                 </tr>
@@ -444,8 +495,8 @@
 
                             <tbody class="divide-y divide-slate-800">
 
-                                @foreach ($this->teachers as $teacher)
-                                    <tr wire:key="{{ $teacher['uuid'] }}" class="hover:bg-slate-800/40 transition-all">
+                                @foreach ($this->students as $student)
+                                    <tr wire:key="{{ $student['uuid'] }}" class="hover:bg-slate-800/40 transition-all">
                                         <td class="p-2 truncate text-slate-300">
                                             {{ $loop->iteration }}
                                         </td>
@@ -457,16 +508,11 @@
                                                 <div class="min-w-0">
 
                                                     <h3 class="font-medium truncate">
-                                                        {{ $teacher['name'] }} {{ $teacher['prenames'] }} ({{ $teacher['gender'] }})
+                                                        {{ $student['name'] }} {{ $student['prenames'] }}
                                                     </h3>
-
-                                                    <p class=text-slate-400 truncate">
-                                                        {{ $teacher['job_name'] }}
-                                                    </p>
-                                                    <p class="text-xs">
-                                                        {{ $teacher['city'] }} - {{ $teacher['department'] }} , {{ $teacher['country'] }}
-                                                    </p>
-
+                                                    <span class="text-left text-orange-600">
+                                                        ({{ $student['gender'] }})
+                                                    </span>
                                                 </div>
 
                                             </div>
@@ -474,45 +520,77 @@
                                         </td>
 
                                         <td class="p-2 truncate text-slate-300">
-                                            {{ $teacher['email'] }}
+                                            {{ $student['email'] ?? ' - ' }}
                                         </td>
 
-                                        <td class="p-2 truncate">
-                                            {{ $teacher['contacts'] }}
+                                        <td class="p-2 truncate font-mono">
+                                            {{ $student['contacts'] ?? ' - ' }}
                                         </td>
                                         <td class="p-2 truncate">
-                                            {{ $teacher['birth_date'] }}
+                                            <span class="inline-flex flex-col gap-3">
+                                                <span>
+                                                    {{ $student['birth_date'] }}
+                                                </span>
+
+                                                <span>
+                                                    {{ $student['birth_place'] ?? ' - ' }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="p-2 truncate">
+                                            <span class="inline-flex flex-col gap-3">
+                                                <span>
+                                                    <span>
+                                                        {{ $student['city'] }}
+                                                    </span>
+                                                    <span>
+                                                        ({{ $student['department'] }})
+                                                    </span>,
+                                                </span>
+                                                <span>
+                                                    {{ $student['country'] }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="p-2 truncate">
+                                            {{ $student['educMaster'] ?? ' - ' }}
+                                        </td>
+                                        <td class="p-2 truncate">
+                                            {{ $student['father_full_name'] ?? ' - ' }}
+                                        </td>
+                                        <td class="p-2 truncate">
+                                            {{ $student['mother_full_name'] ?? ' - ' }}
                                         </td>
 
                                         {{-- ACTIONS --}}
                                         <td class="p-2">
 
                                             <div class="flex items-center justify-end gap-2 truncate">
-                                                <button wire:key="edit-teacher-{{ $teacher['uuid'] }}" wire:click="editTeacher('{{ $teacher['uuid'] }}')" wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 ">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5" wire:target="editTeacher">
+                                                <button wire:key="edit-student-{{ $student['uuid'] }}" wire:click="editStudent('{{ $student['uuid'] }}')" wire:loading.attr="disabled"
+                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 px-3">
+                                                    <span wire:loading.remove class="flex items-center gap-1.5" wire:target="editStudent('{{ $student['uuid'] }}')">
                                                         <x-lucide-pen class="w-4 h-4" />
                                                         Modifier
                                                     </span>
-                                                    <span wire:loading.flex wire:target="editTeacher" class="items-center gap-1.5">
+                                                    <span wire:loading.flex wire:target="editStudent('{{ $student['uuid'] }}')" class="items-center gap-1.5">
                                                         <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                                                         <span>En cours...</span>
                                                     </span>
                                                 </button>
 
-                                                <button wire:key="rem-teacher-{{ $teacher['uuid'] }}" wire:click="deleteTeacher('{{ $teacher['uuid'] }}')" wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 ">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5" wire:target="deleteTeacher">
+                                                <button wire:key="rem-student-{{ $student['uuid'] }}" wire:click="deleteStudent('{{ $student['uuid'] }}')" wire:loading.attr="disabled"
+                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 px-3">
+                                                    <span wire:loading.remove class="flex items-center gap-1.5" wire:target="deleteStudent('{{ $student['uuid'] }}')">
                                                         <x-lucide-trash-2 class="w-4 h-4" />
                                                         Supprimer
                                                     </span>
-                                                    <span wire:loading.flex wire:target="deleteTeacher" class="items-center gap-1.5">
+                                                    <span wire:loading.flex wire:target="deleteStudent('{{ $student['uuid'] }}')" class="items-center gap-1.5">
                                                         <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                                                         <span>En cours...</span>
                                                     </span>
                                                 </button>
-                                                <x-confirm-modal wire:key="confirm-teach-del-{{ $teacher['uuid'] }}" :show="$showTeacherRemoveModal" title="Retirer de la liste" confirm-text="Oui, Retirer" cancel-text="Annuler"
-                                                    confirm-action="confirmDeleteTeacher" close-action="resetModal">
+                                                <x-confirm-modal wire:key="confirm-teach-del-{{ $student['uuid'] }}" :show="$showStudentRemoveModal" title="Retirer de la liste" confirm-text="Oui, Retirer" cancel-text="Annuler"
+                                                    confirm-action="confirmDeletestudent" close-action="resetModal">
                                                     <p>
                                                         Cette action retirera cette donnée de la liste.
                                                     <p class="text-orange-500 font-semibold py-1.5">Action irreversible!</p>

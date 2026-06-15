@@ -19,6 +19,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
@@ -111,6 +112,17 @@ class JobToCreateTeacher implements ShouldQueue
                 ? $payload['city'] . ' (' . $payload['department'] . ')'
                 : null;
 
+            $birth_date = $payload['birth_date'];
+
+            try {
+
+                $birth_date = Carbon::createFromFormat('d/m/Y', $birth_date)->format('Y-m-d');
+
+            } catch (\Exception $e) {
+
+                $birth_date = Carbon::parse($birth_date)->format('Y-m-d');
+            }
+
             $user = User::create([
                 'name'                   => $payload['name'],
                 'prenames'               => $payload['prenames'],
@@ -120,7 +132,7 @@ class JobToCreateTeacher implements ShouldQueue
                 'email'                  => $payload['email'],
                 'contacts'               => $payload['contacts'] ?? null,
                 'gender'                 => $payload['gender'] ?? null,
-                'birth_date'             => $payload['birth_date'] ?? null,
+                'birth_date'             => $birth_date ?? null,
                 'adresse'                => $adresse,
                 'email_verified_at'      => now(),
                 'password'               => Hash::make(Str::random(10)),
@@ -227,8 +239,20 @@ class JobToCreateTeacher implements ShouldQueue
                     'error'  => $exception->getMessage(),
                 ]);
 
-                User::where('email', $task->payload['email'])->forceDelete();
-                Teacher::where('email', $task->payload['email'])->forceDelete();
+                $user = User::firstWhere('email', $task->payload['email']);
+
+                $teacher = Teacher::firstWhere('email', $task->payload['email']);
+
+                if($user && $teacher){
+
+                    if($teacher && $teacher->status !== 'active' && $user && $user->logged_accout < 1){
+
+                        $teacher?->forceDelete();
+
+                        $user?->forceDelete();
+                        
+                    }
+                }
             }
 
             ATeacherCreationFailedEvent::dispatch(
@@ -242,7 +266,7 @@ class JobToCreateTeacher implements ShouldQueue
             $director?->notify(new RealTimeNotification(
                 userEmail: $director->email,
                 tenantId:  $this->tenantId,
-                title:     "ECHEC CRÉATION DES COMPTES ENSEIGNANTS",
+                title:     "ECHEC CRÉATION DU COMPTE ENSEIGNANT ",
                 message:   $exception->getMessage(),
                 type:      'error',
             ));

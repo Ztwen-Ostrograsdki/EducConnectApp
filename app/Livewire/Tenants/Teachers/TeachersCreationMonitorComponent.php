@@ -115,6 +115,7 @@ class TeachersCreationMonitorComponent extends Component
         $batchIds = ImportTask::query()
             ->selectRaw('batch_id, MAX(created_at) as last_created')
             ->whereNotNull('batch_id')
+            ->where('task_name', 'teachers-creation')
             ->groupBy('batch_id')
             ->orderByDesc('last_created')
             ->get();
@@ -204,7 +205,9 @@ class TeachersCreationMonitorComponent extends Component
                 return;
             }
 
-            $jobs = $tasks->map(fn($t) => new JobToCreateTeacher(tenant('id'), $t->id));
+            $domain = request()->getSchemeAndHttpHost();
+
+            $jobs = $tasks->map(fn($t) => new JobToCreateTeacher(tenant('id'), $t->id, $domain));
 
             $newBatch = Bus::batch([])->allowFailures()->dispatch();
 
@@ -261,7 +264,9 @@ class TeachersCreationMonitorComponent extends Component
 
         $task->update(['status' => 'pending', 'error' => null]);
 
-        dispatch(new JobToCreateTeacher(tenant('id'), $task->id));
+        $domain = request()->getSchemeAndHttpHost();
+
+        dispatch(new JobToCreateTeacher(tenant('id'), $task->id, $domain));
 
         $this->forceRefresh();
     }

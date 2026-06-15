@@ -13,7 +13,7 @@
                         Aperçu des tâches lancées
                     </h1>
                     <p class="text-slate-400 text-sm mt-1">
-                        Gestion des migrations des enseignants
+                        Gestion des migrations des apprenants
                     </p>
                 </div>
             </div>
@@ -21,9 +21,9 @@
 
         {{-- ACTIONS GLOBALES --}}
         <div class="flex flex-wrap gap-3 mt-6">
-            <a href="{{ route('tenant.teachers.create') }}" class="p-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 font-medium gap-2 inline-flex items-center">
+            <a href="{{ route('tenant.students.create') }}" class="p-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 font-medium gap-2 inline-flex items-center">
                 <x-lucide-plus class="w-4 h-4" />
-                Ajouter des enseignants
+                Ajouter des apprenants
             </a>
 
             <button wire:click="clearAllBatches" wire:loading.attr="disabled" wire:target="clearAllBatches" class="p-2 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white transition-all active:scale-95 inline-flex items-center gap-2">
@@ -71,7 +71,7 @@
                     <div class="p-6">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
-                                <h2 class="font-bold text-lg text-white">Import enseignants</h2>
+                                <h2 class="font-bold text-lg text-white">Import apprenants</h2>
                                 <p class="text-xs text-slate-500 font-mono break-all mt-1">
                                     {{ $batchData['id'] }}
                                 </p>

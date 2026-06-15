@@ -106,9 +106,29 @@
 
                 <div class="s-section">
                     <div class="s-section-label">Personnes</div>
-                    <a href="{{ route('tenant.students.portal') }}" class="s-link">
-                        <div class="s-icon">👨‍🎓</div><span class="s-label">Apprenants</span><span class="s-badge badge-indigo">847</span>
-                    </a>
+                    <div class="s-acc" id="acc-students">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-students')">
+                            <div class="s-icon">👩‍🏫</div>
+                            <span class="s-label">Les apprenants</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.students.portal') }}" class="s-link">
+                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span class="s-badge badge-green">42</span>
+                            </a>
+                            <a href="{{ route('tenant.students.create') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-user-plus class="w-3 h-3" />
+                                </div><span class="s-label">Ajouter apprenants</span>
+                            </a>
+                            <a href="{{ route('tenant.students.crud.tasks') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-octagon-alert class="w-3 h-3" />
+                                </div><span class="s-label">Status des ajouts</span>
+                            </a>
+
+                        </div>
+                    </div>
                     <div class="s-acc" id="acc-teachers">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-teachers')">
                             <div class="s-icon">👩‍🏫</div>

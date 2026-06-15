@@ -2,29 +2,25 @@
 
 namespace App\Livewire\Tenants\Teachers;
 
-use App\Events\ATeacherCreationFailedEvent;
 use App\Events\InitProcessToCreateTeachersEvent;
-use App\Events\TeacherBatchProgressUpdatedEvent;
-use App\Jobs\JobToCreateTeacher;
+use App\Livewire\Traits\BeninPhoneValidation;
+use App\Models\Teacher;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Tools\BeninData;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Tenancy;
 use WireUi\Traits\WireUiActions;
-
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Créations | ajout des enseignants")]
 class CreateTeachers extends Component
 {
-    use WireUiActions, WithFileUploads;
+    use WireUiActions, WithFileUploads, BeninPhoneValidation;
 
     public $adresse;
 
@@ -445,7 +441,7 @@ class CreateTeachers extends Component
 
         $this->notification()->success(
             title: 'Nettoyage effectué!',
-            description: 'Les données ajoutées sont été nettoyées'
+            description: 'Les données ajoutées ont été nettoyées'
         );
         
     }
@@ -481,6 +477,10 @@ class CreateTeachers extends Component
                 $line  = $index + 2; // ligne Excel (header = 1)
                 $email = strtolower(trim($row['C'] ?? ''));
 
+                $name = Str::upper(trim($row['A'] ?? ''));
+
+                $prenames = ucwords(trim($row['B'] ?? ''));
+
                 // Colonnes attendues dans le fichier Excel :
                 // A = name, B = prenames, C = email, D = contacts,
                 // E = gender, F = country, G = department, H = city,
@@ -488,6 +488,11 @@ class CreateTeachers extends Component
 
                 if (empty($email)) {
                     $errors[] = "Ligne {$line} : email manquant.";
+                    continue;
+                }
+
+                if (empty($name) || empty($prenames)) {
+                    $errors[] = "Ligne {$line} : nom ou prénoms manquants.";
                     continue;
                 }
 
@@ -501,12 +506,56 @@ class CreateTeachers extends Component
                     continue;
                 }
 
+                if (empty($contacts)) {
+                    $errors[] = "Ligne {$line} : N° contact manquant.";
+                    continue;
+                }
+
+                if (!empty($contacts)) {
+                    $phoneError = $this->validatePhoneNumberSilently((string) $contacts);
+
+                    if ($phoneError !== null) {
+                        $errors[] = "Ligne {$line} : {$phoneError}";
+                        continue;
+                    }
+                }
+
+                if(!empty($email)){
+                    
+                    $emailError = $this->validateEmailSilently($email);
+
+                    if ($emailError !== null) {
+                        $errors[] = "Ligne {$line} : {$emailError}";
+                        continue;
+                    }
+                }
+
+                $email_existed_in_db1 = User::where('email', $email)->orWhere('contacts', $contacts)->first();
+
+                $email_existed_in_db2 = Teacher::firstWhere('email', $email);
+
+                if($email_existed_in_db1 || $email_existed_in_db2){
+
+                    $errors[] = "Ligne {$line} : L'adresse mail ou le contact existe déjà dans la base de données.";
+                        continue;
+
+                }
+
+                $names_existed_in_db = User::where('name', $name)->where('prenames', $prenames)->first();
+
+                if($names_existed_in_db){
+
+                    $errors[] = "Ligne {$line} :  L'enseignant {$name} {$prenames} existe déjà dans la base de données.";
+                        continue;
+
+                }
+
                 $teachers[] = [
                     'uuid'       => (string) Str::uuid(),
-                    'name'       => Str::upper(trim($row['A']) ?? ''),
-                    'prenames'   => ucwords(trim($row['B'] ) ?? ''),
+                    'name'       => $name,
+                    'prenames'   => $prenames,
                     'email'      => $email,
-                    'contacts'   => trim($row['D'] ?? ''),
+                    'contacts'   => $contacts,
                     'gender'     => trim($row['E'] ?? ''),
                     'country'    => Str::upper(trim($row['F']) ?? ''),
                     'department' => Str::upper(trim($row['G']) ?? ''),

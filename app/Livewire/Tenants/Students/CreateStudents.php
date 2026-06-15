@@ -3,20 +3,23 @@
 namespace App\Livewire\Tenants\Students;
 
 use App\Events\InitProcessToCreateStudentsEvent;
+use App\Livewire\Traits\BeninPhoneValidation;
 use App\Models\Student;
-use App\Models\User;
 use App\Tools\BeninData;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Ajout des apprenants")]
 class CreateStudents extends Component
 {
-    use WireUiActions, WithFileUploads;
+
+    use WireUiActions, WithFileUploads, BeninPhoneValidation;
 
     public string $adresse;
 
@@ -49,8 +52,7 @@ class CreateStudents extends Component
     public string $country = '';
     public ?string $city = '';
 
-    public string $EducMaster = '';
-    public string $contacts = ''; //LE contacts est un tableau : parent => contacts
+    public string $educMaster = '';
 
     public string $gender = '';
 
@@ -74,15 +76,19 @@ class CreateStudents extends Component
     protected function rules(): array
     {
         return [
-
-            'name' => 'required|string|max:255',
-            'prenames' => 'required|string|max:255',
-            'country' => 'required|string|max:100',
-            'city' => 'required|string|max:100',
-            'gender' => 'required|string|max:10',
-            'department' => 'required|string',
-            'birth_date' => 'required|date',
-            'birth_place' => 'required|string',
+            'name'                 => 'required|string|max:255',
+            'prenames'             => 'required|string|max:255',
+            'country'              => 'required|string|max:100',
+            'city'                 => 'required|string|max:100',
+            'gender'               => 'required|string|max:10',
+            'educMaster'           => 'required|string|unique:students',
+            'department'           => 'required|string',
+            'birth_date'           => 'required|date',
+            'birth_place'          => 'required|string',
+            'contacts'             => 'required|string|min:10',
+            'email'                => 'nullable|email|unique:students',
+            'mother_full_name'     => 'string|nullable',
+            'father_full_name'     => 'string|nullable',
         ];
     }
 
@@ -132,6 +138,10 @@ class CreateStudents extends Component
             'pending_students',
             []
         );
+
+        $this->validate();
+
+        if(!$this->validatePhoneNumber()) return ;
 
         // Session
 
@@ -217,6 +227,8 @@ class CreateStudents extends Component
             'father_full_name' => Str::upper($this->father_full_name),
             'mother_full_name' => Str::upper($this->mother_full_name),
             'birth_date' => $this->birth_date,
+            'birth_place' => $this->birth_place,
+            'educMaster' => $this->educMaster,
             'email' => $this->email,
         ];
 
@@ -328,6 +340,8 @@ class CreateStudents extends Component
     {
         $this->validate();
 
+        $this->validatePhoneNumber();
+
         $students = session('pending_students', []);
 
         // Vérifier doublon email (hors lui-même)
@@ -382,6 +396,7 @@ class CreateStudents extends Component
                     'birth_place' => $this->birth_place,
                     'contacts' => $this->contacts,
                     'email' => $this->email,
+                    'educMaster' => $this->educMaster,
                     'father_full_name' => $this->father_full_name,
                     'mother_full_name' => $this->mother_full_name,
                 ];
@@ -409,8 +424,9 @@ class CreateStudents extends Component
             'name',
             'prenames',
             'contacts',
+            'educMaster',
             'birth_date',
-            'birth_city',
+            'birth_place',
             'city',
             'department',
             'country',
@@ -439,8 +455,6 @@ class CreateStudents extends Component
 
         InitProcessToCreateStudentsEvent::dispatch(tenant('id'), $students, $domain);
 
-        $this->redirectRoute('tenant.students.crud.tasks');
-
         $this->resetExcept('showImportMode');
 
         $this->resetErrorBag();
@@ -459,7 +473,7 @@ class CreateStudents extends Component
 
         $this->notification()->success(
             title: 'Nettoyage effectué!',
-            description: 'Les données ajoutées sont été nettoyées'
+            description: 'Les données ajoutées ont été nettoyées'
         );
         
     }
@@ -488,18 +502,23 @@ class CreateStudents extends Component
             array_shift($rows);
 
             $students        = session('pending_students', []);
+
             $errors          = [];
 
             foreach ($rows as $index => $row) {
                 $line  = $index + 2; // ligne Excel (header = 1)
                 $name = strtolower(trim($row['A'] ?? ''));
                 $prenames = strtolower(trim($row['B'] ?? ''));
-                $email = trim($row['L'] ?? '');
+                $email = trim($row['K'] ?? '');
+
+                $educMaster = $row['F'];
+
+                $contacts = $row['J'];
 
                 // Colonnes attendues dans le fichier Excel :
-                // A = name, B = prenames, C = email, D = contacts,
-                // E = gender, F = country, G = department, H = city,
-                // I = job_name, J = birth_date
+                // A = name, B = prenames, C = country, D = city,
+                // E = sexe, F = educMaster, G = department, H = birth_date,
+                // I = birth_place, J = contacts, K = email, L = mother_full_name, M = father_full_name
 
                 if (empty($name)) {
                     $errors[] = "Ligne {$line} : nom manquant.";
@@ -511,35 +530,84 @@ class CreateStudents extends Component
                     continue;
                 }
 
+                if (empty($educMaster)) {
+                    $errors[] = "Ligne {$line} : N° EducMaster manquant.";
+                    continue;
+                }
+
+                if (empty($contacts)) {
+                    $errors[] = "Ligne {$line} : N° contact manquant.";
+                    continue;
+                }
+
+                if (!empty($contacts)) {
+                    $phoneError = $this->validatePhoneNumberSilently((string) $contacts);
+
+                    if ($phoneError !== null) {
+                        $errors[] = "Ligne {$line} : {$phoneError}";
+                        continue;
+                    }
+                }
+
+                if(!empty($email)){
+                    
+                    $emailError = $this->validateEmailSilently($email);
+
+                    if ($emailError !== null) {
+                        $errors[] = "Ligne {$line} : {$emailError}";
+                        continue;
+                    }
+                }
+
                 foreach($students as $st){
 
                     if($st['name'] === $name && $st['prenames'] === $prenames){
 
-                        $errors[] = "Ligne {$line} : Nom et prénoms {$name} {$prenames} déjà dans la liste.";
+                        $errors[] = "Ligne {$line} : Nom et prénoms {$name} {$prenames} exite déjà dans la liste.";
                         continue;
                     }
 
                     if($email && $st['email'] === $email){
 
-                        $errors[] = "Ligne {$line} : Email {$email} déjà dans la liste.";
+                        $errors[] = "Ligne {$line} : Email {$email} existe déjà dans la liste.";
                         continue;
                     }
+
+                    if($educMaster && $st['educMaster'] === $educMaster){
+
+                        $errors[] = "Ligne {$line} : Le N° EducMaster {$educMaster} est déjà dans la liste.";
+                        continue;
+                    }
+                }
+
+                $existed_in_db = Student::where('name', $name)->where('prenames', $prenames);
+
+                if($email) $existed_in_db->orWhere('email', $email);
+
+                if($educMaster) $existed_in_db->orWhere('educMaster', $educMaster);
+
+                if($existed_in_db->count() > 0){
+
+                    $errors[] = "Ligne {$line} : Les données existent apparemment déjà dans la base de données.";
+                        continue;
+
                 }
 
                 $students[] = [
                     'uuid'              => (string) Str::uuid(),
                     'name'              => Str::upper(trim($row['A']) ?? ''),
                     'prenames'          => ucwords(trim($row['B'] ) ?? ''),
-                    'contacts'          => trim($row['C'] ?? ''),
-                    'gender'            => trim($row['D'] ?? ''),
-                    'country'           => Str::upper(trim($row['E']) ?? ''),
-                    'department'        => Str::upper(trim($row['F']) ?? ''),
-                    'city'              => Str::upper(trim($row['G']) ?? ''),
+                    'contacts'          =>$contacts,
+                    'gender'            => trim($row['E'] ?? ''),
+                    'country'           => Str::upper(trim($row['C']) ?? ''),
+                    'department'        => Str::upper(trim($row['G']) ?? ''),
+                    'city'              => Str::upper(trim($row['D']) ?? ''),
                     'birth_date'        => trim($row['H'] ?? '') ?: null,
                     'birth_place'       => trim($row['I'] ?? '') ?: null,
-                    'father_full_name'  => trim($row['J'] ?? '') ?: null,
-                    'mother_full_name'  => trim($row['K'] ?? '') ?: null,
-                    'email'             => trim($row['L'] ?? '') ?: null,
+                    'father_full_name'  => trim($row['M'] ?? '') ?: null,
+                    'mother_full_name'  => trim($row['L'] ?? '') ?: null,
+                    'educMaster'        => $educMaster,
+                    'email'             => $email,
                 ];
 
                 $existedData[] = $name . ' ' . $prenames;
@@ -550,8 +618,6 @@ class CreateStudents extends Component
             $this->importErrors = $errors;
             $this->excelFile    = null;
             $this->showImportMode = false;
-
-            $successCount = count($students) - (count(session('pending_students', [])) - count($students));
 
             if(count($students)){
                 if (! empty($errors)) {
@@ -596,5 +662,6 @@ class CreateStudents extends Component
         $this->importErrors   = [];
         $this->excelFile      = null;
     }
+
 
 }

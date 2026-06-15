@@ -112,6 +112,7 @@ class StudentsCreationMonitorComponent extends Component
         $batchIds = ImportTask::query()
             ->selectRaw('batch_id, MAX(created_at) as last_created')
             ->whereNotNull('batch_id')
+            ->where('task_name', 'students-creation')
             ->groupBy('batch_id')
             ->orderByDesc('last_created')
             ->get();
@@ -145,8 +146,7 @@ class StudentsCreationMonitorComponent extends Component
             ];
         });
 
-        return view(
-            'livewire.tenants.students.students-creation-monitor-component',
+        return view('livewire.tenants.students.students-creation-monitor-component',
             compact('batches')
         );
     }
@@ -201,7 +201,9 @@ class StudentsCreationMonitorComponent extends Component
                 return;
             }
 
-            $jobs = $tasks->map(fn($t) => new JobToCreateStudent(tenant('id'), $t->id));
+            $domain = request()->getSchemeAndHttpHost();
+
+            $jobs = $tasks->map(fn($t) => new JobToCreateStudent(tenant('id'), $t->id, $domain));
 
             $newBatch = Bus::batch([])->allowFailures()->dispatch();
 
@@ -258,7 +260,9 @@ class StudentsCreationMonitorComponent extends Component
 
         $task->update(['status' => 'pending', 'error' => null]);
 
-        dispatch(new JobToCreateStudent(tenant('id'), $task->id));
+        $domain = request()->getSchemeAndHttpHost();
+
+        dispatch(new JobToCreateStudent(tenant('id'), $task->id, $domain));
 
         $this->forceRefresh();
     }

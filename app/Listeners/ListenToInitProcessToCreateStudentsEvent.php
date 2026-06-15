@@ -22,10 +22,11 @@ class ListenToInitProcessToCreateStudentsEvent
         $tenantId = $event->tenantId;
 
         $batch = Bus::batch([])
-            ->progress(function (Batch $batch) use ($tenantId) {
+            ->then(function (Batch $batch) use ($tenantId) {
                 
             })
             ->finally(function (Batch $batch) use ($tenantId) {
+
                 ProcessToCreateStudentsCompletedSuccesfullyEvent::dispatch(
                     tenantId:   $tenantId,
                     batchId:    $batch->id,
@@ -34,16 +35,16 @@ class ListenToInitProcessToCreateStudentsEvent
                     percentage: $batch->progress(),
                     failed:     $batch->failedJobs,
                 );
+                
             })
             ->allowFailures()
-            ->onQueue('default')
-            ->name('teachers_creation')
+            ->name('students_creation')
             ->dispatch();
 
-        $jobs = collect($event->students)->map(function ($studentsData) use ($batch, $tenantId, $event) {
+        $jobs = collect($event->students)->map(function ($studentData) use ($batch, $tenantId, $event) {
             $task = ImportTask::create([
                 'batch_id'  => $batch->id,
-                'payload'   => $studentsData,
+                'payload'   => $studentData,
                 'status'    => 'pending',
                 'task_name' => 'students-creation',
                 'error'     => null,
@@ -54,7 +55,7 @@ class ListenToInitProcessToCreateStudentsEvent
             return new JobToCreateStudent(
                 tenantId: $tenantId,
                 taskId:   $task->id,
-                domain: $event->domain,
+                domain:   $event->domain,
             );
         });
 

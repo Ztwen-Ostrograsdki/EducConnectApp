@@ -85,8 +85,9 @@ Route::middleware([
             Route::get('/', TenantDashboard::class)->name('dashboard');
 
 
-            
-            Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
+
+            // LES ENSEIGNANTS
+            Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
 
             Route::get('/enseignants/ajout', CreateTeachers::class)->name('teachers.create');
 
@@ -95,15 +96,26 @@ Route::middleware([
             Route::get('/enseignants/impression', PrintableListComponent::class)->name('teachers.print.list');
 
 
+
+
+            // LES ELEVES
+            Route::get('/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
+
             Route::get('/eleves/ajout', CreateStudents::class)->name('students.create');
 
             Route::get('/eleves/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
 
-            Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
 
+
+
+            // LES PARENTS
             Route::get('/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
 
-            Route::get('/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
+
+
+            // LE CLASSES
+            Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
+
 
             Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
