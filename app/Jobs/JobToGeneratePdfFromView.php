@@ -183,6 +183,8 @@ class JobToGeneratePdfFromView implements ShouldQueue
             url:       $url,
             tenantId:  $this->tenantId,
             userEmail: $user->email,
+            target: $this->data['target'],
+            eventName: $this->data['eventName'],
         ));
 
     }

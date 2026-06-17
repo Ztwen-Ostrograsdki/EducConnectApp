@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+
 #[ObservedBy(ObserveNewTenantRequest::class)]
 class RequestToCreateNewTenant extends Model
 {

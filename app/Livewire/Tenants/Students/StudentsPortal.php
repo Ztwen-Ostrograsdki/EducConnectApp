@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
@@ -30,7 +31,19 @@ class StudentsPortal extends Component
         $this->resetPage();
     }
 
-    public function printStudentList()
+    #[On("StudentDataUpdatedEventLiveEvent")]
+    public function studentDataUpdated()
+    {
+        $this->onReloadDashboard();
+    }
+    
+    #[On("StudentsPDFCompletedSuccessfullyLiveEvent")]
+    public function pdfUpdated()
+    {
+        $this->onReloadDashboard();
+    }
+
+    public function printStudentsList()
     {
         $students = $this->getStudentsData()->get();
 
@@ -44,10 +57,12 @@ class StudentsPortal extends Component
             'allStudents'     => $students->count(),
             'totalActifs'     => $students->where('status', 'active')->count(),
             'pdf_title'       => $pdf_title,
+            'target'          => 'students',
+            'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
         ];
 
         PDFFactory::dispatch(
-            view:          'livewire.tenants.students.printable-list-component',
+            view:          'livewire.tenants.students.Students-printable-list-component',
             data:           $viewData,
             filename:      'liste-apprenants',
             category:      'students',

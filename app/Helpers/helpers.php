@@ -16,6 +16,69 @@ if (! function_exists('format_price_fcfa')) {
     }
 }
 
+if (!function_exists('normalizeString')) {
+    function normalizeString(?string $value): string
+    {
+        return Str::upper(Str::ascii($value ?? ''));
+    }
+}
+if (!function_exists('getAge')) {
+    function getAge(string|null $birthDate): ?int
+    {
+        if (empty($birthDate)) {
+            return null;
+        }
+        return Carbon::parse($birthDate)->age;
+    }
+}
+
+if (! function_exists('formatBirthDate')) {
+
+    function formatBirthDate(
+        string|null $birthDate,
+        ?int $dayLength = 3,
+        ?int $monthLength = 5,
+        bool $capitalize = true
+    ): ?string {
+        if (empty($birthDate)) {
+            return null;
+        }
+
+        $date = Carbon::parse($birthDate)->locale('fr');
+
+        $day = $date->translatedFormat('l');
+        $month = $date->translatedFormat('F');
+
+        if ($dayLength !== null) {
+            if ($dayLength <= 0) {
+                $day = '';
+            } else {
+                $day = mb_substr($day, 0, $dayLength);
+            }
+        }
+
+        if ($monthLength !== null) {
+            if ($monthLength > 0) {
+                $month = mb_substr($month, 0, $monthLength);
+            }
+        }
+
+        if ($capitalize) {
+            $day = mb_convert_case($day, MB_CASE_TITLE, 'UTF-8');
+            $month = mb_convert_case($month, MB_CASE_TITLE, 'UTF-8');
+        }
+
+        return trim(
+            collect([
+                $day,
+                $date->format('d'),
+                $month,
+                $date->format('Y'),
+            ])->filter()->implode(' ')
+        );
+    }
+}
+
 if (!function_exists('get_tenant_url')) {
     function get_tenant_url(?string $domain_name = null, string $path = '', ?int $tenantId = null): string
     {

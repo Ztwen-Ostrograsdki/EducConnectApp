@@ -50,6 +50,7 @@ class CentralRealTimeNotification extends Notification implements ShouldQueue, S
             'type'    => $this->type,
             'url'     => $this->url,
             'meta'    => $this->meta,
+            'name'    => 'default',
         ];
     }
 
@@ -65,6 +66,7 @@ class CentralRealTimeNotification extends Notification implements ShouldQueue, S
             'type'       => $this->type,
             'url'        => $this->url,
             'created_at' => now()->toISOString(),
+            'name'       => 'default',
         ]);
     }
 

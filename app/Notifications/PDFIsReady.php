@@ -28,6 +28,8 @@ class PDFIsReady extends Notification implements ShouldQueue, ShouldBroadcast
         public readonly ?string $url = null,
         public readonly ?string  $tenantId = null,
         public readonly ?string  $userEmail = null,
+        public readonly ?string  $target = null,
+        public readonly ?string  $eventName = null,
     ) {
         $this->onQueue('pdf');
     }
@@ -46,10 +48,13 @@ class PDFIsReady extends Notification implements ShouldQueue, ShouldBroadcast
     public function toDatabase(object $notifiable): array
     {
         return [
-            'title'   => $this->title,
-            'message' => $this->message,
-            'type'    => $this->type,
-            'url'     => $this->url,
+            'title'      => $this->title,
+            'message'    => $this->message,
+            'type'       => $this->type,
+            'url'        => $this->url,
+            'name'       => 'make.pdf',
+            'target'     => $this->target,
+            'eventName'  => $this->eventName,
         ];
     }
 
@@ -65,6 +70,9 @@ class PDFIsReady extends Notification implements ShouldQueue, ShouldBroadcast
             'type'       => $this->type,
             'url'        => $this->url,
             'created_at' => now()->toISOString(),
+            'name'       => 'make.pdf',
+            'target'     => $this->target,
+            'eventName'  => $this->eventName,
         ]);
     }
 

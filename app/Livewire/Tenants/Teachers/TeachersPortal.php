@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
@@ -38,6 +39,12 @@ class TeachersPortal extends Component
         $this->resetPage();
     }
 
+    #[On("TeachersPDFCompletedSuccessfullyLiveEvent")]
+    public function pdfUpdated()
+    {
+        $this->onReloadDashboard();
+    }
+
     public function printTeachersList()
     {
         $teachers = $this->getTeachersData()->get();
@@ -52,6 +59,8 @@ class TeachersPortal extends Component
             'allTeachers' => $teachers->count(),
             'totalActifs'      => $teachers->where('status', 'active')->count(),
             'pdf_title' => $pdf_title,
+            'target'          => 'teachers',
+            'eventName'       => 'TeachersPDFCompletedSuccessfullyLiveEvent',
         ];
 
         PDFFactory::dispatch(

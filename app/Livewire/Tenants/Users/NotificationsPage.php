@@ -5,9 +5,11 @@ namespace App\Livewire\Tenants\Users;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
+#[Title("Mes notifications")]
 class NotificationsPage extends Component
 {
     use WireUiActions;
@@ -113,6 +115,6 @@ class NotificationsPage extends Component
 
     public function render()
     {
-        return view('livewire.tenants.users.notifications-page');
+        return view('livewire.tenants.users.notifications-page')->layout(auth('tenant')->user()->getDashboardLayout());
     }
 }

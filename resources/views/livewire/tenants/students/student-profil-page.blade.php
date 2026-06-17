@@ -1,76 +1,71 @@
 <div class="w-full max-w-full overflow-x-hidden p-2">
-
-    {{-- ===================================================== --}}
-    {{-- PROFILE HEADER --}}
-    {{-- ===================================================== --}}
     <section class="mb-6">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+            {{-- COVER PHOTO --}}
+            <div class="relative h-32 sm:h-44 w-full overflow-hidden">
+                {{-- Photo de couverture (même image que le profil, recadrée) --}}
+                <img src="{{ $student->profil_photo_url }}" alt="Photo de couverture" class="w-full h-full object-cover object-top scale-110" />
 
-        <div class="rounded-3xl
-                    border border-slate-800
-                    bg-slate-900
-                    overflow-hidden">
+                {{-- Overlay sombre + lueur indigo pour le style --}}
+                <div class="absolute inset-0 bg-linear-to-br from-indigo-950/70 via-slate-900/50 to-slate-950/80"></div>
 
-            <div class="p-5 sm:p-8">
+                {{-- Lueurs colorées par-dessus la photo --}}
+                <div class="absolute -top-10 -left-10 w-64 h-64 rounded-full bg-indigo-600/30 blur-3xl"></div>
+                <div class="absolute top-0 right-1/3 w-48 h-48 rounded-full bg-violet-600/20 blur-3xl"></div>
+                <div class="absolute -bottom-8 right-10 w-56 h-56 rounded-full bg-sky-500/20 blur-3xl"></div>
 
+                {{-- Overlay bas pour transition douce vers le card body --}}
+                <div class="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-slate-900 to-transparent"></div>
+            </div>
+            {{-- AVATAR flottant sur la cover --}}
+            <div class="px-5 sm:px-8 pb-6 sm:pb-8">
                 <div class="flex flex-col xl:flex-row gap-8">
-
                     {{-- AVATAR --}}
-                    <div class="flex flex-col items-center xl:items-start">
-
-                        <div class="w-36 h-36 rounded-3xl
-                                    bg-slate-800
-                                    shrink-0">
+                    <div class="flex flex-col items-center xl:items-start -mt-16 relative z-20">
+                        {{-- Anneau lumineux autour de l'avatar --}}
+                        <div class="relative shrink-0">
+                            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-500 to-sky-500 opacity-70 blur-sm"></div>
+                            <div class="relative w-32 h-32 rounded-3xl bg-slate-800 ring-4 ring-slate-900 shrink-0 overflow-hidden">
+                                <img src="{{ $student->profil_photo_url }}" alt="Photo de profil" class="w-full h-full object-cover" />
+                            </div>
+                            {{-- Badge statut en ligne --}}
+                            <span class="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full bg-emerald-500 ring-2 ring-slate-900 block"></span>
                         </div>
-
-                        <div class="mt-5 flex flex-wrap gap-3 justify-center xl:justify-start">
-
-                            <span class="px-3 py-1 rounded-full
-                                         bg-indigo-500/10
-                                         text-indigo-400 text-xs">
-
+                        <div class="mt-4 flex flex-wrap gap-3 justify-center xl:justify-start">
+                            <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
                                 Terminale F2-1
-
                             </span>
-
-                            <span class="px-3 py-1 rounded-full
-                                         bg-emerald-500/10
-                                         text-emerald-400 text-xs">
-
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">
                                 Excellent
-
                             </span>
-
                         </div>
-
                     </div>
-
                     {{-- INFOS --}}
-                    <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0 pt-4">
 
-                        <div class="flex flex-col 2xl:flex-row
-                                    2xl:items-start
-                                    2xl:justify-between
-                                    gap-6">
+                        <div class="flex flex-col 2xl:flex-row 2xl:items-start 2xl:justify-between gap-6">
 
                             <div class="min-w-0">
 
                                 <h1 class="text-3xl sm:text-4xl font-bold break-words">
-
-                                    Kouassi Vincent HOUNDEKINDO
-
+                                    <span>
+                                        {{ $student->prenames }}
+                                    </span>
+                                    <span>
+                                        {{ $student->name }}
+                                    </span>
                                 </h1>
 
-                                <p class="mt-2 text-slate-400">
-
-                                    Matricule : MAT-2026-00124
-
+                                <p class="mt-2 text-slate-400 inline-flex flex-col items-center gap-y-1">
+                                    <span class="">
+                                        Matricule : {{ $student->matricule }}
+                                    </span>
+                                    <span class="text-slate-600">
+                                        EducMaster : {{ $student->educMaster }}
+                                    </span>
                                 </p>
 
-                                <div class="mt-6 grid
-                                            grid-cols-1
-                                            sm:grid-cols-2
-                                            xl:grid-cols-4
-                                            gap-4">
+                                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
                                     <div class="rounded-2xl bg-slate-950 p-4">
 
@@ -79,7 +74,7 @@
                                         </p>
 
                                         <h4 class="mt-2 font-semibold">
-                                            17 ans
+                                            {{ getAge($student->birth_date) }} ans
                                         </h4>
 
                                     </div>
@@ -91,7 +86,7 @@
                                         </p>
 
                                         <h4 class="mt-2 font-semibold">
-                                            Masculin
+                                            {{ $student->gender }}
                                         </h4>
 
                                     </div>
@@ -103,7 +98,7 @@
                                         </p>
 
                                         <h4 class="mt-2 font-semibold">
-                                            Béninoise
+                                            {{ $student->country }}
                                         </h4>
 
                                     </div>
@@ -115,7 +110,7 @@
                                         </p>
 
                                         <h4 class="mt-2 font-semibold">
-                                            12/08/2008
+                                            {{ formatBirthDate($student->birth_date) }}
                                         </h4>
 
                                     </div>
@@ -125,57 +120,48 @@
                             </div>
 
                             {{-- ACTIONS --}}
-                            <div class="grid
-                                        grid-cols-2
-                                        sm:grid-cols-4
-                                        xl:grid-cols-2
-                                        gap-3 w-full xl:w-[260px]">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-3 w-full xl:w-[300px]">
 
-                                <button class="p-3 rounded-2xl
-                                               bg-indigo-500
-                                               hover:bg-indigo-600
-                                               transition-all text-sm">
+                                <a title="Changer la photo de profil de {{ $student->getFullName() }}" href="{{ route('tenant.director.manage.profil.photo', ['target' => 'apprenant', 'modelUuid' => $student->uuid]) }}"
+                                    class="p-3 rounded-2xl bg-slate-500 hover:bg-slate-600 transition-all text-sm flex items-center justify-center text-center">
 
-                                    Editer
+                                    <span class="inline-flex items-center gap-x-2">
+                                        <x-lucide-image-upscale class="w-4 h-4" />
+                                        <span>Editer photo</span>
+                                    </span>
 
-                                </button>
+                                </a>
+                                <a title="Mettre à jour les informations de l'apprenant {{ $student->getFullName() }}" href="{{ route('tenant.director.manage.student.data', ['studentUuid' => $student->uuid]) }}"
+                                    class="p-3 rounded-2xl bg-blue-500 hover:bg-blue-600 transition-all text-sm flex items-center justify-center text-center">
 
-                                <a href="{{route('tenant.student.marks', ['student_uuid' => $student_uuid])}}" class="p-3 rounded-2xl
-                                               bg-green-500/20
-                                               text-green-400
-                                               hover:bg-green-500/30
-                                               transition-all text-sm inline-block text-center">
+                                    <span class="inline-flex items-center gap-x-2">
+                                        <x-lucide-user-pen class="w-4 h-4" />
+                                        <span>Editer infos</span>
+                                    </span>
 
-                                    Les notes 
+                                </a>
+                                <a href="{{ route('tenant.student.marks', ['student_uuid' => $student_uuid]) }}" class="p-3 rounded-2xl bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-all text-sm inline-block text-center">
+
+                                    Les notes
 
                                 </a>
 
-                                <button class="p-3 rounded-2xl
-                                               bg-slate-800
-                                               hover:bg-slate-700
-                                               transition-all text-sm">
+                                <button class="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-all text-sm">
 
                                     Présence
 
                                 </button>
 
-                                <button class="p-3 rounded-2xl
-                                               bg-rose-500/20
-                                               text-rose-400
-                                               hover:bg-rose-500/30
-                                               transition-all text-sm">
+                                <button class="p-3 rounded-2xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-all text-sm">
 
                                     Suspendre
 
                                 </button>
 
-                                <a href="{{route('tenant.classe.profil', ['classe_slug' => $classe_slug])}}" class="p-3 col-span-2 rounded-2xl
-                                               bg-sky-500/20
-                                               text-sky-400
-                                               hover:bg-sky-500/30
-                                               transition-all text-sm inline-block text-center">
+                                <a href="{{ route('tenant.classe.profil', ['classe_slug' => $classe_slug]) }}"
+                                    class="p-3 col-span-2 rounded-2xl bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 transition-all text-sm inline-block text-center">
 
-                                    Acceder à la classe 
+                                    Acceder à la classe
 
                                 </a>
 
@@ -187,7 +173,7 @@
 
                 </div>
 
-            </div>
+            </div>{{-- fin px-5 sm:px-8 --}}
 
         </div>
 
@@ -198,11 +184,7 @@
     {{-- ===================================================== --}}
     <section class="mb-6">
 
-        <div class="grid
-                    grid-cols-1
-                    sm:grid-cols-2
-                    2xl:grid-cols-4
-                    gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-6">
 
             {{-- MOYENNE --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
@@ -263,10 +245,7 @@
     {{-- ===================================================== --}}
     {{-- MAIN GRID --}}
     {{-- ===================================================== --}}
-    <section class="grid
-                    grid-cols-1
-                    2xl:grid-cols-12
-                    gap-6">
+    <section class="grid grid-cols-1 2xl:grid-cols-12 gap-6">
 
         {{-- LEFT --}}
         <div class="2xl:col-span-8 space-y-6 min-w-0">
@@ -290,10 +269,7 @@
 
                         </div>
 
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800
-                                       text-sm">
+                        <select class="h-11 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
 
                             <option>Semestre 1</option>
                             <option>Semestre 2</option>
@@ -342,50 +318,40 @@
 
                         <tbody class="divide-y divide-slate-800">
 
-                            @foreach([
-                                'Mathématiques',
-                                'Physique',
-                                'Électricité',
-                                'Informatique',
-                                'Français'
-                            ] as $subject)
+                            @foreach (['Mathématiques', 'Physique', 'Électricité', 'Informatique', 'Français'] as $subject)
+                                <tr class="hover:bg-slate-800/40 transition-all">
 
-                            <tr class="hover:bg-slate-800/40 transition-all">
+                                    <td class="px-6 py-5 font-medium">
+                                        {{ $subject }}
+                                    </td>
 
-                                <td class="px-6 py-5 font-medium">
-                                    {{ $subject }}
-                                </td>
+                                    <td class="px-4 py-5 text-center">
+                                        14.5
+                                    </td>
 
-                                <td class="px-4 py-5 text-center">
-                                    14.5
-                                </td>
+                                    <td class="px-4 py-5 text-center">
+                                        15
+                                    </td>
 
-                                <td class="px-4 py-5 text-center">
-                                    15
-                                </td>
+                                    <td class="px-4 py-5 text-center">
 
-                                <td class="px-4 py-5 text-center">
+                                        <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm">
 
-                                    <span class="px-3 py-1 rounded-full
-                                                 bg-emerald-500/10
-                                                 text-emerald-400 text-sm">
+                                            15.2
 
-                                        15.2
+                                        </span>
 
-                                    </span>
+                                    </td>
 
-                                </td>
+                                    <td class="px-4 py-5 text-center">
+                                        2
+                                    </td>
 
-                                <td class="px-4 py-5 text-center">
-                                    2
-                                </td>
+                                    <td class="px-4 py-5 text-center font-semibold">
+                                        30.4
+                                    </td>
 
-                                <td class="px-4 py-5 text-center font-semibold">
-                                    30.4
-                                </td>
-
-                            </tr>
-
+                                </tr>
                             @endforeach
 
                         </tbody>
@@ -413,9 +379,7 @@
 
                     </div>
 
-                    <span class="px-3 py-1 rounded-full
-                                 bg-indigo-500/10
-                                 text-indigo-400 text-xs">
+                    <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
 
                         +12%
 
@@ -424,11 +388,7 @@
                 </div>
 
                 {{-- CHART --}}
-                <div class="mt-8 h-[320px]
-                            rounded-3xl
-                            border border-dashed border-slate-700
-                            bg-slate-950
-                            flex items-center justify-center">
+                <div class="mt-8 h-[320px] rounded-3xl border border-dashed border-slate-700 bg-slate-950 flex items-center justify-center">
 
                     <p class="text-slate-500">
                         Courbe d'évolution des notes
@@ -457,53 +417,42 @@
 
                 </div>
 
-                <div class="mt-6 grid
-                            grid-cols-1
-                            sm:grid-cols-2
-                            xl:grid-cols-3
-                            gap-4">
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 
-                    @foreach(range(1,6) as $course)
+                    @foreach (range(1, 6) as $course)
+                        <div class="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4">
 
-                    <div class="rounded-2xl
-                                border border-indigo-500/20
-                                bg-indigo-500/10
-                                p-4">
+                            <div class="flex items-center justify-between gap-3">
 
-                        <div class="flex items-center justify-between gap-3">
+                                <h3 class="font-semibold">
+                                    Mathématiques
+                                </h3>
 
-                            <h3 class="font-semibold">
-                                Mathématiques
-                            </h3>
+                                <span class="text-xs text-indigo-300">
+                                    08:00
+                                </span>
 
-                            <span class="text-xs text-indigo-300">
-                                08:00
-                            </span>
+                            </div>
 
-                        </div>
+                            <p class="mt-2 text-sm text-slate-300">
+                                M. HOUNDEKINDO
+                            </p>
 
-                        <p class="mt-2 text-sm text-slate-300">
-                            M. HOUNDEKINDO
-                        </p>
+                            <div class="mt-4 flex items-center justify-between">
 
-                        <div class="mt-4 flex items-center justify-between">
+                                <span class="px-2 py-1 rounded-xl bg-slate-950/50 text-xs">
 
-                            <span class="px-2 py-1 rounded-xl
-                                         bg-slate-950/50
-                                         text-xs">
+                                    Salle B12
 
-                                Salle B12
+                                </span>
 
-                            </span>
+                                <span class="text-xs text-slate-400">
+                                    Lundi
+                                </span>
 
-                            <span class="text-xs text-slate-400">
-                                Lundi
-                            </span>
+                            </div>
 
                         </div>
-
-                    </div>
-
                     @endforeach
 
                 </div>
@@ -541,8 +490,7 @@
 
                         <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
 
-                            <div class="h-full w-[82%]
-                                        bg-indigo-500 rounded-full">
+                            <div class="h-full w-[82%] bg-indigo-500 rounded-full">
                             </div>
 
                         </div>
@@ -566,8 +514,7 @@
 
                         <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
 
-                            <div class="h-full w-[68%]
-                                        bg-emerald-500 rounded-full">
+                            <div class="h-full w-[68%] bg-emerald-500 rounded-full">
                             </div>
 
                         </div>
@@ -591,8 +538,7 @@
 
                         <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
 
-                            <div class="h-full w-[92%]
-                                        bg-amber-500 rounded-full">
+                            <div class="h-full w-[92%] bg-amber-500 rounded-full">
                             </div>
 
                         </div>
@@ -612,35 +558,33 @@
 
                 <div class="mt-6 space-y-5">
 
-                    @foreach(range(1,2) as $parent)
+                    @foreach (range(1, 2) as $parent)
+                        <div class="rounded-2xl bg-slate-950 p-4">
 
-                    <div class="rounded-2xl bg-slate-950 p-4">
+                            <div class="flex items-start gap-4">
 
-                        <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
+                                </div>
 
-                            <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
-                            </div>
+                                <div class="min-w-0">
 
-                            <div class="min-w-0">
+                                    <h3 class="font-medium truncate">
+                                        Parent {{ $parent }}
+                                    </h3>
 
-                                <h3 class="font-medium truncate">
-                                    Parent {{$parent}}
-                                </h3>
+                                    <p class="mt-1 text-sm text-slate-400 truncate">
+                                        +229 01 00 00 00 00
+                                    </p>
 
-                                <p class="mt-1 text-sm text-slate-400 truncate">
-                                    +229 01 00 00 00 00
-                                </p>
+                                    <p class="mt-1 text-sm text-slate-500 truncate">
+                                        parent@email.com
+                                    </p>
 
-                                <p class="mt-1 text-sm text-slate-500 truncate">
-                                    parent@email.com
-                                </p>
+                                </div>
 
                             </div>
 
                         </div>
-
-                    </div>
-
                     @endforeach
 
                 </div>
@@ -656,38 +600,29 @@
 
                 <div class="mt-6 space-y-4">
 
-                    @foreach([
-                        'Lundi',
-                        'Mardi',
-                        'Mercredi',
-                        'Jeudi',
-                        'Vendredi'
-                    ] as $day)
+                    @foreach (['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'] as $day)
+                        <div>
 
-                    <div>
+                            <div class="flex items-center justify-between">
 
-                        <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-300">
+                                    {{ $day }}
+                                </span>
 
-                            <span class="text-sm text-slate-300">
-                                {{ $day }}
-                            </span>
+                                <span class="text-sm font-semibold">
+                                    100%
+                                </span>
 
-                            <span class="text-sm font-semibold">
-                                100%
-                            </span>
+                            </div>
 
-                        </div>
+                            <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
 
-                        <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
+                                <div class="h-full w-full bg-emerald-500 rounded-full">
+                                </div>
 
-                            <div class="h-full w-full
-                                        bg-emerald-500 rounded-full">
                             </div>
 
                         </div>
-
-                    </div>
-
                     @endforeach
 
                 </div>
@@ -708,47 +643,30 @@
                 </p>
             </div>
             <div class="flex flex-col xl:flex-row gap-4">
-                        {{-- FILTERS --}}
-                <div class="grid
-                            grid-cols-1
-                            sm:grid-cols-2
-                            lg:grid-cols-4
-                            gap-3 p-1 py-2.5">
+                {{-- FILTERS --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-1 py-2.5">
 
                     {{-- SEMESTER --}}
-                    <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl
-                                bg-slate-950
-                                border border-slate-800
-                                text-sm">
-                            <option value="">Sélectionner le semestre|trimestre</option>
-                        @foreach(range(1,2) as $i)
+                    <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                        <option value="">Sélectionner le semestre|trimestre</option>
+                        @foreach (range(1, 2) as $i)
                             <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
                         @endforeach
 
-                        @foreach(range(1,3) as $i)
+                        @foreach (range(1, 3) as $i)
                             <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
                         @endforeach
 
                     </select>
 
                     {{-- ACTIONS --}}
-                    @if($period_type_selected)
-                        <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl
-                                    bg-sky-800
-                                    border border-sky-700
-                                    hover:bg-sky-700
-                                    transition-all
-                                    text-sm cursor-pointer">
+                    @if ($period_type_selected)
+                        <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl bg-sky-800 border border-sky-700 hover:bg-sky-700 transition-all text-sm cursor-pointer">
 
                             Charger
                         </button>
 
-                        <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl
-                                    bg-slate-800
-                                    border border-slate-700
-                                    hover:bg-slate-700
-                                    transition-all
-                                    text-sm cursor-pointer">
+                        <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm cursor-pointer">
 
                             Réinitialiser
 
@@ -761,3 +679,4 @@
         </div>
     </section>
 </div>
+

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class YearlyClasseStudent extends Model
 {
     protected $table = 'yearly_classe_students';

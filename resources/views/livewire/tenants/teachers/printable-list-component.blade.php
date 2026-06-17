@@ -1,9 +1,3 @@
-{{--
-    Vue Livewire : liste des enseignants — optimisée pour l'impression / PDF
-    Composant : App\Livewire\Teachers\PrintTeacherList
-    Layout : layouts.print (page blanche sans navigation)
---}}
-
 <div class="print-wrapper">
     <div class="text-center mx-auto mt-2 px-3 border-2 border-gray-900 p-3 my-3">
         <h6 class="letter-spacing-2 flex flex-col items-center gap-y-1">

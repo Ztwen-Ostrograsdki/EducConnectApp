@@ -86,15 +86,32 @@ class User extends Authenticatable
             if($model->gender){
                 if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
 
-                    $model->update(['gender' => 'Masculin']);
+                    $model->update(['gender' => 'MASCULIN']);
                 }
                 elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
 
-                    $model->update(['gender' => 'Féminin']);
+                    $model->update(['gender' => 'FEMININ']);
                 }
             }
+
+            $model->update([
+                'department' => normalizeString($model->department) ?? null,
+                'city' => normalizeString($model->city) ?? null,
+                'country' => normalizeString($model->country) ?? null,
+                'birth_place' => normalizeString($model->birth_place) ?? null
+            ]);
             
         });
+    }
+
+    public function getDashboardLayout(): string
+    {
+        return match (true) {
+            $this->hasRole('directeur') => 'livewire.layouts.tenant-auth-layout',
+            $this->hasRole('enseignant') => 'layouts.app',
+            $this->hasRole('student') => 'layouts.app',
+            default => 'layouts.app',
+        };
     }
 
 

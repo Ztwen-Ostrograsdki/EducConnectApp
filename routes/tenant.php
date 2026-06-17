@@ -14,11 +14,13 @@ use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
+use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
+use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
@@ -138,7 +140,7 @@ Route::middleware([
 
             Route::get('/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
 
-            Route::get('/statistiques-semestrielles/', PeriodicalStatistiqueComponent::class)->name('stats.general');
+            Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
 
             Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');
 
@@ -147,6 +149,11 @@ Route::middleware([
             Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('student.marks');
 
             Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('teacher.profil');
+
+
+            Route::get('/mise-a-jour-photo-de-profil-utilisateur/{target}/{modelUuid}', ProfilPhotoManagerByDirectorComponent::class)->name('director.manage.profil.photo');
+            
+            Route::get('/mise-a-jour-informations/apprenant/{studentUuid}', StudentDataManagerByDirectorComponent::class)->name('director.manage.student.data');
 
         });
 

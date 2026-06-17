@@ -15,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
     {
         require_once app_path('Helpers/helpers.php');
         require_once app_path('Helpers/modules.php');
+
+        // if ($this->app->environment() !== 'production') {
+        //     $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        // }
     }
 
     /**

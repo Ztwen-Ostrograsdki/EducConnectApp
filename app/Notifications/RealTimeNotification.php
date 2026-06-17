@@ -50,6 +50,7 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
             'message' => $this->message,
             'type'    => $this->type,
             'meta'    => $this->meta,
+            'name'    => 'default',
         ];
     }
 
@@ -64,6 +65,7 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
             'message'    => $this->message,
             'type'       => $this->type,
             'created_at' => now()->toISOString(),
+            'name'       => 'default',
         ]);
     }
 

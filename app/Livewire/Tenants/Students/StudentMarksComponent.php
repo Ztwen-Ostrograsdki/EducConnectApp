@@ -4,11 +4,16 @@ namespace App\Livewire\Tenants\Students;
 
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Notes de classe pour apprenant")]
 class StudentMarksComponent extends Component
 {
+
+    public int $counter = 1;
+
     public ?string $student_name;
 
     public ?string $student_uuid;
@@ -30,6 +35,12 @@ class StudentMarksComponent extends Component
     public function onYearChanged(string $schoolYear)
     {
         $this->school_year_selected = $schoolYear;
+    }
+
+    #[On("StudentDataUpdatedEventLiveEvent")]
+    public function studentDataUpdated()
+    {
+        $this->counter++;
     }
 
     public function render()

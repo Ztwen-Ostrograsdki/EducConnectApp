@@ -57,6 +57,6 @@ class MyProfilPage extends Component
     public function render()
     {
         $user = auth()->guard('tenant')->user();
-        return view('livewire.tenants.my-profil-page', compact('user'));
+        return view('livewire.tenants.my-profil-page', compact('user'))->layout(auth('tenant')->user()->getDashboardLayout());
     }
 }

@@ -65,13 +65,20 @@ class Student extends Model
             if($model->gender){
                 if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
 
-                    $model->update(['gender' => 'Masculin']);
+                    $model->update(['gender' => 'MASCULIN']);
                 }
                 elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
 
-                    $model->update(['gender' => 'Féminin']);
+                    $model->update(['gender' => 'FEMININ']);
                 }
             }
+
+            $model->update([
+                'department' => normalizeString($model->department) ?? null,
+                'city' => normalizeString($model->city) ?? null,
+                'country' => normalizeString($model->country) ?? null,
+                'birth_place' => normalizeString($model->birth_place) ?? null
+            ]);
             
         });
     }

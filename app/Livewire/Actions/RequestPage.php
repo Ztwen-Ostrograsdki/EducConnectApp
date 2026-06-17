@@ -214,7 +214,7 @@ class RequestPage extends Component
 
         $departments = BeninData::getDepartments();
 
-        $countries = ['Bénin' => 'Bénin'];
+        $countries = ['BENIN' => 'BENIN'];
 
         
         return view('livewire.actions.request-page', compact('enseignement_types', 'periode_types', 'school_types', 'devoirs_types', 'departments', 'countries', 'genders'));

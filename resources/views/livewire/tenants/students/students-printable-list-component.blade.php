@@ -1,9 +1,3 @@
-{{--
-    Vue Livewire : liste des enseignants — optimisée pour l'impression / PDF
-    Composant : App\Livewire\Teachers\PrintTeacherList
-    Layout : layouts.print (page blanche sans navigation)
---}}
-
 <div class="print-wrapper">
     <div class="text-center mx-auto mt-2 px-3 border-2 border-gray-900 p-3 my-3">
         <h6 class="letter-spacing-2 flex flex-col items-center gap-y-1">
@@ -22,7 +16,6 @@
                             <span class="bg-red-600 inline-block p-0.5 w-1/3"></span>
                         </span>
                     </span>
-
                 </span>
             </div>
         </h6>
@@ -105,10 +98,10 @@
                         <th class="col-nom">Nom & Prénom</th>
                         <th class="col-nom">Père</th>
                         <th class="col-nom">Mère</th>
-                        <th class="col-dept">Département / Matière</th>
+                        <th class="col-dept">Classe</th>
                         <th class="col-grade">EducMaster</th>
                         <th class="col-contact">Contact</th>
-                        <th class="col-recrutement">Date de recrutement</th>
+                        <th class="col-recrutement">Insérés le</th>
                         <th class="col-statut">Statut</th>
                     </tr>
                 </thead>
@@ -123,7 +116,7 @@
                             </td>
 
                             <td class="">
-                                <div class="">
+                                <div class="text-left">
                                     <div>
                                         <p class="name-full">{{ $student->getFullName() }}</p>
                                         @if ($student->roles)
@@ -137,8 +130,7 @@
                             <td class="col-grade">{{ $student->mother_full_name }}</td>
 
                             <td class="col-dept">
-                                <p class="dept-main">{{ $student->city ?? '—' }}</p>
-                                <p class="dept-matiere">{{ '-' }}</p>
+                                <p class="dept-main">{{ 'classe' }}</p>
                             </td>
 
                             <td class="col-grade">{{ $student->educMaster }}</td>
@@ -434,39 +426,6 @@
         border-collapse: collapse;
         font-size: 0.8rem;
         table-layout: fixed;
-    }
-
-    /* Largeurs colonnes */
-    .col-num {
-        width: 3%;
-    }
-
-    .col-matricule {
-        width: 10%;
-    }
-
-    .col-nom {
-        width: 21%;
-    }
-
-    .col-dept {
-        width: 15%;
-    }
-
-    .col-grade {
-        width: 10%;
-    }
-
-    .col-contact {
-        width: 16%;
-    }
-
-    .col-recrutement {
-        width: 12%;
-    }
-
-    .col-statut {
-        width: 9%;
     }
 
     /* En-tête table */

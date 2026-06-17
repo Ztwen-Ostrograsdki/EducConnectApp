@@ -125,7 +125,7 @@ class CreateTeachers extends Component
 
         $departments = BeninData::getDepartments();
 
-        $countries = ['Bénin' => 'Bénin'];
+        $countries = ['BENIN' => 'BENIN'];
 
         if(session()->has('showImportMode')){
 

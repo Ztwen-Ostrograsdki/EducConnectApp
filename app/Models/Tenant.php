@@ -16,6 +16,7 @@ use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
+
 #[ObservedBy(ObserveTenant::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {

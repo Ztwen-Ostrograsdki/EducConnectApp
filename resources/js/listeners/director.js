@@ -1,6 +1,30 @@
 export function registerDirectorListeners(tenantId) {
     window.Echo.private(`tenant.${tenantId}.directeur`)
 
+        // NOTIFICATIONS
+        .notification((notification) => {
+            $wireui.notify({
+                title: notification.title,
+                timeout: 0,
+                description: notification.message,
+                icon: mapTypeToIcon(notification.type ?? "info"),
+            });
+
+            if (notification.name && notification.name === "make.pdf") {
+                Livewire.dispatch(`${notification.eventName}`);
+            }
+        })
+
+        // ERRORS EVENTS
+        .listen("AnyErrorEvent", (e) => {
+            $wireui.notify({
+                title: "Une erreur s'est produite",
+                timeout: 0,
+                description: e.error,
+                icon: mapTypeToIcon(e.target ?? "info"),
+            });
+        })
+
         // STUDENTS CREATIONS EVENTS
         .listen("StudentsCreationTaskStartedEvent", (e) => {
             Livewire.dispatch("StudentsCreationsTasksStartedLiveEvent", {
@@ -26,6 +50,10 @@ export function registerDirectorListeners(tenantId) {
         })
         .listen("ProcessToCreateStudentsCompletedSuccesfullyEvent", (data) => {
             Livewire.dispatch("ProcessToCreateStudentsCompletedSuccesfullyLiveEvent", data);
+        })
+
+        .listen("StudentDataUpdatedEvent", (data) => {
+            Livewire.dispatch("StudentDataUpdatedEventLiveEvent", data);
         })
 
         // TEACHERS CREATIONS EVENTS
@@ -59,4 +87,19 @@ export function registerDirectorListeners(tenantId) {
 
 export function unregisterDirectorListeners(tenantId) {
     window.Echo.leave(`tenant.${tenantId}.directeur`);
+}
+
+/**
+ * Mappe ton type custom vers les icônes WireUI.
+ * @param {'info'|'success'|'warning'|'error'} type
+ * @returns {string}
+ */
+function mapTypeToIcon(type) {
+    const icons = {
+        info: "information-circle",
+        success: "check-circle",
+        warning: "exclamation-circle",
+        error: "x-circle",
+    };
+    return icons[type] ?? "information-circle";
 }

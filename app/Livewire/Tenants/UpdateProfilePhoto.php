@@ -6,10 +6,12 @@ namespace App\Livewire\Tenants;
 use App\Helpers\Support\TenantStorage;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use WireUi\Traits\WireUiActions;
 
+#[Title("Edition de ma photo de profil")]
 class UpdateProfilePhoto extends Component
 {
     use WithFileUploads, WireUiActions;
@@ -108,6 +110,6 @@ class UpdateProfilePhoto extends Component
 
     public function render()
     {
-        return view('livewire.tenants.update-profile-photo');
+        return view('livewire.tenants.update-profile-photo')->layout(auth('tenant')->user()->getDashboardLayout());
     }
 }
