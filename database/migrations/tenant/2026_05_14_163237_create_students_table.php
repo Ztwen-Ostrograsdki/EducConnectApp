@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('country')->nullable()->default(null);
             $table->string('adresse')->nullable()->default(null);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('email')->nullable()->unique();
+            $table->string('email')->nullable();
             $table->string('city')->nullable()->default(null);
             $table->string('department')->nullable()->default(null);
             $table->string('profil_photo')->nullable()->default(null);

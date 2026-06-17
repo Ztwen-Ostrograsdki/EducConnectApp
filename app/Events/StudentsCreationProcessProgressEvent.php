@@ -54,8 +54,15 @@ class StudentsCreationProcessProgressEvent implements ShouldBroadcast
 
         ];
     }
-    public function broadcastAs()
+
+
+    public function broadcastQueue(): string
     {
-        return 'students.creation.tasks.progress';
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

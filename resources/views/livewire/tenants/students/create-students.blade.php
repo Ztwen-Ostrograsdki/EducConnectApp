@@ -123,15 +123,21 @@
                    file:bg-indigo-600 file:text-white
                    hover:file:bg-indigo-700 cursor-pointer" />
 
-                    <div wire:loading wire:target="excelFile" class="mt-3 text-sm text-indigo-400">
-                        Lecture du fichier en cours...
+                    <div wire:loading wire:target="excelFile" class="mt-3 text-sm text-indigo-400 w-full flex justify-center">
+                        <div class="w-full flex flex-col items-center justify-center p-3">
+                            <span>
+                                <x-lucide-loader class="w-10 h-10 animate-spin" />
+                            </span>
+                            <span>Chargement et lecture du fichier en cours ...</span>
+                        </div>
                     </div>
 
                     {{-- Erreurs de lignes ignorées --}}
                     @if (!empty($importErrors))
-                        <div class="mt-4 space-y-1">
+                        <h5 class="text-center py-2.2 border-b text-orange-600 font-semibold border-b-fuchsia-700 uppercase w-full mt-5">Les lignes ignorées lors de l'importation des données du fichier</h5>
+                        <div class="mt-2 flex flex-wrap gap-3 justify-between items-center">
                             @foreach ($importErrors as $err)
-                                <p class="text-xs text-rose-400">{{ $err }}</p>
+                                <p wire:key='students-import-error-{{ $loop->iteration }}' class="text-xs text-red-800 rounded-2xl py-2 px-4 bg-red-300">{{ $err }}</p>
                             @endforeach
                         </div>
                     @endif
@@ -590,7 +596,7 @@
                                                     </span>
                                                 </button>
                                                 <x-confirm-modal wire:key="confirm-teach-del-{{ $student['uuid'] }}" :show="$showStudentRemoveModal" title="Retirer de la liste" confirm-text="Oui, Retirer" cancel-text="Annuler"
-                                                    confirm-action="confirmDeletestudent" close-action="resetModal">
+                                                    confirm-action="confirmDeleteStudent" close-action="resetModal">
                                                     <p>
                                                         Cette action retirera cette donnée de la liste.
                                                     <p class="text-orange-500 font-semibold py-1.5">Action irreversible!</p>

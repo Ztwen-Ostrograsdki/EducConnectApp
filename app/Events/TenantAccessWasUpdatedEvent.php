@@ -37,8 +37,15 @@ class TenantAccessWasUpdatedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs(): string
+
+    public function broadcastQueue(): string
     {
-        return 'tenant.blocked'; // un seul event côté JS
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
 }

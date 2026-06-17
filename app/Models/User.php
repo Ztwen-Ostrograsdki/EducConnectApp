@@ -20,6 +20,8 @@ class User extends Authenticatable
 
     protected $connection = 'tenant';
 
+    protected $table = 'users';
+
     protected $fillable = [
         'name',
         'prenames',

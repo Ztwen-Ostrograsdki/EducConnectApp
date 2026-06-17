@@ -54,8 +54,14 @@ class TeachersCreationStatusUpdatedEvent implements ShouldBroadcast
 
         ];
     }
-    public function broadcastAs()
+
+    public function broadcastQueue(): string
     {
-        return 'teachers.creation.tasks.statuses.updated';
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

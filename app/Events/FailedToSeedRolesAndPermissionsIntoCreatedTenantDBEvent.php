@@ -40,13 +40,18 @@ class FailedToSeedRolesAndPermissionsIntoCreatedTenantDBEvent implements ShouldB
     }
 
 
-    public function broadcastAs(): string
-    {
-        return 'tenant.roles.seed.failed'; 
-    }
-
     public function broadcastWith(): array
     {
         return ['tenant' => $this->tenantId, 'error' => $this->error];
+    }
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

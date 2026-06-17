@@ -61,8 +61,16 @@ class FailedToSendCredentialsToUserEvent implements ShouldBroadcast
     }
 
 
-    public function broadcastAs(): string
+
+    public function broadcastQueue(): string
     {
-        return 'send.credentials.to.teacher.failed'; 
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
+
 }

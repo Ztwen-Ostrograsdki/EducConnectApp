@@ -47,8 +47,14 @@ class TeachersCreationTaskStartedEvent implements ShouldBroadcast
 
         ];
     }
-    public function broadcastAs()
+
+    public function broadcastQueue(): string
     {
-        return 'teachers.creations.tasks.started';
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

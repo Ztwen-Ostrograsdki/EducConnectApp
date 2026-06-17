@@ -47,14 +47,21 @@ class AnyErrorEvent implements ShouldBroadcast
         }
     }
 
-
-    public function broadcastAs(): string
-    {
-        return 'any.error'; 
-    }
-
     public function broadcastWith(): array
     {
         return ['target' => $this->target, 'error' => $this->message];
+    }
+
+
+     // 👇 Forcer la queue pour le broadcasting
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    // 👇 Forcer la connexion
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

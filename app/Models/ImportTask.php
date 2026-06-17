@@ -8,6 +8,8 @@ class ImportTask extends Model
 {
     protected $connection = 'tenant';
 
+    protected $table = 'import_tasks';
+
 
     protected $fillable = [
         'batch_id',

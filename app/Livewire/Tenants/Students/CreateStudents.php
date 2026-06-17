@@ -276,6 +276,8 @@ class CreateStudents extends Component
             title: 'Supprimé',
             description: 'Apprenant retiré.'
         );
+
+        $this->resetModal();
     }
 
     public function resetModal()

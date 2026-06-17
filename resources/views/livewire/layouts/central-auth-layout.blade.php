@@ -12,6 +12,13 @@
         window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
     </script> --}}
 
+    <script>
+        window.__APP_CONTEXT__ = {
+            tenantId: {{ 'null' }},
+            userId: {{ auth('central')->id() ?? 'null' }},
+            role: "{{ auth('central')->user()?->getRoleNames()->first() ?? '' }}",
+        };
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @wireUiScripts
     @livewireStyles
@@ -20,7 +27,7 @@
 <body>
     <div class="shell">
 
-        @livewire('app-guard')
+        {{-- @livewire('app-guard') --}}
 
         <x-notifications />
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>

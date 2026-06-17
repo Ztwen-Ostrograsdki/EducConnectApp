@@ -11,6 +11,13 @@
         window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
     </script> --}}
 
+    <script>
+        window.__APP_CONTEXT__ = {
+            tenantId: '{{ tenant('id') ?? 'null' }}',
+            userId: {{ auth('tenant')->id() ?? 'null' }},
+            role: "{{ auth('tenant')->user()?->getRoleNames()->first() ?? '' }}",
+        };
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @wireUiScripts
     @livewireStyles
@@ -20,7 +27,7 @@
 <body>
     <div class="shell">
 
-        @livewire('app-guard')
+        {{-- @livewire('app-guard') --}}
 
         <x-notifications />
 

@@ -61,9 +61,15 @@ class ATeacherCreationFailedEvent implements ShouldBroadcast
         return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
     }
 
-
-    public function broadcastAs(): string
+    public function broadcastQueue(): string
     {
-        return 'teacher.creation.failed'; 
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
+
 }

@@ -46,8 +46,17 @@ class DefaultForAnyEvent implements ShouldBroadcastNow
     }
 
 
-    public function broadcastAs(): string
+     // 👇 Forcer la queue pour le broadcasting
+    public function broadcastQueue(): string
     {
-        return 'tenant.any.event'; 
+        return 'broadcasting';
     }
+
+    // 👇 Forcer la connexion
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
+
 }

@@ -22,6 +22,13 @@ class NotificationBadge extends Component
     }
 
 
+    #[On("ReloadNotificationsDataLiveEvent")]
+    public function loader()
+    {
+        $this->relaodNotifications();
+    }
+
+
     public function relaodNotifications()
     {
         $this->counter++;

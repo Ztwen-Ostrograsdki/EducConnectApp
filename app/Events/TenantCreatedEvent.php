@@ -36,14 +36,20 @@ class TenantCreatedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs()
-    {
-        return 'tenant.created';
-    }
-
     public function broadcastWith(): array
     {
         return ['email' => $this->email];
+    }
+
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 
     

@@ -54,8 +54,14 @@ class ProcessToCreateTeachersCompletedSuccesfullyEvent implements ShouldBroadcas
 
         ];
     }
-    public function broadcastAs()
+
+    public function broadcastQueue(): string
     {
-        return 'teachers.creation.completed';
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

@@ -46,8 +46,14 @@ class TeacherWasBlockedEvent implements ShouldBroadcast
 
         ];
     }
-    public function broadcastAs()
+
+    public function broadcastQueue(): string
     {
-        return 'teacher.blocked';
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

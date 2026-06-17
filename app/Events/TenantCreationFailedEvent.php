@@ -38,14 +38,20 @@ class TenantCreationFailedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs()
-    {
-        return 'tenant.creation.failed';
-    }
 
     public function broadcastWith(): array
     {
         return ['tenant' => $this->name, 'error' => $this->error, 'domain_name' => $this->domain_name];
+    }
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 
 }

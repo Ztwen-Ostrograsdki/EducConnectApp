@@ -64,8 +64,15 @@ class CredentialsToUserSuccessfullyEvent implements ShouldBroadcast
     }
 
 
-    public function broadcastAs(): string
+    public function broadcastQueue(): string
     {
-        return 'credentials.sent.to.user.successfully'; 
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
+
 }

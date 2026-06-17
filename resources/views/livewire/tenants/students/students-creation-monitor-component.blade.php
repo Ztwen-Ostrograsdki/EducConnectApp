@@ -13,7 +13,7 @@
                         Aperçu des tâches lancées
                     </h1>
                     <p class="text-slate-400 text-sm mt-1">
-                        Gestion des migrations des apprenants
+                        Gestion des migrations des apprenants <span class="hidden">{{ $renderKey }}</span>
                     </p>
                 </div>
             </div>
@@ -62,7 +62,7 @@
             <p class="text-slate-400 text-lg">Aucun batch trouvé</p>
         </div>
     @else
-        <div wire:poll.5s.visible class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             @foreach ($batches as $batchData)
                 <div class="group bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden 
                             hover:border-indigo-500/30 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">

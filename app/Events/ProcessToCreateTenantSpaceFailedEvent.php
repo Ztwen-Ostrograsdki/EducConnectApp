@@ -37,16 +37,21 @@ class ProcessToCreateTenantSpaceFailedEvent implements ShouldBroadcast
         ];
     }
 
-
-    public function broadcastAs()
-    {
-        return 'tenant.space.creation.failed';
-    }
-
     public function broadcastWith(): array
     {
         $demande_request = RequestToCreateNewTenant::findOrFail($this->demande_request_id);
 
         return ['request_email' => $demande_request?->email];
+    }
+
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

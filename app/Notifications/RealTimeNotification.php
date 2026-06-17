@@ -28,7 +28,9 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
         public readonly string  $message,
         public readonly string  $type = 'info',
         public readonly ?array   $meta = null,
-    ) {}
+    ) {
+        $this->onQueue('notifications');
+    }
 
     /**
      * Canaux de livraison.
@@ -80,11 +82,5 @@ class RealTimeNotification extends Notification implements ShouldQueue, ShouldBr
         ];
     }
 
-    /**
-     * Nom de l'event broadcasté (écouté côté JS).
-     */
-    public function broadcastAs(): string
-    {
-        return 'notification.received';
-    }
+    
 }

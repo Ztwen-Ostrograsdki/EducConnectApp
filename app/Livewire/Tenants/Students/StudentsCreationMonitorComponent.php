@@ -32,6 +32,7 @@ class StudentsCreationMonitorComponent extends Component
 
     public function mount(?string $batchId = null): void
     {
+        
         $this->tenantId = tenant('id');
 
         $this->batchId = $batchId
@@ -48,57 +49,60 @@ class StudentsCreationMonitorComponent extends Component
     }
 
     #[On('StudentsCreationsTasksStartedLiveEvent')]
-    public function studentsTasksStarted(array $data): void
+    public function studentsTasksStarted(string $batchId, int $totalJobs): void
     {
-        $this->batchId = $data['batchId'];
+        $this->batchId = $batchId;
 
-        session(['current_batch_id' => $this->batchId]);
+        // session(['current_batch_id' => $this->batchId]);
 
         $this->notification()->send([
             'icon'        => 'success',
-            'title'       => "File d'attente initialisée",
-            'description' => "{$data['totalJobs']} insertion(s) lancée(s) !",
+            'title'       => "CREATION D'APPRENNATS : File d'attente initialisée",
+            'description' => "{$totalJobs} insertion(s) d'apprenants lancée(s) !",
         ]);
 
         $this->forceRefresh();
     }
 
-    #[On('HandleAnyLiveEvent')]
-    public function reloadForAny(array $data): void
+    #[On('StudentsCreationProgressLiveEvent')]
+    public function studentCreationProgress(string $batchId, string $tenantId, int $totalJobs, int $processed, int $failed, $percentage): void
     {
         $this->forceRefresh();
     }
-    
+
     #[On('StudentCreatedSucessfullyLiveEvent')]
-    public function studentCreated(array $data): void
+    public function studentCreated(string $studentName, ?string $message = 'Un nouvelle apprenant inséré avec succès'): void
     {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "CREATION APPRENANT REUSSIE!" ,
+            'description' => "L'apprenant " . $studentName . " a été créé avec succès!",
+        ]);
+
         $this->forceRefresh();
     }
 
     #[On('AStudentCreationFailedLiveEvent')]
-    public function studentCreationFailed(array $data): void
+    public function studentCreationFailed(string $studentName, ?string $error = 'Une erreur est survenue'): void
     {
+        $this->notification()->send([
+            'icon'        => 'error',
+            'title'       => "La création de l'apprenant " . $studentName . " a échoué!" ,
+            'description' => "Erreurs : " . $error,
+        ]);
+
         $this->forceRefresh();
     }
 
-    #[On('StudentsCreationsTasksProgressLiveEvent')]
-    public function studentCreationProgress(array $data): void
+  
+    #[On('ProcessToCreateStudentsCompletedSuccesfullyLiveEvent')]
+    public function tasksCompleted(string $batchId, string $tenantId, int $totalJobs, int $processed, int $failed, $percentage): void
     {
-        $this->forceRefresh();
-    }
-
-    #[On('StudentsCreationsCompletedLiveEvent')]
-    public function taskCompleted(array $data): void
-    {
-        $failed  = $data['failed'] ?? 0;
-        $total   = $data['totalJobs'] ?? 0;
-        $success = $total - $failed;
-
         $this->notification()->send([
             'icon'        => $failed > 0 ? 'warning' : 'success',
-            'title'       => "Traitement terminé",
+            'title'       => "PROCESSUS DE CREATION APPRENANTS TERMINES",
             'timeout'     => 0,
-            'description' => "Total : {$total} — Réussis : {$success} — Échecs : {$failed}",
+            'description' => "Total : {$totalJobs} — Réussis : {$processed} — Échecs : {$failed} — Progression : {$percentage}% ",
         ]);
 
         $this->forceRefresh();
@@ -107,7 +111,7 @@ class StudentsCreationMonitorComponent extends Component
     public function render()
     {
 
-        $this->renderKey = randomNumber();
+        session()->forget('current_batch_id');
 
         $batchIds = ImportTask::query()
             ->selectRaw('batch_id, MAX(created_at) as last_created')
@@ -232,6 +236,14 @@ class StudentsCreationMonitorComponent extends Component
 
         }
 
+    }
+
+
+    
+    #[On('HandleAnyLiveEvent')]
+    public function reloadForAny(array $data): void
+    {
+        $this->forceRefresh();
     }
 
     public function deleteBatchFailures(?string $batchId = null): void

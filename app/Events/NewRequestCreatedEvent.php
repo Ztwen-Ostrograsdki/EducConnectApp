@@ -36,13 +36,19 @@ class NewRequestCreatedEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'tenant.request.created'; 
-    }
-
     public function broadcastWith(): array
     {
         return $this->request_data;
+    }
+
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

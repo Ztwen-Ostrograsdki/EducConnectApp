@@ -37,4 +37,15 @@ class SendCredentialsToCreatedTenantEvent
             new PrivateChannel('channel-name'),
         ];
     }
+
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
 }

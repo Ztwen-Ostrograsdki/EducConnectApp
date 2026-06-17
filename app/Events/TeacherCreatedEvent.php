@@ -61,9 +61,14 @@ class TeacherCreatedEvent implements ShouldBroadcast
         return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
     }
 
-
-    public function broadcastAs(): string
+    public function broadcastQueue(): string
     {
-        return 'teacher.creation.success'; 
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
 }

@@ -37,13 +37,20 @@ class SomesErrorsOccurWhenInitializeTenantSpaceEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs()
-    {
-        return 'tenant.init.errors';
-    }
 
     public function broadcastWith(): array
     {
         return ['tenant' => $this->tenantId, 'error' => $this->error];
+    }
+
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

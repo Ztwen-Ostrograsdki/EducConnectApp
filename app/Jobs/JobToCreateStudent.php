@@ -33,7 +33,8 @@ class JobToCreateStudent implements ShouldQueue
         public string $tenantId,
         public int    $taskId,
         public ?string $domain,
-    ) {}
+    ) {
+    }
 
     /**
      * @return void
@@ -65,21 +66,24 @@ class JobToCreateStudent implements ShouldQueue
             $full_name = $payload['name'] . ' ' .  $payload['prenames'];
 
             // Anti-doublon
-            if (Student::where('email', $payload['email'])->first() || User::where('email', $payload['email'])->first()) {
+            if(!empty($payload['email'])){
 
-                $task->update(['status' => 'failed']);
+                    if (Student::where('email', $payload['email'])->first() || User::where('email', $payload['email'])->first()) {
 
-                $this->fail("Données de l'apprenant est déjà existant dans la base de données!");
+                    $task->update(['status' => 'failed']);
 
-                User::first()->notify(new RealTimeNotification(
-                    userEmail: $tenant->email,
-                    tenantId: $this->tenantId,
-                    title:             "Duplication de compte apprenant",
-                    message:           "Le Compte de l'apprenant" . $full_name . " déjà existant dans la base de données!",
-                    type:              'error',
-                ));
+                    $this->fail("Données de l'apprenant est déjà existant dans la base de données!");
 
-                return;
+                    User::first()->notify(new RealTimeNotification(
+                        userEmail: $tenant->email,
+                        tenantId: $this->tenantId,
+                        title:             "Duplication de compte apprenant",
+                        message:           "Le Compte de l'apprenant" . $full_name . " déjà existant dans la base de données!",
+                        type:              'error',
+                    ));
+
+                    return;
+                }
             }
 
             $birth_date = $payload['birth_date'];
@@ -122,7 +126,7 @@ class JobToCreateStudent implements ShouldQueue
                 'gender'                      => $payload['gender'] ?? null,
                 'birth_date'                  => $birth_date ?? null,
                 'adresse'                     => $adresse,
-                'matricule'                   => Robot::makeIdentifier($tenant->school_name),
+                'matricule'                   => Robot::makeMatricule($tenant->school_name),
                 'qr_code'                     => Robot::makeQrCode($qr_code_payload),
             ]);
 
@@ -130,15 +134,20 @@ class JobToCreateStudent implements ShouldQueue
 
             $student->update(['is_active' => true, 'status' => 'active']);
 
-            StudentCreatedEvent::dispatch($this->tenantId, $task->id, null);
+            // StudentCreatedEvent::dispatch($this->tenantId, $task->id, null);
 
-            $director?->notify(new RealTimeNotification(
-                userEmail: $director?->email,
-                tenantId: $this->tenantId,
-                title:             "COMPTE APPRENANT CREE AVEC SUCCES",
-                message:           "Le compte de l'apprenant " . $student->getUserNamePrefix(true, true) . " a été créé avec succès!",
-                type:              'success',
-            ));
+            $can_sent = randomNumber(1, 10);
+
+            if(in_array($can_sent, [1, 3, 7])){
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
+                    tenantId: $this->tenantId,
+                    title:             "COMPTE APPRENANT CREE AVEC SUCCES",
+                    message:           "Le compte de l'apprenant " . $student->getUserNamePrefix(true, true) . " a été créé avec succès!",
+                    type:              'success',
+                ));
+            }
 
 
         } 
@@ -147,16 +156,17 @@ class JobToCreateStudent implements ShouldQueue
             $full_name = $payload['name'] . ' ' .  $payload['prenames'];
 
             AStudentCreationFailedEvent::dispatch(
-                $this->tenantId,
-                $this->taskId,
-                $th->getMessage(),
+                tenantId: $this->tenantId, 
+                taskId: $this->taskId,
+                studentName: $full_name,
+                error: $th->getMessage(),
             );
 
             $director?->notify(new RealTimeNotification(
                 userEmail: $director?->email,
                 tenantId: $this->tenantId,
                 title:             "Erreur création du compte apprenant " . $full_name,
-                message:           $th->getMessage(),
+                message:           cutter($th->getMessage(), 200),
                 type:              'error',
             ));
 
@@ -198,6 +208,12 @@ class JobToCreateStudent implements ShouldQueue
 
             $task = ImportTask::find($this->taskId);
 
+            $director = User::firstWhere('tenant_id', $this->tenantId);
+
+            $payload = $task->payload;
+
+            $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
             $student = Student::firstWhere('email', $task->payload['email']);
 
             if ($student && !$student->is_active) {
@@ -217,21 +233,17 @@ class JobToCreateStudent implements ShouldQueue
             broadcast(new AStudentCreationFailedEvent(
                     tenantId: $this->tenantId, 
                     taskId: $this->taskId,
+                    studentName: $full_name,
                     error: $exception->getMessage(),
                 )
             );
 
-            $director = User::firstWhere('tenant_id', $this->tenantId);
-
-            $payload = $task->payload;
-
-            $full_name = $payload['name'] . ' ' .  $payload['prenames'];
 
             $director?->notify(new RealTimeNotification(
                 userEmail: $director->email,
                 tenantId:  $this->tenantId,
                 title:     "ECHEC CRÉATION DU COMPTE APPRENANT " . $full_name,
-                message:   $exception->getMessage(),
+                message:   cutter($exception->getMessage(), 200),
                 type:      'error',
             ));
 

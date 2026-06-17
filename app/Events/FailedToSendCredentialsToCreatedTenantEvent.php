@@ -39,14 +39,19 @@ class FailedToSendCredentialsToCreatedTenantEvent implements ShouldBroadcast
     }
 
 
-    public function broadcastAs(): string
-    {
-        return 'tenant.credentials.failed'; 
-    }
-
     public function broadcastWith(): array
     {
         return ['tenantId' => $this->tenantId, 'error' => $this->error];
+    }
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 
     

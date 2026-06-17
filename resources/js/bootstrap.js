@@ -14,23 +14,21 @@ if (token) {
  */
 
 import "./echo";
+import { registerCentralListeners } from "./listeners/central";
+import { registerDirectorListeners } from "./listeners/director";
+import { registerUserListeners } from "./listeners/user";
 
-// import Echo from "laravel-echo";
+const { tenantId, userId, role } = window.__APP_CONTEXT__ ?? {};
 
-// import Pusher from "pusher-js";
+// Toujours actif (super-admin ou pages centrales)
+registerCentralListeners();
 
-// window.Pusher = Pusher;
+if (tenantId) {
+    // Actif pour tous les users du tenant
+    registerUserListeners(tenantId, userId);
 
-// window.Echo = new Echo({
-//     broadcaster: "reverb",
-
-//     key: import.meta.env.VITE_REVERB_APP_KEY,
-
-//     wsHost: import.meta.env.VITE_REVERB_HOST,
-
-//     wsPort: import.meta.env.VITE_REVERB_PORT,
-
-//     forceTLS: false,
-
-//     enabledTransports: ["ws", "wss"],
-// });
+    // Actif uniquement pour le directeur
+    if (role === "directeur") {
+        registerDirectorListeners(tenantId);
+    }
+}

@@ -36,13 +36,19 @@ class CredentialsSentToCreatedTenantSucessfullyEvent implements ShouldBroadcast
         ];
     }
 
-    public function broadcastAs()
-    {
-        return 'created.tenant.credentials.sent';
-    }
 
     public function broadcastWith(): array
     {
         return ['tenantId' => $this->tenantId];
+    }
+
+    public function broadcastQueue(): string
+    {
+        return 'broadcasting';
+    }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
     }
 }

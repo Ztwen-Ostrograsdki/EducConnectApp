@@ -39,6 +39,8 @@ class NotificationsPage extends Component
      */
     public function relaodNotifications(): void
     {
+        $this->dispatch('ReloadNotificationsDataLiveEvent');
+        
         $user = Auth::guard('tenant')->user();
 
         $this->notifications = $user
@@ -81,6 +83,7 @@ class NotificationsPage extends Component
         Auth::guard('tenant')->user()->unreadNotifications->limit(20)->markAsRead();
 
         $this->relaodNotifications();
+
     }
 
     /**
@@ -94,6 +97,7 @@ class NotificationsPage extends Component
             ->delete();
 
         $this->relaodNotifications();
+
     }
 
     /**

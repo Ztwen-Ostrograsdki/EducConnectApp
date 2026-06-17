@@ -58,12 +58,18 @@ class StudentCreatedEvent implements ShouldBroadcast
 
         $name = $data['name'] . ' ' . $data['prenames'];
 
-        return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
+        return ['tenantId' => $this->tenantId, 'userName' => $name];
     }
 
 
-    public function broadcastAs(): string
+    public function broadcastQueue(): string
     {
-        return 'student.creation.success'; 
+        return 'broadcasting';
     }
+
+    public function broadcastConnection(): string
+    {
+        return 'redis';
+    }
+
 }
