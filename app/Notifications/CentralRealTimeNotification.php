@@ -79,11 +79,4 @@ class CentralRealTimeNotification extends Notification implements ShouldQueue, S
         ];
     }
 
-    /**
-     * Nom de l'event broadcasté (écouté côté JS).
-     */
-    public function broadcastAs(): string
-    {
-        return 'central.notifications';
-    }
 }

@@ -21,6 +21,7 @@ class ATeacherCreationFailedEvent implements ShouldBroadcast
     public function __construct(
         public string $tenantId, 
         public int $taskId,
+        public string $teacherName,
         public ?string $error = null,
     )
     {
@@ -41,24 +42,7 @@ class ATeacherCreationFailedEvent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
-        $task = ImportTask::findOrFail($this->taskId);
-
-        $data = $task->payload;
-
-        $error = null;
-
-        if($this->error){
-
-            $error = $this->error;
-        }
-        else{
-
-            $this->error = $task->error;
-        }
-
-        $name = $data['name'] . ' ' . $data['prenames'] . '(' . $data['email'] . ')';
-
-        return ['tenantId' => $this->tenantId, 'error' => $error, 'userName' => $name];
+        return ['tenantId' => $this->tenantId, 'error' => $this->error, 'userName' => $this->teacherName];
     }
 
     public function broadcastQueue(): string

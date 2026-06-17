@@ -3,7 +3,7 @@
 namespace App\Livewire\Tenants\Students;
 
 use App\Events\InitProcessToCreateStudentsEvent;
-use App\Livewire\Traits\BeninPhoneValidation;
+use App\Livewire\Traits\ValidatorTrait;
 use App\Models\Student;
 use App\Tools\BeninData;
 use Illuminate\Support\Str;
@@ -19,7 +19,7 @@ use WireUi\Traits\WireUiActions;
 class CreateStudents extends Component
 {
 
-    use WireUiActions, WithFileUploads, BeninPhoneValidation;
+    use WireUiActions, WithFileUploads, ValidatorTrait;
 
     public string $adresse;
 
@@ -553,7 +553,7 @@ class CreateStudents extends Component
 
                 if(!empty($email)){
                     
-                    $emailError = $this->validateEmailSilently($email);
+                    $emailError = $this->validateEmailSilently($email, false);
 
                     if ($emailError !== null) {
                         $errors[] = "Ligne {$line} : {$emailError}";

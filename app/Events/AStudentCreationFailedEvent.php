@@ -46,13 +46,11 @@ class AStudentCreationFailedEvent implements ShouldBroadcast
         return ['tenantId' => $this->tenantId, 'error' => $this->error, 'userName' => $this->studentName];
     }
 
-    // 👇 Forcer la queue pour le broadcasting
     public function broadcastQueue(): string
     {
         return 'broadcasting';
     }
 
-    // 👇 Forcer la connexion
     public function broadcastConnection(): string
     {
         return 'redis';

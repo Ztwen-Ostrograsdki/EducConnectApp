@@ -50,62 +50,65 @@ class TeachersCreationMonitorComponent extends Component
     }
 
     #[On('TeachersCreationsTasksStartedLiveEvent')]
-    public function teachersTasksStarted(array $data): void
+    public function teachersTasksStarted(string $batchId, int $totalJobs): void
     {
-        $this->batchId = $data['batchId'];
+        $this->batchId = $batchId;
 
-        session(['current_batch_id' => $this->batchId]);
+        // session(['current_batch_id' => $this->batchId]);
 
         $this->notification()->send([
             'icon'        => 'success',
-            'title'       => "File d'attente initialisée",
-            'timeout'     => 5000,
-            'description' => "{$data['totalJobs']} insertion(s) lancée(s) !",
+            'title'       => "CREATION D'ENSEIGNANTS : File d'attente initialisée",
+            'description' => "{$totalJobs} insertion(s) d'enseignant(s) lancée(s) !",
         ]);
 
         $this->forceRefresh();
     }
 
-    #[On('HandleAnyLiveEvent')]
-    public function reloadForAny(array $data): void
+    #[On('TeachersCreationProgressLiveEvent')]
+    public function teacherCreationProgress(string $batchId, string $tenantId, int $totalJobs, int $processed, int $failed, $percentage): void
     {
         $this->forceRefresh();
     }
-    
+
     #[On('TeacherCreatedSucessfullyLiveEvent')]
-    public function teacherCreated(array $data): void
+    public function teacherCreated(string $teacherName, ?string $message = 'Un nouvelle enseignant inséré avec succès'): void
     {
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => "CREATION ENSEIGNANT REUSSIE!" ,
+            'description' => "L'enseignant " . $teacherName . " a été créé avec succès!",
+        ]);
+
         $this->forceRefresh();
     }
 
     #[On('ATeacherCreationFailedLiveEvent')]
-    public function teacherCreationFailed(array $data): void
+    public function TeacherCreationFailed(string $teacherName, ?string $error = 'Une erreur est survenue'): void
     {
-        $this->forceRefresh();
-    }
-
-    #[On('TeachersCreationsTasksProgressLiveEvent')]
-    public function teacherCreationProgress(array $data): void
-    {
-        $this->forceRefresh();
-    }
-
-    #[On('TeachersCreationsCompletedLiveEvent')]
-    public function taskCompleted(array $data): void
-    {
-        $failed  = $data['failed'] ?? 0;
-        $total   = $data['totalJobs'] ?? 0;
-        $success = $total - $failed;
-
         $this->notification()->send([
-            'icon'        => $failed > 0 ? 'warning' : 'success',
-            'title'       => "Traitement terminé",
-            'timeout'     => 0,
-            'description' => "Total : {$total} — Réussis : {$success} — Échecs : {$failed}",
+            'icon'        => 'error',
+            'title'       => "La création de l'enseignant " . $teacherName . " a échoué!" ,
+            'description' => "Erreurs : " . $error,
         ]);
 
         $this->forceRefresh();
     }
+
+  
+    #[On('ProcessToCreateTeachersCompletedSuccesfullyLiveEvent')]
+    public function tasksCompleted(string $batchId, string $tenantId, int $totalJobs, int $processed, int $failed, $percentage): void
+    {
+        $this->notification()->send([
+            'icon'        => $failed > 0 ? 'warning' : 'success',
+            'title'       => "PROCESSUS DE CREATION ENSEGNANTS TERMINES",
+            'timeout'     => 0,
+            'description' => "Total : {$totalJobs} — Réussis : {$processed} — Échecs : {$failed} — Progression : {$percentage}% ",
+        ]);
+
+        $this->forceRefresh();
+    }
+
 
     public function render()
     {

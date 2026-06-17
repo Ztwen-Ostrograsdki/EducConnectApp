@@ -96,11 +96,5 @@ class PDFIsReady extends Notification implements ShouldQueue, ShouldBroadcast
         ];
     }
 
-    /**
-     * Nom de l'event broadcasté (écouté côté JS).
-     */
-    public function broadcastAs(): string
-    {
-        return 'pdf.ready';
-    }
+    
 }

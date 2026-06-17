@@ -3,7 +3,7 @@
 namespace App\Livewire\Tenants\Teachers;
 
 use App\Events\InitProcessToCreateTeachersEvent;
-use App\Livewire\Traits\BeninPhoneValidation;
+use App\Livewire\Traits\ValidatorTrait;
 use App\Models\Teacher;
 use App\Models\Tenant;
 use App\Models\User;
@@ -20,7 +20,7 @@ use WireUi\Traits\WireUiActions;
 #[Title("Créations | ajout des enseignants")]
 class CreateTeachers extends Component
 {
-    use WireUiActions, WithFileUploads, BeninPhoneValidation;
+    use WireUiActions, WithFileUploads, ValidatorTrait;
 
     public $adresse;
 
@@ -87,7 +87,7 @@ class CreateTeachers extends Component
 
             'email' => [
                 'required',
-                'email',
+                app()->isProduction() ? 'email:rfc,dns' :'email',
                 'max:255',
                 function ($attribute, $value, $fail) {
                     $existsUser = User::where('email', $value)->exists();
@@ -163,6 +163,10 @@ class CreateTeachers extends Component
             'pending_teachers',
             []
         );
+
+        $this->validate();
+
+        $this->validatePhoneNumber();
 
         // Session
 
@@ -522,7 +526,7 @@ class CreateTeachers extends Component
 
                 if(!empty($email)){
                     
-                    $emailError = $this->validateEmailSilently($email);
+                    $emailError = $this->validateEmailSilently($email, true);
 
                     if ($emailError !== null) {
                         $errors[] = "Ligne {$line} : {$emailError}";

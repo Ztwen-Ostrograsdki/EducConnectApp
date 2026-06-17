@@ -8,10 +8,12 @@ use App\Models\ImportTask;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Tâches de migrations apprenants")]
 class StudentsCreationMonitorComponent extends Component
 {
     use WireUiActions;
@@ -57,7 +59,7 @@ class StudentsCreationMonitorComponent extends Component
 
         $this->notification()->send([
             'icon'        => 'success',
-            'title'       => "CREATION D'APPRENNATS : File d'attente initialisée",
+            'title'       => "CREATION D'APPRENANTS : File d'attente initialisée",
             'description' => "{$totalJobs} insertion(s) d'apprenants lancée(s) !",
         ]);
 

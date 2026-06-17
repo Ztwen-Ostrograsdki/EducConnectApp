@@ -78,6 +78,7 @@ class Student extends Model
 
 
 
+
     // ─── Relations ────────────────────────────────────────────────────
 
     /**
@@ -419,6 +420,12 @@ class Student extends Model
        if($this->profil_photo)  return TenantStorage::url( $this->profil_photo);
 
        else return asset('images/default-avatar.jpg') ;
+    }
+
+
+    public function profil_photo_url() 
+    {
+        return $this->profil_photo_url;
     }
 
 

@@ -24,6 +24,7 @@ use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
 use App\Livewire\Tenants\Students\StudentsPortal;
+use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
@@ -101,9 +102,11 @@ Route::middleware([
             // LES ELEVES
             Route::get('/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
 
-            Route::get('/eleves/ajout', CreateStudents::class)->name('students.create');
+            Route::get('/apprenants/ajout', CreateStudents::class)->name('students.create');
 
-            Route::get('/eleves/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
+            Route::get('/apprenants/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
+
+            Route::get('/apprenants/impression', StudentsPrintableListComponent::class)->name('students.print.list');
 
 
 

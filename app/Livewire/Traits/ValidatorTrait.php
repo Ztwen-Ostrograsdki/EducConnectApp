@@ -5,14 +5,12 @@ namespace App\Livewire\Traits;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-trait BeninPhoneValidation{
+trait ValidatorTrait{
 
 	public string $contacts = '';
 
 	public function validatePhoneNumber()
 	{
-		$this->resetErrorBag('contacts');
-
 		// 1. Vérifier si le champ est vide
 		if (empty($this->contacts)) {
 			throw ValidationException::withMessages([
@@ -72,22 +70,50 @@ trait BeninPhoneValidation{
 	}
 
 
-	private function validateEmailSilently(?string $email): ?string
+	private function validateEmailSilently(?string $email, $required = true): ?string
 	{
 		// Email optionnel — si vide, on laisse passer
-		if (empty($email)) {
+
+
+		if($required === false){
+
+			if (empty($email)) {
+				return null;
+			}
+
+			$validator = Validator::make(
+				['email' => $email],
+				app()->isProduction() ?
+				['email' => ['required', 'string', 'email:rfc,dns', 'max:255']] :
+				['email' => ['required', 'string', 'email', 'max:255']]
+			);
+
+			if ($validator->fails()) {
+				return "L'adresse email \"{$email}\" est invalide.";
+			}
+
 			return null;
 		}
+		else{
 
-		$validator = Validator::make(
-			['email' => $email],
-			['email' => ['required', 'string', 'email:rfc,dns', 'max:255']]
-		);
+			if (empty($email)) {
+				return "L'adresse email \"{$email}\" est requise.";
+			}
 
-		if ($validator->fails()) {
-			return "L'adresse email \"{$email}\" est invalide.";
+			$validator = Validator::make(
+				['email' => $email],
+				app()->isProduction() ?
+				['email' => ['required', 'string', 'email:rfc,dns', 'max:255']] :
+				['email' => ['required', 'string', 'email', 'max:255']]
+			);
+
+			if ($validator->fails()) {
+				return "L'adresse email \"{$email}\" est invalide.";
+			}
+
+			return null;
+
 		}
 
-		return null;
 	}
 }

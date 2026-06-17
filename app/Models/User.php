@@ -189,6 +189,7 @@ class User extends Authenticatable
        else return asset('images/default-avatar.jpg') ;
     }
 
+
     public function teacher()
     {
         return $this->hasOne(Teacher::class);

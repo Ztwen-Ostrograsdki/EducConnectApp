@@ -78,6 +78,27 @@ class JobToCreateTeacher implements ShouldQueue
 
 
             // Anti-doublon
+
+            if(empty($payload['email'])){
+
+                $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
+                $error_message = "Echec de création de l'espace de l'enseignant " . $full_name . " . Car son adresse mail est manquante!";
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
+                    tenantId: $this->tenantId,
+                    title:             "Erreur création du compte " . $payload['email'],
+                    message:           $error_message,
+                    type:              'error',
+                ));
+
+                $this->fail($error_message);
+                return;
+
+            }
+
+            
             if (User::where('email', $payload['email'])->first()) {
 
                 $task->update(['status' => 'failed']);
@@ -163,11 +184,8 @@ class JobToCreateTeacher implements ShouldQueue
                     'user_id'                => $user->id,
                 ]);
             } catch (\Throwable $th) {
-                ATeacherCreationFailedEvent::dispatch(
-                    $this->tenantId,
-                    $this->taskId,
-                    $th->getMessage(),
-                );
+
+                $full_name = $payload['name'] . ' ' .  $payload['prenames'];
 
                 $director?->notify(new RealTimeNotification(
                     userEmail: $director?->email,
@@ -185,15 +203,18 @@ class JobToCreateTeacher implements ShouldQueue
             
             $task->update(['status' => 'success']);
 
-            TeacherCreatedEvent::dispatch($this->tenantId, $task->id, null);
+            $can_sent = randomNumber(1, 10);
 
-            $director?->notify(new RealTimeNotification(
-                userEmail: $director?->email,
-                tenantId: $this->tenantId,
-                title:             "COMPTE ENSEIGNANT CREE AVEC SUCCES",
-                message:           "Le compte de l'enseignant " . $user->getUserNamePrefix(true, true) . " a été créé avec succès!",
-                type:              'success',
-            ));
+            if(in_array($can_sent, [1, 3, 7])){
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
+                    tenantId: $this->tenantId,
+                    title:             "COMPTE ENSEIGNANT CREE AVEC SUCCES",
+                    message:           "Le compte de l'enseignant " . $user->getUserNamePrefix(true, true) . " a été créé avec succès!",
+                    type:              'success',
+                ));
+            }
 
             $space_url = get_tenant_url($this->domain, 'login');
 
@@ -227,13 +248,15 @@ class JobToCreateTeacher implements ShouldQueue
      */
     public function failed(Throwable $exception): void
     {
-
         tenancy()->initialize($this->tenantId);
 
         try {
             $task = ImportTask::find($this->taskId);
 
             if ($task) {
+
+                $payload = $task->payload;
+
                 $task->update([
                     'status' => 'failed',
                     'error'  => $exception->getMessage(),
@@ -253,23 +276,26 @@ class JobToCreateTeacher implements ShouldQueue
                         
                     }
                 }
+
+                $full_name = $payload['name'] . ' ' .  $payload['prenames'];
+
+                ATeacherCreationFailedEvent::dispatch(
+                    tenantId: $this->tenantId,
+                    taskId: $this->taskId,
+                    error: cutter($exception->getMessage(), 150),
+                    teacherName: $full_name,
+                );
+
+                $director = User::firstWhere('tenant_id', $this->tenantId);
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director->email,
+                    tenantId:  $this->tenantId,
+                    title:     "ECHEC CRÉATION DU COMPTE ENSEIGNANT ",
+                    message:   cutter($exception->getMessage(), 150),
+                    type:      'error',
+                ));
             }
-
-            ATeacherCreationFailedEvent::dispatch(
-                $this->tenantId,
-                $this->taskId,
-                $exception->getMessage(),
-            );
-
-            $director = User::firstWhere('tenant_id', $this->tenantId);
-
-            $director?->notify(new RealTimeNotification(
-                userEmail: $director->email,
-                tenantId:  $this->tenantId,
-                title:     "ECHEC CRÉATION DU COMPTE ENSEIGNANT ",
-                message:   $exception->getMessage(),
-                type:      'error',
-            ));
 
         } finally {
             tenancy()->end();
