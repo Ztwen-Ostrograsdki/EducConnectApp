@@ -11,7 +11,7 @@
     <div class="dd-menu" id="notif-menu">
         <div class="dd-head">
             <div class="dd-title">Notifications</div>
-            <div class="dd-sub">{{ $unreadCount }} non lues</div>
+            <div class="dd-sub">{{ __zero($unreadCount) }} non lues</div>
         </div>
         @foreach ($notifications as $notif)
             <div wire:key='notification-badge-{{ $notif['id'] }}' class="notif-item notif-unread @if ($notif['read_at']) opacity-50 @endif">

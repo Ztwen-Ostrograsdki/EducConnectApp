@@ -339,8 +339,8 @@
                                         {{-- PROFILE --}}
                                         <td class="px-6 py-5">
 
-                                            <a title="Charger le profil de l'enseignant {{ $student->getFullName() }}" href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                class="flex items-center gap-4 hover:text-sky-500 hover:underline">
+                                            <a title="Charger le profil de l'apprenant {{ $student->getFullName() }}" href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                                class="flex items-center gap-4 hover:underline">
 
                                                 <img src="{{ $student->profil_photo_url() }}" alt="" class="w-14 h-14 rounded-full object-cover border-4 border-slate-700">
                                                 <div class="min-w-0">
@@ -351,21 +351,23 @@
 
                                                     </h3>
 
-                                                    <p class="mt-1 text-sm text-slate-400 truncate flex items-center gap-x-1.5">
-                                                        <x-lucide-mail class="w-3.5 h-3.5" />
-                                                        <span>
-                                                            {{ $student->email }}
-                                                        </span>
+                                                    @if ($student->email)
+                                                        <p class="mt-1 text-sm text-slate-400 truncate flex items-center gap-x-1.5">
+                                                            <x-lucide-mail class="w-3.5 h-3.5" />
+                                                            <span>
+                                                                {{ $student->email }}
+                                                            </span>
+                                                        </p>
+                                                    @endif
+                                                    @if ($student->contacts)
+                                                        <p class="mt-1 text-sm text-slate-400 truncate font-mono flex items-center gap-x-1.5">
 
-                                                    </p>
-                                                    <p class="mt-1 text-sm text-slate-400 truncate font-mono flex items-center gap-x-1.5">
-
-                                                        <x-lucide-phone class="w-3.5 h-3.5" />
-                                                        <span>
-                                                            {{ $student->contacts }}
-                                                        </span>
-
-                                                    </p>
+                                                            <x-lucide-phone class="w-3.5 h-3.5" />
+                                                            <span>
+                                                                {{ $student->contacts }}
+                                                            </span>
+                                                        </p>
+                                                    @endif
 
                                                 </div>
 

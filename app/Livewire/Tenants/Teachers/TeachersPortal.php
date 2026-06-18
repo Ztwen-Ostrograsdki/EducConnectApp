@@ -2,19 +2,18 @@
 
 namespace App\Livewire\Tenants\Teachers;
 
-use App\Helpers\Support\TenantStorage;
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\GeneratedDocument;
 use App\Models\Teacher;
 use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title('Portails des enseignants')]
 class TeachersPortal extends Component
 {
     use TeachersActions;

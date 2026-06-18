@@ -3,9 +3,11 @@
 namespace App\Livewire\Tenants\Classes;
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title('Profil de classe ou groupe pédagogique')]
 class ClasseProfil extends Component
 {
     public $section = 'classe-home-page';

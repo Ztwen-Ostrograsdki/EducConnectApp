@@ -205,7 +205,7 @@ class JobToUpdateStudentData implements ShouldQueue
                     userEmail: $director?->email,
                     tenantId: $this->tenantId,
                     title:             "INFOS APPRENANT MISES A JOUR",
-                    message:           "Les infos de l'apprenant " . $student->getUserNamePrefix(true, true) . " a été mis à jour avec succès!",
+                    message:           "Les infos de l'apprenant " . $student->getUserNamePrefix(true, true) . " ont été mises à jour avec succès!",
                     type:              'success',
                 ));
             }

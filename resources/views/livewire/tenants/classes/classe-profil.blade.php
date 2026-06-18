@@ -1,15 +1,10 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 w-full
-                max-w-full
-                px-3
-                overflow-x-hidden">
+<div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full px-3 overflow-x-hidden">
 
     {{-- ================================================= --}}
     {{-- HEADER --}}
     {{-- ================================================= --}}
     <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
-
         <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
-
             <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
                 {{-- LEFT --}}
@@ -17,135 +12,57 @@
 
                     {{-- ICON --}}
                     <div class="shrink-0 self-start">
-
-                        <div
-                            class="w-16 h-16 sm:w-20 sm:h-20
-                                        rounded-3xl
-                                        bg-indigo-500/10
-                                        border border-indigo-500/20
-                                        flex items-center justify-center">
-
-                            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400">
-                            </svg>
-
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400"></svg>
                         </div>
-
                     </div>
 
                     {{-- CONTENT --}}
                     <div class="min-w-0 flex-1">
-
                         <div class="flex flex-wrap items-center gap-2">
-
-                            <h1 class="text-xl sm:text-2xl lg:text-3xl
-                                           font-bold
-                                           leading-tight
-                                           break-words">
-
+                            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight break-words">
                                 1ère F2 — Génie Électrique
-
                             </h1>
-
-                            <span
-                                class="shrink-0
-                                             px-3 py-1 rounded-full
-                                             text-xs
-                                             bg-emerald-500/10
-                                             border border-emerald-500/20
-                                             text-emerald-400">
-
+                            <span class="shrink-0 px-3 py-1 rounded-full text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
                                 Active
-
                             </span>
-
                         </div>
-
-                        <p class="mt-3 text-sm sm:text-base
-                                      text-slate-400
-                                      break-words">
-
-                            Salle spécialisée en électronique industrielle,
-                            automatismes et électrotechnique.
-
+                        <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
+                            Salle spécialisée en électronique industrielle, automatismes et électrotechnique.
                         </p>
 
                         {{-- META --}}
-                        <div
-                            class="mt-4
-                                        flex flex-col
-                                        sm:flex-row
-                                        sm:flex-wrap
-                                        gap-2 sm:gap-5
-                                        text-sm text-slate-400">
-
-                            <div class="break-words">
-                                👨‍🏫 M. HOUNDEKINDO
-                            </div>
-
-                            <div class="break-words">
-                                📍 Bloc B — Salle 14
-                            </div>
-
-                            <div class="break-words">
-                                🕒 2025-2026
-                            </div>
-
+                        <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
+                            <div class="break-words">👨‍🏫 M. HOUNDEKINDO</div>
+                            <div class="break-words">📍 Bloc B — Salle 14</div>
+                            <div class="break-words">🕒 2025-2026</div>
                         </div>
-
                     </div>
 
                 </div>
 
                 {{-- ACTIONS --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-
-                    <button
-                        class="w-full sm:w-auto
-                                       px-4 py-3
-                                       rounded-2xl
-                                       bg-indigo-500
-                                       hover:bg-indigo-600
-                                       transition-all duration-300
-                                       text-sm sm:text-base">
-
+                    <button class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
                         Ajouter Élève
-
                     </button>
-
-                    <button
-                        class="w-full sm:w-auto
-                                       px-4 py-3
-                                       rounded-2xl
-                                       bg-slate-800
-                                       border border-slate-700
-                                       hover:bg-slate-700
-                                       transition-all duration-300
-                                       text-sm sm:text-base">
-
+                    <button class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
                         Modifier Classe
-
                     </button>
-
                 </div>
 
             </div>
-
         </div>
-
     </section>
 
     {{-- ================================================= --}}
     {{-- NAVIGATION --}}
     {{-- ================================================= --}}
     <section class="px-1 pt-6">
-
         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-
             <div class="overflow-x-auto">
-
                 <div class="flex gap-2 p-3 w-max min-w-full">
 
-                    {{-- OVERVIEW --}}
                     <button wire:click="setSection('classe-home-page')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-home-page',
@@ -154,7 +71,6 @@
                         Vue Générale
                     </button>
 
-                    {{-- STUDENTS --}}
                     <button wire:click="setSection('classe-students-list')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-students-list',
@@ -163,7 +79,6 @@
                         Élèves
                     </button>
 
-                    {{-- TEACHERS --}}
                     <button wire:click="setSection('classe-teachers-list')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
@@ -171,7 +86,7 @@
                     ])>
                         Enseignants
                     </button>
-                    {{-- Parents --}}
+
                     <button wire:click="setSection('classe-parents-page')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-parents-page',
@@ -180,7 +95,6 @@
                         Parents
                     </button>
 
-                    {{-- NOTES --}}
                     <button wire:click="setSection('classe-marks-page')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-marks-page',
@@ -189,7 +103,6 @@
                         Notes
                     </button>
 
-                    {{-- ATTENDANCE --}}
                     <button wire:click="setSection('classe-presence-page')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-presence-page',
@@ -198,7 +111,6 @@
                         Présences
                     </button>
 
-                    {{-- PRESENCES --}}
                     <button wire:click="setSection('classe-plan-page')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-plan-page',
@@ -206,7 +118,7 @@
                     ])>
                         Emploi du temps
                     </button>
-                    {{-- BULLENTINS --}}
+
                     <button wire:click="setSection('classe-pupil-bulletin-component')" @class([
                         'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' =>
@@ -217,11 +129,8 @@
                     </button>
 
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
     {{-- ================================================= --}}
@@ -261,37 +170,24 @@
 
                 @case('classe-pupil-bulletin-component')
                     <section class="mb-6">
-
                         <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
-
                             <div class="flex flex-col xl:flex-row gap-4">
 
                                 {{-- FILTERS --}}
-                                <div
-                                    class="grid
-                                        grid-cols-1
-                                        sm:grid-cols-2
-                                        lg:grid-cols-4
-                                        gap-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
                                     {{-- SEMESTER --}}
-                                    <select wire:model.live="period_type_selected"
-                                        class="h-12 px-4 rounded-2xl
-                                            bg-slate-950
-                                            border border-slate-800
-                                            text-sm">
+                                    <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                                         <option value="">Sélectionner le semestre|trimestre</option>
                                         @foreach (range(1, 2) as $i)
                                             <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
                                         @endforeach
-
                                         @foreach (range(1, 3) as $i)
                                             <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
                                         @endforeach
-
                                     </select>
 
-                                    {{-- Pupils --}}
+                                    {{-- PUPILS --}}
                                     <select wire:model.live="student_uuid_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                                         <option value="">Sélectionner l'apprenant</option>
                                         @foreach (range(1, 10) as $i)
@@ -301,42 +197,25 @@
 
                                     {{-- ACTIONS --}}
                                     @if ($student_uuid_selected && $period_type_selected)
-                                        <button wire:click='reloadStudentBulletin'
-                                            class="h-12 px-5 rounded-2xl
-                                                bg-sky-800
-                                                border border-sky-700
-                                                hover:bg-sky-700
-                                                transition-all
-                                                text-sm cursor-pointer">
-
+                                        <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl bg-sky-800 border border-sky-700 hover:bg-sky-700 transition-all text-sm cursor-pointer">
                                             Charger
                                         </button>
-
-                                        <button wire:click='resetBulletinSelections'
-                                            class="h-12 px-5 rounded-2xl
-                                                bg-slate-800
-                                                border border-slate-700
-                                                hover:bg-slate-700
-                                                transition-all
-                                                text-sm cursor-pointer">
-
+                                        <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm cursor-pointer">
                                             Réinitialiser
-
                                         </button>
                                     @endif
+
                                 </div>
 
                             </div>
-
                         </div>
-
                     </section>
                     @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
                 @break
 
             @endswitch
+
         </div>
     </section>
 
 </div>
-

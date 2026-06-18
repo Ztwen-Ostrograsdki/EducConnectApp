@@ -17,6 +17,8 @@ use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
+use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
+use App\Livewire\Tenants\Schoolyears\SchoolYearsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
@@ -86,6 +88,12 @@ Route::middleware([
         // ── Directeur ─────────────────────────────────────────────────
         Route::middleware('role:directeur')->prefix('administration')->name('tenant.')->group(function () {
             Route::get('/', TenantDashboard::class)->name('dashboard');
+
+
+            // ANNNES Scolaires
+            Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
+
+            Route::get('/annees-scolaires/details-annees-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
 
 
 

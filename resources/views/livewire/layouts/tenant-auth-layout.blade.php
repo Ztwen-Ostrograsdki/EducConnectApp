@@ -70,6 +70,25 @@
                     <a data-sidebar-item href="{{ route('tenant.dashboard') }}" class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                         <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                     </a>
+                    <div class="s-acc" id="acc-schoolyears">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-schoolyears')">
+                            <div class="s-icon">
+                                📅
+                            </div>
+                            <span class="s-label">Les années scolaires</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.schoolyears.portal') }}" class="s-link">
+                                <div class="s-icon">📅</div><span class="s-label">Dashboard</span><span class="s-badge badge-green">42</span>
+                            </a>
+                            {{-- <a href="{{ route('tenant.schoolyears.create') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-user-plus class="w-3 h-3" />
+                                </div><span class="s-label">Ajouter apprenants</span>
+                            </a> --}}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="s-section">
@@ -198,7 +217,10 @@
                         <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>
                     </a>
                     <a href="{{ route('tenant.notifications.center') }}" class="s-link">
-                        <div class="s-icon">🔔</div><span class="s-label">Notifications</span>
+                        <div class="s-icon">🔔</div><span class="s-label">
+                            Notifications
+                            @livewire('notifications-counter', ['guard' => 'tenant'])
+                        </span>
                     </a>
                 </div>
             </nav>

@@ -11,7 +11,7 @@
                 👋
             </h1>
             <p class="text-xs text-slate-400 mt-1">
-                Voici un aperçu de votre établissement — Année scolaire
+                Le tableau de bord de votre établissement <span class="text-amber-500 font-semibold opacity-80"> {{ tenant('school_name') }}</span> — Année scolaire
                 <span class="text-emerald-400 font-mono">{{ $tenant_dashboard_selected_school_year }}</span>
             </p>
         </div>
@@ -182,7 +182,8 @@
                             :style="show
                                 ?
                                 'width: {{ $n[2] }}%; transition-delay: {{ 200 + $loop->index * 180 }}ms' :
-                                'width:0%'"></div>
+                                'width:0%'">
+                        </div>
 
                     </div>
 
@@ -335,3 +336,4 @@
     </div>
 
 </div>
+

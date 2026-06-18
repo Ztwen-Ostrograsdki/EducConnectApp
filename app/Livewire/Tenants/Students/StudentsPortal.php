@@ -9,9 +9,11 @@ use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title('Portails des apprenants')]
 class StudentsPortal extends Component
 {
     use StudentsActions;
