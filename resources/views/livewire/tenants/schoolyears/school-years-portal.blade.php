@@ -73,7 +73,7 @@
             </div>
         </section>
         <section class="p-4 sm:p-6 lg:p-8 my-3">
-            <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-4 sm:gap-6">
                 @foreach ($schoolYears as $school_year)
                     <div
                         class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden hover:border-indigo-500/30 transition-all duration-300 opacity-75 hover:opacity-100 hover:-translate-y-0.5">
@@ -125,11 +125,12 @@
                             <div class="mt-6 space-y-3 text-sm text-slate-400">
                                 <div class="flex items-center justify-between gap-3">
                                     <span class="truncate">Type de période</span>
-                                    <span class="truncate text-slate-300">Semestre</span>
+                                    <span
+                                        class="truncate text-slate-300">{{ ucwords($school_year->periode_type) }}</span>
                                 </div>
                                 <div class="flex items-center justify-between gap-3">
-                                    <span class="truncate">Debut : 15 Oct 2025</span>
-                                    <span class="truncate text-slate-300">Fin: 22 Juil 2025</span>
+                                    <span class="truncate">Debut : {{ $school_year->getStartDate() }}</span>
+                                    <span class="truncate text-slate-300">Fin: {{ $school_year->getEndDate() }}</span>
                                 </div>
                             </div>
 

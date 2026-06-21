@@ -13,6 +13,8 @@ class TenantDashboard extends Component
 {
     public ?string $tenant_dashboard_selected_school_year;
 
+    public $counter = 0;
+
     public function mount()
     {
         $year = now()->year;
@@ -24,6 +26,20 @@ class TenantDashboard extends Component
     public function onYearChanged(string $schoolYear)
     {
         $this->tenant_dashboard_selected_school_year = $schoolYear;
+    }
+
+
+    #[On("NewSchoolYearCreatedLiveEvent")]
+    public function schoolYearUpdated()
+    {
+        $this->counter++;
+    }
+
+
+    #[On("SchoolYearUpdatedLiveEvent")]
+    public function newSchoolYearCreated()
+    {
+        $this->counter++;
     }
 
     public function render()

@@ -41,6 +41,12 @@ class SchoolYearSelectorComponent extends Component
         $this->counter++;
     }
 
+    #[On("SchoolYearUpdatedLiveEvent")]
+    public function schoolYearUpdated()
+    {
+        $this->counter++;
+    }
+
     public function render()
     {
         $schoolYears = [];

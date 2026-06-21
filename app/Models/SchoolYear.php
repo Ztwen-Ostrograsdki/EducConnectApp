@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 
 class SchoolYear extends Model
@@ -133,6 +135,7 @@ class SchoolYear extends Model
         return $this->is_active && ! $this->is_closed;
     }
 
+
     /**
      * Check if the school year is closed.
      */
@@ -179,5 +182,89 @@ class SchoolYear extends Model
             fn (int $i) => ['number' => $i, 'label' => "$label $i"],
             range(1, $count)
         );
+    }
+
+
+    public function getDuration()
+    {
+        $periods = $this->periods;
+
+        $periods_without_key = [];
+
+
+        foreach($periods as $p){
+
+            $periods_without_key[] = $p;
+
+        }
+
+        $min = (array)$periods_without_key[0];
+
+        $max = (array)$periods_without_key[count($periods_without_key) - 1];
+
+        $duration = getFulldurationBetween2Dates($min['start'], $max['end']);
+
+
+        return $duration;
+    }
+
+
+    public function getStartDate()
+    {
+        $periods = $this->periods ?? null;
+
+        if(!$periods) return "Date initiale non défine!";
+
+        $periods_without_key = [];
+
+
+        foreach($periods as $p){
+
+            $periods_without_key[] = $p;
+
+        }
+
+        $date = (array)$periods_without_key[0];
+
+        if (! $date['start']) {
+            return null;
+        }
+
+        $carbon = Carbon::parse($date['start'])->locale('fr');
+
+        // weekday + jour en minuscule, mois avec 1ère lettre en majuscule, année
+        return $carbon->translatedFormat('l d') . ' '
+            .Str::ucwords($carbon->translatedFormat('F')) . ' '
+            . $carbon->format('Y');
+    }
+
+
+    public function getEndDate()
+    {
+        $periods = $this->periods ?? null;
+
+        if(!$periods) return "Date finale non défine!";
+
+        $periods_without_key = [];
+
+
+        foreach($periods as $p){
+
+            $periods_without_key[] = $p;
+
+        }
+
+        $date = (array)$periods_without_key[count($periods_without_key) - 1];
+
+        if (! $date['start']) {
+            return null;
+        }
+
+        $carbon = Carbon::parse($date['start'])->locale('fr');
+
+        // weekday + jour en minuscule, mois avec 1ère lettre en majuscule, année
+        return $carbon->translatedFormat('l d') . ' '
+            .Str::ucwords($carbon->translatedFormat('F')) . ' '
+            . $carbon->format('Y');
     }
 }

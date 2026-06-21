@@ -29,6 +29,23 @@ export function registerDirectorListeners(tenantId) {
 
             Livewire.dispatch("NewSchoolYearCreatedLiveEvent");
         })
+        .listen("NewSchoolYearActivatedEvent", (e) => {
+            $wireui.notify({
+                title: "Nouvelle année scolaire active",
+                timeout: 0,
+                description:
+                    "L'année scolaire " + e.school_year + " a été activée!",
+                icon: "info",
+            });
+
+            Livewire.dispatch("NewSchoolYearCreatedLiveEvent");
+
+            Livewire.dispatch("NewSchoolYearActivatedLiveEvent");
+        })
+
+        .listen("SchoolYearUpdatedEvent", (e) => {
+            Livewire.dispatch("SchoolYearUpdatedLiveEvent");
+        })
 
         // ERRORS EVENTS
         .listen("AnyErrorEvent", (e) => {

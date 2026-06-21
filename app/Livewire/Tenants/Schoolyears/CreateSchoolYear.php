@@ -3,10 +3,9 @@
 namespace App\Livewire\Tenants\Schoolyears;
 
 use App\Events\NewSchoolYearCreated;
+use App\Livewire\Traits\ManagesSchoolYearPeriods;
 use App\Livewire\Traits\ValidatorTrait;
 use App\Models\SchoolYear;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -17,7 +16,7 @@ use WireUi\Traits\WireUiActions;
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class CreateSchoolYear extends Component
 {
-    use WireUiActions, ValidatorTrait;
+    use WireUiActions, ValidatorTrait, ManagesSchoolYearPeriods;
 
     public ?string $schoolYear = null;
     public ?string $year_min = null;
@@ -26,9 +25,6 @@ class CreateSchoolYear extends Component
     public string $periode_type = 'Semestre';
     public array $periods = [];
 
-    public bool $done = false;
-
-    // durée de vie du brouillon avant expiration automatique
     private const DRAFT_TTL_MINUTES = 120;
 
     public function mount(): void
@@ -38,10 +34,12 @@ class CreateSchoolYear extends Component
         }
     }
 
-    /**
-     * Clé de session unique par tenant + utilisateur,
-     * pour éviter qu'un brouillon ne fuite entre tenants ou entre comptes.
-     */
+    /*
+    |--------------------------------------------------------------------
+    | Brouillon de session
+    |--------------------------------------------------------------------
+    */
+
     private function draftSessionKey(): string
     {
         return 'school_year_draft:' . tenant('id') . ':' . auth('tenant')->id();
@@ -55,7 +53,6 @@ class CreateSchoolYear extends Component
             return false;
         }
 
-        // expiration : on ignore un brouillon trop vieux
         if (now()->diffInMinutes($draft['saved_at'] ?? now()->subDay()) > self::DRAFT_TTL_MINUTES) {
             $this->clearDraft();
             return false;
@@ -70,6 +67,11 @@ class CreateSchoolYear extends Component
         if (empty($this->periods)) {
             $this->initPeriods();
         }
+
+        $this->notification()->info(
+            title: 'Brouillon restauré',
+            description: 'Vos saisies précédentes ont été récupérées.',
+        );
 
         return true;
     }
@@ -91,15 +93,9 @@ class CreateSchoolYear extends Component
         session()->forget($this->draftSessionKey());
     }
 
-    /**
-     * S'exécute après CHAQUE requête Livewire (clic, changement, etc.) —
-     * un seul point d'entrée, on est sûr de ne rien manquer.
-     */
     public function dehydrate(): void
     {
-        if(!$this->done === true){
-            $this->saveDraft();
-        }
+        $this->saveDraft();
     }
 
     public function discardDraft(): void
@@ -109,62 +105,27 @@ class CreateSchoolYear extends Component
         $this->periode_type = 'Semestre';
         $this->initPeriods();
 
+        $this->notification()->success(title: 'Formulaire réinitialisé');
     }
 
-    public function initPeriods(): void
-    {
-        $count = Str::lower($this->periode_type) === 'trimestre' ? 3 : 2;
-        $this->periods = array_fill(0, $count, ['start' => null, 'end' => null]);
-    }
-
-    public function updatedPeriodeType(): void
-    {
-        $this->initPeriods();
-    }
-
-    public function updatedPeriods($value, $key): void
-    {
-        [$index, $field] = explode('.', $key);
-        $index = (int) $index;
-
-        if ($field === 'start' && !empty($this->periods[$index]['end']) && $this->periods[$index]['end'] <= $value) {
-            $this->periods[$index]['end'] = null;
-        }
-
-        if ($field === 'end' && !empty($this->periods[$index + 1]['start'] ?? null) && $this->periods[$index + 1]['start'] <= $value) {
-            $this->periods[$index + 1]['start'] = null;
-        }
-    }
-
-    public function updated($property): void
-    {
-        $this->validateOnly($property);
-    }
+    /*
+    |--------------------------------------------------------------------
+    | Validation
+    |--------------------------------------------------------------------
+    | Logique des dates (cascade, bornes, periodsRules()) héritée du trait
+    | ManagesSchoolYearPeriods — ne pas dupliquer ici.
+    */
 
     protected function rules(): array
     {
-        $rules = [
-            'schoolYear'   => ['required', 'string', 'regex:/^\d{4}-\d{4}$/', Rule::in(__defaultSchoolYears()), 'unique:school_years,slug'],
+        return array_merge([
+            'schoolYear' => [
+                'required', 'string', 'regex:/^\d{4}-\d{4}$/',
+                Rule::in(__defaultSchoolYears()),
+                'unique:school_years,slug',
+            ],
             'periode_type' => ['required', 'string', Rule::in(config('app.periode_types'))],
-        ];
-
-        foreach ($this->periods as $i => $period) {
-            $startRule = ['required', 'date', "after_or_equal:{$this->year_min}", "before_or_equal:{$this->year_max}"];
-
-            if ($i > 0) {
-                $startRule[] = "after:periods." . ($i - 1) . ".end";
-            }
-
-            $rules["periods.{$i}.start"] = $startRule;
-
-            $rules["periods.{$i}.end"] = [
-                'required', 'date',
-                "after:periods.{$i}.start",
-                "before_or_equal:{$this->year_max}",
-            ];
-        }
-
-        return $rules;
+        ], $this->periodsRules());
     }
 
     public function render()
@@ -172,72 +133,41 @@ class CreateSchoolYear extends Component
         return view('livewire.tenants.schoolyears.create-school-year');
     }
 
-    public function updatedSchoolYear(?string $value): void
-    {
-        if (! $value) {
-            $this->year_min = null;
-            $this->year_max = null;
-            return;
-        }
+    /*
+    |--------------------------------------------------------------------
+    | Création
+    |--------------------------------------------------------------------
+    */
 
-        [$startYear, $endYear] = explode('-', $value);
-        $this->year_min = "{$startYear}-09-01";
-        $this->year_max = "{$endYear}-08-31";
-    }
-
-
-    public function formattedDate(?string $date): ?string
-    {
-        if (! $date) {
-            return null;
-        }
-
-        $carbon = Carbon::parse($date)->locale('fr');
-
-        // weekday + jour en minuscule, mois avec 1ère lettre en majuscule, année
-        return $carbon->translatedFormat('l d') . ' '
-            .Str::ucfirst($carbon->translatedFormat('F')) . ' '
-            . $carbon->format('Y');
-    }
-
-    public function create()
+    public function create(): void
     {
         $this->validate();
 
         try {
-            $periodsData = [];
-
-            foreach ($this->periods as $k => $period) {
-                $periodLabel = str()->lower($this->periode_type) . ' ' . ($k + 1);
-                $periodsData[$periodLabel] = $period;
-            }
-
             [$startYear, $endYear] = explode('-', $this->schoolYear);
 
-            $data = [
+            $done = SchoolYear::create([
                 'slug' => trim($this->schoolYear),
-                'min_year' => (int)trim($startYear),
-                'max_year' => (int)trim($endYear),
+                'min_year' => trim($startYear),
+                'max_year' => trim($endYear),
                 'periode_type' => trim($this->periode_type),
-                'periods' => json_encode($periodsData),
-            ];
-
-            $done = SchoolYear::create($data);
+                'periods' => $this->buildPeriodsData(), // cast 'array' requis sur le modèle
+                'locked_for_period' => null,
+                'marks_locked_for_periods' => null,
+            ]);
 
             if ($done) {
-
-                $this->done = true;
-
-                $this->clearDraft(); // ✅ brouillon consommé, on le supprime
+                $this->clearDraft();
 
                 broadcast(new NewSchoolYearCreated(tenant('id'), $done->slug));
 
-                // $this->redirect(route('tenant.school-years.index'), navigate: true);
+                $this->redirect(route('tenant.school-years.index'), navigate: true);
             }
+
         } catch (\Throwable $th) {
             $this->notification()->error(
                 title: 'Une erreur s\'est produite',
-                description: 'Erreur : ' . cutter($th->getMessage(), 250),
+                description: 'Erreur : ' . cutter($th->getMessage(), 150),
             );
         }
     }

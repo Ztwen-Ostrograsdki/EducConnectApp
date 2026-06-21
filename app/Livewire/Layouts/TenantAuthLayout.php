@@ -2,10 +2,26 @@
 
 namespace App\Livewire\Layouts;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class TenantAuthLayout extends Component
 {
+
+    public $counter = 0;
+    
+    #[On("NewSchoolYearCreatedLiveEvent")]
+    public function newSchoolYearCreated()
+    {
+        $this->counter++;
+    }
+
+    #[On("SchoolYearUpdatedLiveEvent")]
+    public function schoolYearUpdated()
+    {
+        $this->counter++;
+    }
+
     public function render()
     {
 

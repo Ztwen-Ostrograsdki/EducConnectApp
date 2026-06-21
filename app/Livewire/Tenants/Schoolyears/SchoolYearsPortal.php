@@ -20,6 +20,13 @@ class SchoolYearsPortal extends Component
     {
         $this->counter++;
     }
+
+    #[On("SchoolYearUpdatedLiveEvent")]
+    public function schoolYearUpdated()
+    {
+        $this->counter++;
+    }
+
     public function render()
     {
         $schoolYears = SchoolYear::orderBy('min_year')->whereNotNull('slug')->get();

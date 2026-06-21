@@ -240,4 +240,14 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
 
+    /**
+     * Get current school year .
+     */
+    public function getCurrentSchoolYear(): ?SchoolYear
+    {
+        return SchoolYear::where('is_active', true)->where('is_closed', false)?->first() ?? null ;
+    }
+
+
+
 }

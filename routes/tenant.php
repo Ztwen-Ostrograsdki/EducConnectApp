@@ -18,6 +18,7 @@ use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
+use App\Livewire\Tenants\Schoolyears\ManageSchoolYearComponent;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
 use App\Livewire\Tenants\Schoolyears\SchoolYearsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
@@ -98,6 +99,8 @@ Route::middleware([
 
 
             Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
+
+            Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
 
 
 
