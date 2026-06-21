@@ -16,14 +16,18 @@ return new class extends Migration
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
-            $table->string('slug');                          // ex: 2024-2025
-            $table->date('start');
-            $table->date('end');
-            $table->enum('period_type', ['semestre', 'trimestre'])->default('semestre');
-            $table->boolean('is_active')->default(false);      // année en cours
-            $table->boolean('is_closed')->default(false);    // année terminée, plus modifiable
+            $table->string('slug')->unique();
+            $table->integer('min_year')->unique();
+            $table->integer('max_year')->unique();
+            $table->enum('periode_type', ['semestre', 'trimestre'])->default('semestre');
+            $table->boolean('is_active')->default(false);
+            $table->boolean('is_current_school_year')->default(false);
+            $table->boolean('is_closed')->default(false);
+            $table->string('locked_for_period')->nullable();
+            $table->json('marks_locked_for_periods')->nullable();
+            $table->json('periods')->nullable();
             $table->timestamps();
-            $table->unique('slug');
+            $table->softDeletes();
             $table->index('is_active');
         });
         Schema::enableForeignKeyConstraints();

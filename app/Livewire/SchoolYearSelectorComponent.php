@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\SchoolYear;
 use App\Tools\CentralTools;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -11,6 +12,8 @@ use Livewire\Component;
 class SchoolYearSelectorComponent extends Component
 {
     public string|int|null $selectedYear = null;
+
+    public int $counter = 0;
 
     public function mount()
     {
@@ -31,19 +34,25 @@ class SchoolYearSelectorComponent extends Component
         $this->selectedYear = $schoolYear;
     }
 
+
+    #[On("NewSchoolYearCreatedLiveEvent")]
+    public function newSchoolYearCreated()
+    {
+        $this->counter++;
+    }
+
     public function render()
     {
+        $schoolYears = [];
+
         if(Auth::guard('central')->user()){
 
             $schoolYears = CentralTools::getSchoolYears();
         }
         if(Auth::guard('tenant')->user()){
-            $schoolYears = [
-                '2022 - 2023' => '2022 - 2023',
-                '2023 - 2024' => '2023 - 2024',
-                '2024 - 2025' => '2024 - 2025',
-                '2025 - 2026' => '2025 - 2026',
-            ];
+
+            $schoolYears = SchoolYear::orderBy('min_year')->whereNotNull('slug')->pluck('slug')->toArray();
+            
         }
 
         return view('livewire.school-year-selector-component', compact('schoolYears'));

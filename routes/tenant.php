@@ -17,6 +17,7 @@ use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
+use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
 use App\Livewire\Tenants\Schoolyears\SchoolYearsPortal;
 use App\Livewire\Tenants\Serials\SerialProfil;
@@ -93,7 +94,10 @@ Route::middleware([
             // ANNNES Scolaires
             Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
 
-            Route::get('/annees-scolaires/details-annees-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
+            Route::get('/annees-scolaires/details-annee-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
+
+
+            Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
 
 
 

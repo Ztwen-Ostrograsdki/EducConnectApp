@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
@@ -167,13 +168,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     /** Vérifie si l'école utilise les trimestres */
     public function usesTrimestres(): bool
     {
-        return $this->type_periode === 'trimestre';
+        return Str::lower($this->periode_type) === 'trimestre';
     }
 
     /** Vérifie si l'école utilise les semestres */
     public function usesSemestres(): bool
     {
-        return $this->type_periode === 'semestre';
+        return Str::lower($this->periode_type) === 'semestre';
     }
 
     /** Nombre de périodes selon le choix */

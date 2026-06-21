@@ -14,21 +14,29 @@ class SchoolYear extends Model
 
     protected $table = 'school_years';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'slug',
-        'start',
-        'end',
-        'period_type',
+        'min_year',
+        'max_year',
+        'periode_type',
         'is_active',
         'is_closed',
+        'locked_for_period',
+        'is_current_school_year',
+        'marks_locked_for_periods',
+        'periods',
     ];
 
+
     protected $casts = [
-        'start' => 'date',
-        'end' => 'date',
+        'min_year' => 'int',
+        'max_year' => 'int',
         'is_active' => 'boolean',
         'is_closed' => 'boolean',
+        'periods' => 'array',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────

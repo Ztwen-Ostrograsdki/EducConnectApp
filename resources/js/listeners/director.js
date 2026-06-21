@@ -15,6 +15,21 @@ export function registerDirectorListeners(tenantId) {
             }
         })
 
+        // SCHOOL YEAR EVENTS
+        .listen("NewSchoolYearCreated", (e) => {
+            $wireui.notify({
+                title: "Nouvelle année scolaire créée",
+                timeout: 0,
+                description:
+                    "L'année scolaire " +
+                    e.school_year +
+                    " a été créée avec succès!",
+                icon: "info",
+            });
+
+            Livewire.dispatch("NewSchoolYearCreatedLiveEvent");
+        })
+
         // ERRORS EVENTS
         .listen("AnyErrorEvent", (e) => {
             $wireui.notify({
@@ -49,7 +64,10 @@ export function registerDirectorListeners(tenantId) {
             Livewire.dispatch("StudentsCreationProgressLiveEvent", data);
         })
         .listen("ProcessToCreateStudentsCompletedSuccesfullyEvent", (data) => {
-            Livewire.dispatch("ProcessToCreateStudentsCompletedSuccesfullyLiveEvent", data);
+            Livewire.dispatch(
+                "ProcessToCreateStudentsCompletedSuccesfullyLiveEvent",
+                data,
+            );
         })
 
         .listen("StudentDataUpdatedEvent", (data) => {
@@ -81,7 +99,10 @@ export function registerDirectorListeners(tenantId) {
             Livewire.dispatch("TeachersCreationProgressLiveEvent", data);
         })
         .listen("ProcessToCreateTeachersCompletedSuccesfullyEvent", (data) => {
-            Livewire.dispatch("ProcessToCreateTeachersCompletedSuccesfullyLiveEvent", data);
+            Livewire.dispatch(
+                "ProcessToCreateTeachersCompletedSuccesfullyLiveEvent",
+                data,
+            );
         });
 }
 

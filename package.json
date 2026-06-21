@@ -16,7 +16,7 @@
         "laravel-echo": "^2.3.4",
         "laravel-vite-plugin": "^3.1",
         "postcss": "^8.5.14",
-        "prettier": "^3.8.3",
+        "prettier": "^3.8.4",
         "pusher-js": "^8.5.0",
         "tailwindcss": "^4.3.0",
         "vite": "^8.0.0",
