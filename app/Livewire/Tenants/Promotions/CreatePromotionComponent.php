@@ -7,11 +7,11 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
-#[Title("Portail des promotions")]
-class PromotionsPortal extends Component
+#[Title("Creation de promotion")]
+class CreatePromotionComponent extends Component
 {
     public function render()
     {
-        return view('livewire.tenants.promotions.promotions-portal');
+        return view('livewire.tenants.promotions.create-promotion-component');
     }
 }

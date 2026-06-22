@@ -5,9 +5,11 @@ namespace App\Livewire\Tenants\Promotions;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Profil de promotion")]
 class PromotionProfil extends Component
 {
     public string $promotion_slug;

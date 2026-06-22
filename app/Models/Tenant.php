@@ -248,6 +248,21 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return SchoolYear::where('is_active', true)->where('is_closed', false)?->first() ?? null ;
     }
 
+    public function getActiveSchoolYear() : ?SchoolYear
+    {
+        $school_year = SchoolYear::where('is_active', true)->first();
+
+        if($school_year) return $school_year;
+
+        else return null;
+    }
+    
+    
+    public function schoolYearsCount() : ?int
+    {
+        return SchoolYear::whereNotNull('id')?->count();
+    }
+
 
 
 }

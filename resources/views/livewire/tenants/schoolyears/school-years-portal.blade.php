@@ -10,13 +10,21 @@
                             <h1 class="text-2xl sm:text-3xl font-bold break-words">
                                 Portail des années scolaires
                             </h1>
-                            <span
-                                class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0">
-                                24 années scolaires
-                            </span>
+                            @if (tenancy()->tenant?->getActiveSchoolYear())
+                                <span
+                                    class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0">
+                                    Année active : {{ tenancy()->tenant?->getActiveSchoolYear()->slug }}
+                                </span>
+                            @else
+                                <span
+                                    class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs shrink-0">
+                                    Aucune année active
+                                </span>
+                            @endif
                         </div>
-                        <p class="mt-2 text-sm sm:text-base text-slate-400">
-                            Gestion des salles, promotions, séries et enseignants.
+
+                        <p class="mt-2 text-sm sm:text-base text-slate-400 font-mono">
+                            Gestion des ressource scolaires par année
                         </p>
                     </div>
 
@@ -83,14 +91,15 @@
                             <div class="flex items-start justify-between gap-4">
                                 {{-- LEFT --}}
                                 <div class="min-w-0 flex-1">
-                                    <div class="flex flex-wrap items-center gap-2">
+                                    <a href="{{ route('tenant.schoolyear.profil', ['school_year' => $school_year->slug]) }}"
+                                        class="flex flex-wrap items-center gap-2 hover:underline">
                                         <h2 class="text-lg font-bold truncate">Année scolaire {{ $school_year->slug }}
                                         </h2>
                                         <span
                                             class="px-2 py-1 rounded-full bg-emerald-500/10 {{ $school_year->is_active ? 'text-emerald-400' : 'text-red-400' }} text-xs shrink-0">
                                             {{ $school_year->is_active ? 'Active' : 'Non active' }}
                                         </span>
-                                    </div>
+                                    </a>
                                     <p class="mt-2 text-sm text-slate-400 break-words">Génie Électrique & Électronique
                                     </p>
                                 </div>
@@ -137,15 +146,16 @@
                         </div>
 
                         {{-- ACTIONS --}}
-                        <div class="border-t border-slate-800 p-4">
+                        <div class="border-t border-slate-800 p-4 font-mono">
                             <div class="grid grid-cols-2 gap-3">
                                 <a href="{{ route('tenant.schoolyear.profil', ['school_year' => $school_year->slug]) }}"
-                                    class="rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm flex items-center justify-center">
+                                    class="rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm flex items-center justify-center py-2.5 px-2">
                                     Voir détails
                                 </a>
-                                <button class="h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-all text-sm">
+                                <a href="{{ route('tenant.schoolYears.edit', ['school_year' => $school_year->slug]) }}"
+                                    class="flex text-center items-center py-2.5 px-2 rounded-2xl bg-indigo-800 justify-center hover:bg-indigo-700 transition-all text-sm">
                                     Modifier
-                                </button>
+                                </a>
                             </div>
 
                             {{-- QUICK ACTIONS --}}

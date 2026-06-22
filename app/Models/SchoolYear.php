@@ -24,8 +24,8 @@ class SchoolYear extends Model
         'min_year',
         'max_year',
         'periode_type',
-        'is_active',
-        'is_closed',
+        'is_active', //Année en cours : elle peut etre fermée is_closed = true
+        'is_closed', // Année fermée = plus aucune modification de l'exterieur. Toute action sur les models et la base de données est imposssible et bloquée. Une année activée fermée === année en cours mais déjà cloturée 
         'locked_for_period',
         'is_current_school_year',
         'marks_locked_for_periods',

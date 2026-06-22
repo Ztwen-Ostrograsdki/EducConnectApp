@@ -15,6 +15,8 @@ use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
+use App\Livewire\Tenants\Promotions\CreatePromotionComponent;
+use App\Livewire\Tenants\Promotions\ManagePromotionComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
@@ -92,7 +94,7 @@ Route::middleware([
             Route::get('/', TenantDashboard::class)->name('dashboard');
 
 
-            // ANNNES Scolaires
+            // ANNEES SCOLAIRES
             Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
 
             Route::get('/annees-scolaires/details-annee-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
@@ -101,6 +103,16 @@ Route::middleware([
             Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
 
             Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
+
+            // PROMOTIONS
+
+            Route::get('/promotions/promotions', PromotionsPortal::class)->name('promotions.portal');
+
+            Route::get('/promotions/promotions/profil-promotion/{promotion_slug}', PromotionProfil::class)->name('promotion.profil');
+
+            Route::get('/promotions/promotions/{promotion_slug}/edition', ManagePromotionComponent::class)->name('promotion.edit');
+
+            Route::get('/promotions/promotions/nouvelle-promotion', CreatePromotionComponent::class)->name('promotion.create');
 
 
 
@@ -139,9 +151,6 @@ Route::middleware([
 
             Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
-            Route::get('/promotions/portail-des-promotions', PromotionsPortal::class)->name('promotions.portal');
-
-            Route::get('/promotions/portail-des-promotions/profil-promotion/ID={promotion_slug}', PromotionProfil::class)->name('promotion.profil');
 
             Route::get('/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
 

@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') . ' - ' . $title ?? '' }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
 
     <script>
         window.__APP_CONTEXT__ = {
@@ -67,7 +69,8 @@
             <nav class="s-nav">
                 <div class="s-section">
                     <div class="s-section-label">Général</div>
-                    <a data-sidebar-item href="{{ route('tenant.dashboard') }}" class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
+                    <a data-sidebar-item href="{{ route('tenant.dashboard') }}"
+                        class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                         <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                     </a>
                     <div class="s-acc" id="acc-schoolyears">
@@ -80,13 +83,16 @@
                         </div>
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.schoolyears.portal') }}" class="s-link">
-                                <div class="s-icon">📅</div><span class="s-label">Dashboard</span><span class="s-badge badge-green">42</span>
+                                <div class="s-icon">📅</div><span class="s-label">Dashboard</span><span
+                                    class="s-badge badge-green">
+                                    {{ __zero(tenancy()->tenant?->schoolYearsCount()) }}
+                                </span>
                             </a>
-                            {{-- <a href="{{ route('tenant.schoolyears.create') }}" class="s-link">
+                            <a href="{{ route('tenant.schoolYears.create') }}" class="s-link">
                                 <div class="s-icon">
-                                    <x-lucide-user-plus class="w-3 h-3" />
-                                </div><span class="s-label">Ajouter apprenants</span>
-                            </a> --}}
+                                    <span>➕</span>
+                                </div><span class="s-label">Créer une année</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -104,21 +110,43 @@
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Toutes les classes</span>
                             </a>
-                            <a href="{{ route('tenant.classe.profil', ['classe_slug' => 'premiere-f2']) }}" class="s-link" style="font-size:.78rem;">
+                            <a href="{{ route('tenant.classe.profil', ['classe_slug' => 'premiere-f2']) }}"
+                                class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Classe de 1ère F2</span>
                             </a>
                             <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle classe</span>
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    classe</span>
                             </a>
                         </div>
                     </div>
                     <a data-sidebar-item href="{{ route('tenant.subjects.portal') }}" class="s-link">
                         <div class="s-icon">📚</div><span class="s-label">Matières</span>
                     </a>
-                    <a data-sidebar-item href="{{ route('tenant.promotions.portal') }}" class="s-link">
-                        <div class="s-icon">🎯</div><span class="s-label">Promotions</span>
-                    </a>
+                    <div class="s-acc" id="acc-promotions">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-promotions')">
+                            <div class="s-icon">🎯</div>
+                            <span class="s-label">Promotions</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.promotions.portal') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">Portail</span>
+                            </a>
+                            <a href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'premiere']) }}"
+                                class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">Promotion Terminale</span>
+                            </a>
+                            <a href="{{ route('tenant.promotion.create') }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    promotion</span>
+                            </a>
+                        </div>
+                    </div>
                     <a data-sidebar-item href="{{ route('tenant.filiars.portal') }}" class="s-link">
                         <div class="s-icon">🎯</div><span class="s-label">Filières</span>
                     </a>
@@ -140,7 +168,8 @@
                         </div>
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.students.portal') }}" class="s-link">
-                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span class="s-badge badge-green">42</span>
+                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
+                                    class="s-badge badge-green">42</span>
                             </a>
                             <a href="{{ route('tenant.students.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -163,7 +192,8 @@
                         </div>
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.teachers.portal') }}" class="s-link">
-                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span class="s-badge badge-green">42</span>
+                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
+                                    class="s-badge badge-green">42</span>
                             </a>
                             <a href="{{ route('tenant.teachers.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -187,14 +217,16 @@
                 <div class="s-section">
                     <div class="s-section-label">Statistiques</div>
                     <a href="{{ route('tenant.stats.general') }}" class="s-link">
-                        <div class="s-icon">📝</div><span class="s-label">Générale</span><span class="s-badge badge-red">3</span>
+                        <div class="s-icon">📝</div><span class="s-label">Générale</span><span
+                            class="s-badge badge-red">3</span>
                     </a>
                 </div>
 
                 <div class="s-section">
                     <div class="s-section-label">Évaluation</div>
                     <a href="#" class="s-link">
-                        <div class="s-icon">📝</div><span class="s-label">Notes</span><span class="s-badge badge-red">3</span>
+                        <div class="s-icon">📝</div><span class="s-label">Notes</span><span
+                            class="s-badge badge-red">3</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">✅</div><span class="s-label">Présences</span>
@@ -229,7 +261,8 @@
                 <div class="s-user">
                     <div class="s-avatar">
                         @if (auth()->guard('tenant')->user()->profil_photo)
-                            <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                            <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}"
+                                class="h-10 w-10 rounded-full object-cover">
                         @else
                             {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                         @endif
@@ -293,7 +326,8 @@
                         <div class="user-trigger" onclick="toggleDD('user-menu')">
                             <div class="ut-avatar">
                                 @if (auth()->guard('tenant')->user()->profil_photo)
-                                    <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-6.5 w-8 rounded-full object-cover">
+                                    <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}"
+                                        class="h-6.5 w-8 rounded-full object-cover">
                                 @else
                                     {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                                 @endif
@@ -324,11 +358,13 @@
                 </div>
             </header>
 
-            <main class="flex-1
+            <main
+                class="flex-1
             min-w-0
             w-full
             max-w-full
-            overflow-x-hidden p-3" id="content">
+            overflow-x-hidden p-3"
+                id="content">
                 {{ $slot }}
             </main>
         </div>

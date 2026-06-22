@@ -29,7 +29,7 @@ class SchoolYearsPortal extends Component
 
     public function render()
     {
-        $schoolYears = SchoolYear::orderBy('min_year')->whereNotNull('slug')->get();
+        $schoolYears = SchoolYear::orderBy('min_year', 'desc')->whereNotNull('slug')->get();
         
         return view('livewire.tenants.schoolyears.school-years-portal', compact('schoolYears'));
     }

@@ -12,6 +12,8 @@ class Promotion extends Model
 {
     use SoftDeletes;
 
+    protected $connection = 'tenant';
+
     protected $table = 'promotions';
 
     protected $fillable = [
