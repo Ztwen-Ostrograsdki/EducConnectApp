@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Promotions;
 
+use App\Models\Promotion;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -12,19 +13,33 @@ use Livewire\Component;
 #[Title("Profil de promotion")]
 class PromotionProfil extends Component
 {
+    public $counter = 1;
+
+    public Promotion $promotion;
+
     public string $promotion_slug;
 
-    public string $promotion_name = 'Promotion Nom';
+    public string $promotion_name = 'Nom de la promotion';
 
     public ?string $school_year_selected;
 
     public function mount(string $promotion_slug)
     {
+        if(!$promotion_slug) return abort(404);
 
-        $this->promotion_slug = $promotion_slug;
+        $this->promotion_slug  = $promotion_slug;
 
-        $this->promotion_name = Str::random(6);
+        $promotion = Promotion::whereSlug($promotion_slug)?->first();
 
+        if(!$promotion) return abort(404);
+
+        $this->promotion       = $promotion;
+    }
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
     }
 
     #[On('yearChanged')]

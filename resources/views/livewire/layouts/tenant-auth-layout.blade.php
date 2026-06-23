@@ -133,7 +133,10 @@
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.promotions.portal') }}" class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Portail</span>
+                                <span class="s-label">Portail
+                                    <span
+                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->promotionsCount()) }})</span>
+                                </span>
                             </a>
                             <a href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'premiere']) }}"
                                 class="s-link" style="font-size:.78rem;">
@@ -147,12 +150,82 @@
                             </a>
                         </div>
                     </div>
-                    <a data-sidebar-item href="{{ route('tenant.filiars.portal') }}" class="s-link">
-                        <div class="s-icon">🎯</div><span class="s-label">Filières</span>
-                    </a>
-                    <a data-sidebar-item href="{{ route('tenant.serials.portal') }}" class="s-link">
-                        <div class="s-icon">🎯</div><span class="s-label">Séries</span>
-                    </a>
+                    <div class="s-acc" id="acc-filiars">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-filiars')">
+                            <div class="s-icon">🎯</div>
+                            <span class="s-label">Filières</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.filiars.portal') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">Portail
+                                    <span
+                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->filiarsCount()) }})</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('tenant.filiar.profil', ['filiar_slug' => 'BTP']) }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">BTP</span>
+                            </a>
+                            <a href="{{ route('tenant.filiar.create') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    filière</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="s-acc" id="acc-serials">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-serials')">
+                            <div class="s-icon">🎯</div>
+                            <span class="s-label">Séries</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.serials.portal') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">Portail
+                                    <span
+                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->serialsCount()) }})</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('tenant.serial.profil', ['serial_slug' => 'c']) }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">C</span>
+                            </a>
+                            <a href="{{ route('tenant.serial.create') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    série</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="s-acc" id="acc-subjects">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-subjects')">
+                            <div class="s-icon">🎯</div>
+                            <span class="s-label">Matières</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.subjects.portal') }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">Portail
+                                    <span
+                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->subjectsCount()) }})</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('tenant.subject.profil', ['subject_slug' => 'c']) }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                <span class="s-label">C</span>
+                            </a>
+                            <a href="{{ route('tenant.subject.create') }}" class="s-link" style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    matière</span>
+                            </a>
+                        </div>
+                    </div>
                     <a data-sidebar-item href="#" class="s-link">
                         <div class="s-icon">🗓️</div><span class="s-label">Emploi du temps</span>
                     </a>

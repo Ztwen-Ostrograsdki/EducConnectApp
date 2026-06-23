@@ -14,6 +14,8 @@ class Subject extends Model
 
     protected $table = 'subjects';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'slug',

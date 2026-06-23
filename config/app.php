@@ -161,6 +161,30 @@ return [
         'spam' => 'spam',
     ],
 
+    'levels' => [
+        'primaire' => 'primaire',
+        'secondaire' => 'secondaire',
+        'superieur' => 'superieur',
+
+    ],
+    
+    'subject_types' => [
+        'litteraire' => 'litteraire',
+        'scientifique' => 'scientifique',
+        'sportive' => 'sportive',
+        'informatique' => 'informatique',
+        'technique' => 'technique',
+        'industrielle' => 'industrielle',
+        'culture' => 'culture', 
+        'musicale' => 'musicale', 
+        'artistique' => 'artistique', 
+        'culinaire' => 'culinaire', 
+        'mode et vie' => 'mode et vie', 
+        'education - morale' => 'education - morale', 
+        'droit' => 'droit', 
+        'réligion' => 'réligion', 
+    ],
+
     
 
 

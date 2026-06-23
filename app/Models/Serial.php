@@ -14,6 +14,8 @@ class Serial extends Model
 
     protected $table = 'serials';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'slug',

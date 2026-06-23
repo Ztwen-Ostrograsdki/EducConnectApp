@@ -8,8 +8,10 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
+use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
+use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
 use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\ParentProfil;
@@ -23,6 +25,8 @@ use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
 use App\Livewire\Tenants\Schoolyears\ManageSchoolYearComponent;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
 use App\Livewire\Tenants\Schoolyears\SchoolYearsPortal;
+use App\Livewire\Tenants\Serials\CreateSerialComponent;
+use App\Livewire\Tenants\Serials\ManageSerialComponent;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
@@ -33,6 +37,8 @@ use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
 use App\Livewire\Tenants\Students\StudentsPortal;
 use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
+use App\Livewire\Tenants\Subjects\CreateSubjectComponent;
+use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
@@ -105,7 +111,6 @@ Route::middleware([
             Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
 
             // PROMOTIONS
-
             Route::get('/promotions/promotions', PromotionsPortal::class)->name('promotions.portal');
 
             Route::get('/promotions/promotions/profil-promotion/{promotion_slug}', PromotionProfil::class)->name('promotion.profil');
@@ -113,6 +118,32 @@ Route::middleware([
             Route::get('/promotions/promotions/{promotion_slug}/edition', ManagePromotionComponent::class)->name('promotion.edit');
 
             Route::get('/promotions/promotions/nouvelle-promotion', CreatePromotionComponent::class)->name('promotion.create');
+
+            // LES MATIERES
+            Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
+
+            Route::get('/matieres/matieres/profil-matiere/{subject_slug}', SubjectProfil::class)->name('subject.profil');
+
+            Route::get('/matieres/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');
+            Route::get('/matieres/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
+
+
+            // FILIRES
+            Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
+
+            Route::get('/filieres/filieres/profil-filiere/{filiar_slug}', FiliarProfil::class)->name('filiar.profil');
+
+            Route::get('/filieres/nouvelle-matiere', CreateFiliarComponent::class)->name('filiar.create');
+            Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
+
+            // SERIES
+            Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
+
+            Route::get('/series/profil-serie/{serial_slug}', SerialProfil::class)->name('serial.profil');
+
+            Route::get('/series/nouvelle-serie', CreateSerialComponent::class)->name('serial.create');
+
+            Route::get('/series/{serial_slug}/edition', ManageSerialComponent::class)->name('serial.edit');
 
 
 
@@ -149,20 +180,7 @@ Route::middleware([
             Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
 
-            Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
-
-
-            Route::get('/matieres/portail-des-matieres/profil-matiere/ID={subject_slug}', SubjectProfil::class)->name('subject.profil');
-
             Route::get('/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
-
-            Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
-
-            Route::get('/filieres/portail-des-filieres/profil-filiere/ID={filiar_slug}', FiliarProfil::class)->name('filiar.profil');
-
-            Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
-
-            Route::get('/series/portail-des-series/profil-serie/ID={serial_slug}', SerialProfil::class)->name('serial.profil');
 
             Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
 

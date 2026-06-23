@@ -3,6 +3,12 @@
 namespace App\Models;
 
 use App\Events\TenantForceDeleted;
+use App\Models\Filiar;
+use App\Models\Promotion;
+use App\Models\RequestToCreateNewTenant;
+use App\Models\SchoolYear;
+use App\Models\Serial;
+use App\Models\Subject;
 use App\Models\TenantModuleAccess;
 use App\Models\TenantStatistic;
 use App\Models\User;
@@ -261,6 +267,26 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function schoolYearsCount() : ?int
     {
         return SchoolYear::whereNotNull('id')?->count();
+    }
+    
+    public function promotionsCount() : ?int
+    {
+        return Promotion::whereNotNull('id')?->count();
+    }
+    
+    public function filiarsCount() : ?int
+    {
+        return Filiar::whereNotNull('id')?->count();
+    }
+
+    public function serialsCount() : ?int
+    {
+        return Serial::whereNotNull('id')?->count();
+    }
+
+    public function subjectsCount() : ?int
+    {
+        return Subject::whereNotNull('id')?->count();
     }
 
 

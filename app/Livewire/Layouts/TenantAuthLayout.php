@@ -22,6 +22,12 @@ class TenantAuthLayout extends Component
         $this->counter++;
     }
 
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+
     public function render()
     {
 

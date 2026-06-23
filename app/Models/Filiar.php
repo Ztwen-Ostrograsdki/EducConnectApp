@@ -14,6 +14,8 @@ class Filiar extends Model
 
     protected $table = 'filiars';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'slug',
