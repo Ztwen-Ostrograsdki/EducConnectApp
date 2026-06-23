@@ -15,6 +15,8 @@ class Classe extends Model
 
     protected $table = 'classes';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'school_year_id',

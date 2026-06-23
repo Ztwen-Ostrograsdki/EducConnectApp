@@ -1,22 +1,22 @@
 <div class="w-full overflow-x-hidden">
 
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
 
         <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
 
-            <h1 class="text-lg sm:text-3xl font-bold">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-400 px-3 py-2.5">
 
-                Profil de la Promotion Tle F2
+                Profil de la Promotion <span class="font-mono text-amber-400 font-semibold">{{ $promotion->name }}</span>
 
             </h1>
 
-            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">
-
-                Promotion Active
-
+            <span
+                class="px-3 py-1 rounded-full @if ($promotion->is_active) bg-emerald-500/10 text-emerald-400 @else bg-red-500/10 text-red-400 @endif text-xs">
+                Promotion {{ $promotion->is_active ? 'active' : 'non active' }}
             </span>
 
         </div>
@@ -26,13 +26,15 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="relative overflow-hidden
+            <div
+                class="relative overflow-hidden
                         rounded-[32px]
                         border border-slate-800
                         bg-slate-900">
 
                 {{-- BG --}}
-                <div class="absolute inset-0
+                <div
+                    class="absolute inset-0
                             bg-gradient-to-br
                             from-indigo-500/10
                             via-slate-900
@@ -41,14 +43,16 @@
 
                 <div class="relative p-5 sm:p-6 lg:p-8">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 xl:flex-row
                                 xl:items-start
                                 xl:justify-between
                                 gap-8">
 
                         {{-- LEFT --}}
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                                     lg:flex-row
                                     gap-6
                                     min-w-0">
@@ -74,13 +78,14 @@
                             {{-- INFOS --}}
                             <div class="min-w-0">
 
-                                <div class="flex flex-wrap
+                                <div
+                                    class="flex flex-wrap
                                             items-center
                                             gap-3">
 
                                     <h1 class="text-2xl sm:text-3xl font-bold">
 
-                                        {{ $promotion_name }}
+                                        {{ $promotion->name }}
 
                                     </h1>
 
@@ -89,21 +94,23 @@
                                 <p class="mt-2 text-slate-400">
 
                                     Tableau global des statistiques,
-                                    performances de la promotion.
+                                    performances de la promotion {{ $promotion->name }}.
 
                                 </p>
 
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                                 bg-slate-800 border border-slate-700">
 
                                         18 Enseignants
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                                 bg-slate-800 border border-slate-700">
 
                                         42 Classes
@@ -118,21 +125,24 @@
                         {{-- ACTIONS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-indigo-500 hover:bg-indigo-600">
 
                                 Ajouter une classe
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-emerald-500 hover:bg-emerald-600">
 
                                 Export PDF
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-sky-500 hover:bg-sky-600">
 
                                 Statistiques
@@ -154,14 +164,16 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-2
                         lg:grid-cols-4
                         2xl:grid-cols-6
                         gap-4">
 
                 @foreach ([['Moyenne Générale', '11.84', 'text-indigo-400'], ['Meilleure classe', 'Terminale F4-3', 'text-emerald-400'], ['Faibel classe', 'Terminale F4-6', 'text-rose-400'], ['Taux Réussite', '72%', 'text-sky-400'], ['Classes', '35', 'text-amber-400'], ['Enseignants', '18', 'text-violet-400']] as $kpi)
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
@@ -190,20 +202,23 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-1
                         xl:grid-cols-2
                         gap-6">
 
                 {{-- BEST --}}
-                <div class="rounded-[32px]
+                <div
+                    class="rounded-[32px]
                             bg-slate-900
                             border border-emerald-500/20
                             p-6">
 
                     <div class="flex items-center gap-4">
 
-                        <div class="w-16 h-16 rounded-2xl
+                        <div
+                            class="w-16 h-16 rounded-2xl
                                     bg-emerald-500/10
                                     flex items-center justify-center
                                     text-2xl">
@@ -232,7 +247,8 @@
 
                     <div class="mt-6 space-y-4">
 
-                        <div class="rounded-2xl
+                        <div
+                            class="rounded-2xl
                                     bg-slate-950
                                     border border-slate-800
                                     p-5">
@@ -251,7 +267,8 @@
 
                             <div class="mt-4 flex flex-wrap gap-3">
 
-                                <span class="px-3 py-1 rounded-full
+                                <span
+                                    class="px-3 py-1 rounded-full
                                              bg-emerald-500/10
                                              text-emerald-400 text-xs">
 
@@ -259,7 +276,8 @@
 
                                 </span>
 
-                                <span class="px-3 py-1 rounded-full
+                                <span
+                                    class="px-3 py-1 rounded-full
                                              bg-indigo-500/10
                                              text-indigo-400 text-xs">
 
@@ -276,14 +294,16 @@
                 </div>
 
                 {{-- WORST --}}
-                <div class="rounded-[32px]
+                <div
+                    class="rounded-[32px]
                             bg-slate-900
                             border border-rose-500/20
                             p-6">
 
                     <div class="flex items-center gap-4">
 
-                        <div class="w-16 h-16 rounded-2xl
+                        <div
+                            class="w-16 h-16 rounded-2xl
                                     bg-rose-500/10
                                     flex items-center justify-center
                                     text-2xl">
@@ -312,7 +332,8 @@
 
                     <div class="mt-6 space-y-4">
 
-                        <div class="rounded-2xl
+                        <div
+                            class="rounded-2xl
                                     bg-slate-950
                                     border border-slate-800
                                     p-5">
@@ -331,7 +352,8 @@
 
                             <div class="mt-4 flex flex-wrap gap-3">
 
-                                <span class="px-3 py-1 rounded-full
+                                <span
+                                    class="px-3 py-1 rounded-full
                                              bg-rose-500/10
                                              text-rose-400 text-xs">
 
@@ -339,7 +361,8 @@
 
                                 </span>
 
-                                <span class="px-3 py-1 rounded-full
+                                <span
+                                    class="px-3 py-1 rounded-full
                                              bg-indigo-500/10
                                              text-indigo-400 text-xs">
 
@@ -372,7 +395,8 @@
                 {{-- ===================================================== --}}
                 {{-- MEILLEUR GARÇON --}}
                 {{-- ===================================================== --}}
-                <div class="rounded-[32px]
+                <div
+                    class="rounded-[32px]
                     bg-slate-900
                     border border-sky-500/20
                     overflow-hidden">
@@ -382,7 +406,8 @@
 
                         <div class="flex items-center gap-4">
 
-                            <div class="w-16 h-16 rounded-2xl
+                            <div
+                                class="w-16 h-16 rounded-2xl
                                 bg-sky-500/10
                                 flex items-center justify-center
                                 text-2xl">
@@ -415,7 +440,8 @@
                     {{-- CONTENT --}}
                     <div class="p-6">
 
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                             lg:flex-row
                             lg:items-center
                             gap-5">
@@ -423,7 +449,8 @@
                             {{-- PHOTO --}}
                             <div class="flex justify-center lg:block">
 
-                                <div class="w-28 h-28 rounded-[28px]
+                                <div
+                                    class="w-28 h-28 rounded-[28px]
                                     bg-slate-800
                                     border border-slate-700
                                     shrink-0">
@@ -434,7 +461,8 @@
                             {{-- DETAILS --}}
                             <div class="flex-1 min-w-0">
 
-                                <div class="flex flex-wrap
+                                <div
+                                    class="flex flex-wrap
                                     items-center
                                     gap-3">
 
@@ -444,7 +472,8 @@
 
                                     </h3>
 
-                                    <span class="px-3 py-1 rounded-full
+                                    <span
+                                        class="px-3 py-1 rounded-full
                                          bg-sky-500/10
                                          text-sky-400 text-xs">
 
@@ -464,7 +493,8 @@
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -472,7 +502,8 @@
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -480,7 +511,8 @@
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -493,14 +525,16 @@
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
 
-                                    <button class="h-11 px-5 rounded-2xl
+                                    <button
+                                        class="h-11 px-5 rounded-2xl
                                            bg-sky-500 hover:bg-sky-600">
 
                                         Voir Profil
 
                                     </button>
 
-                                    <button class="h-11 px-5 rounded-2xl
+                                    <button
+                                        class="h-11 px-5 rounded-2xl
                                            bg-indigo-500 hover:bg-indigo-600">
 
                                         Historique Notes
@@ -520,7 +554,8 @@
                 {{-- ===================================================== --}}
                 {{-- MEILLEURE FILLE --}}
                 {{-- ===================================================== --}}
-                <div class="rounded-[32px]
+                <div
+                    class="rounded-[32px]
                     bg-slate-900
                     border border-pink-500/20
                     overflow-hidden">
@@ -530,7 +565,8 @@
 
                         <div class="flex items-center gap-4">
 
-                            <div class="w-16 h-16 rounded-2xl
+                            <div
+                                class="w-16 h-16 rounded-2xl
                                 bg-pink-500/10
                                 flex items-center justify-center
                                 text-2xl">
@@ -563,7 +599,8 @@
                     {{-- CONTENT --}}
                     <div class="p-6">
 
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                             lg:flex-row
                             lg:items-center
                             gap-5">
@@ -571,7 +608,8 @@
                             {{-- PHOTO --}}
                             <div class="flex justify-center lg:block">
 
-                                <div class="w-28 h-28 rounded-[28px]
+                                <div
+                                    class="w-28 h-28 rounded-[28px]
                                     bg-slate-800
                                     border border-slate-700
                                     shrink-0">
@@ -582,7 +620,8 @@
                             {{-- DETAILS --}}
                             <div class="flex-1 min-w-0">
 
-                                <div class="flex flex-wrap
+                                <div
+                                    class="flex flex-wrap
                                     items-center
                                     gap-3">
 
@@ -592,7 +631,8 @@
 
                                     </h3>
 
-                                    <span class="px-3 py-1 rounded-full
+                                    <span
+                                        class="px-3 py-1 rounded-full
                                          bg-pink-500/10
                                          text-pink-400 text-xs">
 
@@ -612,7 +652,8 @@
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -620,7 +661,8 @@
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -628,7 +670,8 @@
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                         bg-slate-950
                                         border border-slate-800">
 
@@ -641,14 +684,16 @@
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
 
-                                    <button class="h-11 px-5 rounded-2xl
+                                    <button
+                                        class="h-11 px-5 rounded-2xl
                                            bg-pink-500 hover:bg-pink-600">
 
                                         Voir Profil
 
                                     </button>
 
-                                    <button class="h-11 px-5 rounded-2xl
+                                    <button
+                                        class="h-11 px-5 rounded-2xl
                                            bg-indigo-500 hover:bg-indigo-600">
 
                                         Historique Notes
@@ -674,7 +719,8 @@
         {{-- ===================================================== --}}
         <section class="mb-6 p-2">
 
-            <div class="rounded-[32px]
+            <div
+                class="rounded-[32px]
                         bg-slate-900
                         border border-slate-800
                         overflow-hidden">
@@ -682,7 +728,8 @@
                 {{-- HEADER --}}
                 <div class="p-5 border-b border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 xl:flex-row
                                 xl:items-center
                                 xl:justify-between
@@ -715,7 +762,8 @@
                                           border border-slate-800
                                           px-4">
 
-                            <select class="h-11 rounded-2xl
+                            <select
+                                class="h-11 rounded-2xl
                                            bg-slate-950
                                            border border-slate-800
                                            px-4">
@@ -768,7 +816,8 @@
 
                                         <div class="flex items-center gap-4 truncate">
 
-                                            <div class="w-14 h-14
+                                            <div
+                                                class="w-14 h-14
                                                     rounded-2xl
                                                     bg-slate-800">
                                             </div>
@@ -798,7 +847,8 @@
 
                                         <div class="flex flex-wrap gap-2 truncate">
 
-                                            <span class="px-3 py-1 rounded-full
+                                            <span
+                                                class="px-3 py-1 rounded-full
                                                      bg-indigo-500/10
                                                      text-indigo-400 text-xs">
 
@@ -806,7 +856,8 @@
 
                                             </span>
 
-                                            <span class="px-3 py-1 rounded-full
+                                            <span
+                                                class="px-3 py-1 rounded-full
                                                      bg-indigo-500/10
                                                      text-indigo-400 text-xs">
 
@@ -823,7 +874,8 @@
 
                                         <div class="flex justify-end gap-2 truncate">
 
-                                            <button class="h-10 px-4 rounded-xl
+                                            <button
+                                                class="h-10 px-4 rounded-xl
                                                        bg-indigo-500/10
                                                        text-indigo-400">
 
@@ -831,7 +883,8 @@
 
                                             </button>
 
-                                            <button class="h-10 px-4 rounded-xl
+                                            <button
+                                                class="h-10 px-4 rounded-xl
                                                        bg-amber-500/10
                                                        text-amber-400">
 
@@ -839,7 +892,8 @@
 
                                             </button>
 
-                                            <button class="h-10 px-4 rounded-xl
+                                            <button
+                                                class="h-10 px-4 rounded-xl
                                                        bg-rose-500/10
                                                        text-rose-400">
 
@@ -869,7 +923,8 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-[32px]
+            <div
+                class="rounded-[32px]
                 bg-slate-900
                 border border-slate-800
                 overflow-hidden">
@@ -879,7 +934,8 @@
                 {{-- ===================================================== --}}
                 <div class="p-5 sm:p-6 border-b border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                         xl:flex-row
                         xl:items-center
                         xl:justify-between
@@ -905,7 +961,8 @@
                         </div>
 
                         {{-- FILTERS --}}
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                             sm:flex-row
                             gap-3
                             w-full
@@ -1032,7 +1089,8 @@
 
                                                     <div class="min-w-0">
 
-                                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)]) }}">
+                                                        <a
+                                                            href="{{ route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)]) }}">
                                                             <h3 class="font-medium truncate">
                                                                 Kouassi Vincent {{ $i }}
                                                             </h3>
@@ -1149,7 +1207,8 @@
 
         </section>
 
-        <div class="rounded-3xl
+        <div
+            class="rounded-3xl
                                 bg-slate-900
                                 border border-slate-800
                                 p-5">
@@ -1163,7 +1222,8 @@
             <div class="mt-5 space-y-4">
 
                 @foreach (range(1, 5) as $weak)
-                    <div class="rounded-2xl
+                    <div
+                        class="rounded-2xl
                                         bg-slate-950
                                         p-4">
 

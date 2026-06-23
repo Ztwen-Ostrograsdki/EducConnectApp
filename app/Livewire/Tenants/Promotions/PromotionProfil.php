@@ -34,6 +34,7 @@ class PromotionProfil extends Component
         if(!$promotion) return abort(404);
 
         $this->promotion       = $promotion;
+        $this->promotion_name       = $promotion->name;
     }
 
     #[On('DataUpdatedEventLiveEvent')]

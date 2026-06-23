@@ -131,11 +131,11 @@ class TeachersPortal extends Component
                 $query->orwhere('gender', 'like', "%{$this->search}%");
                 $query->orwhere('birth_date', 'like', "%{$this->search}%");
                 $query->orwhere('birth_place', 'like', "%{$this->search}%");
-                $query->orwhere('identifiant', 'like', "%{$this->search}%");
                 $query->orwhere('job_name', 'like', "%{$this->search}%");
                 $query->orwhere('status', 'like', "%{$this->search}%");
             });
         })
+        ->orwhere('identifiant', 'like', "%{$this->search}%")
         ->when($this->city, function (Builder $query) {
             $query->whereHas('user', function ($query) {
                 $query->where('city', $this->city);

@@ -49,13 +49,63 @@ trait TeachersActions{
 
     public $showConfirmTeachersUnLock = false;
 
+    public $showConfirmGivingAccessToTeacher = false;
+
 
     public ?string $targetedTeacherUserUuid = null;
 
 
 	public function closeModal()
     {
-        $this->reset('showConfirmDeleteTeacher', 'showConfirmTeacherRestorationModal', 'showConfirmForceDeleteTeacher', 'showConfirmTeacherLock', 'showConfirmDeleteTeachers', 'showConfirmTeachersRestorationModal', 'showConfirmForceDeleteTeachers', 'showConfirmTeachersLock', 'targetedTeacherUserUuid', 'showConfirmTeachersUnLock');
+        $this->reset('showConfirmDeleteTeacher', 'showConfirmTeacherRestorationModal', 'showConfirmForceDeleteTeacher', 'showConfirmTeacherLock', 'showConfirmDeleteTeachers', 'showConfirmTeachersRestorationModal', 'showConfirmForceDeleteTeachers', 'showConfirmTeachersLock', 'targetedTeacherUserUuid', 'showConfirmTeachersUnLock', 'showConfirmGivingAccessToTeacher');
+    }
+
+    public function giveAccessForThisSchoolYear(string $userUuid): void
+    {
+        $this->showConfirmGivingAccessToTeacher = true;
+
+        $this->targetedTeacherUserUuid = $userUuid;
+
+    }
+
+    public function ConfirmGivingAccessForThisSchoolYear(): void
+    {
+       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
+
+        if($user){
+
+            $teacher = $user->teacher;
+
+            if($teacher){
+
+                $teacher->giveAccessForThisSchoolYear();
+
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Enseignant bloquée',
+                    'description' => "L'Enseignant a été bloqué!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => "Aucun enseignant trouvé",
+                    'description' => "Aucun enseignant n'est lié à cet utilisateur!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'utilisateur introuvable',
+                'description' => "L'utilisateur n'existe pas dans la base de données",
+            ]);
+            
+        }
+        $this->closeModal();
+        
     }
 
 

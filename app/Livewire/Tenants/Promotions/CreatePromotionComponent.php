@@ -22,7 +22,7 @@ class CreatePromotionComponent extends Component
     public string $name = '';
 
     #[Validate('nullable|string|max:20')]
-    public string $code = '';
+    public ?string $code;
 
     #[Validate('required|in:primaire,secondaire,superieur')]
     public string $level = 'secondaire';

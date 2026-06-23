@@ -11,6 +11,8 @@ class TeacherYearlyAccess extends Model
 {
     protected $table = 'teacher_yearly_accesses';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'teacher_id', 'school_year_id', 'token', 'token_expires_at',
         'token_requested_at', 'token_attempts', 'validated_at',

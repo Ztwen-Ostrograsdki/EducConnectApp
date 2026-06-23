@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\Classes;
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -14,6 +15,8 @@ class ClasseProfil extends Component
 
     public $classroom = 'TERMINALE';
 
+    public $counter = 0;
+
     public ?string $student_uuid_selected;
 
     public string $classe_slug;
@@ -23,6 +26,12 @@ class ClasseProfil extends Component
     public function mount(string $classe_slug)
     {
         $this->classe_slug = $classe_slug;
+    }
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
     }
 
     public function setSection(string $section)

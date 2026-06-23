@@ -38,7 +38,7 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_locked')->default(false); // on pourra empêcher l'accès aux enseignants momentanement
-            $table->json('locked_for_teachers')->default(null); // un tableau des id des enseignant sur lequels on pourra empêcher l'accès à certains enseignants momentanement
+            $table->json('locked_for_teachers')->nullable(); // un tableau des id des enseignant sur lequels on pourra empêcher l'accès à certains enseignants momentanement
             $table->timestamps();
             $table->softDeletes();
 

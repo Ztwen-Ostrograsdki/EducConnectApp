@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -215,5 +214,13 @@ class Teacher extends Model
     public function profil_photo_url() 
     {
         return $this->user->profil_photo_url;
+    }
+
+
+    public function giveAccessForThisSchoolYear(?SchoolYear $school_year = null)
+    {
+        if(!$school_year) $school_year = SchoolYear::firstWhere('is_active', true);
+
+        
     }
 }

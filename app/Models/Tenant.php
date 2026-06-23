@@ -251,7 +251,15 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      */
     public function getCurrentSchoolYear(): ?SchoolYear
     {
-        return SchoolYear::where('is_active', true)->where('is_closed', false)?->first() ?? null ;
+        if(session()->has('school_year_selected')){
+            $school_year = SchoolYear::where('is_active', true)->whereSlug(session('school_year_selected'))?->first() ?? null;
+
+        }
+        $school_year = SchoolYear::where('is_active', true)->where('is_closed', false)?->first() ?? null;
+
+        if($school_year) session()->put('school_year_selected', $school_year?->slug);
+            
+        return $school_year;
     }
 
     public function getActiveSchoolYear() : ?SchoolYear
@@ -288,6 +296,36 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return Subject::whereNotNull('id')?->count();
     }
+    
+    public function getClassesOfSchoolYear(?SchoolYear $school_year = null, bool $must_has_promotion = true, bool $must_has_filiar = true)
+    {
+        $classes = [];
+
+
+        if(!$school_year) $school_year = $this->getActiveSchoolYear();
+
+        if($school_year && $must_has_filiar && $must_has_promotion){
+
+            return $classes = Classe::where('is_active', true)->where('school_year_id', $school_year->id)->whereNotNull('promotion_id')->whereNotNull('filiar_id')->get();
+        }
+
+        elseif($school_year && $must_has_filiar){
+
+            return $classes = Classe::where('is_active', true)->where('school_year_id', $school_year->id)->whereNotNull('filiar_id')->get();
+        }
+        elseif($school_year && $must_has_promotion){
+
+            return $classes = Classe::where('is_active', true)->where('school_year_id', $school_year->id)->whereNotNull('promotion_id')->get();
+        }
+        elseif($must_has_filiar && $must_has_promotion){
+
+            return $classes = Classe::where('is_active', true)->whereNotNull('promotion_id')->whereNotNull('filiar_id')->get();
+        }
+
+        return $classes;
+    }
+
+
 
 
 

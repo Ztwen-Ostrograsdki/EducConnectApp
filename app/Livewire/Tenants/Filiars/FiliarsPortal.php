@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Filiars;
 
+use App\Models\Filiar;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -30,6 +31,8 @@ class FiliarsPortal extends Component
 
     public function render()
     {
-        return view('livewire.tenants.filiars.filiars-portal');
+        $filiars = Filiar::orderByDesc('name')->get();
+
+        return view('livewire.tenants.filiars.filiars-portal', compact('filiars'));
     }
 }

@@ -8,6 +8,8 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
+use App\Livewire\Tenants\Classes\CreateClasseComponent;
+use App\Livewire\Tenants\Classes\EditClasseComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
@@ -133,7 +135,7 @@ Route::middleware([
 
             Route::get('/filieres/filieres/profil-filiere/{filiar_slug}', FiliarProfil::class)->name('filiar.profil');
 
-            Route::get('/filieres/nouvelle-matiere', CreateFiliarComponent::class)->name('filiar.create');
+            Route::get('/filieres/nouvelle-filiere', CreateFiliarComponent::class)->name('filiar.create');
             Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
 
             // SERIES
@@ -146,6 +148,14 @@ Route::middleware([
             Route::get('/series/{serial_slug}/edition', ManageSerialComponent::class)->name('serial.edit');
 
 
+            // LES CLASSES
+            Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
+
+            Route::get('/classes/profil-classe/{classe_slug}', ClasseProfil::class)->name('classe.profil');
+
+            Route::get('/classes/nouvelle-classe', CreateClasseComponent::class)->name('classes.create');
+
+            Route::get('/classes/{classe_slug}/edition', EditClasseComponent::class)->name('classe.edit');
 
             // LES ENSEIGNANTS
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
@@ -176,12 +186,7 @@ Route::middleware([
 
 
 
-            // LE CLASSES
-            Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
-
-
-            Route::get('/classes/portail-classses/profil-classe/ID={classe_slug}', ClasseProfil::class)->name('classe.profil');
-
+            
             Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
 
             Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');

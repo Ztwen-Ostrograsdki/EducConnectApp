@@ -1,55 +1,23 @@
 <div class="w-full overflow-x-hidden">
 
-    <div class="mx-auto
-                w-full
-                max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
-
-        {{-- ===================================================== --}}
-        {{-- HERO --}}
-        {{-- ===================================================== --}}
+    <div class="mx-auto w-full max-w-[1900px] px-3 sm:px-4 lg:px-6 xl:px-8">
         <section class="mb-6">
 
-            <div class="relative overflow-hidden
-                        rounded-[32px]
-                        border border-slate-800
-                        bg-slate-900">
-
-                {{-- BG --}}
-                <div class="absolute inset-0
-                            bg-gradient-to-br
-                            from-indigo-500/10
-                            via-slate-900
-                            to-slate-900">
+            <div class="relative overflow-hidden  rounded-[32px]  border border-slate-800 bg-slate-900">
+                <div class="absolute inset-0  bg-gradient-to-br from-indigo-500/10 via-slate-900 to-slate-900">
                 </div>
-
                 <div class="relative p-5 sm:p-6 lg:p-8">
 
-                    <div class="flex flex-col
-                                xl:flex-row
-                                xl:items-start
-                                xl:justify-between
-                                gap-8">
+                    <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
 
-                        {{-- LEFT --}}
                         <div class="min-w-0">
-
-                            <div class="flex flex-wrap
-                                        items-center
-                                        gap-3">
-
+                            <div class="flex flex-wrap items-center gap-3">
                                 <h1 class="text-2xl sm:text-3xl font-bold">
-
                                     Dashboard Promotions
-
                                 </h1>
 
-                                <span class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400 text-xs">
-
+                                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
                                     Gestion Académique
-
                                 </span>
 
                             </div>
@@ -66,22 +34,19 @@
                             {{-- BADGES --}}
                             <div class="mt-6 flex flex-wrap gap-3">
 
-                                <div class="px-4 py-2 rounded-2xl
-                                            bg-slate-800 border border-slate-700">
+                                <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
-                                    7 Promotions
+                                    {{ __zero(tenancy()->tenant?->promotionsCount()) }} Promotions
 
                                 </div>
 
-                                <div class="px-4 py-2 rounded-2xl
-                                            bg-slate-800 border border-slate-700">
+                                <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
                                     124 Classes
 
                                 </div>
 
-                                <div class="px-4 py-2 rounded-2xl
-                                            bg-slate-800 border border-slate-700">
+                                <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
                                     4 812 Apprenants
 
@@ -94,22 +59,10 @@
                         {{-- ACTIONS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-emerald-500 hover:bg-emerald-600
-                                           transition">
-
+                            <a wire:navigate href="{{ route('tenant.promotion.create') }}"
+                                class="px-5 py-3 flex justify-center items-center rounded-2xl bg-blue-500 hover:bg-blue-800 transition">
                                 Nouvelle Promotion
-
-                            </button>
-
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600
-                                           transition">
-
-                                Statistiques
-
-                            </button>
-
+                            </a>
                         </div>
 
                     </div>
@@ -125,28 +78,15 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
-                        grid-cols-2
-                        lg:grid-cols-4
-                        2xl:grid-cols-6
-                        gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-4">
 
-                @foreach ([['Promotions', '7', 'text-indigo-400'], ['Classes', '124', 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400'], ['Filières', '14', 'text-rose-400']] as $kpi)
-                    <div class="rounded-3xl
-                            bg-slate-900
-                            border border-slate-800
-                            p-5">
-
+                @foreach ([['Promotions', __zero(tenancy()->tenant?->promotionsCount()), 'text-indigo-400'], ['Classes', '124', 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400'], ['Filières', '14', 'text-rose-400']] as $kpi)
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
                         <p class="text-sm text-slate-400">
-
                             {{ $kpi[0] }}
-
                         </p>
-
                         <h2 class="mt-3 text-2xl font-bold {{ $kpi[1] ? $kpi[2] : '' }}">
-
                             {{ $kpi[1] }}
-
                         </h2>
 
                     </div>
@@ -155,13 +95,10 @@
             </div>
 
         </section>
-
-        {{-- ===================================================== --}}
-        {{-- PROMOTIONS TABLE --}}
-        {{-- ===================================================== --}}
         <section>
 
-            <div class="rounded-[32px]
+            <div
+                class="rounded-[32px]
                         bg-slate-900
                         border border-slate-800
                         overflow-hidden">
@@ -171,7 +108,8 @@
                 {{-- ===================================================== --}}
                 <div class="p-5 sm:p-6 border-b border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 2xl:flex-row
                                 2xl:items-center
                                 2xl:justify-between
@@ -296,6 +234,9 @@
                             <tr>
 
                                 <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    N°
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
                                     Promotion
                                 </th>
 
@@ -323,14 +264,6 @@
                                     Plus Âgé
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Moyenne
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Taux Réussite
-                                </th>
-
                                 <th class="px-6 py-4 text-right text-sm text-slate-400">
                                     Actions
                                 </th>
@@ -340,31 +273,30 @@
                         </thead>
 
                         {{-- BODY --}}
-                        <tbody class="divide-y divide-slate-800">
+                        <tbody class="divide-y divide-slate-800 text-slate-400">
 
-                            @foreach (['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'] as $promo)
-                                <tr class="hover:bg-slate-800/40
-                                       transition-colors duration-200">
+                            @foreach ($promotions as $promo)
+                                <tr class="hover:bg-slate-800/40 transition-colors duration-200">
 
-                                    {{-- PROMOTION --}}
+                                    <td class="px-6 py-5 truncate">{{ $loop->iteration }}</td>
+
                                     <td class="px-6 py-5">
 
-                                        <div>
+                                        <a wire:navigate
+                                            href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promo->slug]) }}"
+                                            class="hover:underline underline-offset-2">
 
-                                            <h3 class="font-semibold text-lg">
+                                            <h3 class="font-semibold text-base">
 
-                                                {{ $promo }}
+                                                {{ $promo->name }}
 
                                             </h3>
 
                                             <p class="mt-1 text-sm text-slate-400">
-
-                                                Année Académique
-                                                2025 - 2026
-
+                                                {{ $promo->code }}
                                             </p>
 
-                                        </div>
+                                        </a>
 
                                     </td>
 
@@ -382,7 +314,8 @@
                                     {{-- EFFECTIF --}}
                                     <td class="px-4 py-5 text-center">
 
-                                        <span class="font-semibold
+                                        <span
+                                            class="font-semibold
                                                  text-indigo-400">
 
                                             684
@@ -474,42 +407,14 @@
 
                                     </td>
 
-                                    {{-- AVG --}}
-                                    <td class="px-4 py-5 text-center">
-
-                                        <span class="text-lg font-bold
-                                                 text-emerald-400">
-
-                                            12.84
-
-                                        </span>
-
-                                    </td>
-
-                                    {{-- SUCCESS --}}
-                                    <td class="px-4 py-5 text-center">
-
-                                        <span
-                                            class="px-3 py-1 rounded-full
-                                                 bg-emerald-500/10
-                                                 text-emerald-400
-                                                 text-xs">
-
-                                            78%
-
-                                        </span>
-
-                                    </td>
-
                                     {{-- ACTIONS --}}
                                     <td class="px-6 py-5">
 
-                                        <div class="flex justify-end
-                                                flex-wrap
-                                                gap-2">
+                                        <div class="flex justify-end gap-2">
 
                                             {{-- PROFIL --}}
-                                            <a href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'f']) }}"
+                                            <a wire:navigate
+                                                href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promo->slug]) }}"
                                                 class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
                                                 Profil
                                             </a>
@@ -558,7 +463,8 @@
                 {{-- ===================================================== --}}
                 <div class="p-5 border-t border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 lg:flex-row
                                 lg:items-center
                                 lg:justify-between
@@ -578,7 +484,8 @@
                         {{-- EXPORTS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-emerald-500 hover:bg-emerald-600
                                            transition">
 
@@ -586,7 +493,8 @@
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-rose-500 hover:bg-rose-600
                                            transition">
 

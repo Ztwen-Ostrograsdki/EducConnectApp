@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Promotions;
 
+use App\Models\Promotion;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -20,10 +21,10 @@ class PromotionsPortal extends Component
         $this->counter++;
     }
 
-
-    
     public function render()
     {
-        return view('livewire.tenants.promotions.promotions-portal');
+        $promotions = Promotion::orderByDesc('order')->get();
+
+        return view('livewire.tenants.promotions.promotions-portal', compact('promotions'));
     }
 }

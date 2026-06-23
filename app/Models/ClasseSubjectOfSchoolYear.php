@@ -23,6 +23,8 @@ class ClasseSubjectOfSchoolYear extends Model
         'ended_at' => 'datetime',
     ];
 
+    protected $connection = 'tenant';
+
     /**
      * Get the class this assignment belongs to.
      */

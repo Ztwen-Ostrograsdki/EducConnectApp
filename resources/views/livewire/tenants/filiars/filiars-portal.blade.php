@@ -1,6 +1,7 @@
 <div class="w-full overflow-x-hidden">
 
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
@@ -10,13 +11,15 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="relative overflow-hidden
+            <div
+                class="relative overflow-hidden
                         rounded-[32px]
                         border border-slate-800
                         bg-slate-900">
 
                 {{-- BG --}}
-                <div class="absolute inset-0
+                <div
+                    class="absolute inset-0
                             bg-gradient-to-br
                             from-indigo-500/10
                             via-slate-900
@@ -25,7 +28,8 @@
 
                 <div class="relative p-5 sm:p-6 lg:p-8">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 xl:flex-row
                                 xl:items-start
                                 xl:justify-between
@@ -34,7 +38,8 @@
                         {{-- LEFT --}}
                         <div class="min-w-0">
 
-                            <div class="flex flex-wrap
+                            <div
+                                class="flex flex-wrap
                                         items-center
                                         gap-3">
 
@@ -44,12 +49,8 @@
 
                                 </h1>
 
-                                <span class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400 text-xs">
-
-                                    Gestion Académique
-
+                                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
+                                    Gestion Académique {{ session('school_year_selected') }}
                                 </span>
 
                             </div>
@@ -66,21 +67,25 @@
                             {{-- BADGES --}}
                             <div class="mt-6 flex flex-wrap gap-3">
 
-                                <div class="px-4 py-2 rounded-2xl
+                                <div
+                                    class="px-4 py-2 rounded-2xl
                                             bg-slate-800 border border-slate-700">
 
-                                    7 Filières
+                                    {{ __zero(tenancy()->tenant?->filiarsCount()) }} Filières
 
                                 </div>
 
-                                <div class="px-4 py-2 rounded-2xl
+                                <div
+                                    class="px-4 py-2 rounded-2xl
                                             bg-slate-800 border border-slate-700">
 
-                                    124 Classes
+                                    {{ __zero(count(tenancy()->tenant?->getClassesOfSchoolYear(null, true, true))) }}
+                                    Classes
 
                                 </div>
 
-                                <div class="px-4 py-2 rounded-2xl
+                                <div
+                                    class="px-4 py-2 rounded-2xl
                                             bg-slate-800 border border-slate-700">
 
                                     4 812 Apprenants
@@ -94,22 +99,12 @@
                         {{-- ACTIONS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-emerald-500 hover:bg-emerald-600
-                                           transition">
+                            <a wire:navigate href="{{ route('tenant.filiar.create') }}"
+                                class="py-3 flex justify-center items-center px-5 rounded-2xl bg-blue-500 hover:bg-blue-800  transition">
 
-                                + Nouvelle Classe
+                                + Nouvelle filière
 
-                            </button>
-
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600
-                                           transition">
-
-                                Statistiques
-
-                            </button>
-
+                            </a>
                         </div>
 
                     </div>
@@ -125,14 +120,16 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-2
                         lg:grid-cols-4
                         2xl:grid-cols-6
                         gap-4">
 
-                @foreach ([['Promotions', '7', 'text-indigo-400'], ['Classes', '124', 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400']] as $kpi)
-                    <div class="rounded-3xl
+                @foreach ([['Filières', __zero(tenancy()->tenant?->filiarsCount()), 'text-indigo-400'], ['Classes', __zero(count(tenancy()->tenant?->getClassesOfSchoolYear(null, true, true))), 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400']] as $kpi)
+                    <div
+                        class="rounded-3xl
                             bg-slate-900
                             border border-slate-800
                             p-5">
@@ -161,7 +158,8 @@
         {{-- ===================================================== --}}
         <section class="">
 
-            <div class="rounded-[32px]
+            <div
+                class="rounded-[32px]
                         bg-slate-900
                         border border-slate-800
                         overflow-hidden p-2">
@@ -171,7 +169,8 @@
                 {{-- ===================================================== --}}
                 <div class="p-5 sm:p-6 border-b border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 2xl:flex-row
                                 2xl:items-center
                                 2xl:justify-between
@@ -182,13 +181,13 @@
 
                             <h2 class="text-xl font-semibold">
 
-                                Liste des classes
+                                Liste des filières
 
                             </h2>
 
                             <p class="mt-1 text-sm text-slate-400">
 
-                                Analyse détaillée des classes,
+                                Analyse détaillée des filières,
                                 performances et statistiques.
 
                             </p>
@@ -219,26 +218,11 @@
                             </div>
 
                             {{-- PROMOTIONS --}}
-                            <select
-                                class="h-12
-                                           rounded-2xl
-                                           bg-slate-950
-                                           border border-slate-800
-                                           px-4
-                                           text-sm">
+                            <select class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm">
 
-                                <option>
-                                    Toutes les promotions
-                                </option>
-
-                                <option>
-                                    Sixième
-                                </option>
-
-                                <option>
-                                    Troième
-                                </option>
-
+                                <option>Toutes les promotions </option>
+                                <option value="">Actives</option>
+                                <option value="">Non actives</option>
                             </select>
 
                         </div>
@@ -261,7 +245,10 @@
                             <tr class="truncate">
 
                                 <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Classe
+                                    N°
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                    Filière
                                 </th>
 
                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -284,14 +271,6 @@
                                     Plus Âgé
                                 </th>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Moyenne
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Taux Réussite
-                                </th>
-
                                 <th class="px-6 py-4 text-center text-sm text-slate-400">
                                     Actions
                                 </th>
@@ -301,23 +280,29 @@
                         </thead>
 
                         {{-- BODY --}}
-                        <tbody class="divide-y divide-slate-800">
+                        <tbody class="divide-y divide-slate-800 text-slate-400">
 
-                            @foreach (['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'] as $classe)
-                                <tr class="hover:bg-slate-800/40
+                            @foreach ($filiars as $filiar)
+                                <tr
+                                    class="hover:bg-slate-800/40
                                        transition-colors duration-200">
+
+                                    <td class="px-6 py-5 truncate">{{ $loop->iteration }}</td>
 
                                     <td class="px-6 py-5 truncate">
 
-                                        <div>
+                                        <a wire:navigate
+                                            href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
+                                            class="text-slate-400 hover:underline underline-offset-2">
 
-                                            <h3 class="font-semibold text-lg">
+                                            <h3 class="font-semibold text-base">
 
-                                                {{ $classe }}
+                                                {{ $filiar->name }}
 
                                             </h3>
+                                            <p class="text-slate-500 font-mono">{{ $filiar->code }}</p>
 
-                                        </div>
+                                        </a>
 
                                     </td>
 
@@ -414,41 +399,12 @@
 
                                     </td>
 
-                                    {{-- AVG --}}
-                                    <td class="px-4 py-5 text-center truncate">
-
-                                        <span class="text-lg font-bold
-                                                 text-emerald-400">
-
-                                            12.84
-
-                                        </span>
-
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center truncate">
-
-                                        <span
-                                            class="px-3 py-1 rounded-full
-                                                 bg-emerald-500/10
-                                                 text-emerald-400
-                                                 text-xs">
-
-                                            78%
-
-                                        </span>
-
-                                    </td>
-
-                                    {{-- ACTIONS --}}
                                     <td class="px-6 py-5">
 
-                                        <div class="flex justify-end
-                                                flex-wrap
-                                                gap-2 truncate">
-
-                                            {{-- PROFIL --}}
-                                            <a href="{{ route('tenant.filiar.profil', ['filiar_slug' => 'f']) }}" class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
+                                        <div class="flex gap-2 truncate">
+                                            <a wire:navigate
+                                                href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
+                                                class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
                                                 Profil
                                             </a>
 
@@ -496,7 +452,8 @@
                 {{-- ===================================================== --}}
                 <div class="p-5 border-t border-slate-800">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 lg:flex-row
                                 lg:items-center
                                 lg:justify-between
@@ -516,7 +473,8 @@
                         {{-- EXPORTS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-emerald-500 hover:bg-emerald-600
                                            transition">
 
@@ -524,7 +482,8 @@
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-rose-500 hover:bg-rose-600
                                            transition">
 
