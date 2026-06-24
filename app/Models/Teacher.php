@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Jobs\JobToCreateYearlyAccessForTeacher;
+use App\Notifications\RealTimeNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -180,8 +182,9 @@ class Teacher extends Model
     /**
      * Check if the teacher has a valid access for a given school year.
      */
-    public function hasValidAccessForYear(int $schoolYearId): bool
+    public function hasValidAccessForYear(?int $schoolYearId = null): bool
     {
+        if(!$schoolYearId) $schoolYearId = SchoolYear::where('is_active', true)->where('is_closed', false)->first()?->id;
         return $this->yearlyAccesses()
             ->where('school_year_id', $schoolYearId)
             ->where('status', 'active')
@@ -217,10 +220,46 @@ class Teacher extends Model
     }
 
 
-    public function giveAccessForThisSchoolYear(?SchoolYear $school_year = null)
+    public function giveAccessForThisSchoolYear(?string $tenantId = null, ?SchoolYear $school_year = null, ?string $domain = null)
     {
         if(!$school_year) $school_year = SchoolYear::firstWhere('is_active', true);
 
-        
+        if($school_year) JobToCreateYearlyAccessForTeacher::dispatch($tenantId, $this->id, $school_year->id, $domain);
+
+        else return User::first()?->notify(new RealTimeNotification(
+                    userEmail: User::first()?->email,
+                    tenantId:  $this->tenantId,
+                    title:     "ECHEC DE LA CREATION D'ACCES ENSEIGNANT ",
+                    message:   "Aucune année scolaire active!",
+                    type:      'error',
+                ));
+
+    }
+    
+    
+    public function revokAccessForThisSchoolYear(?int $school_year_id)
+    {
+        if($this->hasValidAccessForYear($school_year_id)){
+
+            if(!$school_year_id) $school_year_id = SchoolYear::where('is_active', true)->where('is_closed', false)->first()?->id;
+
+                return $this->yearlyAccesses()
+                    ->where('school_year_id', $school_year_id)
+                    ->where('status', 'active')
+                    ?->delete();
+        }
+
+        else{
+
+            return User::first()?->notify(new RealTimeNotification(
+                    userEmail: User::first()?->email,
+                    tenantId:  $this->tenantId,
+                    title:     "ECHEC DE LA REVOCATION D'ACCES ENSEIGNANT ",
+                    message:   "Aucune année scolaire active!",
+                    type:      'error',
+                ));
+
+        } 
+
     }
 }

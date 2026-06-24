@@ -219,7 +219,7 @@ Route::middleware([
         Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
 
         //ESPACE ENSEIGNANT
-        Route::middleware(['role:enseignant', 'teacher.not.blocked'])->name('tenant.my.teacher.')->group(function () {
+        Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.my.teacher.')->group(function () {
             Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('space');
             Route::get('/mon-espace-enseignant/les-notes', TeacherClasseMarksViewer::class)->name('space.marks');
             Route::get('/mon-espace-enseignant/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('space.marks.manager');

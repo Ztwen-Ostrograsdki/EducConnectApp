@@ -74,7 +74,30 @@ class TenantLogin extends Component
 
             session()->regenerate();
 
-            $logged_count = Auth::guard('tenant')->user()->logged_count;
+            /** @noinspection PhpUndefinedMethodInspection */
+            $user = auth('tenant')->user();
+
+            $logged_count = $user->logged_count;
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            if(!$user->hasRole('directeur')){
+
+                if(!$user->teacher?->hasValidAccessForYear()){
+
+                    $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
+
+                    Auth::guard('tenant')->logout();
+
+                    return;
+                }
+
+
+                //Ajouter pour les comptes parents ici
+
+
+
+                //Ajouter pour les comptes élèves ici
+            }
 
 
             if($logged_count < 1){
@@ -84,12 +107,12 @@ class TenantLogin extends Component
             }
             else{
 
-                Auth::guard('tenant')->user()->update(['logged_count' => $logged_count + 1]);
+                
+                $user->update(['logged_count' => $logged_count + 1]);
 
-                if(Auth::guard('tenant')->user()->hasRole('directeur')){
+                if($user->hasRole('directeur')){
 
                     return $this->redirectRoute('tenant.dashboard');
-
                 }
                 else{
 

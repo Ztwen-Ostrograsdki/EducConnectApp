@@ -8,8 +8,6 @@ use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
-use App\Models\Teacher;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -23,6 +21,7 @@ use Livewire\Component;
 class CreateClasseComponent extends Component
 {
     public int    $school_year_id = 0;
+    public string    $school_year ='';
     public int    $promotion_id   = 0;
     public ?int   $filiar_id      = null;
     public ?int   $serial_id      = null;
@@ -30,7 +29,6 @@ class CreateClasseComponent extends Component
     public string $code           = '';
     public string $level          = 'secondaire';
     public int    $effectif_max   = 50;
-    public ?int   $principal_id   = null;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
 
@@ -43,6 +41,8 @@ class CreateClasseComponent extends Component
         $active = SchoolYear::current()->first();
         if ($active) {
             $this->school_year_id = $active->id;
+
+            $this->school_year = $active->slug;
         }
     }
 
@@ -72,52 +72,7 @@ class CreateClasseComponent extends Component
         return Serial::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
     }
 
-    #[Computed]
-    public function teachers()
-    {
-        if (strlen($this->teacherSearch) < 2) {
-            return collect();
-        }
-
-        $yearId = $this->school_year_id;
-
-        return Teacher::query()
-                ->select('teachers.*')
-                ->join('users', 'users.id', '=', 'teachers.user_id')
-                ->with(['user'])
-                ->withoutTrashed()
-                ->when($this->teacherSearch, function (Builder $query) {
-                    $query->whereHas('user', function ($query) {
-                        $query->where('email', 'like', "%{$this->teacherSearch}%");
-                        $query->orwhere('name', 'like', "%{$this->teacherSearch}%");
-                        $query->orwhere('prenames', 'like', "%{$this->teacherSearch}%");
-                        $query->orwhere('contacts', 'like', "%{$this->teacherSearch}%");
-                        $query->orwhere('birth_date', 'like', "%{$this->teacherSearch}%");
-                        $query->orwhere('birth_place', 'like', "%{$this->teacherSearch}%");
-                    });
-                })
-                ->orwhere('teachers.identifiant', 'like', "%{$this->teacherSearch}%")
-                ->get()
-                ->filter(fn(Teacher $t) => $t->hasValidAccessForYear(
-                    $yearId
-                ))
-                ->take(10)
-                ->values();
-    }
-
     // ─── Actions ──────────────────────────────────────────────────────
-
-    public function selectTeacher(int $id, string $name): void
-    {
-        $this->principal_id  = $id;
-        $this->teacherSearch = $name;
-    }
-
-    public function clearTeacher(): void
-    {
-        $this->principal_id  = null;
-        $this->teacherSearch = '';
-    }
 
     public function save(): void
     {
@@ -130,13 +85,11 @@ class CreateClasseComponent extends Component
                 'name'           => [
                     'required', 'string', 'max:100',
                     Rule::unique('classes', 'name')
-                        ->where('school_year_id', $this->school_year_id)
-                        ->whereNull('deleted_at'),
+                        ->where('school_year_id', $this->school_year_id),
                 ],
                 'code'         => 'nullable|string|max:30',
                 'level'        => 'required|in:primaire,secondaire,superieur',
                 'effectif_max' => 'required|integer|min:1|max:200',
-                'principal_id' => 'nullable|exists:teachers,id',
                 'is_active'    => 'boolean',
                 'is_locked'    => 'boolean',
             ]);
@@ -151,7 +104,6 @@ class CreateClasseComponent extends Component
                 'code'           => $this->code ?: null,
                 'level'          => $this->level,
                 'effectif_max'   => $this->effectif_max,
-                'principal_id'   => $this->principal_id,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,
             ]);
@@ -174,6 +126,76 @@ class CreateClasseComponent extends Component
             );
         }
 
+    }
+
+
+    public function updatedPromotionId($promotion_id)
+    {
+        $this->name = $this->getClasseName();
+    }
+
+    public function updatedFiliarId($filiar_id)
+    {
+        $this->name = $this->getClasseName();
+    }
+    public function updatedSeriald($serial_id)
+    {
+        $this->name = $this->getClasseName();
+    }
+
+
+    public function getClasseName() : string
+    {
+        $name = '';
+
+
+        if($this->promotion_id){
+
+            $promotion = Promotion::find($this->promotion_id)?->name;
+
+            $name =  $promotion . '-';
+
+            if(in_array(Str::lower($promotion), config('app.promotions_without_filiars_series'))){
+
+                $name = $promotion;
+            }
+
+        }
+
+        if(!in_array(Str::lower($promotion), config('app.promotions_without_filiars_series'))){
+
+            if($this->promotion_id && $this->serial_id){
+
+                $serial = Serial::find($this->serial_id)?->code;
+
+                $name .= '' . Str::upper($serial);
+
+            }
+            elseif($this->promotion_id && $this->filiar_id){
+
+                $filiar = Filiar::find($this->filiar_id)?->code;
+
+                $name .=  Str::upper($filiar);
+
+            }
+        }
+
+        $last_classe_with_same_name = Classe::where('school_year_id', $this->school_year_id)->where('name', str_replace('-', '', $name))->count();
+
+        if($last_classe_with_same_name){
+
+            $name .= $last_classe_with_same_name + 1;
+        }
+
+        return $name;
+    }
+
+    public function updatedSchoolYearId(?int $schoolYearId)
+    {
+        if($schoolYearId){
+
+            $this->school_year = SchoolYear::find($schoolYearId)?->slug;
+        }
     }
 
 

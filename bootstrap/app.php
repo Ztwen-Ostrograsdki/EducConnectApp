@@ -5,6 +5,7 @@ use App\Console\Commands\DropAllTenantsCommand;
 use App\Console\Commands\InitAdminCentralCommand;
 use App\Console\Commands\RefreshEducCommand;
 use App\Console\Commands\SyncTenantStatistics;
+use App\Http\Middleware\CheckIfTeacherHasValidAccessForActiveSchoolYear;
 use App\Http\Middleware\CheckIfTenantDomainNotBlocked;
 use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
@@ -66,6 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher.not.blocked' => EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
+            'has.valid.access' => CheckIfTeacherHasValidAccessForActiveSchoolYear::class,
         ]);
 
     })

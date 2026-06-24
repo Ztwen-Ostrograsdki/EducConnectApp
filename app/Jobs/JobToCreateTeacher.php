@@ -55,10 +55,8 @@ class JobToCreateTeacher implements ShouldQueue
 
             tenancy()->initialize($this->tenantId);
 
-            // Vide le cache Spatie immédiatement après init de la tenancy
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-            // Variable locale — pas de propriété publique
             $task = ImportTask::findOrFail($this->taskId);
 
             if ($this->batch()?->cancelled()) {
@@ -76,8 +74,14 @@ class JobToCreateTeacher implements ShouldQueue
 
             $director = User::first();
 
+            if(!$director){
 
-            // Anti-doublon
+                $this->fail("COMPTE DIRECTEUR INEXISTANT : IMPOSSIBLE DE CREER UN UTILISATEUR AVANT LE COMPTE DIRECTEUR");
+
+                return;
+
+            }
+
 
             if(empty($payload['email'])){
 
@@ -116,19 +120,15 @@ class JobToCreateTeacher implements ShouldQueue
                 return;
             }
 
-            // 1. Rôle en premier
             $role = Role::firstOrCreate([
                 'name'       => 'enseignant',
                 'guard_name' => 'tenant',
             ]);
 
-            // 2. Vide le cache après firstOrCreate
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-            // 3. Recharge depuis la DB pour être sûr
             $role = $role->fresh();
 
-            // 4. Création du user
             $adresse = ($payload['city'] ?? null) && ($payload['department'] ?? null)
                 ? $payload['city'] . ' (' . $payload['department'] . ')'
                 : null;
@@ -199,8 +199,6 @@ class JobToCreateTeacher implements ShouldQueue
                 return;
             }
 
-            // 5. Assignation via objet directement
-            
             $task->update(['status' => 'success']);
 
             $can_sent = randomNumber(1, 10);

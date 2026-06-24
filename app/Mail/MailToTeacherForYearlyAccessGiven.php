@@ -10,16 +10,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MailToCreateYearlyAccessForTeacher extends Mailable
+class MailToTeacherForYearlyAccessGiven extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(
+        public string $school_year,
+        public $html,
+    )
     {
-        //
+        
+    }
+
+    public function build()
+    {
+        return $this->subject("Accès accordé pour le compte de l'année scolaire $this->school_year")
+                    ->html($this->html);
     }
 
     /**
@@ -28,17 +37,7 @@ class MailToCreateYearlyAccessForTeacher extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Mail To Create Yearly Access For Teacher',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
+            subject: "Accès accordé pour le compte de l'année scolaire $this->school_year",
         );
     }
 

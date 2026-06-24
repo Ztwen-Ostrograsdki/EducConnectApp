@@ -185,6 +185,17 @@ return [
         'réligion' => 'réligion', 
     ],
 
+    'promotions_without_filiars_series' => [
+        'sixieme',
+        'sixième',
+        'cinquième',
+        'cinquieme',
+        'quatrieme',
+        'quatrieme',
+        'troisième',
+        'troisieme',
+    ],
+
     
 
 

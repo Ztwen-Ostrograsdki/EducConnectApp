@@ -51,13 +51,15 @@ trait TeachersActions{
 
     public $showConfirmGivingAccessToTeacher = false;
 
+    public $showConfirmRevokTeacherAccess = false;
+
 
     public ?string $targetedTeacherUserUuid = null;
 
 
 	public function closeModal()
     {
-        $this->reset('showConfirmDeleteTeacher', 'showConfirmTeacherRestorationModal', 'showConfirmForceDeleteTeacher', 'showConfirmTeacherLock', 'showConfirmDeleteTeachers', 'showConfirmTeachersRestorationModal', 'showConfirmForceDeleteTeachers', 'showConfirmTeachersLock', 'targetedTeacherUserUuid', 'showConfirmTeachersUnLock', 'showConfirmGivingAccessToTeacher');
+        $this->reset('showConfirmDeleteTeacher', 'showConfirmTeacherRestorationModal', 'showConfirmForceDeleteTeacher', 'showConfirmTeacherLock', 'showConfirmDeleteTeachers', 'showConfirmTeachersRestorationModal', 'showConfirmForceDeleteTeachers', 'showConfirmTeachersLock', 'targetedTeacherUserUuid', 'showConfirmTeachersUnLock', 'showConfirmGivingAccessToTeacher', 'showConfirmRevokTeacherAccess');
     }
 
     public function giveAccessForThisSchoolYear(string $userUuid): void
@@ -78,7 +80,60 @@ trait TeachersActions{
 
             if($teacher){
 
-                $teacher->giveAccessForThisSchoolYear();
+                $domain = request()->getSchemeAndHttpHost();
+
+                $teacher->giveAccessForThisSchoolYear(tenant('id'), null, $domain);
+
+                $this->notification()->send([
+                    'icon'        => 'success',
+                    'title'       => 'Enseignant bloquée',
+                    'description' => "L'Enseignant a été bloqué!",
+                ]);
+            }
+            else{
+                $this->notification()->send([
+                    'icon'        => 'warning',
+                    'title'       => "Aucun enseignant trouvé",
+                    'description' => "Aucun enseignant n'est lié à cet utilisateur!",
+                ]);
+            }
+
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'utilisateur introuvable',
+                'description' => "L'utilisateur n'existe pas dans la base de données",
+            ]);
+            
+        }
+        $this->closeModal();
+        
+    }
+
+
+    public function revokTeacherAccessForThisSchoolYear(string $userUuid): void
+    {
+        $this->showConfirmRevokTeacherAccess = true;
+
+        $this->targetedTeacherUserUuid = $userUuid;
+
+    }
+
+    public function ConfirmToRevokTeacherAccessForThisSchoolYear(): void
+    {
+       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
+
+        if($user){
+
+            $teacher = $user->teacher;
+
+            if($teacher){
+
+                $domain = request()->getSchemeAndHttpHost();
+
+                $teacher->revokAccessForThisSchoolYear(tenant('id'), null, $domain);
 
                 $this->notification()->send([
                     'icon'        => 'success',
