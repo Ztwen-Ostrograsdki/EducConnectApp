@@ -2,7 +2,7 @@
     @if ($schoolYears)
         <select class="year-select" wire:model.live="selectedYear">
             @foreach ($schoolYears as $year)
-                <option value="{{ $year }}">{{ $year }}</option>
+                <option :selected='{{ $year->is_active }}' value="{{ $year->slug }}">{{ $year->slug }}</option>
             @endforeach
         </select>
     @else

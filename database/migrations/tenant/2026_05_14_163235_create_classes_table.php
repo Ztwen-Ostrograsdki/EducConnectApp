@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignId('promotion_id')->constrained('promotions');
             $table->foreignId('filiar_id')->nullable()->constrained('filiars')->nullOnDelete();
             $table->foreignId('serial_id')->nullable()->constrained('serials')->nullOnDelete();
-            $table->string('name');                                      // ex: Terminale BTP 2
+            $table->string('name'); 
+            $table->string('slug');                                     // ex: Terminale BTP 2
             $table->string('code')->nullable();                         // ex: TLE-BTP-2
             $table->enum('level', ['primaire', 'secondaire', 'superieur']);
             $table->integer('effectif_max')->default(50);
@@ -36,6 +37,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('students')
                 ->nullOnDelete();
+            $table->string('localization')->nullable()->default(null);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_locked')->default(false); // on pourra empêcher l'accès aux enseignants momentanement
             $table->json('locked_for_teachers')->nullable(); // un tableau des id des enseignant sur lequels on pourra empêcher l'accès à certains enseignants momentanement

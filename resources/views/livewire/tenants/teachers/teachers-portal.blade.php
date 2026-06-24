@@ -667,7 +667,7 @@
                                                             :show="$showConfirmGivingAccessToTeacher"
                                                             title="Accorder l'accès à l'enseignant {{ $teacher->getFullName() }} pour cette nouvelle année scolaire {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}"
                                                             confirm-text="Oui, enroller" cancel-text="Annuler"
-                                                            confirm-action="showConfirmGivingAccessToTeacher"
+                                                            confirm-action="ConfirmGivingAccessToTeacher"
                                                             close-action="closeModal">
                                                             <p>Cette action entrainera : </p>
                                                             <ul class="text-orange-600 text-xs">

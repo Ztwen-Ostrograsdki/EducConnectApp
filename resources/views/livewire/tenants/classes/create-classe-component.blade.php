@@ -71,42 +71,44 @@
             </div>
             @if ($promotion_id)
 
-                <div wire:loading.remove wire:target='promotion_id' class="transition-all">
-                    <label class="block text-xs font-medium text-slate-400 mb-1.5">
-                        Filière <span class="text-slate-600">(optionnel)</span>
-                    </label>
-                    <select wire:model.live="filiar_id"
-                        class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
-                        <option value="">— Aucune —</option>
-                        @foreach ($this->filiars as $filiar)
-                            <option value="{{ $filiar->id }}">
-                                {{ $filiar->name }}{{ $filiar->code ? ' (' . $filiar->code . ')' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('filiar_id')
-                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-                    @enderror
-                </div>
+                @if (tenancy()->tenant?->promotionCanHasFiliarOrSerial($promotion_id))
 
-                <div wire:loading.remove wire:target='promotion_id' class="transition-all">
-                    <label class="block text-xs font-medium text-slate-400 mb-1.5">
-                        Série <span class="text-slate-600">(optionnel)</span>
-                    </label>
-                    <select wire:model.live="serial_id"
-                        class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
-                        <option value="">— Aucune —</option>
-                        @foreach ($this->serials as $serial)
-                            <option value="{{ $serial->id }}">
-                                {{ $serial->name }}{{ $serial->code ? ' (' . $serial->code . ')' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('serial_id')
-                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <div wire:loading.remove wire:target='promotion_id' class="transition-all">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">
+                            Filière <span class="text-slate-600">(optionnel)</span>
+                        </label>
+                        <select wire:model.live="filiar_id"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                            <option value="">— Aucune —</option>
+                            @foreach ($this->filiars as $filiar)
+                                <option value="{{ $filiar->id }}">
+                                    {{ $filiar->name }}{{ $filiar->code ? ' (' . $filiar->code . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('filiar_id')
+                            <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                        @enderror
+                    </div>
 
+                    <div wire:loading.remove wire:target='promotion_id' class="transition-all">
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">
+                            Série <span class="text-slate-600">(optionnel)</span>
+                        </label>
+                        <select wire:model.live="serial_id"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                            <option value="">— Aucune —</option>
+                            @foreach ($this->serials as $serial)
+                                <option value="{{ $serial->id }}">
+                                    {{ $serial->name }}{{ $serial->code ? ' (' . $serial->code . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('serial_id')
+                            <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endif
             @endif
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">

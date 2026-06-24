@@ -11,9 +11,12 @@
                 <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
 
                     {{-- ICON --}}
-                    <div class="shrink-0 self-start">
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400"></svg>
+                    <div class="shrink-0 self-start font-mono">
+                        <div
+                            class="w-32 h-32 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                            <span class="text-indigo-400">
+                                {{ $classe->code }}
+                            </span>
                         </div>
                     </div>
 
@@ -21,21 +24,29 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight break-words">
-                                1ère F2 — Génie Électrique
+                                {{ $classe->name }}
                             </h1>
-                            <span class="shrink-0 px-3 py-1 rounded-full text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                                Active
-                            </span>
+                            @if ($classe->is_active)
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                                    Active
+                                </span>
+                            @else
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-red-500/10 border border-red-500/20 text-red-400">
+                                    Fermée
+                                </span>
+                            @endif
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
-                            Salle spécialisée en électronique industrielle, automatismes et électrotechnique.
+                            {{ $classe->speciality() }}
                         </p>
 
                         {{-- META --}}
                         <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                             <div class="break-words">👨‍🏫 M. HOUNDEKINDO</div>
-                            <div class="break-words">📍 Bloc B — Salle 14</div>
-                            <div class="break-words">🕒 2025-2026</div>
+                            <div class="break-words">📍 {{ $classe->localization ?? 'Non précisée' }}</div>
+                            <div class="break-words">🕒 {{ $classe->schoolYear->slug }}</div>
                         </div>
                     </div>
 
@@ -43,10 +54,12 @@
 
                 {{-- ACTIONS --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-                    <button class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
+                    <button
+                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
                         Ajouter Élève
                     </button>
-                    <button class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
+                    <button
+                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
                         Modifier Classe
                     </button>
                 </div>
@@ -177,7 +190,8 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
                                     {{-- SEMESTER --}}
-                                    <select wire:model.live="period_type_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                                    <select wire:model.live="period_type_selected"
+                                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                                         <option value="">Sélectionner le semestre|trimestre</option>
                                         @foreach (range(1, 2) as $i)
                                             <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
@@ -188,19 +202,23 @@
                                     </select>
 
                                     {{-- PUPILS --}}
-                                    <select wire:model.live="student_uuid_selected" class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                                    <select wire:model.live="student_uuid_selected"
+                                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                                         <option value="">Sélectionner l'apprenant</option>
                                         @foreach (range(1, 10) as $i)
-                                            <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}</option>
+                                            <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc
+                                                {{ $i }}</option>
                                         @endforeach
                                     </select>
 
                                     {{-- ACTIONS --}}
                                     @if ($student_uuid_selected && $period_type_selected)
-                                        <button wire:click='reloadStudentBulletin' class="h-12 px-5 rounded-2xl bg-sky-800 border border-sky-700 hover:bg-sky-700 transition-all text-sm cursor-pointer">
+                                        <button wire:click='reloadStudentBulletin'
+                                            class="h-12 px-5 rounded-2xl bg-sky-800 border border-sky-700 hover:bg-sky-700 transition-all text-sm cursor-pointer">
                                             Charger
                                         </button>
-                                        <button wire:click='resetBulletinSelections' class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm cursor-pointer">
+                                        <button wire:click='resetBulletinSelections'
+                                            class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm cursor-pointer">
                                             Réinitialiser
                                         </button>
                                     @endif
@@ -219,3 +237,4 @@
     </section>
 
 </div>
+

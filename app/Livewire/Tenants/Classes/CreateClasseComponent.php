@@ -14,12 +14,15 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-
+use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Créer nouvelle classe")]
 class CreateClasseComponent extends Component
 {
+    use WireUiActions;
+
+
     public int    $school_year_id = 0;
     public string    $school_year ='';
     public int    $promotion_id   = 0;
@@ -28,7 +31,7 @@ class CreateClasseComponent extends Component
     public string $name           = '';
     public string $code           = '';
     public string $level          = 'secondaire';
-    public int    $effectif_max   = 50;
+    public int    $effectif_max   = 40;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
 
@@ -94,10 +97,12 @@ class CreateClasseComponent extends Component
                 'is_locked'    => 'boolean',
             ]);
 
+
             $classe = Classe::create([
                 'uuid'           => (string) Str::uuid(),
                 'school_year_id' => $this->school_year_id,
                 'promotion_id'   => $this->promotion_id,
+                'slug'           => Str::slug($this->name),
                 'filiar_id'      => $this->filiar_id,
                 'serial_id'      => $this->serial_id,
                 'name'           => $this->name,
@@ -131,38 +136,44 @@ class CreateClasseComponent extends Component
 
     public function updatedPromotionId($promotion_id)
     {
-        $this->name = $this->getClasseName();
+
+        $this->getClasseName();
     }
 
     public function updatedFiliarId($filiar_id)
     {
-        $this->name = $this->getClasseName();
+        $this->getClasseName();
     }
     public function updatedSeriald($serial_id)
     {
-        $this->name = $this->getClasseName();
+        $this->getClasseName();
     }
 
 
-    public function getClasseName() : string
+    public function getClasseName()
     {
         $name = '';
+        $serial = '';
+        $filiar = '';
+        $suffix = null;
+
+        $tenant = tenancy()->tenant;
 
 
         if($this->promotion_id){
 
-            $promotion = Promotion::find($this->promotion_id)?->name;
+            $promotion_name = Promotion::find($this->promotion_id)?->name;
 
-            $name =  $promotion . '-';
+            $name =  $promotion_name . '-';
 
-            if(in_array(Str::lower($promotion), config('app.promotions_without_filiars_series'))){
+            if(!$tenant->promotionCanHasFiliarOrSerial($this->promotion_id)){
 
-                $name = $promotion;
+                $name = $promotion_name;
             }
 
         }
 
-        if(!in_array(Str::lower($promotion), config('app.promotions_without_filiars_series'))){
+        if($tenant->promotionCanHasFiliarOrSerial($this->promotion_id)){
 
             if($this->promotion_id && $this->serial_id){
 
@@ -178,16 +189,15 @@ class CreateClasseComponent extends Component
                 $name .=  Str::upper($filiar);
 
             }
+
+            $suffix = $serial ? $serial : $filiar;
         }
 
-        $last_classe_with_same_name = Classe::where('school_year_id', $this->school_year_id)->where('name', str_replace('-', '', $name))->count();
+        
 
-        if($last_classe_with_same_name){
+        $this->code = $tenant->classeCodeGenerator($this->school_year_id, $this->promotion_id, $name, $suffix);
 
-            $name .= $last_classe_with_same_name + 1;
-        }
-
-        return $name;
+        $this->name = $tenant->classeNameGenerator($this->school_year_id, $this->promotion_id, $name);
     }
 
     public function updatedSchoolYearId(?int $schoolYearId)

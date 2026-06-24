@@ -23,12 +23,14 @@
             {{-- Footer --}}
             <div class="flex justify-end gap-3 p-6">
 
-                <button type="button" wire:click="{{ $closeAction }}" class="px-4 py-2 text-black bg-gray-500 border rounded-lg hover:bg-gray-200">
+                <button type="button" wire:click="{{ $closeAction }}"
+                    class="px-4 py-2 text-black bg-gray-500 border rounded-lg hover:bg-gray-200">
 
                     {{ $cancelText }}
                 </button>
 
-                <button type="button" wire:click="{{ $confirmAction }}" class="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-700">
+                <button type="button" wire:click="{{ $confirmAction }}"
+                    class="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-700">
 
                     {{ $confirmText }}
                 </button>

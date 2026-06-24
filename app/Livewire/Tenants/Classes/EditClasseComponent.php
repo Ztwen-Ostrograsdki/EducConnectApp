@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Tenants\Classes;
 
+use App\Events\DataUpdatedEvent;
 use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Teacher;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -28,6 +30,7 @@ class EditClasseComponent extends Component
     public ?int   $filiar_id      = null;
     public ?int   $serial_id      = null;
     public string $name           = '';
+    public string $school_year    = '';
     public string $code           = '';
     public string $level          = 'secondaire';
     public int    $effectif_max   = 50;
@@ -61,6 +64,7 @@ class EditClasseComponent extends Component
         $this->principal_id    = $classe->principal_id;
         $this->is_active       = $classe->is_active;
         $this->is_locked       = $classe->is_locked;
+        $this->school_year     = $classe->school_year->slug;
 
         // Pré-remplir le search avec le nom du prof actuel
         if ($classe->principal_id && $classe->principal) {
@@ -73,7 +77,7 @@ class EditClasseComponent extends Component
     #[Computed]
     public function schoolYears()
     {
-        return SchoolYear::orderByDesc('start')->get(['id', 'slug', 'is_active']);
+        return SchoolYear::orderByDesc('min_year')->get(['id', 'slug', 'is_active']);
     }
 
     #[Computed]
@@ -158,6 +162,7 @@ class EditClasseComponent extends Component
                 'filiar_id'      => $this->filiar_id,
                 'serial_id'      => $this->serial_id,
                 'name'           => $this->name,
+                'slug'           => Str::slug($this->name),
                 'code'           => $this->code ?: null,
                 'level'          => $this->level,
                 'effectif_max'   => $this->effectif_max,
@@ -174,6 +179,8 @@ class EditClasseComponent extends Component
                 );
 
                 $this->redirect(route('tenant.classe.profil', ['classe_slug' => $this->classe_slug]), navigate: true); 
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
             }
         } catch (\Throwable $th) {
             $this->notification()->error(
@@ -182,6 +189,81 @@ class EditClasseComponent extends Component
             );
         }
 
+    }
+
+
+    public function updatedPromotionId($promotion_id)
+    {
+
+        $this->getClasseName();
+    }
+
+    public function updatedFiliarId($filiar_id)
+    {
+        $this->getClasseName();
+    }
+    public function updatedSeriald($serial_id)
+    {
+        $this->getClasseName();
+    }
+
+
+    public function getClasseName()
+    {
+        $name = '';
+        $serial = '';
+        $filiar = '';
+        $suffix = null;
+
+        $tenant = tenancy()->tenant;
+
+
+        if($this->promotion_id){
+
+            $promotion_name = Promotion::find($this->promotion_id)?->name;
+
+            $name =  $promotion_name . '-';
+
+            if(!$tenant->promotionCanHasFiliarOrSerial($this->promotion_id)){
+
+                $name = $promotion_name;
+            }
+
+        }
+
+        if($tenant->promotionCanHasFiliarOrSerial($this->promotion_id)){
+
+            if($this->promotion_id && $this->serial_id){
+
+                $serial = Serial::find($this->serial_id)?->code;
+
+                $name .= '' . Str::upper($serial);
+
+            }
+            elseif($this->promotion_id && $this->filiar_id){
+
+                $filiar = Filiar::find($this->filiar_id)?->code;
+
+                $name .=  Str::upper($filiar);
+
+            }
+
+            $suffix = $serial ? $serial : $filiar;
+        }
+
+        
+
+        $this->code = $tenant->classeCodeGenerator($this->school_year_id, $this->promotion_id, $name, $suffix);
+
+        $this->name = $tenant->classeNameGenerator($this->school_year_id, $this->promotion_id, $name);
+    }
+
+    public function updatedSchoolYearId(?int $schoolYearId)
+    {
+        if($schoolYearId){
+
+            $this->school_year = SchoolYear::find($schoolYearId)?->slug;
+        }
     }
 
 

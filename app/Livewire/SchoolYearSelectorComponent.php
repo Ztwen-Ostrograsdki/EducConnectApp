@@ -57,7 +57,7 @@ class SchoolYearSelectorComponent extends Component
         }
         if(Auth::guard('tenant')->user()){
 
-            $schoolYears = SchoolYear::orderBy('min_year')->whereNotNull('slug')->pluck('slug')->toArray();
+            $schoolYears = SchoolYear::orderBy('min_year')->whereNotNull('slug')->get();
             
         }
 

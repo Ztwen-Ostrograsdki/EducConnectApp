@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Classes;
 
+use App\Models\Classe;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -13,11 +14,13 @@ class ClasseProfil extends Component
 {
     public $section = 'classe-home-page';
 
-    public $classroom = 'TERMINALE';
+    public $classroom = '';
 
     public $counter = 0;
 
     public ?string $student_uuid_selected;
+
+    public ?Classe $classe;
 
     public string $classe_slug;
 
@@ -25,7 +28,18 @@ class ClasseProfil extends Component
 
     public function mount(string $classe_slug)
     {
-        $this->classe_slug = $classe_slug;
+        if(!$classe_slug) return abort(404);
+
+        $this->classe_slug  = $classe_slug;
+
+        $classe = Classe::whereSlug($classe_slug)?->first();
+
+        if(!$classe) return abort(404);
+
+        $this->classe       = $classe;
+
+        $this->classroom       = $classe->name;
+
     }
 
     #[On('DataUpdatedEventLiveEvent')]

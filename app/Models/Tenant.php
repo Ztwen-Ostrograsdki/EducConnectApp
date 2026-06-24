@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\TenantForceDeleted;
+use App\Helpers\ClasseHelpers;
 use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\RequestToCreateNewTenant;
@@ -324,6 +325,70 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
         return $classes;
     }
+
+
+    public function promotionCanHasFiliarOrSerial(int $promotion_id) : bool
+    {
+        $promotion_name = Promotion::find($promotion_id)?->name;
+
+        if($promotion_name){
+
+            if(in_array(Str::lower($promotion_name), config('app.promotions_without_filiars_series'))) return false;
+
+            else return true;
+
+        }
+
+        return false;
+    }
+    
+    public function classeNameGenerator(?int $school_year_id, int $promotion_id, string $name) : string
+    {
+        $promotion_name = Promotion::find($promotion_id)?->name;
+
+        if($promotion_name){
+
+            $last_classe_with_same_name = Classe::where('school_year_id', $school_year_id)->where('name', $name)->count();
+
+            if($last_classe_with_same_name){
+
+                $name .= '-' . $last_classe_with_same_name + 1;
+            }
+
+        }
+
+        return $name;
+    }
+
+    public function classeCodeGenerator(?int $school_year_id, int $promotion_id, string $first_name, ?string $suffix = '') : string
+    {
+        $promotion_name = Promotion::find($promotion_id)?->name;
+
+        $occurence = null;
+
+        if($promotion_name){
+
+            $name = $this->classeNameGenerator($school_year_id, $promotion_id, $first_name);
+
+            $last_classe_with_same_name = Classe::where('school_year_id', $school_year_id)->where('name', $first_name)->count();
+
+            if($last_classe_with_same_name){
+
+                $occurence = $last_classe_with_same_name + 1;
+            }
+
+            if($suffix) $suffix = '-' . $suffix;
+
+            if($occurence) $occurence = '-' . $occurence;
+
+            return Str::upper(ClasseHelpers::getClasseNameFormatted($name)['code']) . '' . $suffix . '' . $occurence ?? Str::initials($name, true);
+
+        }
+
+        return Str::initials($first_name, true);
+    }
+
+
 
 
 

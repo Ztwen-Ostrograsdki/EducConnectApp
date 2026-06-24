@@ -25,6 +25,8 @@ class Classe extends Model
         'serial_id',
         'name',
         'code',
+        'slug',
+        'localization',
         'level',
         'effectif_max',
         'principal_id',
@@ -45,6 +47,11 @@ class Classe extends Model
     // ─── Relations ────────────────────────────────────────────────────
 
     public function schoolYear(): BelongsTo
+    {
+        return $this->belongsTo(SchoolYear::class, 'school_year_id');
+    }
+    
+    public function school_year(): BelongsTo
     {
         return $this->belongsTo(SchoolYear::class, 'school_year_id');
     }
@@ -211,5 +218,20 @@ class Classe extends Model
     public function isFull(): bool
     {
         return $this->effectif() >= $this->effectif_max;
+    }
+
+    public function speciality()
+    {
+        if($this->filiar){
+
+            return $this->filiar->name;
+
+        }
+        elseif($this->serial){
+
+            return $this->serial->name;
+        }
+
+        return $this->promotion->name;
     }
 }
