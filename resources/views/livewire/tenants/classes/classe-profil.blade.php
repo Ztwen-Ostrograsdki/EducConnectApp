@@ -54,10 +54,11 @@
 
                 {{-- ACTIONS --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-                    <button
+                    <a wire:navigate
+                        href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"
                         class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
                         Ajouter Élève
-                    </button>
+                    </a>
                     <button
                         class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
                         Modifier Classe
@@ -197,7 +198,8 @@
                                             <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
                                         @endforeach
                                         @foreach (range(1, 3) as $i)
-                                            <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                                            <option value="Trimestre {{ $i }}">Trimestre {{ $i }}
+                                            </option>
                                         @endforeach
                                     </select>
 

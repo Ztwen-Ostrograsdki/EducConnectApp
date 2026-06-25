@@ -10,6 +10,7 @@ use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Classes\CreateClasseComponent;
 use App\Livewire\Tenants\Classes\EditClasseComponent;
+use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
@@ -79,7 +80,7 @@ Route::middleware([
 
     Route::get('/mot-de-passe-oublie/{token?}/{email?}', PasswordForgotPage::class)->middleware('guest:tenant')->name('tenant.password.forgot');
 
-    Route::get('/password-reset/{?token}/{?email}', ResetPasswordPage::class)->middleware('guest:tenant')->name('tenant.password.reset');
+    Route::get('/password-reset/{token?}/{email?}', ResetPasswordPage::class)->middleware('guest:tenant')->name('tenant.password.reset');
 
     Route::get('/', HomePage::class)->name('tenants.home');
 
@@ -107,10 +108,13 @@ Route::middleware([
 
             Route::get('/annees-scolaires/details-annee-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
 
-
             Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
 
             Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
+
+
+
+
 
             // PROMOTIONS
             Route::get('/promotions/promotions', PromotionsPortal::class)->name('promotions.portal');
@@ -121,6 +125,10 @@ Route::middleware([
 
             Route::get('/promotions/promotions/nouvelle-promotion', CreatePromotionComponent::class)->name('promotion.create');
 
+
+
+
+
             // LES MATIERES
             Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
@@ -130,6 +138,8 @@ Route::middleware([
             Route::get('/matieres/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
 
 
+
+
             // FILIRES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
 
@@ -137,6 +147,10 @@ Route::middleware([
 
             Route::get('/filieres/nouvelle-filiere', CreateFiliarComponent::class)->name('filiar.create');
             Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
+
+
+
+
 
             // SERIES
             Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
@@ -148,6 +162,9 @@ Route::middleware([
             Route::get('/series/{serial_slug}/edition', ManageSerialComponent::class)->name('serial.edit');
 
 
+
+
+
             // LES CLASSES
             Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
@@ -156,6 +173,12 @@ Route::middleware([
             Route::get('/classes/nouvelle-classe', CreateClasseComponent::class)->name('classes.create');
 
             Route::get('/classes/{classe_slug}/edition', EditClasseComponent::class)->name('classe.edit');
+
+            Route::get('/classes/migration-des-apprenants/{classe_slug?}', MigrateStudentsToClassesComponent::class)->name('classe.migrate.students');
+
+
+
+
 
             // LES ENSEIGNANTS
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
