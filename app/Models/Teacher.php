@@ -70,6 +70,14 @@ class Teacher extends Model
     }
 
     /**
+     * Get all yearly subjects for this teacher.
+     */
+    public function yearlySubjects(): HasMany
+    {
+        return $this->hasMany(TeacherYearlySubject::class, 'teacher_id');
+    }
+
+    /**
      * Get all yearly accesses for this teacher.
      */
     public function yearlyAccesses(): HasMany
@@ -109,6 +117,14 @@ class Teacher extends Model
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
         return $this->classeSubjects()->where('school_year_id', $school_year_id)->where('classe_id', $classe_id)->get();
+    }
+
+
+    public function getYearlySubjects(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return $this->yearlySubjects()->where('school_year_id', $school_year_id)->get();
     }
 
     /**
@@ -220,13 +236,23 @@ class Teacher extends Model
 
     public function getFullName(bool $reverse = false)
     {
-        return $this->user->getFullName($reverse);
+        return $this->user?->getFullName($reverse);
+    }
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
+    {
+        return $this->user?->getUserNamePrefix($withFullName, $reverseName);
+    }
+
+    public function greating(bool $withFullName = true, bool $reverse = false)
+    {
+        return $this->user?->greating($withFullName, $reverse);
     }
 
 
     public function profil_photo_url() 
     {
-        return $this->user->profil_photo_url;
+        return $this->user?->profil_photo_url;
     }
 
 

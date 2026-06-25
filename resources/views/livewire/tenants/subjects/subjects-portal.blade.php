@@ -4,7 +4,8 @@
             overflow-hidden p-2">
     <section class="mb-6">
 
-        <div class="flex flex-col
+        <div
+            class="flex flex-col
                         xl:flex-row
                         xl:items-center
                         xl:justify-between
@@ -21,7 +22,8 @@
 
                     </h1>
 
-                    <span class="px-3 py-1 rounded-full
+                    <span
+                        class="px-3 py-1 rounded-full
                                      bg-indigo-500/10
                                      text-indigo-400
                                      text-xs">
@@ -47,7 +49,8 @@
 
     <section class="mb-6">
 
-        <div class="rounded-3xl
+        <div
+            class="rounded-3xl
                         border border-slate-800
                         bg-slate-900
                         p-4 sm:p-5">
@@ -67,7 +70,8 @@
                                    focus:ring-2
                                    focus:ring-indigo-500/40">
 
-                    <div class="absolute left-4 top-1/2
+                    <div
+                        class="absolute left-4 top-1/2
                                     -translate-y-1/2
                                     text-slate-500">
 
@@ -78,7 +82,8 @@
                 </div>
 
                 {{-- FILTER GRID --}}
-                <div class="grid
+                <div
+                    class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
                                 xl:grid-cols-7
@@ -113,7 +118,8 @@
 
                     </select>
 
-                    <button class="h-11 rounded-2xl
+                    <button
+                        class="h-11 rounded-2xl
                                        bg-indigo-500
                                        hover:bg-indigo-600
                                        transition-all text-sm">
@@ -136,13 +142,15 @@
                 </div>
 
                 {{-- GLOBAL ACTIONS --}}
-                <div class="grid
+                <div
+                    class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
                                 xl:grid-cols-5
                                 gap-3">
 
-                    <button class="h-12 rounded-2xl
+                    <button
+                        class="h-12 rounded-2xl
                                        bg-indigo-500
                                        hover:bg-indigo-600
                                        transition-all text-sm">
@@ -151,7 +159,8 @@
 
                     </button>
 
-                    <button class="h-12 rounded-2xl
+                    <button
+                        class="h-12 rounded-2xl
                                        bg-emerald-500
                                        hover:bg-emerald-600
                                        transition-all text-sm">
@@ -176,6 +185,9 @@
                 <tr>
 
                     <th class="px-6 py-4 text-left text-sm text-slate-400">
+                        N°
+                    </th>
+                    <th class="px-6 py-4 text-left text-sm text-slate-400">
                         Matière
                     </th>
 
@@ -184,15 +196,15 @@
                     </th>
 
                     <th class="px-4 py-4 text-center text-sm text-slate-400">
-                        Enseignants
+                        Nbre enseignants
                     </th>
 
                     <th class="px-4 py-4 text-center text-sm text-slate-400">
-                        Classes
+                        Nbre de classes
                     </th>
 
                     <th class="px-4 py-4 text-center text-sm text-slate-400">
-                        Moyenne
+                        Meilleur classe
                     </th>
 
                     <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -213,18 +225,30 @@
 
             <tbody class="divide-y divide-slate-800">
 
-                @foreach (range(1, 10) as $subject)
-                    <tr class="hover:bg-slate-800/40">
+                @foreach ($subjects as $subject)
+                    <tr class="hover:bg-slate-800/40 truncate">
 
                         <td class="px-6 py-5 font-medium">
 
-                            Mathématiques
+                            {{ $loop->iteration }}
+
+                        </td>
+                        <td class="px-6 py-5 font-medium">
+
+                            <a class="hover:underline underline-offset-2 text-slate-300 font-semibold font-mono"
+                                wire:navigate
+                                href="{{ route('tenant.subject.profil', ['subject_slug' => $subject->slug]) }}">
+                                {{ $subject->name }}
+                                <p class="text-slate-500 font-mono text-sm">
+                                    {{ $subject->code }}
+                                </p>
+                            </a>
 
                         </td>
 
                         <td class="px-4 py-5 text-center">
 
-                            M. Tognon
+                            -
 
                         </td>
 
@@ -266,18 +290,22 @@
 
                             <div class="flex justify-end gap-2">
 
-                                <a href="{{ route('tenant.subject.profil', ['subject_slug' => 'f']) }}" class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
-                                    Profil
+                                <a wire:navigate
+                                    href="{{ route('tenant.subject.edit', ['subject_slug' => $subject->slug]) }}"
+                                    class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
+                                    Editer
                                 </a>
 
-                                <button class="h-10 px-4 rounded-xl
+                                <button
+                                    class="h-10 px-4 rounded-xl
                                            bg-orange-500/10
                                            text-orange-400">
 
-                                    Désactiver
+                                    Désactiver ou activer
 
                                 </button>
-                                <button class="h-10 px-4 rounded-xl
+                                <button
+                                    class="h-10 px-4 rounded-xl
                                            bg-red-500/10
                                            text-red-400">
 

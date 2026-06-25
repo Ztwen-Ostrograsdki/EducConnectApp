@@ -553,6 +553,19 @@
                                         {{-- ACTIONS --}}
                                         <td class="px-3 py-5 ">
                                             <div class="flex items-center gap-2 text-xs w-full">
+                                                @if ($teacher->hasValidAccessForYear())
+                                                    <a wire:navigate
+                                                        href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $teacher->uuid]) }}"
+                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-800/50 text-indigo-400 "
+                                                        s>
+                                                        <span>
+                                                            ⚙️
+                                                        </span>
+                                                        <span class="text-center">
+                                                            matières
+                                                        </span>
+                                                    </a>
+                                                @endif
                                                 @if (!$teacher->user->credentials_sent)
                                                     <button wire:key="send-credentials-teacher-{{ $teacher->id }}"
                                                         wire:click="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"

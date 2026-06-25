@@ -233,6 +233,15 @@
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     matière</span>
                             </a>
+                            <a wire:navigate href="{{ route('tenant.teacher.manage.subjects') }}" class="s-link"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">
+                                    ⚙️
+                                </div>
+                                <span class="s-label">
+                                    Attribution
+                                </span>
+                            </a>
                         </div>
                     </div>
                     <a data-sidebar-item href="#" class="s-link">

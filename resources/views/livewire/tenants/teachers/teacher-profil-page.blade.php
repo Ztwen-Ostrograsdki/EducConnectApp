@@ -3,7 +3,8 @@
     {{-- ===================================================== --}}
     {{-- GLOBAL CONTAINER --}}
     {{-- ===================================================== --}}
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1850px]
                 px-3
@@ -16,7 +17,8 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-3xl
+            <div
+                class="rounded-3xl
                         border border-slate-800
                         bg-slate-900
                         overflow-hidden">
@@ -33,7 +35,8 @@
 
                                 <div class="relative">
 
-                                    <div class="w-40 h-40 rounded-full
+                                    <div
+                                        class="w-40 h-40 rounded-full
                                    ring-4 ring-slate-900
                                    overflow-hidden
                                    shadow-2xl">
@@ -43,7 +46,8 @@
                                     </div>
 
                                     {{-- Badge --}}
-                                    <div class="absolute bottom-3 right-3
+                                    <div
+                                        class="absolute bottom-3 right-3
                                    w-5 h-5 rounded-full
                                    bg-green-500
                                    ring-2 ring-slate-900">
@@ -63,7 +67,8 @@
 
                                         <div class="flex flex-wrap items-center gap-2">
 
-                                            <h1 class="text-2xl sm:text-3xl
+                                            <h1
+                                                class="text-2xl sm:text-3xl
                                                        font-bold
                                                        break-words">
 
@@ -92,22 +97,11 @@
                                     </div>
 
                                     {{-- GRID INFOS --}}
-                                    <div class="grid
+                                    <div
+                                        class="grid
                                                 grid-cols-2
                                                 lg:grid-cols-4
                                                 gap-3">
-
-                                        <div class="rounded-2xl bg-slate-950 p-3">
-
-                                            <p class="text-xs text-slate-500">
-                                                Matière
-                                            </p>
-
-                                            <h4 class="mt-1 font-medium truncate">
-                                                Mathématiques
-                                            </h4>
-
-                                        </div>
 
                                         <div class="rounded-2xl bg-slate-950 p-3">
 
@@ -207,10 +201,35 @@
                                 Désactiver
 
                             </button>
+                            <a wire:navigate
+                                href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $teacher->uuid]) }}"
+                                class="flex justify-center gap-x-3 items-center w-full rounded-2xl py-3 px-2  bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-all col-span-2 text-sm"
+                                style="">
+                                <span class="" style="">
+                                    ⚙️
+                                </span>
+                                <span class="text-center">
+                                    Gérer les matières
+                                </span>
+                            </a>
 
                         </div>
 
                     </div>
+
+                </div>
+                <div class=" bg-slate-950 p-3">
+
+                    <p class="text-lg text-slate-500 border-b border-b-slate-600">
+                        Matière(s) | Spécilaité(s)
+                    </p>
+
+                    <h4 class="mt-1 font-medium flex flex-wrap gap-2 text-sm">
+                        @foreach ($teacher->getYearlySubjects() as $yearly_subject)
+                            <span
+                                class="rounded-2xl p-2 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->name }}</span>
+                        @endforeach
+                    </h4>
 
                 </div>
 
@@ -223,13 +242,15 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-2
                         xl:grid-cols-4
                         gap-4">
 
                 @foreach ([['Classes', '8', 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                             border border-slate-800
                             bg-slate-900
                             p-4 sm:p-5">
@@ -238,7 +259,8 @@
                             {{ $kpi[0] }}
                         </p>
 
-                        <h2 class="mt-3
+                        <h2
+                            class="mt-3
                                text-2xl sm:text-3xl xl:text-4xl
                                font-bold {{ $kpi[2] }}">
 
@@ -258,7 +280,8 @@
         {{-- ===================================================== --}}
         <section>
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-1
                         2xl:grid-cols-[minmax(0,1fr)_400px]
                         gap-6">
@@ -269,7 +292,8 @@
                 <div class="space-y-6 min-w-0">
 
                     {{-- CLASSES --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 overflow-hidden">
@@ -278,7 +302,8 @@
                         <div class="border-b border-slate-800
                                     p-4 sm:p-6">
 
-                            <div class="flex flex-col lg:flex-row
+                            <div
+                                class="flex flex-col lg:flex-row
                                         lg:items-center
                                         lg:justify-between
                                         gap-4">
@@ -455,7 +480,8 @@
                     </div>
 
                     {{-- EMPLOI DU TEMPS --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 p-4 sm:p-6">
@@ -477,14 +503,16 @@
                         </div>
 
                         {{-- TIMETABLE --}}
-                        <div class="mt-6 grid
+                        <div
+                            class="mt-6 grid
                                     grid-cols-1
                                     lg:grid-cols-2
                                     xl:grid-cols-3
                                     gap-4">
 
                             @foreach (range(1, 6) as $course)
-                                <div class="rounded-2xl
+                                <div
+                                    class="rounded-2xl
                                         border border-indigo-500/20
                                         bg-indigo-500/10
                                         p-4">
@@ -503,7 +531,8 @@
 
                                         </div>
 
-                                        <span class="px-2 py-1 rounded-xl
+                                        <span
+                                            class="px-2 py-1 rounded-xl
                                                  bg-slate-950/40
                                                  text-xs">
 
@@ -568,7 +597,8 @@
                 <div class="space-y-6 min-w-0">
 
                     {{-- STATS --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 p-5">
@@ -596,7 +626,8 @@
 
                                     <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
 
-                                        <div class="h-full rounded-full {{ $stat[2] }}" style="width: {{ $stat[1] }}">
+                                        <div class="h-full rounded-full {{ $stat[2] }}"
+                                            style="width: {{ $stat[1] }}">
                                         </div>
 
                                     </div>
@@ -609,7 +640,8 @@
                     </div>
 
                     {{-- INFOS --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 p-5">
@@ -639,7 +671,8 @@
                     </div>
 
                     {{-- PERFORMANCE --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 p-5">
@@ -650,7 +683,8 @@
 
                         <div class="mt-6 flex justify-center items-center">
 
-                            <img class="w-52 h-52" src="{{ $teacher->qr_code }}" alt="QR Code de {{ $teacher->user->getFullName() }}">
+                            <img class="w-52 h-52" src="{{ $teacher->qr_code }}"
+                                alt="QR Code de {{ $teacher->user->getFullName() }}">
 
                         </div>
 

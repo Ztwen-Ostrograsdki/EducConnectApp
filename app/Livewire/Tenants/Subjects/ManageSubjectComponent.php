@@ -20,16 +20,25 @@ class ManageSubjectComponent extends Component
 
     public Subject $subject;
 
-    public string $name        = '';
-    public string $code        = '';
-    public string $description = '';
-    public string $type        = 'scientifique';
-    public string $level       = 'secondaire';
+    public ?string $name        = '';
+    public ?string $code        = '';
+    public ?string $description = '';
+    public ?string $type        = 'scientifique';
+    public ?string $level       = 'secondaire';
     public bool   $is_active   = true;
     public string $previewSlug = '';
+    public string $subject_slug = '';
 
-    public function mount(Subject $subject): void
+    public function mount(string $subject_slug)
     {
+        if(!$subject_slug) return abort(404);
+
+        $this->subject_slug  = $subject_slug;
+
+        $subject = Subject::whereSlug($subject_slug)?->first();
+
+        if(!$subject) return abort(404);
+
         $this->subject     = $subject;
         $this->name        = $subject->name;
         $this->code        = $subject->code ?? '';

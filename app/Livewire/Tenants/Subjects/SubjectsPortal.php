@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Subjects;
 
+use App\Models\Subject;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -35,6 +36,8 @@ class SubjectsPortal extends Component
 
     public function render()
     {
-        return view('livewire.tenants.subjects.subjects-portal');
+        $subjects = Subject::orderByDesc('name')->get();
+
+        return view('livewire.tenants.subjects.subjects-portal', compact('subjects'));
     }
 }

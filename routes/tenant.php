@@ -11,6 +11,7 @@ use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Classes\CreateClasseComponent;
 use App\Livewire\Tenants\Classes\EditClasseComponent;
 use App\Livewire\Tenants\Classes\ManageClasseYearlyResponsiblesComponent;
+use App\Livewire\Tenants\Classes\ManageYearlyClasseSubjectsTeacherComponent;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
@@ -46,6 +47,7 @@ use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
+use App\Livewire\Tenants\Teachers\ManageTeacherSubjectsComponent;
 use App\Livewire\Tenants\Teachers\PrintableListComponent;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersCreationMonitorComponent;
@@ -179,6 +181,8 @@ Route::middleware([
 
             Route::get('/classes/{classe_slug}/gestion-pp-responsables', ManageClasseYearlyResponsiblesComponent::class)->name('classe.respos');
 
+            Route::get('/classes/{classe_slug}/gestion-enseignant-par-matiere', ManageYearlyClasseSubjectsTeacherComponent::class)->name('classe.manage.subjects.teacher');
+
 
 
 
@@ -191,6 +195,8 @@ Route::middleware([
             Route::get('/enseignants/status-des-ajouts', TeachersCreationMonitorComponent::class)->name('teachers.crud.tasks');
 
             Route::get('/enseignants/impression', PrintableListComponent::class)->name('teachers.print.list');
+            
+            Route::get('/enseignants/gestion-des-matieres/{teacher_uuid?}', ManageTeacherSubjectsComponent::class)->name('teacher.manage.subjects');
 
 
 

@@ -68,6 +68,11 @@
                 {{-- ACTIONS --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
                     <a wire:navigate
+                        href="{{ route('tenant.classe.manage.subjects.teacher', ['classe_slug' => $classe->slug]) }}"
+                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-green-500/30 hover:bg-green-800/30 transition-all duration-300 text-sm sm:text-base">
+                        Gestion prof par matière
+                    </a>
+                    <a wire:navigate
                         href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"
                         class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
                         Ajouter Élève

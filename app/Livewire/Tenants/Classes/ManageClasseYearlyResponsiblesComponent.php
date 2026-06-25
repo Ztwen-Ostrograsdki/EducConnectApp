@@ -18,10 +18,7 @@ use WireUi\Traits\WireUiActions;
 #[Title('Gestion : PP et Responsables de classe')]
 class ManageClasseYearlyResponsiblesComponent extends Component
 {
-    use WireUiActions;
-
-
-    use WithPagination;
+    use WireUiActions, WithPagination;
 
     public Classe $classe;
     public ?string $classe_slug = null;

@@ -70,7 +70,7 @@ trait TeachersActions{
 
     }
 
-    public function ConfirmGivingAccessForThisSchoolYear(): void
+    public function ConfirmGivingAccessToTeacher(): void
     {
        $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
 
@@ -86,8 +86,8 @@ trait TeachersActions{
 
                 $this->notification()->send([
                     'icon'        => 'success',
-                    'title'       => 'Enseignant bloquée',
-                    'description' => "L'Enseignant a été bloqué!",
+                    'title'       => "Proccessus d'accès lancé",
+                    'description' => "Le processus pour accorder l'accès à l'enseignant " . $teacher->getFullName() . " a été lancé",
                 ]);
             }
             else{
@@ -108,7 +108,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -159,7 +159,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -209,38 +209,11 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
-	public function sendCredentialsToTeacher(string $userUuid)
-	{
-		$user = User::firstWhere('uuid', $userUuid);
-
-        if($user && $user->logged_count < 1 ){
-
-			$domain = request()->getSchemeAndHttpHost();
-
-            $space_url = get_tenant_url($domain, 'login');
-
-            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url);
-
-            $this->notification()->send([
-                'icon'        => 'success',
-                'title'       => "Envoi des données espace enseignant ",
-                'description' => "Processus lancé ...",
-            ]);
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'Erreur processus',
-                'description' => "La reqûete n'existe pas ou n'a pas encore été validée!",
-            ]);
-        }
-	}
-
+	
 
     public function unlockTeacher(string $userUuid): void
     {
@@ -283,7 +256,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -343,7 +316,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -402,7 +375,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -461,7 +434,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -507,7 +480,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -551,7 +524,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -597,7 +570,7 @@ trait TeachersActions{
             ]);
             
         }
-        $this->closeModal();
+        
         
     }
 
@@ -639,7 +612,7 @@ trait TeachersActions{
 			]);
 			
 		}
-        $this->closeModal();
+        
         
     }
 
@@ -681,9 +654,38 @@ trait TeachersActions{
 			]);
 			
 		}
-        $this->closeModal();
+        
         
     }
+
+    public function sendCredentialsToTeacher(string $userUuid)
+	{
+		$user = User::firstWhere('uuid', $userUuid);
+
+        if($user && $user->logged_count < 1 ){
+
+			$domain = request()->getSchemeAndHttpHost();
+
+            $space_url = get_tenant_url($domain, 'login');
+
+            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url);
+
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => "Envoi des données espace enseignant ",
+                'description' => "Processus lancé ...",
+            ]);
+        }
+        else{
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur processus',
+                'description' => "La reqûete n'existe pas ou n'a pas encore été validée!",
+            ]);
+        }
+	}
+
 
     public function createTeachersFromExcelFile()
     {
