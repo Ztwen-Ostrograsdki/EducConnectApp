@@ -44,7 +44,8 @@
 
                         {{-- META --}}
                         <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
-                            <div class="break-words">👨‍🏫 M. HOUNDEKINDO</div>
+                            <div class="break-words">👨‍🏫
+                                {{ $classe->principal ? $classe->principal?->getFullName() : 'Non précisée' }}</div>
                             <div class="break-words">📍 {{ $classe->localization ?? 'Non précisée' }}</div>
                             <div class="break-words">🕒 {{ $classe->schoolYear->slug }}</div>
                         </div>
@@ -59,10 +60,10 @@
                         class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
                         Ajouter Élève
                     </a>
-                    <button
+                    <a wire:navigate href="{{ route('tenant.classe.edit', ['classe_slug' => $classe->slug]) }}"
                         class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
                         Modifier Classe
-                    </button>
+                    </a>
                 </div>
 
             </div>
@@ -155,7 +156,7 @@
 
             @switch($section)
                 @case('classe-home-page')
-                    <livewire:tenants.classes.sections.classe-home-page :classroom="$classroom" />
+                    <livewire:tenants.classes.sections.classe-home-page :classroom="$classroom" :classe="$classe" />
                 @break
 
                 @case('classe-students-list')

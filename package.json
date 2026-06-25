@@ -27,6 +27,7 @@
         "axios": "^1.16.1",
         "lucide": "^1.16.0",
         "motion": "^12.38.0",
-        "puppeteer": "^24.43.1"
+        "puppeteer": "^24.43.1",
+        "sweetalert2": "^11.26.25"
     }
 }

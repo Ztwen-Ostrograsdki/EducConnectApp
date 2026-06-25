@@ -102,6 +102,16 @@ class Teacher extends Model
     }
 
     /**
+     * Get all classe-subject assignments in the classe for this teacher.
+     */
+    public function getSubjectsForThisClasse(int $classe_id, ?int $school_year_id = null): HasMany
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return $this->classeSubjects()->where('school_year_id', $school_year_id)->where('classe_id', $classe_id)->get();
+    }
+
+    /**
      * Get active classe-subject assignments for a specific school year.
      */
     public function activeClasseSubjectsByYear(int $schoolYearId): HasMany

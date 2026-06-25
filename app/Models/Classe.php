@@ -88,6 +88,19 @@ class Classe extends Model
         return $this->belongsTo(Student::class, 'respo_2_id');
     }
 
+    // Enseignants intervenant dans cette classe
+    public function teachers(): HasMany
+    {
+        return $this->hasMany(ClasseSubjectOfSchoolYear::class, 'classe_id');
+    }
+
+
+    // Total enseignants intervenant dans cette classe
+    public function teachersCount(): int
+    {
+        return $this->teachers?->count();
+    }
+
     // Élèves inscrits dans cette classe
     public function students(): HasMany
     {
@@ -140,6 +153,19 @@ class Classe extends Model
             ->where('school_year_id', $yearId)
             ->whereNull('ended_at')
             ->first();
+    }
+
+
+    public function recentStudentsMigratedsIntoClasse(int $weeks = 1)
+    {
+        $school_year_id = $this->school_year_id;
+
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
+                            $q->where('school_year_id', $school_year_id)
+                            ->where('classe_id', $this->id)
+                            ->where('created_at', '>=', now()->subMonths(2))
+                        )
+                        ->latest('created_at')->take(10)->get();
     }
 
     /**

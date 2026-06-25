@@ -30,6 +30,7 @@ class MigrateStudentsToClassesComponent extends Component
     public ?string $classe_slug = null;
     public ?int $classeId = null;
     public ?Classe $selectedClasse = null;
+    public array $draftStudents = [];
 
     // ─── Mode manuel ──────────────────────────────────────────────────
     public string $identifiersInput = '';
@@ -51,6 +52,8 @@ class MigrateStudentsToClassesComponent extends Component
 
     public function mount(?string $classe_slug = null): void
     {
+        $draft = StudentMigrationSession::get();
+
         if($classe_slug){
 
             $schoolYearId = SchoolYear::current()->first()?->id;
@@ -61,6 +64,8 @@ class MigrateStudentsToClassesComponent extends Component
 
                 $this->classeId = $classe->id;
 
+                StudentMigrationSession::setClasse($classe->id);
+
                 $this->selectedClasse = $classe;
 
                 $this->classe_slug = $classe_slug;
@@ -70,8 +75,17 @@ class MigrateStudentsToClassesComponent extends Component
                 abort(404);
             }
         }
-        $draft = StudentMigrationSession::get();
-        $this->classeId = $draft['classe_id'];
+        else {
+            // Pas de paramètre → on reprend ce qui est en session
+            $this->classeId = $draft['classe_id'];
+        }
+
+        if(session()->has('students_mode_import')){
+
+            $this->mode = session('students_mode_import');
+        }
+
+        $this->refreshDraft();
     }
 
     public function updatedClasseId(): void
@@ -84,8 +98,16 @@ class MigrateStudentsToClassesComponent extends Component
         $this->errorMessage = '';
     }
 
+    private function refreshDraft(): void
+    {
+        $this->draftStudents = StudentMigrationSession::get()['students'] ?? [];
+    }
+
+
     public function updatedMode(): void
     {
+        session()->put('students_mode_import', $this->mode);
+
         $this->resetPage();
         $this->errorMessage     = '';
         $this->notFoundIds      = [];
@@ -371,10 +393,12 @@ class MigrateStudentsToClassesComponent extends Component
             return;
         }
 
-        $alreadyInDraft = array_column($this->draftStudents, 'id');
+        $draft = StudentMigrationSession::get();
+        $alreadyInDraft = array_column($draft['students'] ?? [], 'id');
 
         if (in_array($studentId, $alreadyInDraft)) {
             StudentMigrationSession::removeStudent($studentId);
+            $this->refreshDraft();
             return;
         }
 
@@ -386,11 +410,15 @@ class MigrateStudentsToClassesComponent extends Component
         if (!empty($found)) {
             StudentMigrationSession::addStudents($found);
         }
+
+        $this->refreshDraft();
     }
+
 
     public function isInDraft(int $studentId): bool
     {
-        return in_array($studentId, array_column($this->draftStudents, 'id'));
+        $draft = StudentMigrationSession::get();
+        return in_array($studentId, array_column($draft['students'] ?? [], 'id'));
     }
 
     // ─── Actions sur le draft ─────────────────────────────────────────
@@ -398,6 +426,8 @@ class MigrateStudentsToClassesComponent extends Component
     public function removeFromDraft(int $studentId): void
     {
         StudentMigrationSession::removeStudent($studentId);
+
+        $this->refreshDraft();
     }
 
     public function clearDraft(): void
@@ -407,6 +437,8 @@ class MigrateStudentsToClassesComponent extends Component
         $this->importErrors = [];
         $this->errorMessage = '';
         $this->migrating    = false;
+
+        $this->refreshDraft();
     }
 
     // ─── Migration ────────────────────────────────────────────────────
@@ -440,8 +472,13 @@ class MigrateStudentsToClassesComponent extends Component
         $this->notFoundIds  = [];
         $this->importErrors = [];
 
-        $this->dispatch('notify', type: 'success',
-            message: count($validIds) . ' apprenant(s) en cours de migration.');
+        $count = count($validIds);
+
+        $this->notification()->success(
+                title: 'MIGRATION DES APPRENANTS LANCEE',
+                description: "La migration de {$count} apprenants vers la classe {$this->selectedClasse->name} a été lancée.",
+            );
+
     }
 
     // ─── Render ───────────────────────────────────────────────────────

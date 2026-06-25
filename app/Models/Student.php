@@ -96,6 +96,23 @@ class Student extends Model
         return $this->hasMany(YearlyClasseStudent::class, 'student_id');
     }
 
+    public function yearlyClasseStudents(): HasMany
+    {
+        return $this->hasMany(YearlyClasseStudent::class, 'student_id');
+    }
+
+
+    public function currentYearlyAccess(?int $classe_id, ?int $school_year_id = null)
+    {
+
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return $this->yearlyClasseStudents()->where('school_year_id', $school_year_id)->where('status', 'active')->where('classe_id', $classe_id)?->first();
+    }
+
+
+    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
