@@ -117,3 +117,53 @@ label,
 a {
     cursor: pointer;
 }
+
+.swal2-actions button {
+    border: thin solid white !important;
+    border-radius: 15px !important;
+}
+
+.swal2-popup.swal2-modal.swal2-icon-warning.swal2-show {
+    border: thin solid aqua !important;
+    background: #010116 !important;
+    border-radius: 50px !important;
+}
+
+h2.swal2-title {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.swal2-popup.swal2-modal.swal2-icon-warning.swal2-show p {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.swal2-html-container {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.swal2-cancel.swal2-styled {
+    background-color: red;
+}
+.swal2-cancel.swal2-styled:hover {
+    background-color: rgb(150, 8, 8);
+}
+.swal2-confirm.swal2-styled {
+    background-color: blue;
+}
+.swal2-confirm.swal2-styled:hover {
+    background-color: rgb(22, 22, 140);
+}
+.swal2-cancel.swal2-styled,
+.swal2-confirm.swal2-styled {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.swal2-container,
+.swal2-center,
+.swal2-backdrop-show {
+    background-color: rgba(1, 1, 10, 0.863) !important;
+}

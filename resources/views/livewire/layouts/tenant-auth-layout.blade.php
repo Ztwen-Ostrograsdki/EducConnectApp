@@ -33,7 +33,6 @@
 
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-        {{-- SIDEBAR --}}
         <aside class="sidebar" id="sidebar">
             <div class="s-brand">
 
@@ -106,16 +105,22 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.classes.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.classes.portal') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail</span>
                             </a>
-                            <a href="{{ route('tenant.classe.profil', ['classe_slug' => 'premiere-f2']) }}"
-                                class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Classe de 1ère F2</span>
-                            </a>
-                            <a href="{{ route('tenant.classes.create') }}" class="s-link" style="font-size:.78rem;">
+                            @foreach (tenancy()->tenant?->getSchoolYearClasses() as $classe)
+                                <a wire:navigate
+                                    href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
+                                    class="s-link" style="font-size:.78rem;">
+                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                    <span class="s-label">Classe de {{ $classe->code ?? $classe->name }}</span>
+                                </a>
+                            @endforeach
+
+                            <a wire:navigate href="{{ route('tenant.classes.create') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     classe</span>
                             </a>
@@ -128,19 +133,21 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.promotions.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.promotions.portal') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->promotionsCount()) }})</span>
                                 </span>
                             </a>
-                            <a href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'premiere']) }}"
+                            <a wire:navigate
+                                href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'premiere']) }}"
                                 class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Promotion Terminale</span>
                             </a>
-                            <a href="{{ route('tenant.promotion.create') }}" class="s-link"
+                            <a wire:navigate href="{{ route('tenant.promotion.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     promotion</span>
@@ -154,19 +161,21 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.filiars.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.filiars.portal') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->filiarsCount()) }})</span>
                                 </span>
                             </a>
-                            <a href="{{ route('tenant.filiar.profil', ['filiar_slug' => 'BTP']) }}" class="s-link"
-                                style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.filiar.profil', ['filiar_slug' => 'BTP']) }}"
+                                class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">BTP</span>
                             </a>
-                            <a href="{{ route('tenant.filiar.create') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.filiar.create') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     filière</span>
                             </a>
@@ -179,19 +188,21 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.serials.portal') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.serials.portal') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->serialsCount()) }})</span>
                                 </span>
                             </a>
-                            <a href="{{ route('tenant.serial.profil', ['serial_slug' => 'c']) }}" class="s-link"
-                                style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.serial.profil', ['serial_slug' => 'c']) }}"
+                                class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">C</span>
                             </a>
-                            <a href="{{ route('tenant.serial.create') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.serial.create') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     série</span>
                             </a>
@@ -204,7 +215,7 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.subjects.portal') }}" class="s-link"
+                            <a wire:navigate href="{{ route('tenant.subjects.portal') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail
@@ -212,12 +223,13 @@
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->subjectsCount()) }})</span>
                                 </span>
                             </a>
-                            <a href="{{ route('tenant.subject.profil', ['subject_slug' => 'c']) }}" class="s-link"
-                                style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.subject.profil', ['subject_slug' => 'c']) }}"
+                                class="s-link" style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">C</span>
                             </a>
-                            <a href="{{ route('tenant.subject.create') }}" class="s-link" style="font-size:.78rem;">
+                            <a wire:navigate href="{{ route('tenant.subject.create') }}" class="s-link"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
                                     matière</span>
                             </a>
@@ -237,16 +249,16 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.students.portal') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.students.portal') }}" class="s-link">
                                 <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
                                     class="s-badge badge-green">42</span>
                             </a>
-                            <a href="{{ route('tenant.students.create') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.students.create') }}" class="s-link">
                                 <div class="s-icon">
                                     <x-lucide-user-plus class="w-3 h-3" />
                                 </div><span class="s-label">Ajouter apprenants</span>
                             </a>
-                            <a href="{{ route('tenant.students.crud.tasks') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.students.crud.tasks') }}" class="s-link">
                                 <div class="s-icon">
                                     <x-lucide-octagon-alert class="w-3 h-3" />
                                 </div><span class="s-label">Status des ajouts</span>
@@ -261,16 +273,16 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.teachers.portal') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.teachers.portal') }}" class="s-link">
                                 <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
                                     class="s-badge badge-green">42</span>
                             </a>
-                            <a href="{{ route('tenant.teachers.create') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.teachers.create') }}" class="s-link">
                                 <div class="s-icon">
                                     <x-lucide-user-plus class="w-3 h-3" />
                                 </div><span class="s-label">Ajouter enseignants</span>
                             </a>
-                            <a href="{{ route('tenant.teachers.crud.tasks') }}" class="s-link">
+                            <a wire:navigate href="{{ route('tenant.teachers.crud.tasks') }}" class="s-link">
                                 <div class="s-icon">
                                     <x-lucide-octagon-alert class="w-3 h-3" />
                                 </div><span class="s-label">Status des ajouts</span>
@@ -279,14 +291,14 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('tenant.parents.portal') }}" class="s-link">
+                    <a wire:navigate href="{{ route('tenant.parents.portal') }}" class="s-link">
                         <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span>
                     </a>
                 </div>
 
                 <div class="s-section">
                     <div class="s-section-label">Statistiques</div>
-                    <a href="{{ route('tenant.stats.general') }}" class="s-link">
+                    <a wire:navigate href="{{ route('tenant.stats.general') }}" class="s-link">
                         <div class="s-icon">📝</div><span class="s-label">Générale</span><span
                             class="s-badge badge-red">3</span>
                     </a>
@@ -318,7 +330,7 @@
                     <a href="#" class="s-link">
                         <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>
                     </a>
-                    <a href="{{ route('tenant.notifications.center') }}" class="s-link">
+                    <a wire:navigate href="{{ route('tenant.notifications.center') }}" class="s-link">
                         <div class="s-icon">🔔</div><span class="s-label">
                             Notifications
                             @livewire('notifications-counter', ['guard' => 'tenant'])
@@ -337,7 +349,7 @@
                             {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                         @endif
                     </div>
-                    <a href="{{ route('tenant.my.profil') }}" class="s-user-info">
+                    <a wire:navigate href="{{ route('tenant.my.profil') }}" class="s-user-info">
                         <div class="s-user-name">{{ Auth::guard('tenant')->user()?->name ?? 'Utilisateur' }}</div>
                         <div class="s-user-role">
                             @php $u = Auth::guard('tenant')->user(); @endphp
@@ -364,7 +376,6 @@
             </div>
         </aside>
 
-        {{-- MAIN --}}
         <div class="main" id="main">
             <header class="header">
                 <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
@@ -413,7 +424,7 @@
                                 <div class="dd-title">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                 <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                             </div>
-                            <a href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
+                            <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
                             <a href="#" class="dd-item">⚙️ Paramètres du compte</a>
                             <a href="#" class="dd-item">❓ Support</a>
                             <div class="dd-sep"></div>

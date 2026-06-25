@@ -88,6 +88,15 @@ class Classe extends Model
         return $this->belongsTo(Student::class, 'respo_2_id');
     }
 
+
+    public function responsables() : array
+    {
+        return [
+            'respo 1' => $this->respo1,
+            'respo 2' => $this->respo2,
+        ];
+    }
+
     // Enseignants intervenant dans cette classe
     public function teachers(): HasMany
     {

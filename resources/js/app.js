@@ -16,6 +16,23 @@ import Alpine from "alpinejs";
 
 // createIcons({ icons });
 
+import Swal from "sweetalert2";
+
+document.addEventListener("livewire:initialized", () => {
+    Livewire.on("swal", (params) => {
+        const options = Array.isArray(params) ? params[0] : params;
+
+        Swal.fire(options).then((result) => {
+            if (result.isConfirmed && options.onConfirmed) {
+                Livewire.dispatch(
+                    options.onConfirmed,
+                    options.onConfirmedParams ?? {},
+                );
+            }
+        });
+    });
+});
+
 // Motion — animations déclaratives sur les éléments du DOM
 import { animate, stagger, inView, scroll } from "motion";
 window.Motion = { animate, stagger, inView, scroll };
@@ -119,7 +136,11 @@ window.showToast = (message, type = "success") => {
     animate(toast, { opacity: [0, 1], y: [16, 0] }, { duration: 0.3 });
 
     setTimeout(() => {
-        animate(toast, { opacity: [1, 0], y: [0, 16] }, { duration: 0.3 }).finished.then(() => toast.remove());
+        animate(
+            toast,
+            { opacity: [1, 0], y: [0, 16] },
+            { duration: 0.3 },
+        ).finished.then(() => toast.remove());
     }, 3500);
 };
 

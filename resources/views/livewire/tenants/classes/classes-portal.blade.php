@@ -176,7 +176,7 @@
                     </button>
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6"
+                <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-4 sm:gap-6"
                     wire:loading.class="opacity-50">
                     @foreach ($classes as $classe)
                         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:-translate-y-0.5"
@@ -274,49 +274,81 @@
                                         Modifier
                                     </a>
                                 </div>
-                                <div class="mt-3 flex items-center gap-2">
-                                    <button wire:key="move-classe-to-trash-{{ $classe->id }}"
-                                        wire:click="moveClasseToTrash('{{ $classe->uuid }}')"
+                                <div class="mt-3 grid grid-cols-3 gap-3">
+                                    <button wire:click="moveClasseToTrash({{ $classe->id }})"
                                         wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                            wire:target="moveClasseToTrash('{{ $classe->uuid }}')">
-                                            <x-lucide-trash class="w-4 h-4" />
-                                            <span>Corbeille</span>
+                                        wire:target="moveClasseToTrash({{ $classe->id }})"
+                                        class="relative py-3 px-4 rounded-xl bg-rose-500/20 hover:bg-rose-500/45 text-rose-400 hover:text-white transition-all text-xs font-medium">
+                                        <span wire:loading.remove
+                                            wire:target="moveClasseToTrash({{ $classe->id }})">
+                                            <span class="inline-flex items-center gap-x-3">
+                                                <x-lucide-trash class="w-4 h-4" />
+                                                <span>Corbeille</span>
+                                            </span>
                                         </span>
-                                        <span wire:loading.flex wire:target="moveClasseToTrash('{{ $classe->uuid }}')"
-                                            class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
+                                        <span wire:loading wire:target="moveClasseToTrash({{ $classe->id }})"
+                                            class="inline-flex items-center gap-1">
+                                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8z" />
+                                            </svg>
                                         </span>
                                     </button>
-                                    <x-confirm-modal wire:key="confirm-move-classe-to-trash-{{ $classe->id }}"
-                                        :show="$showConfirmDeleteClasse"
-                                        title="Envoyer la classe {{ $classe->name }} dans la corbeille"
-                                        confirm-text="Oui, envoyée" cancel-text="Annuler"
-                                        confirm-action="ConfirmToMoveClasseToTrash" close-action="closeModal">
-                                        <p>Cette action entrainera : </p>
-                                        <ul class="text-orange-600 text-xs">
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 " />
-                                                <span>La suppresion superficielle de cette classe</span>
-                                            </li>
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 " />
-                                                <span>La classe ne sera plus accessible sur la plateforme</span>
-                                            </li>
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 " />
-                                                <span>Elle sera supprimée définitivement après une durée de 30
-                                                    jours</span>
-                                            </li>
-                                        </ul>
-                                    </x-confirm-modal>
+
                                     <button
-                                        class="flex-1 h-10 rounded-xl bg-amber-800 hover:bg-amber-700 transition-all text-xs">Fermer
+                                        wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
+                                        wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
+                                        class="relative py-3 px-4 rounded-xl {{ $classe->is_locked ? 'bg-emerald-600/20 hover:bg-emerald-500/50' : 'bg-amber-500/0 hover:bg-amber-600/50' }} transition-all text-xs font-medium">
+                                        <span wire:loading.remove wire:target="lockClasse, unlockClasse"
+                                            class="inline-flex items-center justify-center gap-3">
+                                            <span class="inline-flex items-center justify-center gap-3">
+                                                @if ($classe->is_locked)
+                                                    <x-lucide-lock-open class="w-4 h-4" />
+                                                    <span>Déverrouiller</span>
+                                                @else
+                                                    <x-lucide-lock class="w-4 h-4" />
+                                                    <span>Verrouiller</span>
+                                                @endif
+                                            </span>
+                                        </span>
+                                        <span wire:loading wire:loading wire:target="lockClasse, unlockClasse"
+                                            class="inline-flex items-center gap-1">
+                                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8z" />
+                                            </svg>
+                                        </span>
                                     </button>
+
                                     <button
-                                        class="flex-1 h-10 rounded-xl bg-indigo-800 hover:bg-indigo-700 transition-all text-xs">Verrouiller
+                                        wire:click="{{ $classe->is_active ? 'closeClasse(' . $classe->id . ')' : 'activateClasse(' . $classe->id . ')' }}"
+                                        wire:loading.attr="disabled" wire:target="activateClasse, closeClasse"
+                                        class="relative py-3 px-4 rounded-xl {{ !$classe->is_active ? 'bg-green-600/20 hover:bg-green-500/60' : 'bg-red-500/20 hover:bg-red-600/60' }} transition-all text-xs font-medium">
+                                        <span wire:loading.remove wire:target="activateClasse, closeClasse"
+                                            class="inline-flex items-center justify-center gap-3">
+                                            <span class="inline-flex items-center justify-center gap-3">
+                                                @if ($classe->is_active)
+                                                    <x-lucide-power class="w-4 h-4" />
+                                                    <span>Fermer</span>
+                                                @else
+                                                    <x-lucide-book-open-check class="w-4 h-4" />
+                                                    <span>Activer</span>
+                                                @endif
+                                            </span>
+                                        </span>
+                                        <span wire:loading wire:loading wire:target="activateClasse, closeClasse"
+                                            class="inline-flex items-center gap-1">
+                                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8z" />
+                                            </svg>
+                                        </span>
                                     </button>
 
                                 </div>

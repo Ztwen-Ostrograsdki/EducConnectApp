@@ -16,12 +16,57 @@
                     {{-- ACTIONS --}}
                     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                         <button
-                            class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-red-500 hover:bg-red-600 transition-all duration-300 text-sm sm:text-base">
-                            Fermer cette classe
+                            wire:click="{{ $classe->is_active ? 'closeClasse(' . $classe->id . ')' : 'activateClasse(' . $classe->id . ')' }}"
+                            wire:loading.attr="disabled" wire:target="activateClasse, closeClasse"
+                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_active ? 'bg-orange-400 hover:bg-orange-700' : 'bg-green-500/40 hover:bg-green-800/30' }}">
+
+                            <span wire:loading.remove wire:target="activateClasse, closeClasse"
+                                class="inline-flex items-center justify-center gap-3">
+                                <span class="inline-flex items-center justify-center gap-3">
+                                    @if (!$classe->is_active)
+                                        <x-lucide-check class="w-4 h-4" />
+                                        <span>Activer</span>
+                                    @else
+                                        <x-lucide-x class="w-4 h-4" />
+                                        <span>Fermer</span>
+                                    @endif
+                                </span>
+                            </span>
+
+                            <span wire:loading wire:target="closeClasse, activateClasse"
+                                class="inline-flex items-center justify-center gap-3">
+                                <span class="inline-flex items-center justify-center gap-3">
+                                    <span>En cours...</span>
+                                    <x-lucide-refresh-cw class="w-4 h-4 animate-spin" />
+                                </span>
+                            </span>
                         </button>
+
                         <button
-                            class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
-                            Verrouiller les notes
+                            wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
+                            wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
+                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_locked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-amber-500 hover:bg-amber-600' }}">
+
+                            <span wire:loading.remove wire:target="lockClasse, unlockClasse"
+                                class="inline-flex items-center justify-center gap-3">
+                                <span class="inline-flex items-center justify-center gap-3">
+                                    @if ($classe->is_locked)
+                                        <x-lucide-lock-open class="w-4 h-4" />
+                                        <span>Déverrouiller</span>
+                                    @else
+                                        <x-lucide-lock class="w-4 h-4" />
+                                        <span>Verrouiller</span>
+                                    @endif
+                                </span>
+                            </span>
+
+                            <span wire:loading wire:target="lockClasse, unlockClasse"
+                                class="inline-flex items-center justify-center gap-3">
+                                <span class="inline-flex items-center justify-center gap-3">
+                                    <span>En cours...</span>
+                                    <x-lucide-refresh-cw class="w-4 h-4 animate-spin" />
+                                </span>
+                            </span>
                         </button>
                     </div>
 
@@ -118,12 +163,19 @@
 
                 </div>
 
-                {{-- RIGHT --}}
                 <div class="min-w-0 space-y-6 text-slate-400 font-semibold">
 
-                    {{-- PROF --}}
                     <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
-                        <h3 class="font-semibold text-base sm:text-lg">Professeur Principal</h3>
+                        <h3 class="font-semibold text-base flex justify-between items-center">
+                            <span>Prof principal (PP)</span>
+                            <a class="inline-flex items-center gap-x-3 px-4 py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 text-slate-200"
+                                wire:navigate
+                                href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}">
+                                <x-lucide-pen class="h-4 w-4" />
+                                <span>Editer</span>
+                            </a>
+
+                        </h3>
                         <div class="mt-5 flex items-center gap-4 min-w-0">
                             <div class="w-16 h-16 rounded-2xl bg-slate-800 shrink-0"></div>
                             <div class="min-w-0 flex-1">
@@ -141,12 +193,42 @@
                         </div>
                     </div>
 
-                    {{-- STATS --}}
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
+                        <h3 class="font-semibold text-base flex justify-between items-center">
+                            <span>Responsables de classes</span>
+                            <a class="inline-flex items-center gap-x-3 px-4 py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 text-slate-200"
+                                wire:navigate
+                                href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}">
+                                <x-lucide-pen class="h-4 w-4" />
+                                <span>Editer</span>
+                            </a>
+
+                        </h3>
+                        <div class="flex flex-col gap-2.5 my-2.5">
+                            @foreach ($classe->responsables() as $key => $respo)
+                                <div class="flex-col items-center justify-center border border-gray-600 rounded-2xl"
+                                    wire:key='respo-{{ $loop->iteration }}'>
+                                    <h5 class=" text-center border-b border-b-slate-600 py-2.5">
+                                        Responsable N° {{ $loop->iteration }}
+                                    </h5>
+                                    <div class="mt-5 flex items-center gap-4 min-w-0 p-2">
+                                        <div class="w-16 h-16 rounded-2xl bg-slate-800 shrink-0"></div>
+                                        <div class="min-w-0 flex-1">
+                                            <h6 class=" truncate">
+                                                {{ $respo ? $respol?->getFullName() : 'Non encore défini' }}
+                                            </h6>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
                         <h3 class="font-semibold text-base sm:text-lg">Statistiques</h3>
                         <div class="mt-5 space-y-5">
 
-                            {{-- BAR --}}
                             <div>
                                 <div class="flex items-center justify-between gap-3 mb-2">
                                     <span class="text-sm truncate">Présence</span>

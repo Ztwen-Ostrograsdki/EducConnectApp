@@ -37,6 +37,18 @@
                                     Fermée
                                 </span>
                             @endif
+
+                            @if (!$classe->is_locked)
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                                    Accessible
+                                </span>
+                            @else
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-red-500/10 border border-red-500/20 text-red-400">
+                                    Verrouillée
+                                </span>
+                            @endif
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
                             {{ $classe->speciality() }}
@@ -160,7 +172,7 @@
                 @break
 
                 @case('classe-students-list')
-                    <livewire:tenants.classes.sections.classe-students-list :classroom="$classroom" />
+                    <livewire:tenants.classes.sections.classe-students-list :classroom="$classroom" :classe="$classe" />
                 @break
 
                 @case('classe-teachers-list')

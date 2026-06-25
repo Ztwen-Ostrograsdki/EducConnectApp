@@ -297,6 +297,22 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return Subject::whereNotNull('id')?->count();
     }
+
+
+    public function getSchoolYearClasses(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = $this->getActiveSchoolYear()?->id;
+
+        if($school_year_id){
+
+            return Classe::where('school_year_id', $school_year_id)->orderByDesc('name')->get();
+
+        }
+
+        return null;
+
+
+    }
     
     public function getClassesOfSchoolYear(?SchoolYear $school_year = null, bool $must_has_promotion = true, bool $must_has_filiar = true)
     {

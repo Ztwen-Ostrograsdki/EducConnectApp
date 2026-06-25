@@ -10,6 +10,7 @@ use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
 use App\Livewire\Tenants\Classes\CreateClasseComponent;
 use App\Livewire\Tenants\Classes\EditClasseComponent;
+use App\Livewire\Tenants\Classes\ManageClasseYearlyResponsiblesComponent;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
@@ -175,6 +176,8 @@ Route::middleware([
             Route::get('/classes/{classe_slug}/edition', EditClasseComponent::class)->name('classe.edit');
 
             Route::get('/classes/migration-des-apprenants/{classe_slug?}', MigrateStudentsToClassesComponent::class)->name('classe.migrate.students');
+
+            Route::get('/classes/{classe_slug}/gestion-pp-responsables', ManageClasseYearlyResponsiblesComponent::class)->name('classe.respos');
 
 
 
