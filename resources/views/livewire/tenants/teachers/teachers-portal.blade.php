@@ -267,6 +267,21 @@
         {{-- ===================================================== --}}
         <section>
 
+            @php
+                $unaccesses = tenancy()->tenant?->getTeachersWithoutYearlyAccesses();
+            @endphp
+            @if (count($unaccesses))
+                <div
+                    class="rounded-2xl border border-red-800 bg-red-900/30 p-2 font-mono text-sm animate-pulse text-red-400 my-3">
+                    <span>{{ __zero(count($unaccesses)) }} enseigant(s) sont sans accès pour cette année scolaire
+                        {{ $this->activeYear?->slug ?? '' }}</span>
+                    <p>
+                        Veuillez leur accorder les accès. Autrement, vous ne
+                        pourriez ni définir leurs matières ni leur attribuer de classe!
+                    </p>
+                </div>
+            @endif
+
             <div class="space-y-6 min-w-0">
 
                 {{-- TEACHERS TABLE --}}
@@ -297,127 +312,78 @@
                             </div>
 
                             <div class="flex w-full justify-end">
-                                <div class="flex flex-wrap items-center gap-3 text-sm ">
-                                    <button wire:key="unlock-teacher-all" wire:click="unlockTeachers"
-                                        wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex items-center px-2.5 justify-center cursor-pointer bg-lime-500/10 hover:bg-lime-700/50 text-lime-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                            wire:target="unlockTeachers">
-                                            <x-lucide-lock-keyhole-open class="w-4 h-4" />
-                                            Débloquer tous
-                                        </span>
-                                        <span wire:loading.flex wire:target="unlockTeachers"
-                                            class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
-                                        </span>
-                                    </button>
-                                    <x-confirm-modal wire:key="confirm-unlock-teacher-all" :show="$showConfirmTeachersUnLock"
-                                        title="Débloquer tous les enseignants bloqués " confirm-text="Oui, déboqué"
-                                        cancel-text="Annuler" confirm-action="ConfirmTeachersUnLocking"
-                                        close-action="closeModal">
-                                        <p>Cette action entrainera : </p>
-                                        <ul class="text-green-500 text-xs">
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5" />
-                                                <span>
-                                                    Le déblocage de tous les enseignants bloqués
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </x-confirm-modal>
-                                    <button wire:key="lock-teacher-all" wire:click="lockTeachers"
-                                        wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                            wire:target="lockTeachers">
-                                            <x-lucide-ban class="w-4 h-4" />
-                                            Bloquer tous
-                                        </span>
-                                        <span wire:loading.flex wire:target="lockTeachers" class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
-                                        </span>
-                                    </button>
-                                    <x-confirm-modal wire:key="confirm-lock-teacher-all" :show="$showConfirmTeachersLock"
-                                        title="Bloquer l'accès à tous les enseignants "
-                                        confirm-text="Oui, placer tous dans la corbeille" cancel-text="Annuler"
-                                        confirm-action="ConfirmTeacherLocking" close-action="closeModal">
-                                        <p>Cette action entrainera : </p>
-                                        <ul class="text-orange-500 text-xs">
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5" />
-                                                <span>
-                                                    Les enseignants n'ouront plus accès à leur espace
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </x-confirm-modal>
+                                <div class="flex w-full justify-end">
+                                    <div class="flex flex-wrap items-center gap-3 text-sm">
 
-                                    <button wire:key="restore-teacher-all" wire:click="restoreTeachers"
-                                        wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                            wire:target="restoreTeachers">
-                                            <x-lucide-recycle class="w-4 h-4" />
-                                            Restaurer tous
-                                        </span>
-                                        <span wire:loading.flex wire:target="restoreTeachers"
-                                            class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
-                                        </span>
-                                    </button>
-                                    <x-confirm-modal wire:key="confirm-restore-teacher-all" :show="$showConfirmTeachersRestorationModal"
-                                        title="Restauration de tout enseignant"
-                                        confirm-text="Oui, restaurer tout enseignant" cancel-text="Annuler"
-                                        confirm-action="ConfirmTeacherRestoration" close-action="closeModal">
-                                        <p>Cette action entrainera : </p>
-                                        <ul class="text-green-500 text-xs">
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 text-green-800" />
-                                                <span>La restauration de tous les enseignants</span>
-                                            </li>
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 text-green-800" />
-                                                <span>Chaque enseignant aura de nouveau accès à son espace en tant
-                                                    qu'enseignant</span>
-                                            </li>
-                                        </ul>
-                                    </x-confirm-modal>
+                                        {{-- Débloquer tous --}}
+                                        <button wire:click="unlockTeachers" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex items-center px-2.5 justify-center cursor-pointer bg-lime-500/10 hover:bg-lime-700/50 text-lime-400">
+                                            <span wire:loading.remove wire:target="unlockTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <x-lucide-lock-keyhole-open class="w-4 h-4" />
+                                                Débloquer tous
+                                            </span>
+                                            <span wire:loading wire:target="unlockTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center gap-x-2">
+                                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                    <span>En cours...</span>
+                                                </span>
+                                            </span>
+                                        </button>
 
-                                    <button wire:key="force-del-teacher-all" wire:click="forceDeleteTeachers"
-                                        wire:loading.attr="disabled"
-                                        class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
-                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                            wire:target="forceDeleteTeachers">
-                                            <x-lucide-trash-2 class="w-4 h-4" />
-                                            Supprimer déf. tous
-                                        </span>
-                                        <span wire:loading.flex wire:target="forceDeleteTeachers"
-                                            class="items-center gap-1.5">
-                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                            <span>En cours...</span>
-                                        </span>
-                                    </button>
-                                    <x-confirm-modal wire:key="confirm-force-del-teacher-all" :show="$showConfirmForceDeleteTeachers"
-                                        title="Suppression définitive de tout enseignant"
-                                        confirm-text="Oui, Supprimer Déf." cancel-text="Annuler"
-                                        confirm-action="ConfirmTeachersForceDelete" close-action="closeModal">
-                                        <p>Cette action entrainera : </p>
-                                        <ul class="text-orange-500 text-xs">
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 text-orange-800" />
-                                                <span>La suppresion définitive de tous les enseignants de la
-                                                    corbeille</span>
-                                            </li>
-                                            <li class="flex items-center gap-x-1">
-                                                <x-lucide-check class="w-5 h-5 text-amber-600" />
-                                                <span>Cette action est irrevsersible et ne sera effective que dans 30
-                                                    jours!</span>
-                                            </li>
-                                        </ul>
-                                    </x-confirm-modal>
+                                        {{-- Bloquer tous --}}
+                                        <button wire:click="lockTeachers" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400">
+                                            <span wire:loading.remove wire:target="lockTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <x-lucide-ban class="w-4 h-4" />
+                                                Bloquer tous
+                                            </span>
+                                            <span wire:loading wire:target="lockTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center gap-x-2">
+                                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                    <span>En cours...</span>
+                                                </span>
+                                            </span>
+                                        </button>
+
+                                        {{-- Restaurer tous --}}
+                                        <button wire:click="restoreTeachers" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-purple-500/10 hover:bg-purple-500/20 text-purple-400">
+                                            <span wire:loading.remove wire:target="restoreTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <x-lucide-recycle class="w-4 h-4" />
+                                                Restaurer tous
+                                            </span>
+                                            <span wire:loading wire:target="restoreTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center gap-x-2">
+                                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                    <span>En cours...</span>
+                                                </span>
+                                            </span>
+                                        </button>
+
+                                        {{-- Supprimer déf. tous --}}
+                                        <button wire:click="forceDeleteTeachers" wire:loading.attr="disabled"
+                                            class="h-11 rounded-2xl flex px-2.5 items-center justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400">
+                                            <span wire:loading.remove wire:target="forceDeleteTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <x-lucide-trash-2 class="w-4 h-4" />
+                                                Supprimer déf. tous
+                                            </span>
+                                            <span wire:loading wire:target="forceDeleteTeachers"
+                                                class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center gap-x-2">
+                                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                    <span>En cours...</span>
+                                                </span>
+                                            </span>
+                                        </button>
+
+                                    </div>
                                 </div>
                             </div>
 
@@ -428,7 +394,7 @@
                     {{-- TABLE --}}
                     <div class="overflow-x-auto">
 
-                        <table class="min-w-[1200px] w-full">
+                        <table class="z-table-border w-full">
 
                             <thead class="bg-slate-950 border-b border-slate-800">
 
@@ -453,10 +419,6 @@
                                         Heures/Sem
                                     </th>
 
-                                    <th class="px-3 py-4 text-center text-sm text-slate-400">
-                                        Accès {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}
-                                    </th>
-
                                     <th class="px-6 py-4 text-center text-sm text-slate-400">
                                         Actions
                                     </th>
@@ -477,24 +439,24 @@
                                         </td>
 
                                         {{-- PROFILE --}}
-                                        <td class="px-6 py-5">
+                                        <td class="px-6 py-5 text-slate-400">
 
                                             <a title="Charger le profil de l'enseignant {{ $teacher->getFullName() }}"
                                                 href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $teacher->uuid]) }}"
-                                                class="flex items-center gap-4 hover:text-sky-500 hover:underline">
+                                                class="flex items-center gap-4 underline-offset-4 hover:underline hover:text-amber-600">
 
-                                                <img src="{{ $teacher->profil_photo_url() }}" alt=""
+                                                <img src="{{ $teacher->profil_photo_url() }}"
+                                                    alt="Photo de profil de {{ $teacher->fullName() }}"
                                                     class="w-14 h-14 rounded-full object-cover border-4 border-slate-700">
                                                 <div class="min-w-0">
 
-                                                    <h3 class="font-medium truncate">
+                                                    <h3 class="font-medium ">
 
                                                         {{ $teacher->getFullName() }}
 
                                                     </h3>
 
-                                                    <p
-                                                        class="mt-1 text-sm text-slate-400 truncate flex items-center gap-x-1.5">
+                                                    <p class="mt-1 text-sm text-slate-400 flex items-center gap-x-1.5">
                                                         <x-lucide-mail class="w-3.5 h-3.5" />
                                                         <span>
                                                             {{ $teacher->user->email }}
@@ -502,7 +464,7 @@
 
                                                     </p>
                                                     <p
-                                                        class="mt-1 text-sm text-slate-400 truncate font-mono flex items-center gap-x-1.5">
+                                                        class="mt-1 text-sm text-slate-400 font-mono flex items-center gap-x-1.5">
 
                                                         <x-lucide-phone class="w-3.5 h-3.5" />
                                                         <span>
@@ -514,308 +476,226 @@
                                                 </div>
 
                                             </a>
+                                            <span
+                                                class="px-3 rounded-full @if ($teacher->hasValidAccessForYear()) bg-emerald-500/10 text-emerald-400 @else  bg-red-500/10 text-red-400 animate-pulse @endif border border-slate-600 w-full flex text-xs py-1 mt-2 text-center items-center justify-center gap-x-1">
+                                                <span>Accès
+                                                    {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}</span>
+                                                @if ($teacher->hasValidAccessForYear())
+                                                    <span> accordé</span>
+                                                @else
+                                                    <span> non accordé</span>
+                                                @endif
+                                            </span>
 
                                         </td>
 
                                         {{-- SUBJECT --}}
                                         <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                            {{ $teacher->specialties ? implode($teacher->specialties, '-') : '-' }}
+                                            <div class="mt-1 font-medium flex gap-2 text-sm">
+                                                @foreach ($teacher->getYearlySubjects() as $yearly_subject)
+                                                    <span
+                                                        class="rounded-xl p-1 px-3 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->code }}</span>
+                                                @endforeach
+                                            </div>
 
                                         </td>
 
                                         {{-- CLASSES --}}
                                         <td class="px-3 py-5 text-center">
 
-                                            -
+                                            @php
+                                                $othersClasses = $teacher->getTeacherClassesForThisSchoolYear([]);
+
+                                            @endphp
+                                            @if (count($othersClasses))
+                                                @foreach ($othersClasses as $cl)
+                                                    <span
+                                                        class="px-2 py-1 rounded-xl bg-slate-800 text-xs uppercase font-mono border border-sky-700">
+                                                        {{ $cl?->code ?? $cl->name }}
+                                                    </span>
+                                                @endforeach
+                                            @else
+                                                <span
+                                                    class="px-2 py-1 rounded-xl text-slate-400 ls-2 italic text-xs flex justify-center flex-col">
+                                                    <span>Aucune</span>
+                                                    <span>classe assignée</span>
+                                                </span>
+                                            @endif
 
                                         </td>
 
                                         {{-- HOURS --}}
                                         <td class="px-3 py-5 text-center text-gray-500">
 
-                                            26h
+                                            -
 
                                         </td>
 
-                                        {{-- STATUS --}}
-                                        <td class="px-3 py-5 text-center">
-                                            <span
-                                                class="px-3 py-1 rounded-full @if ($teacher->hasValidAccessForYear()) bg-emerald-500/10 text-emerald-400 @else  bg-red-500/10 text-red-400 @endif text-xs">
-                                                @if ($teacher->hasValidAccessForYear())
-                                                    Accès accordé
-                                                @else
-                                                    Accès non accordé
-                                                @endif
-                                            </span>
-                                        </td>
+                                        <td class="px-3 py-5 truncate">
+                                            <div class="flex items-center gap-2 text-xs w-full ">
 
-                                        {{-- ACTIONS --}}
-                                        <td class="px-3 py-5 ">
-                                            <div class="flex items-center gap-2 text-xs w-full">
                                                 @if ($teacher->hasValidAccessForYear())
-                                                    <a wire:navigate
+                                                    <a title="Définir les matières spécialités de l'enseigant {{ $teacher->getFullName() }}"
+                                                        wire:navigate
                                                         href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $teacher->uuid]) }}"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-800/50 text-indigo-400 "
-                                                        s>
-                                                        <span>
-                                                            ⚙️
-                                                        </span>
-                                                        <span class="text-center">
-                                                            matières
-                                                        </span>
+                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-800/50 text-indigo-400 gap-x-2">
+                                                        <span>⚙️</span>
+                                                        <span>Matières</span>
                                                     </a>
                                                 @endif
+
+                                                {{-- Envoyer credentials --}}
                                                 @if (!$teacher->user->credentials_sent)
-                                                    <button wire:key="send-credentials-teacher-{{ $teacher->id }}"
+                                                    <button
+                                                        title="Envoyer les données de connexion à {{ $teacher->getFullName() }}"
                                                         wire:click="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
                                                         wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')">
+                                                        wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
+                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-600/50 hover:bg-sky-800/50 text-sky-400">
+                                                        <span wire:loading.remove
+                                                            wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
+                                                            class="flex items-center gap-1.5">
                                                             <x-lucide-send class="w-4 h-4" />
                                                             Envoyer
                                                         </span>
-                                                        <span wire:loading.flex
+                                                        <span wire:loading
                                                             wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
+                                                            class="flex items-center gap-1.5">
                                                             <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
                                                             <span>En cours...</span>
                                                         </span>
                                                     </button>
-                                                @endif
-                                                @if ($teacher->blocked)
-                                                    <button wire:key="unlock-teacher-{{ $teacher->id }}"
-                                                        wire:click="unlockTeacher('{{ $teacher->user->uuid }}')"
-                                                        wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-lime-600/50 hover:bg-lime-800/50 text-lime-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="unlockTeacher('{{ $teacher->user->uuid }}')">
-                                                            <x-lucide-lock-keyhole-open class="w-4 h-4" />
-                                                            Débloquer
-                                                        </span>
-                                                        <span wire:loading.flex
-                                                            wire:target="unlockTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                            <span>En cours...</span>
-                                                        </span>
-                                                    </button>
-                                                    <x-confirm-modal
-                                                        wire:key="confirm-unlock-teacher-{{ $teacher->id }}"
-                                                        :show="$showConfirmTeacherUnLock"
-                                                        title="Débloquer l'enseignant {{ $teacher->user->getFullName(true) }}"
-                                                        confirm-text="Oui, déboqué" cancel-text="Annuler"
-                                                        confirm-action="ConfirmTeacherUnLocking"
-                                                        close-action="closeModal">
-                                                        <p>Cette action entrainera : </p>
-                                                        <ul class="text-green-500 text-xs">
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5" />
-                                                                <span>
-                                                                    {{ $teacher->user->getFullName(true) }} aura de
-                                                                    nouveau accès à son espace
-                                                                </span>
-                                                            </li>
-                                                        </ul>
-                                                    </x-confirm-modal>
-                                                @else
-                                                    <button wire:key="lock-teacher-{{ $teacher->id }}"
-                                                        wire:click="lockTeacher('{{ $teacher->user->uuid }}')"
-                                                        wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="lockTeacher('{{ $teacher->user->uuid }}')">
-                                                            <x-lucide-ban class="w-4 h-4" />
-                                                            Bloquer
-                                                        </span>
-                                                        <span wire:loading.flex
-                                                            wire:target="lockTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                            <span>En cours...</span>
-                                                        </span>
-                                                    </button>
-                                                    <x-confirm-modal
-                                                        wire:key="confirm-lock-teacher-{{ $teacher->id }}"
-                                                        :show="$showConfirmTeacherLock"
-                                                        title="Bloquer l'accès à l'enseignant {{ $teacher->user->getFullName(true) }}"
-                                                        confirm-text="Oui, placer dans la corbeille"
-                                                        cancel-text="Annuler" confirm-action="ConfirmTeacherLocking"
-                                                        close-action="closeModal">
-                                                        <p>Cette action entrainera : </p>
-                                                        <ul class="text-orange-500 text-xs">
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5" />
-                                                                <span>
-                                                                    {{ $teacher->user->getFullName(true) }} n'aura plus
-                                                                    accès à la son espace enseignant
-                                                                </span>
-                                                            </li>
-                                                        </ul>
-                                                    </x-confirm-modal>
                                                 @endif
 
-                                                {{-- DELETE --}}
+                                                {{-- Bloquer / Débloquer --}}
+                                                <button
+                                                    title="{{ $teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} l'enseigant {{ $teacher->getFullName() }}"
+                                                    wire:click="{{ $teacher->is_locked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="lockTeacher, unlockTeacher"
+                                                    class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600/80 hover:bg-amber-800/80' : 'bg-purple-500/20 hover:bg-purple-600/60' }} transition-all text-xs font-medium">
+                                                    <span wire:loading.remove wire:target="lockTeacher, unlockTeacher"
+                                                        class="inline-flex items-center justify-center gap-3">
+                                                        <span class="inline-flex items-center justify-center gap-3">
+                                                            @if ($teacher->is_locked)
+                                                                <x-lucide-unlock class="w-4 h-4" />
+                                                                <span>Débloquer</span>
+                                                            @else
+                                                                <x-lucide-user-lock class="w-4 h-4" />
+                                                                <span>Bloquer</span>
+                                                            @endif
+                                                        </span>
+                                                    </span>
+
+                                                    <span wire:loading wire:target="lockTeacher, unlockTeacher"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                                {{-- Accorder accès --}}
                                                 @if (!$teacher->deleted_at)
-                                                    @if (!$teacher->hasValidAccessForYear())
-                                                        <button wire:key="give-access-teacher-{{ $teacher->id }}"
-                                                            wire:click="giveAccessForThisSchoolYear('{{ $teacher->user->uuid }}')"
-                                                            wire:loading.attr="disabled"
-                                                            class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-lime-500/10 hover:bg-lime-500/20 text-lime-400 ">
-                                                            <span wire:loading.remove class="flex items-center gap-1.5"
-                                                                wire:target="giveAccessForThisSchoolYear('{{ $teacher->user->uuid }}')">
-                                                                <x-lucide-key class="w-4 h-4" />
-                                                                <span>Accorder</span>
+                                                    <button
+                                                        title="{{ $teacher->hasValidAccessForYear() ? 'Retirer ' : 'Accorder ' }} l'accès à l'enseigant {{ $teacher->getFullName() }} pour cette année scolaire "
+                                                        wire:click="{{ !$teacher->hasValidAccessForYear() ? 'giveAccessForThisSchoolYear(' . $teacher->id . ')' : 'removeAccessForThisSchoolYear(' . $teacher->id . ')' }}"
+                                                        wire:loading.attr="disabled"
+                                                        wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
+                                                        class="relative py-3 px-4 rounded-xl {{ !$teacher->hasValidAccessForYear() ? 'bg-green-800/60 hover:bg-lime-500/80' : 'bg-orange-700/80 hover:bg-orange-600/40' }} transition-all text-xs font-medium">
+                                                        <span wire:loading.remove
+                                                            wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
+                                                            class="inline-flex items-center justify-center gap-3">
+                                                            <span
+                                                                class="inline-flex items-center justify-center gap-3">
+                                                                @if ($teacher->hasValidAccessForYear())
+                                                                    <x-lucide-user-lock class="w-4 h-4" />
+                                                                    <span>Retirer accès</span>
+                                                                @else
+                                                                    <x-lucide-key class="w-4 h-4" />
+                                                                    <span>Accorder accès</span>
+                                                                @endif
                                                             </span>
-                                                            <span wire:loading.flex
-                                                                wire:target="giveAccessForThisSchoolYear('{{ $teacher->user->uuid }}')"
-                                                                class="items-center gap-1.5">
-                                                                <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                                <span>En cours...</span>
+                                                        </span>
+
+                                                        <span wire:loading
+                                                            wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
+                                                            class="inline-flex items-center gap-1">
+                                                            <svg class="animate-spin w-3 h-3" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4" />
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8v8z" />
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                @endif
+
+                                                <button
+                                                    title="{{ $teacher->deleted_at ? 'Restaurer ' : 'Envoyer ' }} l'enseigant {{ $teacher->getFullName() }} {{ $teacher->deleted_at ? ' de ' : ' dans ' }} la corbeille"
+                                                    wire:click="{{ $teacher->deleted_at ? 'restoreTeacher(' . $teacher->id . ')' : 'deleteTeacher(' . $teacher->id . ')' }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="deleteTeacher, restoreTeacher"
+                                                    class="relative py-3 px-4 rounded-xl {{ !$teacher->deleted_at ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }} transition-all text-xs font-medium">
+                                                    <span wire:loading.remove
+                                                        wire:target="deleteTeacher, restoreTeacher"
+                                                        class="inline-flex items-center justify-center gap-3">
+                                                        <span class="inline-flex items-center justify-center gap-3">
+                                                            @if ($teacher->deleted_at)
+                                                                <x-lucide-recycle class="w-4 h-4" />
+                                                                <span>Restaurer</span>
+                                                            @else
+                                                                <x-lucide-trash class="w-4 h-4" />
+                                                                <span>Corbeille</span>
+                                                            @endif
+                                                        </span>
+                                                    </span>
+
+                                                    <span wire:loading wire:target="deleteTeacher, restoreTeacher"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                                @if ($teacher->deleted_at)
+                                                    <button
+                                                        wire:click="{{ 'forceDeleteTeacher(' . $teacher->id . ')' }}"
+                                                        wire:loading.attr="disabled" wire:target="forceDeleteTeacher"
+                                                        class="relative py-3 px-4 rounded-xl bg-red-500/20 hover:bg-red-600/60 transition-all text-xs font-medium">
+                                                        <span wire:loading.remove wire:target="forceDeleteTeacher"
+                                                            class="inline-flex items-center justify-center gap-3">
+                                                            <span
+                                                                class="inline-flex items-center justify-center gap-3">
+
+                                                                <x-lucide-trash-2 class="w-4 h-4" />
+                                                                <span>Suppr. Déf.</span>
                                                             </span>
-                                                        </button>
-                                                        <x-confirm-modal
-                                                            wire:key="confirm-del-teacher-{{ $teacher->id }}"
-                                                            :show="$showConfirmGivingAccessToTeacher"
-                                                            title="Accorder l'accès à l'enseignant {{ $teacher->getFullName() }} pour cette nouvelle année scolaire {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}"
-                                                            confirm-text="Oui, enroller" cancel-text="Annuler"
-                                                            confirm-action="ConfirmGivingAccessToTeacher"
-                                                            close-action="closeModal">
-                                                            <p>Cette action entrainera : </p>
-                                                            <ul class="text-orange-600 text-xs">
-                                                                <li class="flex items-center gap-x-1">
-                                                                    <x-lucide-check class="w-5 h-5 " />
-                                                                    <span>L'enrollement de l'enseignant</span>
-                                                                </li>
-                                                                <li class="flex items-center gap-x-1">
-                                                                    <x-lucide-check class="w-5 h-5 " />
-                                                                    <span>L'enseignant aura un accès à son espace
-                                                                        enseignant pour le compte de l'année scolaire
-                                                                        {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}</span>
-                                                                </li>
+                                                        </span>
 
-                                                            </ul>
-                                                        </x-confirm-modal>
-                                                    @else
-                                                    @endif
-                                                    <button wire:key="del-teacher-{{ $teacher->id }}"
-                                                        wire:click="deleteTeacher('{{ $teacher->user->uuid }}')"
-                                                        wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="deleteTeacher('{{ $teacher->user->uuid }}')">
-                                                            <x-lucide-trash class="w-4 h-4" />
-                                                            Corbeille
-                                                        </span>
-                                                        <span wire:loading.flex
-                                                            wire:target="deleteTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                            <span>En cours...</span>
+                                                        <span wire:loading wire:target="forceDeleteTeacher"
+                                                            class="inline-flex items-center gap-1">
+                                                            <svg class="animate-spin w-3 h-3" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4" />
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8v8z" />
+                                                            </svg>
                                                         </span>
                                                     </button>
-                                                    <x-confirm-modal
-                                                        wire:key="confirm-del-teacher-{{ $teacher->id }}"
-                                                        :show="$showConfirmDeleteTeacher"
-                                                        title="Placer l'enseignant {{ $teacher->getFullName() }} dans la Corbeille"
-                                                        confirm-text="Oui, placer dans la corbeille"
-                                                        cancel-text="Annuler" confirm-action="ConfirmTeacherDeletion"
-                                                        close-action="closeModal">
-                                                        <p>Cette action entrainera : </p>
-                                                        <ul class="text-orange-600 text-xs">
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 " />
-                                                                <span>La mise en corbeille de l'enseignant</span>
-                                                            </li>
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 " />
-                                                                <span>L'enseignant n'aura plus accès à son espace
-                                                                    enseignant</span>
-                                                            </li>
-
-                                                        </ul>
-                                                    </x-confirm-modal>
-                                                @else
-                                                    <button wire:key="restore-teacher-{{ $teacher->id }}"
-                                                        wire:click="restoreTeacher('{{ $teacher->user->uuid }}')"
-                                                        wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="restoreTeacher('{{ $teacher->user->uuid }}')">
-                                                            <x-lucide-recycle class="w-4 h-4" />
-                                                            Restaurer
-                                                        </span>
-                                                        <span wire:loading.flex
-                                                            wire:target="restoreTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                            <span>En cours...</span>
-                                                        </span>
-                                                    </button>
-                                                    <x-confirm-modal
-                                                        wire:key="confirm-restore-teacher-{{ $teacher->id }}"
-                                                        :show="$showConfirmTeacherRestorationModal"
-                                                        title="restauration de l'enseignant {{ $teacher->user->getFullName(true) }}"
-                                                        confirm-text="Oui, restaurer l'enseignant {{ $teacher->user->getFullName(true) }}"
-                                                        cancel-text="Annuler"
-                                                        confirm-action="ConfirmTeacherRestoration"
-                                                        close-action="closeModal">
-                                                        <p>Cette action entrainera : </p>
-                                                        <ul class="text-green-500 text-xs">
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 text-green-800" />
-                                                                <span>La restauration de l'enseignant</span>
-                                                            </li>
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 text-green-800" />
-                                                                <span>L'enseignant aura de nouveau accès à son espace en
-                                                                    temps que enseignant</span>
-                                                            </li>
-                                                        </ul>
-                                                    </x-confirm-modal>
-                                                    <button wire:key="force-del-teacher-{{ $teacher->id }}"
-                                                        wire:click="forceDeleteTeacher('{{ $teacher->user->uuid }}')"
-                                                        wire:loading.attr="disabled"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 px-1.5 justify-center cursor-pointer bg-red-500/10 hover:bg-red-500/20 text-red-400 ">
-                                                        <span wire:loading.remove class="flex items-center gap-1.5"
-                                                            wire:target="forceDeleteTeacher('{{ $teacher->user->uuid }}')">
-                                                            <x-lucide-trash-2 class="w-4 h-4" />
-                                                            Suppr. déf.
-                                                        </span>
-                                                        <span wire:loading.flex
-                                                            wire:target="forceDeleteTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                            <span>En cours...</span>
-                                                        </span>
-                                                    </button>
-                                                    <x-confirm-modal
-                                                        wire:key="confirm-force-del-teacher-{{ $teacher->id }}"
-                                                        :show="$showConfirmForceDeleteTeacher"
-                                                        title="Suppression définitive de l'enseignant {{ $teacher->user->getFullName() }}"
-                                                        confirm-text="Oui, Supprimer Déf." cancel-text="Annuler"
-                                                        confirm-action="ConfirmTeacherForceDelete"
-                                                        close-action="closeModal">
-                                                        <p>Cette action entrainera : </p>
-                                                        <ul class="text-orange-500 text-xs">
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 text-orange-800" />
-                                                                <span>La suppresion définitive de l'utilisateur
-                                                                    {{ $teacher->getFullName() }}</span>
-                                                            </li>
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 text-orange-800" />
-                                                                <span>La suppresion définitive de l'enseignant
-                                                                    {{ $teacher->getFullName() }}</span>
-                                                            </li>
-                                                            <li class="flex items-center gap-x-1">
-                                                                <x-lucide-check class="w-5 h-5 text-amber-600" />
-                                                                <span>Cette action est irrevsersible et ne sera
-                                                                    effective que dans 30 jours!</span>
-                                                            </li>
-                                                        </ul>
-                                                    </x-confirm-modal>
                                                 @endif
 
                                             </div>

@@ -140,15 +140,20 @@
                                     <div
                                         class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
 
-                                        <div class="flex items-center gap-4 min-w-0 flex-1">
-                                            <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0"></div>
+                                        <a wire:navigate
+                                            href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                            class="flex items-center gap-4 min-w-0 flex-1 hover:text-amber-500 underline-offset-4 hover:underline">
+                                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                                <img src="{{ $student->profil_photo_url }}"
+                                                    class="w-full h-full object-cover rounded-full">
+                                            </div>
                                             <div class="min-w-0 flex-1">
                                                 <h4 class="font-medium truncate">Élève {{ $student->getFullName() }}
                                                 </h4>
                                                 <p class="text-sm text-slate-400 truncate">Matricule
                                                     #458{{ $student->matricule }}</p>
                                             </div>
-                                        </div>
+                                        </a>
 
                                         <div class="text-xs font-mono text-slate-400 shrink-0">Ajouté à la classe le
                                             {{ __formatDate($student->currentYearlyAccess($classe->id)?->started_at) }}
@@ -177,19 +182,24 @@
 
                         </h3>
                         <div class="mt-5 flex items-center gap-4 min-w-0">
-                            <div class="w-16 h-16 rounded-2xl bg-slate-800 shrink-0"></div>
-                            <div class="min-w-0 flex-1">
+                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                <img src="{{ $classe->principal->user->profil_photo_url }}"
+                                    class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <a wire:navigate
+                                href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $classe->principal->uuid]) }}"
+                                class="min-w-0 flex-1 hover:text-sky-500 underline-offset-4 hover:underline">
                                 <h4 class="font-semibold truncate">
                                     {{ $classe->principal ? $classe->principal?->getFullName() : 'Non encore défini' }}
                                 </h4>
                                 @if ($classe->principal?->getSubjectsForThisClasse($classe->id))
-                                    <p class="text-sm text-slate-400 truncate flex flex-wrap gap-2">
+                                    <p class="text-xs font-mono text-slate-400 truncate flex flex-wrap gap-2">
                                         @foreach ($classe->principal?->getSubjectsForThisClasse($classe->id) as $classeSubject)
                                             <span>{{ $classeSubject->subject?->name }}</span>
                                         @endforeach
                                     </p>
                                 @endif
-                            </div>
+                            </a>
                         </div>
                     </div>
 
@@ -211,15 +221,20 @@
                                     <h5 class=" text-center border-b border-b-slate-600 py-2.5">
                                         Responsable N° {{ $loop->iteration }}
                                     </h5>
-                                    <div class="mt-5 flex items-center gap-4 min-w-0 p-2">
-                                        <div class="w-16 h-16 rounded-2xl bg-slate-800 shrink-0"></div>
+                                    <a wire:navigate
+                                        href="{{ route('tenant.student.profil', ['student_uuid' => $respo->uuid]) }}"
+                                        class="mt-5 flex items-center gap-4 min-w-0 p-2 hover:text-amber-500 underline-offset-4 hover:underline">
+                                        <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                            <img src="{{ $respo->profil_photo_url }}"
+                                                class="w-full h-full object-cover rounded-full">
+                                        </div>
                                         <div class="min-w-0 flex-1">
                                             <h6 class=" truncate">
-                                                {{ $respo ? $respol?->getFullName() : 'Non encore défini' }}
+                                                {{ $respo ? $respo?->getFullName() : 'Non encore défini' }}
                                             </h6>
 
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             @endforeach
                         </div>

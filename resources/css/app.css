@@ -145,25 +145,175 @@ h2.swal2-title {
 }
 
 .swal2-cancel.swal2-styled {
-    background-color: red;
+    background-color: red !important;
 }
 .swal2-cancel.swal2-styled:hover {
-    background-color: rgb(150, 8, 8);
+    background-color: rgb(150, 8, 8) !important;
 }
 .swal2-confirm.swal2-styled {
-    background-color: blue;
+    background-color: blue !important;
 }
 .swal2-confirm.swal2-styled:hover {
-    background-color: rgb(22, 22, 140);
+    background-color: rgb(22, 22, 140) !important;
 }
 .swal2-cancel.swal2-styled,
 .swal2-confirm.swal2-styled {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
 }
 
 .swal2-container,
 .swal2-center,
 .swal2-backdrop-show {
     background-color: rgba(1, 1, 10, 0.863) !important;
+}
+
+.z-table tr.z-table-body:nth-child(odd) {
+    background: #0845ee36 !important;
+}
+
+.z-table tr.z-table-body:nth-child(even) {
+    background: hsla(165, 96%, 45%, 0.315) !important;
+}
+
+.z-table {
+    border-collapse: collapse !important;
+}
+
+.z-table-border th,
+.z-table-border td {
+    border: thin solid rgba(133, 127, 127, 0.329) !important;
+}
+.hoverable tr:hover,
+tr:hover {
+    opacity: 1 !important;
+    background-color: rgba(23, 120, 230, 0.116) !important;
+    cursor: pointer;
+}
+
+.text-cursive {
+    font-family: cursive !important;
+}
+
+.z-hover-secondary:hover {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
+.z-bg-hover-secondary {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
+.bg-hover-secondary {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
+.z-bg-secondary-dark {
+    background-color: #334 !important;
+}
+
+.bg-secondary-dark {
+    background-color: #334 !important;
+}
+
+.z-bg-secondary-light-opac {
+    background-color: rgba(10, 10, 40, 0.87) !important;
+}
+
+.z-bg-secondary-light {
+    background-color: rgba(10, 10, 40, 0.97) !important;
+}
+
+.bg-secondary-light {
+    background-color: rgba(10, 10, 50, 0.97) !important;
+}
+
+.bg-secondary-light-opac {
+    background-color: rgba(10, 10, 40, 0.87) !important;
+}
+
+.bg-choosen-marks {
+    background-color: rgba(10, 53, 30, 0.87) !important;
+}
+
+.bg-secondary-light-0 {
+    background-color: rgba(30, 15, 45, 0.87) !important;
+}
+
+.bg-secondary-light-2 {
+    background-color: rgba(9, 15, 20, 0.9) !important;
+}
+
+.bg-secondary-light-3 {
+    background-color: rgba(12, 20, 45, 0.91) !important;
+}
+
+.bg-secondary-light-1 {
+    background-color: rgba(12, 15, 30, 0.92) !important;
+}
+
+.text-light-0 {
+    color: rgba(30, 15, 45, 0.87) !important;
+}
+
+.text-light-2 {
+    color: rgba(9, 15, 20, 0.9) !important;
+}
+
+.text-light-3 {
+    color: rgba(12, 20, 45, 0.91) !important;
+}
+
+.text-light-1 {
+    color: rgba(12, 15, 30, 0.92) !important;
+}
+
+.text-black-0 {
+    color: black !important;
+}
+
+.z-bg-secondary {
+    background-color: #334 !important;
+}
+.bg-green-y {
+    background-color: greenyellow !important;
+}
+
+.border-green-y {
+    border-color: greenyellow !important;
+}
+
+.z-secondary {
+    background-color: #334 !important;
+}
+.letter-spacing-3 {
+    letter-spacing: 3px;
+}
+.letter-spacing-2 {
+    letter-spacing: 2px;
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
+}
+
+.letter-spacing-0 {
+    letter-spacing: 0.5px;
+}
+
+.ls-3 {
+    letter-spacing: 3px;
+}
+.ls-2 {
+    letter-spacing: 2px;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+.ls-0 {
+    letter-spacing: 0.5px;
 }

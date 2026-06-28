@@ -313,6 +313,27 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
 
     }
+
+    public function getTeachersWithoutYearlyAccesses(?int $school_year_id = null)
+    {
+        $teachers = [];
+
+        if(!$school_year_id) $school_year_id = $this->getActiveSchoolYear()?->id;
+
+        $all_actives_teachers = Teacher::where('status', 'active')->get();
+
+        foreach($all_actives_teachers as $teacher){
+
+           if($teacher->yearlyAccesses()->where('school_year_id', $school_year_id)->whereStatus('active')->whereNull('suspended_at')->count() < 1){
+
+                $teachers[] = $teacher;
+
+           }
+        }
+
+        return $teachers;
+
+    }
     
     public function getClassesOfSchoolYear(?SchoolYear $school_year = null, bool $must_has_promotion = true, bool $must_has_filiar = true)
     {

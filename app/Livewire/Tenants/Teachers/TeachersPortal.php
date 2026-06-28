@@ -4,9 +4,11 @@ namespace App\Livewire\Tenants\Teachers;
 
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\GeneratedDocument;
+use App\Models\SchoolYear;
 use App\Models\Teacher;
 use App\Services\PDFFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -18,9 +20,29 @@ class TeachersPortal extends Component
 {
     use TeachersActions;
 
+    public string $search = '';
+
+    public string $city = '';
+
+    public string $gender = '';
+
+    public string $department = '';
+
+    public ?string $status = null;
+
+    public int $perPage = 12;
+
+
+    
     public function mount(?string $status = null)
     {
         if($status) $this->status = $status;
+    }
+
+    #[Computed]
+    public function activeYear(): ?SchoolYear
+    {
+        return SchoolYear::current()->first();
     }
 
     public function onReloadDashboard()

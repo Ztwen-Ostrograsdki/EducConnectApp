@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Events\DataUpdatedEvent;
 use App\Models\SchoolYear;
 use App\Tools\CentralTools;
 use Illuminate\Support\Facades\Auth;
@@ -17,15 +18,45 @@ class SchoolYearSelectorComponent extends Component
 
     public function mount()
     {
-        $this->selectedYear = session('school_year_selected');
-    }
+        $activeSchoolYear = SchoolYear::where('is_active', true)->where('is_closed', false)->first();
 
-    public function updatedSelectedYear(): void
-    {
-        $this->dispatch('yearChanged', $this->selectedYear);
+        if($activeSchoolYear) $this->selectedYear = $activeSchoolYear->slug;
 
         Session::put('school_year_selected', $this->selectedYear);
     }
+
+    public function updatedSelectedYear(?string $school_year): void
+    {
+        $activeSchoolYear = SchoolYear::where('is_active', true)->where('is_closed', false)->first();
+
+        $selectedSchoolYear = SchoolYear::firstWhere('slug', $school_year);
+
+        $done = false;
+
+        if($selectedSchoolYear){
+
+            $done = $selectedSchoolYear->update(['is_active' => true, 'is_closed' => false]);
+
+        }
+
+        if($activeSchoolYear && $done){
+
+            $activeSchoolYear->update(['is_active' => false]);
+        }
+
+        $this->dispatch('yearChanged', $this->selectedYear);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        Session::put('school_year_selected', $this->selectedYear);
+    }
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+
 
     #[On('yearChanged')]
     public function onYearChanged(string $schoolYear)

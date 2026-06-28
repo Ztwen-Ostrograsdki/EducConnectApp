@@ -8,7 +8,6 @@ use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
-use App\Models\Teacher;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -24,6 +23,7 @@ class EditClasseComponent extends Component
 
     public Classe $classe;
 
+    public string $localization   = '';
     public string    $classe_slug = '';
     public int    $school_year_id = 0;
     public int    $promotion_id   = 0;
@@ -34,7 +34,6 @@ class EditClasseComponent extends Component
     public string $code           = '';
     public string $level          = 'secondaire';
     public int    $effectif_max   = 50;
-    public ?int   $principal_id   = null;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
 
@@ -54,6 +53,7 @@ class EditClasseComponent extends Component
 
         $this->classe          = $classe;
         $this->school_year_id  = $classe->school_year_id;
+        $this->localization    = $classe->localization;
         $this->promotion_id    = $classe->promotion_id;
         $this->filiar_id       = $classe->filiar_id;
         $this->serial_id       = $classe->serial_id;
@@ -61,15 +61,10 @@ class EditClasseComponent extends Component
         $this->code            = $classe->code ?? '';
         $this->level           = $classe->level;
         $this->effectif_max    = $classe->effectif_max;
-        $this->principal_id    = $classe->principal_id;
         $this->is_active       = $classe->is_active;
         $this->is_locked       = $classe->is_locked;
         $this->school_year     = $classe->school_year->slug;
 
-        // Pré-remplir le search avec le nom du prof actuel
-        if ($classe->principal_id && $classe->principal) {
-            $this->teacherSearch = $classe->principal->name;
-        }
     }
 
     // ─── Computed ─────────────────────────────────────────────────────
@@ -98,46 +93,12 @@ class EditClasseComponent extends Component
         return Serial::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
     }
 
-    #[Computed]
-    public function teachers()
-    {
-        if (strlen($this->teacherSearch) < 2) {
-            return collect();
-        }
-
-        $yearId = $this->school_year_id;
-
-        return Teacher::where(function ($q) {
-                $q->where('name', 'like', '%' . $this->teacherSearch . '%')
-                  ->orWhere('email', 'like', '%' . $this->teacherSearch . '%');
-            })
-            ->get()
-            ->filter(fn(Teacher $t) => $t->hasValidAccessForYear(
-                SchoolYear::find($yearId)
-            ))
-            ->take(10)
-            ->values();
-    }
-
-    // ─── Actions ──────────────────────────────────────────────────────
-
-    public function selectTeacher(int $id, string $name): void
-    {
-        $this->principal_id  = $id;
-        $this->teacherSearch = $name;
-    }
-
-    public function clearTeacher(): void
-    {
-        $this->principal_id  = null;
-        $this->teacherSearch = '';
-    }
-
     public function save(): void
     {
         try {
             $this->validate([
                 'school_year_id' => 'required|exists:school_years,id',
+                'localization'   => 'string|nullable',
                 'promotion_id'   => 'required|exists:promotions,id',
                 'filiar_id'      => 'nullable|exists:filiars,id',
                 'serial_id'      => 'nullable|exists:serials,id',
@@ -151,7 +112,6 @@ class EditClasseComponent extends Component
                 'code'         => 'nullable|string|max:30',
                 'level'        => 'required|in:primaire,secondaire,superieur',
                 'effectif_max' => 'required|integer|min:1|max:200',
-                'principal_id' => 'nullable|exists:teachers,id',
                 'is_active'    => 'boolean',
                 'is_locked'    => 'boolean',
             ]);
@@ -166,9 +126,9 @@ class EditClasseComponent extends Component
                 'code'           => $this->code ?: null,
                 'level'          => $this->level,
                 'effectif_max'   => $this->effectif_max,
-                'principal_id'   => $this->principal_id,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,
+                'localization'   => $this->localization,
             ]);
 
             if($done){

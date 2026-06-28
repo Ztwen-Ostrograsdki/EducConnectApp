@@ -240,12 +240,21 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
     {
         $link = ClasseSubjectOfSchoolYear::with(['subject', 'teacher.user'])->findOrFail($linkId);
 
-        $link->update([
-            'ended_at'           => now(),
-            'replacement_reason' => 'Remaniement d\'emploi du temps',
-            'replaced_by'        => auth('tenant')->id(),
-        ]);
+        if($link->started_at->gt(now()->subWeeks(2))){
+            
+            $link->update([
+                'ended_at'           => now(),
+                'replacement_reason' => 'Remaniement d\'emploi du temps',
+                'replaced_by'        => auth('tenant')->id(),
+            ]);
 
+        }
+        else{
+
+            $link->delete();
+        }
+
+        
         broadcast(new DataUpdatedEvent(tenant('id')));
 
         $this->notification()->warning(

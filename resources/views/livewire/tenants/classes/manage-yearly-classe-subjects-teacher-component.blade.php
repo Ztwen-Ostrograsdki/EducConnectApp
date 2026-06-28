@@ -14,6 +14,20 @@
                 </p>
             </div>
         </div>
+        @php
+            $unaccesses = tenancy()->tenant?->getTeachersWithoutYearlyAccesses();
+        @endphp
+        @if (count($unaccesses))
+            <div
+                class="rounded-2xl border border-red-800 bg-red-900/30 p-2 font-mono text-sm animate-pulse text-red-400">
+                <span>{{ __zero(count($unaccesses)) }} enseigant(s) sont sans accès pour cette année scolaire
+                    {{ $this->activeYear?->slug ?? '' }}</span>
+                <p>
+                    Veuillez vous rendre sur le portail des enseignants pour accorder les accès. Autrement, vous ne
+                    pourriez ni définir leurs matières ni leur attribuer de classe!
+                </p>
+            </div>
+        @endif
 
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
@@ -71,9 +85,9 @@
                                 </div>
 
                                 <div wire:loading.remove wire:target="selectSubject({{ $subject->id }})"
-                                    class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0
+                                    class="p-2 rounded-xl uppercase flex items-center justify-center text-xs font-bold shrink-0
                                     {{ $isSelected ? 'bg-indigo-500/30 text-indigo-300' : ($isAssigned ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300') }}">
-                                    {{ strtoupper(substr($subject->name, 0, 2)) }}
+                                    {{ $subject->code }}
                                 </div>
 
                                 <div class="flex-1 min-w-0">
@@ -240,11 +254,16 @@
 
             </div>
 
-            <div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden h-fit sticky top-6">
+            <div
+                class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden h-fit sticky top-6 font-semibold space-x-3">
 
                 <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between gap-4">
                     <div>
-                        <h2 class="font-semibold text-white text-sm">Matières assignées</h2>
+                        <h2 class=" text-slate-400 text-base font-semibold">Profs choisis par matière de la
+                            classe
+                            <span class="text-orange-500 font-semibold">
+                                {{ $classe?->code }}</span>
+                        </h2>
                         <p class="text-xs text-slate-500 mt-0.5">
                             {{ $this->assignedLinks->count() }} assignation(s) · {{ $this->activeYear?->slug }}
                         </p>
@@ -261,57 +280,83 @@
                         <p class="text-sm text-slate-500">Aucune matière assignée pour l'instant.</p>
                     </div>
                 @else
-                    <div class="divide-y divide-slate-800">
+                    <table class="divide-y divide-slate-800 w-full  ">
+                        <thead class="bg-slate-950 border-b border-slate-800">
+
+                            <tr>
+
+                                <th class="px-3 py-4 text-center text-sm text-slate-400">
+                                    N°
+                                </th>
+                                <th class="px-3 py-4 text-center text-sm text-slate-400">
+                                    Matière
+                                </th>
+
+                                <th class="px-3 py-4 text-center text-sm text-slate-400">
+                                    Enseignant
+                                </th>
+
+                                <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
                         @foreach ($this->assignedLinks as $link)
-                            <div wire:key="link-{{ $link->id }}"
-                                class="flex items-start gap-3 px-5 py-4 hover:bg-slate-800/30 transition">
+                            <tr wire:key="link-{{ $link->id }}"
+                                class=" px-3 py-2 hover:bg-slate-800/30 transition w-full text-center text-slate-500">
 
-                                <div
-                                    class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                                    {{ strtoupper(substr($link->subject?->name ?? '?', 0, 2)) }}
-                                </div>
+                                <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-white truncate">
+                                    {{ __zero($loop->iteration) }}
+
+                                </td>
+
+                                <td
+                                    class=" flex flex-col items-center justify-center text-xs font-bold shrink-0 mt-0.5 truncate">
+                                    <p class="text-sm font-semibold text-white">
                                         {{ $link->subject?->name ?? '—' }}
                                     </p>
-                                    @if ($link->subject?->code)
-                                        <p class="text-xs text-slate-500 font-mono">{{ $link->subject->code }}</p>
-                                    @endif
-                                    <div class="mt-2 flex items-center gap-2">
-                                        <div
-                                            class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0">
-                                            {{ strtoupper(substr($link->teacher?->user?->name ?? '?', 0, 1)) }}
-                                        </div>
-                                        <p class="text-xs text-slate-400 truncate">
-                                            {{ $link->teacher?->user?->name ?? 'Sans prof' }}
-                                        </p>
+                                    <div class="flex items-center gap-x-2">
+                                        @if ($link->subject?->code)
+                                            <p class="text-xs text-slate-500 font-mono">{{ $link->subject->code }}</p>
+                                        @endif
+                                        @if ($link->coefficient)
+                                            <p class="text-xs text-slate-600 mt-1">Coeff. {{ $link->coefficient }}</p>
+                                        @endif
                                     </div>
-                                    @if ($link->coefficient != 1)
-                                        <p class="text-xs text-slate-600 mt-1">Coeff. {{ $link->coefficient }}</p>
-                                    @endif
-                                </div>
+                                </td>
 
-                                <button wire:click="removeLink({{ $link->id }})" wire:loading.attr="disabled"
-                                    wire:target="removeLink({{ $link->id }})"
-                                    class="relative inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white text-xs font-medium transition disabled:opacity-40 shrink-0">
-                                    <span wire:loading.remove wire:target="removeLink({{ $link->id }})">
-                                        <x-lucide-x class="w-3.5 h-3.5 inline -mt-0.5" /> Retirer
-                                    </span>
-                                    <span wire:loading wire:target="removeLink({{ $link->id }})"
-                                        class="inline-flex items-center gap-1.5">
-                                        <svg class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4" />
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                                        </svg>
-                                        En cours...
-                                    </span>
-                                </button>
+                                <td class=" min-w-0 truncate text-center">
 
-                            </div>
+                                    {{ $link->teacher?->getFullName() ?? 'Sans prof' }}
+
+                                </td>
+
+                                <td class="truncate">
+                                    <button wire:click="removeLink({{ $link->id }})" wire:loading.attr="disabled"
+                                        wire:target="removeLink({{ $link->id }})"
+                                        class="relative inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white text-xs font-medium transition disabled:opacity-40 shrink-0">
+                                        <span wire:loading.remove wire:target="removeLink({{ $link->id }})">
+                                            <x-lucide-x class="w-3.5 h-3.5 inline -mt-0.5" /> Retirer
+                                        </span>
+                                        <span wire:loading wire:target="removeLink({{ $link->id }})"
+                                            class="inline-flex items-center gap-1.5">
+                                            <svg class="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4" />
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v8z" />
+                                            </svg>
+                                            En cours...
+                                        </span>
+                                    </button>
+                                </td>
+
+                            </tr>
                         @endforeach
-                    </div>
+                    </table>
                 @endif
 
             </div>

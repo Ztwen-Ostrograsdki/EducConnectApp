@@ -82,7 +82,12 @@
                         <thead class="bg-slate-950 border-b border-slate-800">
                             <tr>
                                 <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Apprenant</th>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Matricule</th>
+                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                    <span class="flex flex-col">
+                                        <span>Date de naissance</span>
+                                        <span>Age</span>
+                                    </span>
+                                </th>
                                 <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Moyenne</th>
                                 <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Présence</th>
                                 <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Statut</th>
@@ -94,30 +99,39 @@
                                 <tr class="hover:bg-slate-800/40 transition-all" wire:key="student-{{ $student->id }}">
 
                                     {{-- Apprenant --}}
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-4 min-w-0">
-                                            <div
-                                                class="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold shrink-0">
-                                                {{ strtoupper(substr($student->name, 0, 1)) }}
+                                    <td class="px-6 py-5 truncate">
+                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                            class="flex items-center gap-4 min-w-0 hover:underline hover:underline-offset-4 hover:text-amber-500">
+                                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                                <img src="{{ $student->profil_photo_url }}"
+                                                    class="w-full h-full object-cover rounded-full">
                                             </div>
-                                            <div class="min-w-0">
-                                                <a href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                    class="font-medium truncate hover:text-indigo-400 transition block">
-                                                    {{ $student->name }} {{ $student->prenames }}
-                                                </a>
-                                                <p class="text-xs text-slate-500 truncate mt-0.5">
-                                                    {{ $student->gender ?? '—' }}
-                                                    @if ($student->educMaster)
-                                                        · <span class="font-mono">{{ $student->educMaster }}</span>
-                                                    @endif
-                                                </p>
+                                            <div class="flex flex-col">
+                                                <div class="font-medium  transition block">
+                                                    {{ $student->getFullName() }}
+                                                </div>
+
                                             </div>
-                                        </div>
+
+                                        </a>
+                                        <p class="text-xs text-slate-500 mt-0.5 flex gap-x-1">
+                                            <span>{{ $student->gender ?? '—' }}</span>
+                                            @if ($student->educMaster)
+                                                · EducMaster : <span class="font-mono">{{ $student->educMaster }}</span>
+                                            @endif
+                                            @if ($student->matricule)
+                                                · Matricule : <span class="font-mono">{{ $student->matricule }}</span>
+                                            @endif
+                                        </p>
                                     </td>
 
                                     {{-- Matricule --}}
                                     <td class="px-6 py-5 text-sm text-slate-300 font-mono">
-                                        {{ $student->matricule }}
+                                        <div class="flex flex-col gap-y-2">
+                                            <p>{{ ucwords(__formatDate($student->birth_date)) }}</p>
+                                            <p class="text-slate-500 text-left ">{{ getAge($student->birth_date) }} ans
+                                            </p>
+                                        </div>
                                     </td>
 
                                     {{-- Moyenne --}}
@@ -304,3 +318,4 @@
 
     </div>
 </div>
+

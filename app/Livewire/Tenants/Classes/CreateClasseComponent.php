@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
@@ -23,6 +24,7 @@ class CreateClasseComponent extends Component
     use WireUiActions;
 
 
+    public int    $counter        = 0;
     public int    $school_year_id = 0;
     public string    $school_year ='';
     public int    $promotion_id   = 0;
@@ -31,6 +33,7 @@ class CreateClasseComponent extends Component
     public string $name           = '';
     public string $code           = '';
     public string $level          = 'secondaire';
+    public string $localization   = 'Bâtiment H - Salle 1';
     public int    $effectif_max   = 40;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
@@ -47,6 +50,12 @@ class CreateClasseComponent extends Component
 
             $this->school_year = $active->slug;
         }
+    }
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
     }
 
     // ─── Computed ─────────────────────────────────────────────────────
@@ -82,6 +91,7 @@ class CreateClasseComponent extends Component
         try {
             $this->validate([
                 'school_year_id' => 'required|exists:school_years,id',
+                'localization'   => 'string|nullable',
                 'promotion_id'   => 'required|exists:promotions,id',
                 'filiar_id'      => 'nullable|exists:filiars,id',
                 'serial_id'      => 'nullable|exists:serials,id',
@@ -111,6 +121,7 @@ class CreateClasseComponent extends Component
                 'effectif_max'   => $this->effectif_max,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,
+                'localization'   => $this->localization,
             ]);
 
             if($classe){

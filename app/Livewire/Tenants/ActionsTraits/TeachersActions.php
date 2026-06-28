@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Tenants\ActionsTraits;
 
+use App\Events\DataUpdatedEvent;
 use App\Events\TeacherWasBlockedEvent;
 use App\Jobs\JobToSendCredentialsToUser;
+use App\Models\Classe;
 use App\Models\Teacher;
 use App\Models\User;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
@@ -16,646 +19,486 @@ trait TeachersActions{
     
     public $counter = 3;
     
-    public string $search = '';
-
-    public string $city = '';
-
-    public string $gender = '';
-
-    public string $department = '';
-
-    public ?string $status = null;
-
-    public int $perPage = 12;
-
-    public $showConfirmDeleteTeacher = false;
-
-    public $showConfirmTeacherRestorationModal = false;
-
-    public $showConfirmForceDeleteTeacher = false;
-
-    public $showConfirmTeacherLock = false;
-
-    public $showConfirmTeacherUnLock = false;
+    
 
 
-    public $showConfirmDeleteTeachers = false;
-
-    public $showConfirmTeachersRestorationModal = false;
-
-    public $showConfirmForceDeleteTeachers = false;
-
-    public $showConfirmTeachersLock = false;
-
-    public $showConfirmTeachersUnLock = false;
-
-    public $showConfirmGivingAccessToTeacher = false;
-
-    public $showConfirmRevokTeacherAccess = false;
-
-
-    public ?string $targetedTeacherUserUuid = null;
-
-
-	public function closeModal()
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
     {
-        $this->reset('showConfirmDeleteTeacher', 'showConfirmTeacherRestorationModal', 'showConfirmForceDeleteTeacher', 'showConfirmTeacherLock', 'showConfirmDeleteTeachers', 'showConfirmTeachersRestorationModal', 'showConfirmForceDeleteTeachers', 'showConfirmTeachersLock', 'targetedTeacherUserUuid', 'showConfirmTeachersUnLock', 'showConfirmGivingAccessToTeacher', 'showConfirmRevokTeacherAccess');
+        $this->counter++;
     }
 
-    public function giveAccessForThisSchoolYear(string $userUuid): void
+    
+    // ─── Actions individuelles ─────────────────────────────────────────
+
+    public function lockTeacher(int $teacherId): void
     {
-        $this->showConfirmGivingAccessToTeacher = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Bloquer cet enseignant ?',
+            'text'               => 'L\'enseignant n\'aura plus accès à son espace.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, bloquer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherLocking',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmGivingAccessToTeacher(): void
+    #[On('ConfirmTeacherLocking')]
+    public function ConfirmTeacherLocking(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-
-        if($user){
-
-            $teacher = $user->teacher;
-
-            if($teacher){
-
-                $domain = request()->getSchemeAndHttpHost();
-
-                $teacher->giveAccessForThisSchoolYear(tenant('id'), null, $domain);
-
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => "Proccessus d'accès lancé",
-                    'description' => "Le processus pour accorder l'accès à l'enseignant " . $teacher->getFullName() . " a été lancé",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => "Aucun enseignant trouvé",
-                    'description' => "Aucun enseignant n'est lié à cet utilisateur!",
-                ]);
-            }
-
+        $user = User::where('uuid', $teacherId)->first();
+        if (!$user) {
+            $this->notification()->error(title: 'Utilisateur introuvable');
+            return;
         }
-        else{
+        $user->teacher->update(['blocked' => true]);
+        broadcast(new TeacherWasBlockedEvent(tenant('id'), $user->id));
+        $this->notification()->success(
+            title: 'Enseignant bloqué',
+            description: "{$user->teacher->getFullName()} a été bloqué.",
+        );
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function lockAccessToClasse(int $teacherId, int $classeId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Bloquer l'accès de cet enseignant à la classe?",
+            'text'               =>"L'enseignant n'aura plus accès à cette classe.",
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Bloquer son accès',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToLockTeacherAccessToClasse',
+            'onConfirmedParams'  => ['teacherId' => $teacherId, 'classeId' => $classeId],
+        ]);
+    }
+
+    #[On('ConfirmToLockTeacherAccessToClasse')]
+    public function OnConfirmToLockTeacherAccessToClasse(int $teacherId, int $classeId): void
+    {
+        $teacher = Teacher::find($teacherId);
+
+        $classe = Classe::find($classeId);
+
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
+        }
+
+        if (!$classe) {
+            $this->notification()->error(title: 'Classe introuvable');
+            return;
+        }
+
+        try {
+            if($teacher->canAccessIntoClasse($classe->id)){
+
+                $locked_for_teachers = $classe->locked_for_teachers;
+
+                $locked_for_teachers[$teacherId] = $teacherId;
+
+                $classe->update(['locked_for_teachers' => $locked_for_teachers]);
+
+            }
+
+            $this->notification()->success(
+                title: "L'accès de l'enseignant à été bloqué",
+                description: "{$teacher->getFullName()} n'a plus accès à la classe " . $classe->name,
+            );
+
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "L'accès de l'enseignant {$teacher?->getFullName()} à la classe {$classe->name} n'a pas pu être résolu ",
+                description: "Raisons : " . cutter($th->getMessage(), 150),
+            );
+        }
+    }
+
+    public function unLockAccessToClasse(int $teacherId, int $classeId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Autoriser l'accès de cet enseignant à la classe?",
+            'text'               =>"L'enseignant aura de nouveau accès à cette classe.",
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Autoriser son accès',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'UnlockAccessToClasse',
+            'onConfirmedParams'  => ['teacherId' => $teacherId, 'classeId' => $classeId],
+        ]);
+    }
+
+    #[On('UnlockAccessToClasse')]
+    public function OnUnlockAccessToClasse(int $teacherId, int $classeId): void
+    {
+        $teacher = Teacher::find($teacherId);
+
+        $classe = Classe::find($classeId);
+
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
+        }
+
+        if (!$classe) {
+            $this->notification()->error(title: 'Classe introuvable');
+            return;
+        }
+
+        try {
+            if($teacher->cannotAccessIntoClasse($classe->id)){
+
+                $locked_for_teachers = $classe->locked_for_teachers;
+
+                unset($locked_for_teachers[$teacherId]);
+
+                array_values($locked_for_teachers);
+
+                $classe->update(['locked_for_teachers' => $locked_for_teachers]);
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+
+                $this->notification()->success(
+                    title: "L'accès de l'enseignant à été autorisé",
+                    description: "L'enseignant {$teacher->getFullName()} a à présent accès à la classe " . $classe->name,
+                );
+
+            }
+
             
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "L'accès de l'enseignant {$teacher?->getFullName()} à la classe {$classe->name} n'a pas pu être résolu ",
+                description: "Raisons : " . cutter($th->getMessage(), 150),
+            );
         }
-        
-        
     }
 
-
-    public function revokTeacherAccessForThisSchoolYear(string $userUuid): void
+    public function unlockTeacher(int $teacherId): void
     {
-        $this->showConfirmRevokTeacherAccess = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Débloquer cet enseignant ?',
+            'text'               => 'L\'enseignant retrouvera accès à son espace.',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, débloquer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherUnLocking',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmToRevokTeacherAccessForThisSchoolYear(): void
+    #[On('ConfirmTeacherUnLocking')]
+    public function OnConfirmTeacherUnLocking(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-
-        if($user){
-
-            $teacher = $user->teacher;
-
-            if($teacher){
-
-                $domain = request()->getSchemeAndHttpHost();
-
-                $teacher->revokAccessForThisSchoolYear(tenant('id'), null, $domain);
-
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignant bloquée',
-                    'description' => "L'Enseignant a été bloqué!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => "Aucun enseignant trouvé",
-                    'description' => "Aucun enseignant n'est lié à cet utilisateur!",
-                ]);
-            }
-
+        $user = User::where('uuid', $teacherId)->first();
+        if (!$user) {
+            $this->notification()->error(title: 'Utilisateur introuvable');
+            return;
         }
-        else{
+        $user->teacher->update(['blocked' => false]);
+        $this->notification()->success(
+            title: 'Enseignant débloqué',
+            description: "{$user->teacher->getFullName()} a été débloqué.",
+        );
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
-
-
-
-    public function lockTeacher(string $userUuid): void
+    public function giveAccessForThisSchoolYear(int $teacherId): void
     {
-        $this->showConfirmTeacherLock = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Accorder l\'accès ?',
+            'text'               => 'L\'enseignant sera enrôlé pour l\'année ' . ($this->activeYear?->slug ?? ''),
+            'icon'               => 'info',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, enrôler',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmGivingAccessToTeacher',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmTeacherLocking(): void
+    #[On('ConfirmGivingAccessToTeacher')]
+    public function OnConfirmGivingAccessToTeacher(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-        if($user){
-
-            $locked = $user->teacher->update(['blocked' => true]);
-
-            if($locked){
-
-				(broadcast(new TeacherWasBlockedEvent(tenant('id'), $user->id)));
-				
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignant bloquée',
-                    'description' => "L'Enseignant a été bloqué!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la blocage',
-                    'description' => "L'Enseignant n'a pas été bloqué!",
-                ]);
-            }
-
+        $teacher = Teacher::whereId($teacherId)->first();
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
         }
-        else{
+        $teacher->giveAccessToTeacherForThisSchoolYear(tenant('id'), null, request()->getSchemeAndHttpHost());
+        $this->notification()->success(
+            title: 'Accès accordé',
+            description: "Le processus d'accès pour {$teacher->getFullName()} a été lancé.",
+        );
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
-	
 
-    public function unlockTeacher(string $userUuid): void
+    public function removeAccessForThisSchoolYear(int $teacherId): void
     {
-        $this->showConfirmTeacherUnLock = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Révoquer l\'accès ?',
+            'text'               => 'L\'enseignant ne sera plus enrôlé pour l\'année ' . ($this->activeYear?->slug ?? ''),
+            'icon'               => 'info',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, retirer l\'accès ',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToRemoveAccessToTeacher',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmTeacherUnLocking(): void
+    #[On('ConfirmToRemoveAccessToTeacher')]
+    public function OnConfirmToRemoveAccessToTeacher(int $teacherId): void
     {
-        $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-
-        if($user){
-
-            $locked = $user->teacher->update(['blocked' => false]);
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignant débloqué',
-                    'description' => "L'enseignant a été débloqué!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la déblocage',
-                    'description' => "L'enseignant n'a pas été débloqué!",
-                ]);
-            }
-
+        $teacher = Teacher::whereId($teacherId)->first();
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
         }
-        else{
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+        $teacher->removeTeacherAccessForThisSchoolYear(tenant('id'), null, request()->getSchemeAndHttpHost());
+        $this->notification()->success(
+            title: 'Accès révoqué',
+            description: "Le processus de suppression d'accès pour l'enseignant {$teacher->getFullName()} a été lancé.",
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
-
-
-    public function deleteTeacher(string $userUuid): void
+    public function deleteTeacher(int $teacherId): void
     {
-        $this->showConfirmDeleteTeacher = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Envoyer à la corbeille ?',
+            'text'               => 'L\'enseignant n\'aura plus accès à son espace.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, corbeille',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherDeletion',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmTeacherDeletion(): void
+    #[On('ConfirmTeacherDeletion')]
+    public function OnConfirmTeacherDeletion(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-        if($user){
-
-            $teacher = $user->teacher;
-
-            if($teacher){
-
-                $deleted = $teacher->delete();
-
-                if($deleted){
-                    $this->notification()->send([
-                        'icon'        => 'success',
-                        'title'       => 'enseignant envoyé dans la corbeille',
-                        'description' => "L'enseignant a été envoyé dans la corbeille!",
-                    ]);
-                }
-                else{
-                    $this->notification()->send([
-                        'icon'        => 'warning',
-                        'title'       => 'Echec de la suppresion',
-                        'description' => "L'Enseignant n'a pas été supprimé!",
-                    ]);
-                }
-            }
-            else{
-
-                $this->notification()->send([
-                    'icon'        => 'error',
-                    'title'       => "Utilisateur non lié à un enseignant",
-                    'description' => "Vérifiez la requête",
-                ]);
-                
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
+        $user = User::where('uuid', $teacherId)->first();
         
-        
+        if (!$user?->teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
+        }
+        $user->teacher->delete();
+        $this->notification()->success(
+            title: 'Enseignant mis en corbeille',
+            description: "{$user->teacher->getFullName()} a été envoyé à la corbeille.",
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
-
-    public function forceDeleteTeacher(string $userUuid): void
+    public function restoreTeacher(int $teacherId): void
     {
-        $this->showConfirmForceDeleteTeacher = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Restaurer cet enseignant ?',
+            'text'               => 'L\'enseignant retrouvera accès à son espace.',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, restaurer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#a855f7',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherRestoration',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmTeacherForceDelete(): void
+    #[On('ConfirmTeacherRestoration')]
+    public function OnConfirmTeacherRestoration(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-        if($user){
-
-            $teacher = $user->teacher;
-
-            if($teacher){
-
-                $deleted = $teacher->forceDelete();
-
-                if($deleted){
-                    $this->notification()->send([
-                        'icon'        => 'success',
-                        'title'       => 'enseignant supprimé définitivement',
-                        'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-                    ]);
-                }
-                else{
-                    $this->notification()->send([
-                        'icon'        => 'warning',
-                        'title'       => 'Echec de la suppresion',
-                        'description' => "L'enseignant n'a pas été supprimé!",
-                    ]);
-                }
-            }
-            else{
-
-                $this->notification()->send([
-                    'icon'        => 'error',
-                    'title'       => "Utilisateur non lié à un enseignant",
-                    'description' => "Vérifiez la requête",
-                ]);
-                
-            }
-
+        $user = User::where('uuid', $teacherId)->withTrashed()->first();
+        $teacher = $user?->teacher()->withTrashed()->first();
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
         }
-        else{
+        $teacher->restore();
+        $this->notification()->success(
+            title: 'Enseignant restauré',
+            description: "{$teacher->getFullName()} a été restauré.",
+        );
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
-
-    public function restoreTeacher(string $userUuid): void
+    public function forceDeleteTeacher(int $teacherId): void
     {
-        $this->showConfirmTeacherRestorationModal = true;
-
-        $this->targetedTeacherUserUuid = $userUuid;
-
+        $this->dispatch('swal', [
+            'title'              => 'Suppression définitive ?',
+            'text'               => 'Cette action est irréversible. Elle sera effective dans 30 jours.',
+            'icon'               => 'error',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer déf.',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherForceDelete',
+            'onConfirmedParams'  => ['teacherId' => $teacherId],
+        ]);
     }
 
-    public function ConfirmTeacherRestoration(): void
+    #[On('ConfirmTeacherForceDelete')]
+    public function OnConfirmTeacherForceDelete(int $teacherId): void
     {
-       $user = User::whereUuid($this->targetedTeacherUserUuid)->firstOrFail();
-        if($user){
-
-            $teacher = $user->teacher;
-
-            if($teacher){
-
-                $restored = $teacher->restore();
-
-                if($restored){
-                    $this->notification()->send([
-                        'icon'        => 'success',
-                        'title'       => 'enseignant restauré',
-                        'description' => "L'enseignant " . $teacher->getFullName() . " a été restauré de la corbeille",
-                    ]);
-                }
-                else{
-                    $this->notification()->send([
-                        'icon'        => 'warning',
-                        'title'       => 'Echec de la restauration',
-                        'description' => "L'enseignant n'a pas été restauré!",
-                    ]);
-                }
-            }
-            else{
-
-                $this->notification()->send([
-                    'icon'        => 'error',
-                    'title'       => "Utilisateur non lié à un enseignant",
-                    'description' => "Vérifiez la requête",
-                ]);
-                
-            }
-
+        $user = User::where('uuid', $teacherId)->withTrashed()->first();
+        $teacher = $user?->teacher()->withTrashed()->first();
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
+            return;
         }
-        else{
+        $teacher->forceDelete();
+        $this->notification()->success(
+            title: 'Suppression planifiée',
+            description: "Effective dans 30 jours.",
+        );
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
+    // ─── Actions groupées ──────────────────────────────────────────────
 
-	// GROUPS ACTIONS ON TEACHERS
-
-	public function lockTeachers(): void
+    public function lockTeachers(): void
     {
-        $this->showConfirmTeachersLock = true;
-
+        $this->dispatch('swal', [
+            'title'              => 'Bloquer tous les enseignants ?',
+            'text'               => 'Tous les enseignants actifs n\'auront plus accès.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, bloquer tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeachersLocking',
+        ]);
     }
 
-    public function ConfirmTeachersLocking(): void
+    #[On('ConfirmTeachersLocking')]
+    public function OnConfirmTeachersLocking(): void
     {
-       $query = Teacher::where('blocked', false);
+        Teacher::where('blocked', false)->update(['blocked' => true]);
+        $this->notification()->success(
+            title: 'Enseignants bloqués',
+            description: 'Tous les enseignants ont été bloqués.',
+        );
 
-        if($query->count()){
 
-            $locked = true;
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignants bloqués',
-                    'description' => "Les enseignants ont été bloqués!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec du blocage',
-                    'description' => "L'enseignant n'a pas été bloqué!",
-                ]);
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'Enseignant introuvable',
-                'description' => "L'enseignant n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
-
 
     public function unlockTeachers(): void
     {
-        $this->showConfirmTeachersUnLock = true;
-
+        $this->dispatch('swal', [
+            'title'              => 'Débloquer tous les enseignants ?',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, débloquer tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeachersUnLocking',
+        ]);
     }
 
-    public function ConfirmTeachersUnLocking(): void
+    #[On('ConfirmTeachersUnLocking')]
+    public function OnConfirmTeachersUnLocking(): void
     {
-        $query = Teacher::where('blocked', true);
+        Teacher::where('blocked', true)->update(['blocked' => false]);
+        $this->notification()->success(
+            title: 'Enseignants débloqués',
+            description: 'Tous les enseignants ont été débloqués.',
+        );
 
-        if($query){
-
-            $locked = true;
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignants débloqués',
-                    'description' => "Les enseignants ont été débloqués!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec du déblocage',
-                    'description' => "es enseignants n'a pas été débloqués!",
-                ]);
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        
-        
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
-
-
-
-    public function deleteTeachers(): void
-    {
-        $this->showConfirmDeleteTeachers = true;
-    }
-
-    public function ConfirmTeachersDeletion(): void
-    {
-       $query = Teacher::withoutTrashed()->whereNotNull('user_id');
-
-        if($query->count()){
-
-			$done = true;
-
-            if($done){
-
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'Enseignants envoyés dans la corbeille',
-					'description' => "Les enseignants ont été envoyés dans la corbeille!",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "La suppresion a échoué!",
-				]);
-			}
-                   
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => "Pas d'enseignants trouvés",
-                'description' => "La liste des enseignants semble vide",
-            ]);
-            
-        }
-        
-        
-    }
-
-
-    public function forceDeleteTeachers(): void
-    {
-        $this->showConfirmForceDeleteTeachers = true;
-    }
-
-    public function ConfirmTeachersForceDelete(): void
-    {
-       $query = Teacher::onlyTrashed()->whereNotNull('user_id');
-
-		if($query->count()){
-
-			$deleted = true;
-
-			if($deleted){
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'Enseignants de la corbeille supprimé définitivement',
-					'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "Les enseignants n'ont pas été supprimés!",
-				]);
-			}
-		}
-		else{
-
-			$this->notification()->send([
-				'icon'        => 'error',
-				'title'       => "Aucun enseignant trouvé dans la corbeille",
-				'description' => "Vérifiez la requête",
-			]);
-			
-		}
-        
-        
-    }
-
 
     public function restoreTeachers(): void
     {
-        $this->showConfirmTeachersRestorationModal = true;
+        $this->dispatch('swal', [
+            'title'              => 'Restaurer tous les enseignants ?',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, restaurer tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#a855f7',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeacherRestoration',
+        ]);
     }
 
-    public function ConfirmTeachersRestoration(): void
+    #[On('ConfirmTeachersRestoration')]
+    public function OnConfirmTeachersRestoration(): void
     {
-       $query = Teacher::onlyTrashed()->whereNotNull('user_id');
+        Teacher::onlyTrashed()->whereNotNull('user_id')->restore();
+        $this->notification()->success(
+            title: 'Enseignants restaurés',
+            description: 'Tous les enseignants ont été restaurés.',
+        );
 
-		if($query->count()){
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
 
-			$deleted = true;
+    public function forceDeleteTeachers(): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Suppression définitive de tous ?',
+            'text'               => 'Irréversible. Effective dans 30 jours.',
+            'icon'               => 'error',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer déf. tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmTeachersForceDelete',
+        ]);
+    }
 
-			if($deleted){
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'Enseignants de la corbeille supprimé définitivement',
-					'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "Les enseignants n'ont pas été supprimés!",
-				]);
-			}
-		}
-		else{
+    #[On('ConfirmTeachersForceDelete')]
+    public function OnConfirmTeachersForceDelete(): void
+    {
+        Teacher::onlyTrashed()->whereNotNull('user_id')->forceDelete();
+        $this->notification()->success(
+            title: 'Suppression planifiée',
+            description: 'Effective dans 30 jours.',
+        );
 
-			$this->notification()->send([
-				'icon'        => 'error',
-				'title'       => "Aucun enseignant trouvé dans la corbeille",
-				'description' => "Vérifiez la requête",
-			]);
-			
-		}
-        
-        
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
     public function sendCredentialsToTeacher(string $userUuid)

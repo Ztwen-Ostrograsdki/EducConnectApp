@@ -181,7 +181,7 @@
                 @break
 
                 @case('classe-teachers-list')
-                    <livewire:tenants.classes.sections.classe-teachers-list :classroom="$classroom" />
+                    <livewire:tenants.classes.sections.classe-teachers-list :classroom="$classroom" :classe="$classe" />
                 @break
 
                 @case('classe-parents-page')

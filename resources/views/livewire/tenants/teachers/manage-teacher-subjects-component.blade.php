@@ -12,7 +12,22 @@
                     <span class="text-indigo-400 font-medium">{{ $this->activeYear?->slug ?? '—' }}</span>
                 </p>
             </div>
+
         </div>
+        @php
+            $unaccesses = tenancy()->tenant?->getTeachersWithoutYearlyAccesses();
+        @endphp
+        @if (count($unaccesses))
+            <div
+                class="rounded-2xl border border-red-800 bg-red-900/30 p-2 font-mono text-sm animate-pulse text-red-400">
+                <span>{{ __zero(count($unaccesses)) }} enseigant(s) sont sans accès pour cette année scolaire
+                    {{ $this->activeYear?->slug ?? '' }}</span>
+                <p>
+                    Veuillez vous rendre sur le portail des enseignants pour accorder les accès. Autrement, vous ne
+                    pourriez ni définir leurs matières ni leur attribuer de classe!
+                </p>
+            </div>
+        @endif
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
             <label class="block text-xs font-medium text-slate-400 mb-2">
                 Enseignant <span class="text-rose-400">*</span>

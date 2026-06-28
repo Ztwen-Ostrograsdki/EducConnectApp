@@ -148,28 +148,39 @@
             </div>
         </div>
 
-        {{-- Toggles --}}
-        <div class="flex flex-col gap-3 pt-1">
-            <label class="flex items-center gap-3 cursor-pointer">
-                <div class="relative">
-                    <input type="checkbox" wire:model="is_active" class="sr-only peer" />
-                    <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-indigo-600 transition"></div>
-                    <div
-                        class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-center">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">
+                    Localisation classe <span class="text-slate-600">(optionnel)</span>
+                </label>
+                <input type="text" wire:model="localization" placeholder="ex: Bâtiment H salle 1"
+                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
+                @error('localization')
+                    <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="flex flex-col gap-3 pt-1">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" wire:model="is_active" class="sr-only peer" />
+                        <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-indigo-600 transition"></div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                        </div>
                     </div>
-                </div>
-                <span class="text-sm text-slate-300">Classe active</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-                <div class="relative">
-                    <input type="checkbox" wire:model="is_locked" class="sr-only peer" />
-                    <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-amber-600 transition"></div>
-                    <div
-                        class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                    <span class="text-sm text-slate-300">Classe active</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" wire:model="is_locked" class="sr-only peer" />
+                        <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-amber-600 transition"></div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                        </div>
                     </div>
-                </div>
-                <span class="text-sm text-slate-300">Verrouiller l'accès enseignants</span>
-            </label>
+                    <span class="text-sm text-slate-300">Verrouiller l'accès enseignants</span>
+                </label>
+            </div>
         </div>
 
     </div>

@@ -1,9 +1,6 @@
 <div class="min-h-screen bg-slate-950 text-slate-100">
     <div class=" mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- HEADER --}}
-        {{-- ═══════════════════════════════════════════ --}}
         <div class="flex items-center gap-4">
             <a wire:navigate href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                 class="rounded-xl border border-slate-700 p-2 text-slate-400 hover:text-white hover:bg-slate-800 transition">
@@ -26,14 +23,17 @@
                 class="rounded-2xl border {{ $principalId ? 'border-indigo-500/40 bg-indigo-500/5' : 'border-slate-700 bg-slate-900' }} p-4 transition-all">
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Prof principal</p>
                 @if ($principalId)
-                    @php $pt = $this->teachers->firstWhere('id', $principalId); @endphp
+                    @php
+                        $pt = $this->teachers->firstWhere('id', $principalId);
+                    @endphp
                     <div class="flex items-center gap-2">
                         <div
                             class="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0">
-                            {{ strtoupper(substr($pt?->name ?? '?', 0, 1)) }}
+                            {{ strtoupper(substr($pt?->user?->name ?? '?', 0, 1)) }}
                         </div>
                         <div class="min-w-0">
-                            <p class="text-sm font-medium text-white truncate">{{ $pt?->name ?? '—' }}</p>
+                            <p class="text-sm font-medium text-white truncate">
+                                {{ $pt?->getFullName() ?? 'nom non défini' }}</p>
                         </div>
                         <button wire:click="togglePrincipal({{ $principalId }})"
                             class="ml-auto text-slate-500 hover:text-rose-400 transition shrink-0">
@@ -139,15 +139,15 @@
                             <div
                                 class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0
                         {{ $isSelected ? 'bg-indigo-500/30 text-indigo-300' : 'bg-slate-700 text-slate-300' }}">
-                                {{ strtoupper(substr($teacher->name, 0, 1)) }}
+                                {{ strtoupper(substr($teacher->user?->name, 0, 1)) }}
                             </div>
 
                             <div class="flex-1 min-w-0">
                                 <p
                                     class="text-sm font-medium {{ $isSelected ? 'text-white' : 'text-slate-300' }} truncate">
-                                    {{ $teacher->name }}
+                                    {{ $teacher->getFullName() }}
                                 </p>
-                                <p class="text-xs text-slate-500 truncate">{{ $teacher->email ?? '—' }}</p>
+                                <p class="text-xs text-slate-500 truncate">{{ $teacher->user->email ?? '—' }}</p>
                             </div>
 
                             @if ($isSelected)

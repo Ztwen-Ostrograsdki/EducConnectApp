@@ -90,7 +90,7 @@ class Teacher extends Model
      */
     public function accessForYear(int $schoolYearId): HasMany
     {
-        return $this->yearlyAccesses()->where('school_year_id', $schoolYearId);
+        return $this->yearlyAccesses()->where('school_year_id', $schoolYearId)->where('is_active', true);
     }
 
     /**
@@ -112,11 +112,30 @@ class Teacher extends Model
     /**
      * Get all classe-subject assignments in the classe for this teacher.
      */
-    public function getSubjectsForThisClasse(int $classe_id, ?int $school_year_id = null): HasMany
+    public function getSubjectsForThisClasse(int $classe_id, ?int $school_year_id = null)
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        return $this->classeSubjects()->where('school_year_id', $school_year_id)->where('classe_id', $classe_id)->get();
+        return ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('classe_id', $classe_id)->where('is_active', true)->whereNull('ended_at')->get();
+    }
+
+
+    /**
+     * Get all classe assignments for this year.
+     */
+    public function getTeacherClassesForThisSchoolYear(?array $excepts = [], ?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $relations = ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->whereNull('ended_at')->pluck('classe_id')->toArray();
+
+        if(count($relations)){
+
+            return Classe::whereIn('id', $relations)->whereNotIn('id', $excepts)->get();
+
+        } 
+
+        return [];
     }
 
 
@@ -135,6 +154,27 @@ class Teacher extends Model
         return $this->classeSubjects()
             ->where('school_year_id', $schoolYearId)
             ->whereNull('ended_at');
+    }
+    
+    public function cannotAccessIntoClasse(int $classe_id, ?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+        
+        $classe = Classe::findOrFail($classe_id);
+
+        $locked_for_teachers = $classe->locked_for_teachers;
+
+        if(!$locked_for_teachers) return false;
+
+        if(in_array($this->id, $locked_for_teachers)) return true;
+
+        else return false;
+    }
+
+
+    public function canAccessIntoClasse(int $classe_id, ?int $school_year_id = null)
+    {
+        return !$this->cannotAccessIntoClasse($classe_id, $school_year_id);
     }
 
     /**
@@ -256,7 +296,7 @@ class Teacher extends Model
     }
 
 
-    public function giveAccessForThisSchoolYear(?string $tenantId = null, ?SchoolYear $school_year = null, ?string $domain = null)
+    public function giveAccessToTeacherForThisSchoolYear(?string $tenantId = null, ?SchoolYear $school_year = null, ?string $domain = null)
     {
         if(!$school_year) $school_year = SchoolYear::firstWhere('is_active', true);
 
@@ -273,7 +313,7 @@ class Teacher extends Model
     }
     
     
-    public function revokAccessForThisSchoolYear(?int $school_year_id)
+    public function removeTeacherAccessForThisSchoolYear(?int $school_year_id)
     {
         if($this->hasValidAccessForYear($school_year_id)){
 
