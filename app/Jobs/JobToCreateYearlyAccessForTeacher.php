@@ -22,7 +22,6 @@ use Throwable;
 class JobToCreateYearlyAccessForTeacher implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
-
     /**
      * Nombre de tentatives max (retry manuel via bouton).
      */
@@ -87,9 +86,10 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
                 ));
 
                 $this->fail("Enseignant inexistant ou année scolaire inexistante ou non active!");
+
+                return;
             }
 
-            // Anti-doublon
             if($teacher->hasValidAccessForYear($this->school_year_id)){
 
                 $full_name = $teacher->getFullName();
@@ -105,6 +105,7 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
                 ));
 
                 $this->fail($error_message);
+
                 return;
 
             }
@@ -125,7 +126,8 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
                     title:             "ACCES ENSEIGNANT CREE AVEC SUCCES",
                     message:           "L'accès de l'enseignant " . $teacher->getUserNamePrefix(true, true) . " pour le compte de l'année scolaire " . $school_year->slug . " a été créé avec succès!",
                     type:              'success',
-                ));
+                )
+            );
 
             $space_url = get_tenant_url($this->domain, 'login');
 
@@ -153,7 +155,6 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
                 )
             );
 
-
             try {
 
                JobToSendCredentialsToUser::dispatch($this->tenantId, $teacher->user->email, null, $space_url);
@@ -161,7 +162,6 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
             } catch (\Throwable $e) {
 
                 $director?->notify(new RealTimeNotification(
-
                     userEmail: $director->email,
                     tenantId:  $this->tenantId,
                     title:     "ECHEC DE L'ENVOI DES DONNEES ESPACE ENSEIGNANT A : " . $teacher->getFullName(),
@@ -205,7 +205,5 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
             tenancy()->end();
         }
     }
-
-
     
 }

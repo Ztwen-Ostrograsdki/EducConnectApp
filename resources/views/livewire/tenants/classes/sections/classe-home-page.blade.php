@@ -18,7 +18,7 @@
                         <button
                             wire:click="{{ $classe->is_active ? 'closeClasse(' . $classe->id . ')' : 'activateClasse(' . $classe->id . ')' }}"
                             wire:loading.attr="disabled" wire:target="activateClasse, closeClasse"
-                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_active ? 'bg-orange-400 hover:bg-orange-700' : 'bg-green-500/40 hover:bg-green-800/30' }}">
+                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_active ? 'bg-red-700/60 hover:bg-red-700' : 'bg-green-500/40 hover:bg-green-800/30' }}">
 
                             <span wire:loading.remove wire:target="activateClasse, closeClasse"
                                 class="inline-flex items-center justify-center gap-3">
@@ -45,7 +45,7 @@
                         <button
                             wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
                             wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
-                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_locked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-amber-500 hover:bg-amber-600' }}">
+                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_locked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-orange-500/20 hover:bg-orange-600' }}">
 
                             <span wire:loading.remove wire:target="lockClasse, unlockClasse"
                                 class="inline-flex items-center justify-center gap-3">
@@ -89,7 +89,18 @@
                             👨‍🎓
                         </div>
                     </div>
-                    <div class="mt-4 text-sm text-emerald-400 truncate">+12% ce trimestre</div>
+                    <div class="mt-4 text-sm  truncate">
+                        <span class="flex justify-between font-mono text-xs items-center text-indigo-600">
+                            <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                {{ __zero($classe->getStudentsCountOnGender('Féminin')) }}
+                                filles</span>
+                            <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                {{ __zero($classe->getStudentsCountOnGender('Masculin')) }}
+                                Garçons</span>
+                            <span class="rounded-2xl p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
+                                {{ __zero($classe->getClasseStudentsLeavesCount()) }} Abandon</span>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">

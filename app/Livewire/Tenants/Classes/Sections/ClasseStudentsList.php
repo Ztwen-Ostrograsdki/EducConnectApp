@@ -44,6 +44,122 @@ class ClasseStudentsList extends Component
         $this->resetPage();
     }
 
+    public function markStudentAsLeaved(int $studentId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Marquer comme abondonné ?",
+            'text'               => "Cet apprenant ne figurera plus dans la liste de la classe en cours d'année scolaire",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, valider',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'MarkAsLeaved',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('MarkAsLeaved')]
+    public function OnMarkAsLeaved(int $studentId): void
+    {
+        $student = Student::find($studentId);
+
+        if (!$student) {
+
+            $this->notification()->error(title: 'Apprenant introuvable');
+            return;
+        }
+
+        try {
+            
+            $done = $student->markStudentAsLeaved();
+
+            if($done){
+
+                $this->notification()->success(
+                    title: 'Apprenant marqué abandonné',
+                    description: "L'apprenant {$student->getFullName()} a été marqué comme un apprenant ayant abondonné.",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+
+            }
+            else{
+
+                $this->notification()->error(
+                    title: 'Apprenant non marqué abandonné',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Apprenant non marqué abandonné',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
+        }
+        
+        
+    }
+    
+    public function reinsertIntoClasseAsActive(int $studentId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Réinséré cet apprenant dans la classe",
+            'text'               => "Cet apprenant figurera désormais dans la liste de la classe en cours d'année scolaire",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, réinséré',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ReinsertIntoClasse',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ReinsertIntoClasse')]
+    public function OnReinsertIntoClasse(int $studentId): void
+    {
+        $student = Student::find($studentId);
+
+        if (!$student) {
+
+            $this->notification()->error(title: 'Apprenant introuvable');
+            return;
+        }
+
+        try {
+            
+            $done = $student->reinsertStudentIntoClasse();
+
+            if($done){
+
+                $this->notification()->success(
+                    title: 'Apprenant réinséré dans sa classe',
+                    description: "L'apprenant {$student->getFullName()} a été réinséré dans sa classe de départ au cours de l'année scolaire!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: 'Apprenant non réinséré',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Apprenant non réinséré',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
+        }
+        
+        
+    }
+
     // ─── Suppression (soft delete) ────────────────────────────────────
 
     public function deleteStudent(?int $studentId = null): void
@@ -197,9 +313,40 @@ class ClasseStudentsList extends Component
             )
         )
         ->when($this->gender, fn($q) => $q->where('gender', $this->gender))
+        ->whereDoesntHave('yearlyStudentsLeaves')
+        ->orWhereHas('yearlyStudentsLeaves', fn($req) => 
+            $req->where('school_year_id', '<>', $this->classe->school_year_id)
+                ->orWhere('classe_id', '<>', $this->classe->id)
+                ->whereNull('ended_at')
+        )
         ->orderBy('name')
+        ->orderBy('prenames')
         ->paginate($this->perpage);
 
-        return view('livewire.tenants.classes.sections.classe-students-list', compact('students'));
+
+        $leave_students = Student::whereHas('yearlyClasseStudents', fn($q) =>
+            $q->where('classe_id', $this->classe->id)
+              ->where('school_year_id', $this->classe->school_year_id)
+              ->where('is_active', true)
+        )
+        ->when($this->search, fn($q) =>
+            $q->where(fn($q) =>
+                $q->where('name', 'like', '%'.$this->search.'%')
+                  ->orWhere('prenames', 'like', '%'.$this->search.'%')
+                  ->orWhere('matricule', 'like', '%'.$this->search.'%')
+            )
+        )
+        ->when($this->gender, fn($q) => $q->where('gender', $this->gender))
+        ->whereHas('yearlyStudentsLeaves', fn($req) => 
+            $req->where('school_year_id', $this->classe->school_year_id)
+                ->orWhere('classe_id', $this->classe->id)
+                ->whereNull('ended_at')
+        )
+        ->with(['yearlyStudentsLeaves'])
+        ->orderBy('name')
+        ->orderBy('prenames')
+        ->get();
+
+        return view('livewire.tenants.classes.sections.classe-students-list', compact('students', 'leave_students'));
     }
 }

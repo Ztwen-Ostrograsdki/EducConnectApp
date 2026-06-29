@@ -71,26 +71,22 @@
             </div>
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- TABLE --}}
-        {{-- ===================================================== --}}
-        <section class="w-full">
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+        <section class="w-full my-4">
+            <div class="border border-slate-800 bg-slate-900 overflow-hidden">
                 <div class="overflow-x-auto" wire:loading.class="opacity-50"
                     wire:target="search, gender, previousPage, nextPage, gotoPage">
-                    <table class="w-full min-w-full">
-                        <thead class="bg-slate-950 border-b border-slate-800">
+                    <table class="w-full min-w-full z-table-border">
+                        <thead class="bg-slate-950 border-b border-slate-800 text-center">
                             <tr>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Apprenant</th>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
+                                <th class=" px-6 py-4 text-sm font-medium text-slate-400">Apprenant</th>
+                                <th class=" px-6 py-4 text-sm font-medium text-slate-400">
                                     <span class="flex flex-col">
                                         <span>Date de naissance</span>
                                         <span>Age</span>
                                     </span>
                                 </th>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Moyenne</th>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Présence</th>
-                                <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">Statut</th>
+                                <th class=" px-6 py-4 text-sm font-medium text-slate-400">Présence</th>
+                                <th class=" px-6 py-4 text-sm font-medium text-slate-400">Statut</th>
                                 <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">Actions</th>
                             </tr>
                         </thead>
@@ -134,14 +130,6 @@
                                         </div>
                                     </td>
 
-                                    {{-- Moyenne --}}
-                                    <td class="px-6 py-5">
-                                        <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full bg-slate-700 text-slate-400 text-xs">
-                                            En cours...
-                                        </span>
-                                    </td>
-
                                     {{-- Présence --}}
                                     <td class="px-6 py-5 text-sm text-slate-400">
                                         <span
@@ -172,18 +160,9 @@
                                         @endif
                                     </td>
 
-                                    {{-- Actions --}}
                                     <td class="px-6 py-5">
                                         <div class="flex items-center justify-end gap-2">
 
-                                            {{-- Profil --}}
-                                            <a wire:navigate
-                                                href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                class="py-2 px-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500 text-indigo-400 hover:text-white transition-all text-xs font-medium">
-                                                Profil
-                                            </a>
-
-                                            {{-- Bloquer / Débloquer --}}
                                             <button wire:click="toggleBlockStudent({{ $student->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:target="toggleBlockStudent({{ $student->id }})"
@@ -208,7 +187,34 @@
                                                 </span>
                                             </button>
 
-                                            {{-- Retirer de la classe --}}
+                                            @if ($student->checkIfStudentNotLeavedYet())
+                                                <button
+                                                    title="Marquer {{ $student->getFullName() }} comme ayant abandonné"
+                                                    wire:click="markStudentAsLeaved({{ $student->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="markStudentAsLeaved({{ $student->id }})"
+                                                    class="relative py-2 px-3 rounded-xl text-xs font-medium transition-all
+                                                {{ $student->checkIfStudentNotLeavedYet()
+                                                    ? 'bg-slate-500/20 hover:bg-slate-500 text-slate-400 hover:text-white'
+                                                    : 'bg-sky-500/20 hover:bg-sky-500 text-sky-400 hover:text-white' }}">
+                                                    <span wire:loading.remove
+                                                        wire:target="markStudentAsLeaved({{ $student->id }})">
+                                                        {{ $student->checkIfStudentNotLeavedYet() ? 'Abandon' : 'Réinséré' }}
+                                                    </span>
+                                                    <span wire:loading
+                                                        wire:target="markStudentAsLeaved({{ $student->id }})"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                            @endif
+
                                             <button wire:click="removeFromClasse({{ $student->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:target="removeFromClasse({{ $student->id }})"
@@ -229,7 +235,6 @@
                                                 </span>
                                             </button>
 
-                                            {{-- Supprimer --}}
                                             <button wire:click="deleteStudent({{ $student->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:target="deleteStudent({{ $student->id }})"
@@ -276,9 +281,6 @@
             </div>
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- PAGINATION --}}
-        {{-- ===================================================== --}}
         @if ($students->hasPages())
             <section class="py-6">
                 <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4">
@@ -315,6 +317,218 @@
                 </div>
             </section>
         @endif
+
+        <section class="w-full my-3 mt-10">
+
+            <div class=" border border-orange-700 p-2 bg-orange-900/10 overflow-hidden">
+                <div class="overflow-x-auto" wire:loading.class="opacity-50"
+                    wire:target="search, gender, previousPage, nextPage, gotoPage">
+                    @if (count($leave_students))
+                        <div class="p-4 bg-orange-500/15 border border-orange-500 my-2">
+                            <h5 class="text-orange-500 text-base font-mono ls-1">Liste des apprenants ayant abandonnés
+                            </h5>
+                        </div>
+                        <table class="w-full z-table-border">
+                            <thead class="bg-slate-950 border-b border-slate-800 text-center">
+                                <tr>
+                                    <th class=" px-6 py-4 text-sm font-medium text-slate-400">Apprenant</th>
+                                    <th class=" px-6 py-4 text-sm font-medium text-slate-400">
+                                        <span class="flex flex-col">
+                                            <span>Date de naissance</span>
+                                            <span>Age</span>
+                                        </span>
+                                    </th>
+                                    <th class=" px-6 py-4 text-sm font-medium text-slate-400">Présence</th>
+                                    <th class=" px-6 py-4 text-sm font-medium text-slate-400">Statut</th>
+                                    <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800">
+                                @foreach ($leave_students as $leave_student)
+                                    <tr class="hover:bg-slate-800/40 transition-all"
+                                        wire:key="student-{{ $leave_student->id }}">
+
+                                        {{-- Apprenant --}}
+                                        <td class="px-6 py-5 truncate">
+                                            <a href="{{ route('tenant.student.profil', ['student_uuid' => $leave_student->uuid]) }}"
+                                                class="flex items-center gap-4 min-w-0 hover:underline hover:underline-offset-4 hover:text-amber-500">
+                                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                                    <img src="{{ $leave_student->profil_photo_url }}"
+                                                        class="w-full h-full object-cover rounded-full">
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <div class="font-medium  transition block">
+                                                        {{ $leave_student->getFullName() }}
+                                                    </div>
+
+                                                </div>
+
+                                            </a>
+                                            <p class="text-xs text-slate-500 mt-0.5 flex gap-x-1">
+                                                <span>{{ $leave_student->gender ?? '—' }}</span>
+                                                @if ($leave_student->educMaster)
+                                                    · EducMaster : <span
+                                                        class="font-mono">{{ $leave_student->educMaster }}</span>
+                                                @endif
+                                                @if ($leave_student->matricule)
+                                                    · Matricule : <span
+                                                        class="font-mono">{{ $leave_student->matricule }}</span>
+                                                @endif
+                                            </p>
+                                        </td>
+
+                                        {{-- Matricule --}}
+                                        <td class="px-6 py-5 text-sm text-slate-300 font-mono">
+                                            <div class="flex flex-col gap-y-2">
+                                                <p>{{ ucwords(__formatDate($leave_student->birth_date)) }}</p>
+                                                <p class="text-slate-500 text-left ">
+                                                    {{ getAge($leave_student->birth_date) }}
+                                                    ans
+                                                </p>
+                                            </div>
+                                        </td>
+
+                                        {{-- Présence --}}
+                                        <td class="px-6 py-5 text-sm text-slate-400">
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full bg-slate-700 text-slate-400 text-xs">
+                                                En cours...
+                                            </span>
+                                        </td>
+
+                                        {{-- Statut --}}
+                                        <td class="px-6 py-5">
+                                            @if ($leave_student->blocked)
+                                                <span
+                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs border border-rose-500/20">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Bloqué
+                                                </span>
+                                            @endif
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs border border-orange-500/20">
+                                                <span
+                                                    class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
+                                                Abandonné
+                                            </span>
+                                        </td>
+
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center justify-end gap-2">
+
+                                                <button wire:click="toggleBlockStudent({{ $leave_student->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="toggleBlockStudent({{ $leave_student->id }})"
+                                                    class="relative py-2 px-3 rounded-xl text-xs font-medium transition-all
+                                                {{ $leave_student->blocked
+                                                    ? 'bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white'
+                                                    : 'bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-white' }}">
+                                                    <span wire:loading.remove
+                                                        wire:target="toggleBlockStudent({{ $leave_student->id }})">
+                                                        {{ $leave_student->blocked ? 'Débloquer' : 'Bloquer' }}
+                                                    </span>
+                                                    <span wire:loading
+                                                        wire:target="toggleBlockStudent({{ $leave_student->id }})"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                                @if (!$leave_student->checkIfStudentNotLeavedYet())
+                                                    <button
+                                                        title="Réinséré {{ $leave_student->getFullName() }} dans la liste des apprenants actifs"
+                                                        wire:click="reinsertIntoClasseAsActive({{ $leave_student->id }})"
+                                                        wire:loading.attr="disabled"
+                                                        wire:target="reinsertIntoClasseAsActive({{ $leave_student->id }})"
+                                                        class="relative py-2 px-3 rounded-xl text-xs font-medium transition-all  hover:text-white bg-sky-500/20 hover:bg-sky-500 text-sky-400 hover:text-white' }}">
+                                                        <span wire:loading.remove
+                                                            wire:target="reinsertIntoClasseAsActive({{ $leave_student->id }})">
+                                                            Réinséré
+                                                        </span>
+                                                        <span wire:loading
+                                                            wire:target="reinsertIntoClasseAsActive({{ $leave_student->id }})"
+                                                            class="inline-flex items-center gap-1">
+                                                            <svg class="animate-spin w-3 h-3" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12"
+                                                                    cy="12" r="10" stroke="currentColor"
+                                                                    stroke-width="4" />
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8v8z" />
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                @endif
+
+                                                <button wire:click="removeFromClasse({{ $leave_student->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="removeFromClasse({{ $leave_student->id }})"
+                                                    class="relative py-2 px-3 rounded-xl bg-orange-500/20 hover:bg-orange-500 text-orange-400 hover:text-white transition-all text-xs font-medium">
+                                                    <span wire:loading.remove
+                                                        wire:target="removeFromClasse({{ $leave_student->id }})">
+                                                        Retirer
+                                                    </span>
+                                                    <span wire:loading
+                                                        wire:target="removeFromClasse({{ $leave_student->id }})"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                                <button wire:click="deleteStudent({{ $leave_student->id }})"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="deleteStudent({{ $leave_student->id }})"
+                                                    class="relative py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-400 hover:text-white transition-all text-xs font-medium">
+                                                    <span wire:loading.remove
+                                                        wire:target="deleteStudent({{ $leave_student->id }})">
+                                                        Supprimer
+                                                    </span>
+                                                    <span wire:loading
+                                                        wire:target="deleteStudent({{ $leave_student->id }})"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="w-full max-auto flex justify-center">
+                            <div class="text-center p-5">
+                                <div class="flex flex-col items-center gap-3">
+                                    <p class="text-orange-500 animate-pulse font-semibold text-lg ls-1 font-mono">Aucun
+                                        apprenant n'a abandonné dans
+                                        cette classe.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </section>
 
     </div>
 </div>

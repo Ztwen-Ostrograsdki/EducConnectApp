@@ -164,7 +164,7 @@
                                            transition-all
                                            text-sm">
 
-                                Modifier
+                                Editer
 
                             </button>
 
@@ -221,14 +221,17 @@
                 <div class=" bg-slate-950 p-3">
 
                     <p class="text-lg text-slate-500 border-b border-b-slate-600">
-                        Matière(s) | Spécilaité(s)
+                        Matière(s) | Spécialité(s)
                     </p>
 
                     <h4 class="mt-1 font-medium flex flex-wrap gap-2 text-sm">
-                        @foreach ($teacher->getYearlySubjects() as $yearly_subject)
+                        @forelse ($teacher->getYearlySubjects() as $yearly_subject)
                             <span
                                 class="rounded-2xl p-2 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->name }}</span>
-                        @endforeach
+                        @empty
+                            <span class="text-orange-600/50 italic ls-1 font-mono py-4">Matières et spacialités non
+                                spécifiées</span>
+                        @endforelse
                     </h4>
 
                 </div>
@@ -597,6 +600,10 @@
                                             <span>de la classe de {{ $cl->code ?? $cl->name }}</span>
                                         </div>
                                     @endforeach
+                                @else
+                                    <span class="text-yellow-600/80 italic ls-1 font-mono py-4">Aucune
+                                        responsabilités accordées à {{ $teacher->getFullName() }} cette année
+                                        scolaire</span>
                                 @endif
                             </div>
 

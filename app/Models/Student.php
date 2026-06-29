@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Support\TenantStorage;
+use App\Models\SchoolYear;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -99,6 +100,12 @@ class Student extends Model
     public function yearlyClasseStudents(): HasMany
     {
         return $this->hasMany(YearlyClasseStudent::class, 'student_id');
+    } 
+    
+    
+    public function yearlyStudentsLeaves(): HasMany
+    {
+        return $this->hasMany(YearlyClasseStudentsLeave::class, 'student_id');
     }
 
 
@@ -256,19 +263,22 @@ class Student extends Model
     public function isEnrolledForYear(int $schoolYearId): bool
     {
         return $this->classes()
-            ->wherePivot('school_year_id', $schoolYearId)
-            ->wherePivot('status', 'actif')
+            ->where('school_year_id', $schoolYearId)
+            ->where('status', 'actif')
             ->exists();
     }
 
     /**
      * Get the active class for a specific school year.
      */
-    public function getClassForYear(int $schoolYearId): ?Classe
+    public function getStudentCurrentClasse(?int $schoolYearId = null)
     {
+        if(!$schoolYearId) $schoolYearId = SchoolYear::current()?->first()?->id;
+
         return $this->classes()
-            ->wherePivot('school_year_id', $schoolYearId)
-            ->wherePivot('status', 'actif')
+            ->where('school_year_id', $schoolYearId)
+            ->where('is_active', true)
+            ->with('classe')
             ->first();
     }
 
@@ -487,6 +497,84 @@ class Student extends Model
         }
 
         return null;
+    }
+
+    public function checkIfStudentNotLeavedYet(?int $classe_id = null, ?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $currentClasse = $this->getStudentCurrentClasse($school_year_id);
+
+        if(!$currentClasse) return true;
+
+        if(!$classe_id) $classe_id = $currentClasse?->id;
+
+        return !$this->yearlyStudentsLeaves()
+                       ->where('school_year_id', $school_year_id)
+                       ->where('classe_id', $classe_id)
+                       ->whereNull('ended_at')
+                       ->exists();
+
+
+    }
+
+
+
+    public function markStudentAsLeaved(?int $classe_id = null, ?int $school_year_id = null, ?string $reasons = "Abondonné sans motif précisé!")
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $currentClasse = $this->getStudentCurrentClasse($school_year_id);
+
+        if(!$currentClasse) return false;
+
+        if(!$classe_id) $classe_id = $currentClasse?->classe_id;
+
+        $exists = $this->yearlyStudentsLeaves()
+                       ->where('school_year_id', $school_year_id)
+                       ->where('classe_id', $classe_id)
+                       ->whereNull('ended_at')
+                       ->exists();
+
+        if(!$exists){
+
+            return YearlyClasseStudentsLeave::create([
+                'school_year_id' => $school_year_id,
+                'classe_id' => $classe_id,
+                'student_id' => $this->id,
+                'leave_at' => now(),
+                'reasons' => $reasons,
+            ]);
+        }
+
+        return false;
+
+    }
+    
+    
+    public function reinsertStudentIntoClasse(?int $classe_id = null, ?int $school_year_id = null, ?string $reasons = "Abondonné sans motif précisé!")
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $currentClasse = $this->getStudentCurrentClasse($school_year_id);
+
+        if(!$currentClasse) return false;
+
+        if(!$classe_id) $classe_id = $currentClasse?->classe_id;
+
+        $exists = $this->yearlyStudentsLeaves()
+                       ->where('school_year_id', $school_year_id)
+                       ->where('classe_id', $classe_id)
+                       ->whereNotNull('leave_at')
+                       ->first();
+
+        if($exists){
+
+            return $exists->delete();
+        }
+
+        return false;
+
     }
     
 }

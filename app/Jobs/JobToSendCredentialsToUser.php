@@ -72,7 +72,6 @@ class JobToSendCredentialsToUser implements ShouldQueue
                 return;
             }
 
-            // Mise à jour du mot de passe
             $user->update(['password' => Hash::make($this->default_password), 'status' => 'active']);
 
             $roles = $user->myRoles();

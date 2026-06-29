@@ -52,6 +52,17 @@
                                 {{ $classe->principal ? $classe->principal?->getFullName() : 'Non précisée' }}</div>
                             <div class="break-words">📍 {{ $classe->localization ?? 'Non précisée' }}</div>
                             <div class="break-words">🕒 {{ $classe->schoolYear->slug }}</div>
+                            <span class="flex font-mono text-xs items-center text-indigo-600 gap-x-2">
+                                <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                    {{ __zero($classe->getStudentsCountOnGender('Féminin')) }}
+                                    filles</span>
+                                <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                    {{ __zero($classe->getStudentsCountOnGender('Masculin')) }}
+                                    Garçons</span>
+                                <span
+                                    class="rounded-2xl p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
+                                    {{ __zero($classe->getClasseStudentsLeavesCount()) }} Abandon</span>
+                            </span>
                         </div>
                     </div>
 

@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Tenants\ActionsTraits;
 
+use App\Events\DataUpdatedEvent;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\Student;
 use App\Models\User;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
@@ -109,31 +111,11 @@ trait StudentsActions{
 
 	public function sendCredentialsToStudent(string $studentUuid)
 	{
-		// $user = User::firstWhere('uuid', $studentUuid);
-
-        // if($user && $user->logged_count < 1 ){
-
-		// 	$domain = request()->getSchemeAndHttpHost();
-
-        //     $space_url = get_tenant_url($domain, 'login');
-
-        //     // JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url);
-
-        //     $this->notification()->send([
-        //         'icon'        => 'success',
-        //         'title'       => "Envoi des données espace enseignant ",
-        //         'description' => "Processus lancé ...",
-        //     ]);
-        // }
-        // else{
-
-        //     $this->notification()->send([
-        //         'icon'        => 'error',
-        //         'title'       => 'Erreur processus',
-        //         'description' => "La reqûete n'existe pas ou n'a pas encore été validée!",
-        //     ]);
-        // }
+		
 	}
+
+
+    
 
 
     public function unlockStudent(string $studentUuid): void

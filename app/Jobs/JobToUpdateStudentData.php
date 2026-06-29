@@ -2,11 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Events\AStudentCreationFailedEvent;
 use App\Events\StudentDataUpdatedEvent;
-use App\Events\StudentsCreationStatusUpdatedEvent;
 use App\Helpers\Robot;
-use App\Models\ImportTask;
 use App\Models\Student;
 use App\Models\User;
 use App\Notifications\RealTimeNotification;
@@ -16,7 +13,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
 use Throwable;
 
 class JobToUpdateStudentData implements ShouldQueue
@@ -73,8 +69,7 @@ class JobToUpdateStudentData implements ShouldQueue
                 return;
             }
 
-
-            // Anti-doublon
+            // Anti - doublon
             $existed_full_name = Student::withTrashed()->where('name', $this->data['name'])->where('prenames', $this->data['prenames'])->where('id', '<>', $this->studentId)->exists();
 
             $existed_educ = Student::withTrashed()->where('educMaster', $this->data['educMaster'])->where('id', '<>', $this->studentId)->exists();

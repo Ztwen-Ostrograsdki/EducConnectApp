@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Student;
+use Countable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 
 class Classe extends Model
@@ -180,6 +183,60 @@ class Classe extends Model
                             ->where('created_at', '>=', now()->subMonths(2))
                         )
                         ->latest('created_at')->take(10)->get();
+    }
+
+
+    public function getStudentsOnGender(?string $gender = null) : Countable
+    {
+        $school_year_id = $this->school_year_id;
+
+        $query = Student::whereHas('yearlyClasseStudents', fn($q) =>
+                            $q->where('school_year_id', $school_year_id)
+                            ->where('classe_id', $this->id)
+                            ->where('created_at', '>=', now()->subMonths(2))
+                        );
+
+        if($gender){
+
+            $query->whereIn('gender', [$gender, Str::lower($gender), Str::upper($gender)]);
+
+
+        }
+
+        return $query->get();
+    }
+
+
+    public function getStudentsCountOnGender(?string $gender = null) : int
+    {
+        return count($this->getStudentsOnGender($gender));
+    }
+
+
+    public function getClasseStudentsLeaves(?string $gender = null) : Countable
+    {
+        $school_year_id = $this->school_year_id;
+
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
+            $q->where('classe_id', $this->id)
+              ->where('school_year_id', $school_year_id)
+              ->where('is_active', true)
+        )
+        ->when($gender, fn($q) => $q->whereIn('gender', [$gender, Str::lower($gender), Str::upper($gender)]))
+        ->whereHas('yearlyStudentsLeaves', fn($req) => 
+            $req->where('school_year_id', $school_year_id)
+                ->orWhere('classe_id', $this->id)
+                ->whereNull('ended_at')
+        )
+        ->with(['yearlyStudentsLeaves'])
+        ->orderBy('name')
+        ->orderBy('prenames')
+        ->get();
+    }
+
+    public function getClasseStudentsLeavesCount(?string $gender = null) : int
+    {
+        return count($this->getClasseStudentsLeaves($gender));
     }
 
     /**
