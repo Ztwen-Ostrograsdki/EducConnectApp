@@ -50,18 +50,9 @@ return new class extends Migration
 
             $table->index(['student_id', 'school_year_id', 'period']);
             $table->index(['classe_id', 'subject_id', 'school_year_id', 'period']);
-            $table->index([
-                'student_id',
-                'school_year_id'
-            ]);
+            $table->index(['student_id','school_year_id']);
 
-            $table->index([
-                'student_id',
-                'subject_id',
-                'school_year_id',
-                'period',
-                'type'
-            ]);
+            $table->index([ 'student_id', 'subject_id', 'school_year_id','period','type']);
         });
         Schema::enableForeignKeyConstraints();
     }

@@ -1,16 +1,9 @@
 <div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full px-3 overflow-x-hidden">
-
-    {{-- ================================================= --}}
-    {{-- HEADER --}}
-    {{-- ================================================= --}}
     <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
         <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
-                {{-- LEFT --}}
                 <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
-
-                    {{-- ICON --}}
                     <div class="shrink-0 self-start font-mono">
                         <div
                             class="w-32 h-32 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -20,7 +13,6 @@
                         </div>
                     </div>
 
-                    {{-- CONTENT --}}
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight break-words">
@@ -86,10 +78,6 @@
             </div>
         </div>
     </section>
-
-    {{-- ================================================= --}}
-    {{-- NAVIGATION --}}
-    {{-- ================================================= --}}
     <section class="px-1 pt-6">
         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
             <div class="overflow-x-auto">
@@ -165,9 +153,6 @@
         </div>
     </section>
 
-    {{-- ================================================= --}}
-    {{-- DYNAMIC CONTENT --}}
-    {{-- ================================================= --}}
     <section class="p-2 my-2.5 shadow-sm shadow-cyan-600 rounded-2xl">
         <div wire:key="section-{{ $section }}">
 

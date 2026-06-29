@@ -8,6 +8,7 @@ use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\TeacherYearlySubject;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -166,20 +167,16 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
         $this->selectedTeacherId = null;
         $this->teacherSearch     = '';
 
-        // Invalide le cache pour forcer le rechargement avec la nouvelle matière
         unset($this->availableTeachers);
         unset($this->assignedTeacherForSubject);
         unset($this->selectedSubject);
     }
 
-    // ─── Assigner prof à matière ──────────────────────────────────────
-
     public function assignTeacher(int $teacherId): void
     {
         if (!$this->selectedSubjectId || !$this->activeYear) return;
 
-        // ── Vérifier que le prof enseigne bien cette matière ──────────
-        $teachesSubject = \App\Models\TeacherYearlySubject::where('teacher_id', $teacherId)
+        $teachesSubject = TeacherYearlySubject::where('teacher_id', $teacherId)
             ->where('subject_id', $this->selectedSubjectId)
             ->where('school_year_id', $this->activeYear->id)
             ->where('is_active', true)
@@ -193,7 +190,6 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
             return;
         }
 
-        // ── Vérifier si déjà pris dans cette classe ────────────────────
         $existing = ClasseSubjectOfSchoolYear::where('classe_id', $this->classe->id)
             ->where('subject_id', $this->selectedSubjectId)
             ->where('school_year_id', $this->activeYear->id)
@@ -234,8 +230,6 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
         unset($this->assignedTeacherForSubject);
     }
 
-    // ─── Retirer un lien ──────────────────────────────────────────────
-
     public function removeLink(int $linkId): void
     {
         $link = ClasseSubjectOfSchoolYear::with(['subject', 'teacher.user'])->findOrFail($linkId);
@@ -266,7 +260,6 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
         unset($this->assignedTeacherForSubject);
     }
 
-    // ─── Render ───────────────────────────────────────────────────────
 
     public function render()
     {

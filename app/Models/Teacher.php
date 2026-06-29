@@ -101,6 +101,14 @@ class Teacher extends Model
         return $this->hasMany(Classe::class, 'principal_id');
     }
 
+
+    public function getClassesWhereIsPrincipal(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return Classe::where('principal_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->get();
+    }
+
     /**
      * Get all classe-subject assignments for this teacher.
      */
@@ -136,6 +144,25 @@ class Teacher extends Model
         } 
 
         return [];
+    }
+
+    public function getTeacherClassesCountForThisSchoolYear(?array $excepts = [], ?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->whereNull('ended_at')->distinct('classe_id')->count();
+       
+    }
+
+    /**
+     * Get all classe assignments for this year.
+     */
+    public function getTeacherClassesWithSubjectsForThisSchoolYear(?array $excepts = [], ?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return ClasseSubjectOfSchoolYear::with(['classe', 'subject'])->where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->whereNull('ended_at')->get();
+
     }
 
 

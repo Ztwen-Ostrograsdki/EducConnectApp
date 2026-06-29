@@ -191,7 +191,7 @@ class JobToCreateTeacher implements ShouldQueue
                     userEmail: $director?->email,
                     tenantId: $this->tenantId,
                     title:             "Erreur création du compte " . $payload['email'],
-                    message:           $th->getMessage(),
+                    message:           cutter($th->getMessage(), 200),
                     type:              'error',
                 ));
 
@@ -280,7 +280,7 @@ class JobToCreateTeacher implements ShouldQueue
                 ATeacherCreationFailedEvent::dispatch(
                     tenantId: $this->tenantId,
                     taskId: $this->taskId,
-                    error: cutter($exception->getMessage(), 150),
+                    error: cutter($exception->getMessage(), 200),
                     teacherName: $full_name,
                 );
 
@@ -290,7 +290,7 @@ class JobToCreateTeacher implements ShouldQueue
                     userEmail: $director->email,
                     tenantId:  $this->tenantId,
                     title:     "ECHEC CRÉATION DU COMPTE ENSEIGNANT ",
-                    message:   cutter($exception->getMessage(), 150),
+                    message:   cutter($exception->getMessage(), 200),
                     type:      'error',
                 ));
             }

@@ -82,7 +82,7 @@
                                                          text-indigo-400
                                                          text-xs shrink-0">
 
-                                                Enseignant Permanent
+                                                Enseignant
 
                                             </span>
 
@@ -237,18 +237,11 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div
-                class="grid
-                        grid-cols-2
-                        xl:grid-cols-4
-                        gap-4">
+            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
 
-                @foreach ([['Classes', '8', 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
+                @foreach ([['Classes', __zero($teacher?->getTeacherClassesCountForThisSchoolYear()), 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
                     <div
                         class="rounded-3xl
                             border border-slate-800
@@ -274,217 +267,219 @@
             </div>
 
         </section>
-
-        {{-- ===================================================== --}}
-        {{-- MAIN --}}
-        {{-- ===================================================== --}}
         <section>
 
-            <div
-                class="grid
-                        grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_400px]
-                        gap-6">
-
-                {{-- ===================================================== --}}
-                {{-- LEFT --}}
-                {{-- ===================================================== --}}
+            <div class="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_400px] gap-6">
                 <div class="space-y-6 min-w-0">
-
-                    {{-- CLASSES --}}
-                    <div
-                        class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                overflow-hidden">
-
-                        {{-- HEADER --}}
-                        <div class="border-b border-slate-800
-                                    p-4 sm:p-6">
-
-                            <div
-                                class="flex flex-col lg:flex-row
-                                        lg:items-center
-                                        lg:justify-between
-                                        gap-4">
-
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+                        <div class="border-b border-slate-800 p-4 sm:p-6">
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                                 <div>
-
                                     <h2 class="text-lg sm:text-xl font-semibold">
-                                        Classes Enseignées
+                                        Classes assignées
                                     </h2>
 
                                     <p class="mt-1 text-sm text-slate-400">
-                                        Gestion des performances par classe
+                                        Gestion des classes dirigées
                                     </p>
 
                                 </div>
 
                                 <button
-                                    class="h-11 px-5 rounded-2xl
-                                               bg-indigo-500
-                                               hover:bg-indigo-600
-                                               transition-all
-                                               text-sm">
-
+                                    class="h-11 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
                                     Ajouter Classe
-
                                 </button>
 
                             </div>
 
                         </div>
 
-                        {{-- TABLE --}}
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto p-2">
+                            @php
+                                $classes = $teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
+                            @endphp
 
-                            <table class="min-w-[950px] w-full">
+                            @if (count($classes))
+                                <table class="w-full z-table-border text-slate-400 text-sm">
 
-                                <thead class="bg-slate-950 border-b border-slate-800">
+                                    <thead class="bg-slate-950 border-b border-slate-800">
 
-                                    <tr>
+                                        <tr>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Classe
-                                        </th>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                Classe
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Matière
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Matière
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Élèves
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Notes faites
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Notes faites
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Heures/Sem
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Heures/Sem
-                                        </th>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                Actions
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne classe
-                                        </th>
+                                        </tr>
 
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
-                                            Actions
-                                        </th>
+                                    </thead>
 
-                                    </tr>
+                                    <tbody class="divide-y divide-slate-800">
 
-                                </thead>
+                                        @foreach ($classes as $kls)
+                                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                                <tbody class="divide-y divide-slate-800">
+                                                <td class="px-6 py-5">
 
-                                    @foreach (range(1, 4) as $i)
-                                        <tr class="hover:bg-slate-800/40 transition-all">
+                                                    <div class="flex items-center gap-3">
 
-                                            <td class="px-6 py-5">
+                                                        <a href="{{ route('tenant.classe.profil', ['classe_slug' => $kls->classe?->slug]) }}"
+                                                            class="hover:underline underline-offset-4 hover:text-lime-500">
 
-                                                <div class="flex items-center gap-3">
+                                                            <h3 class="font-medium">
+                                                                {{ $kls->classe?->name }}
+                                                            </h3>
 
-                                                    <div
-                                                        class="w-11 h-11 rounded-2xl
-                                                            bg-indigo-500/10
-                                                            flex items-center justify-center
-                                                            text-indigo-400 font-semibold">
+                                                            <p class="text-xs text-amber-700">
+                                                                {{ $kls->classe?->speciality() }}
+                                                            </p>
 
-                                                        F2
-
-                                                    </div>
-
-                                                    <div>
-
-                                                        <h3 class="font-medium">
-                                                            Terminale F2-{{ $i }}
-                                                        </h3>
-
-                                                        <p class="text-sm text-slate-400">
-                                                            Série Technique
-                                                        </p>
+                                                        </a>
 
                                                     </div>
 
-                                                </div>
+                                                </td>
 
-                                            </td>
+                                                <td class="px-4 py-5 text-center">
+                                                    {{ $kls->subject?->code ?? $kls->subject?->name }}
+                                                </td>
+                                                <td class="px-4 py-5 text-center">
 
-                                            <td class="px-4 py-5 text-center">
-                                                Mathématiques
-                                            </td>
-
-                                            <td class="px-4 py-5 text-center">
-                                                42
-                                            </td>
-
-                                            <td class="px-4 py-5 text-center">
-
-                                                <span
-                                                    class="px-3 py-1 rounded-full
+                                                    <span
+                                                        class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                    86
+                                                        86
 
-                                                </span>
+                                                    </span>
 
-                                            </td>
+                                                </td>
 
-                                            <td class="px-4 py-5 text-center">
-                                                4h
-                                            </td>
+                                                <td class="px-4 py-5 text-center">
+                                                    4h
+                                                </td>
 
-                                            <td class="px-4 py-5 text-center font-semibold">
-                                                13.8
-                                            </td>
+                                                <td class="px-6 py-5">
 
-                                            <td class="px-6 py-5">
+                                                    <div class="flex items-center justify-end gap-2">
 
-                                                <div class="flex items-center justify-end gap-2">
+                                                        <button
+                                                            title="{{ $teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} cet enseigant "
+                                                            wire:click="{{ $teacher->is_locked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="lockTeacher, unlockTeacher"
+                                                            class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600 hover:bg-amber-800' : 'bg-purple-500/20 hover:bg-purple-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
+                                                            <span wire:loading.remove
+                                                                wire:target="lockTeacher, unlockTeacher"
+                                                                class="inline-flex items-center justify-center">
+                                                                <span
+                                                                    class="inline-flex items-center justify-center gap-2">
+                                                                    @if ($teacher->is_locked)
+                                                                        <x-lucide-unlock class="w-4 h-4" />
+                                                                        <span>Débloquer</span>
+                                                                    @else
+                                                                        <x-lucide-user-lock class="w-4 h-4" />
+                                                                        <span>Bloquer</span>
+                                                                    @endif
+                                                                </span>
+                                                            </span>
 
-                                                    <button
-                                                        class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-indigo-500
-                                                               transition-all">
+                                                            <span wire:loading wire:target="lockTeacher, unlockTeacher"
+                                                                class="inline-flex items-center gap-1">
+                                                                <svg class="animate-spin w-3 h-3" fill="none"
+                                                                    viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12"
+                                                                        cy="12" r="10" stroke="currentColor"
+                                                                        stroke-width="4" />
+                                                                    <path class="opacity-75" fill="currentColor"
+                                                                        d="M4 12a8 8 0 018-8v8z" />
+                                                                </svg>
+                                                            </span>
+                                                        </button>
 
-                                                        👁
+                                                        <button
+                                                            title="{{ $teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'Déverouiller' : 'Vérouiller ' }} l'accès du prof à la classe"
+                                                            wire:click="{{ $teacher->cannotAccessIntoClasse($kls->classe?->id)
+                                                                ? 'unLockAccessToClasse(' . $teacher->id . ',' . $kls->classe?->id . ')'
+                                                                : 'lockAccessToClasse(' . $teacher->id . ',' . $kls->classe?->id . ')' }}"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="lockAccessToClasse, unLockAccessToClasse"
+                                                            class="relative py-3 px-4 rounded-xl {{ !$teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }}  text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
+                                                            <span wire:loading.remove
+                                                                wire:target="lockAccessToClasse, unLockAccessToClasse"
+                                                                class="inline-flex items-center justify-center">
+                                                                <span
+                                                                    class="inline-flex items-center justify-center gap-2">
+                                                                    @if ($teacher->cannotAccessIntoClasse($kls->classe?->id))
+                                                                        <x-lucide-check class="w-4 h-4" />
+                                                                        <span>Déverouiller accès</span>
+                                                                    @else
+                                                                        <x-lucide-user-lock class="w-4 h-4" />
+                                                                        <span>Verouiller accès</span>
+                                                                    @endif
+                                                                </span>
+                                                            </span>
 
-                                                    </button>
+                                                            <span wire:loading
+                                                                wire:target="lockAccessToClasse, unLockAccessToClasse"
+                                                                class="inline-flex items-center gap-1">
+                                                                <svg class="animate-spin w-3 h-3" fill="none"
+                                                                    viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12"
+                                                                        cy="12" r="10" stroke="currentColor"
+                                                                        stroke-width="4" />
+                                                                    <path class="opacity-75" fill="currentColor"
+                                                                        d="M4 12a8 8 0 018-8v8z" />
+                                                                </svg>
+                                                            </span>
+                                                        </button>
 
-                                                    <button
-                                                        class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-emerald-500
-                                                               transition-all">
+                                                    </div>
 
-                                                        ✏
+                                                </td>
 
-                                                    </button>
+                                            </tr>
+                                        @endforeach
 
-                                                </div>
+                                    </tbody>
 
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-
-                            </table>
+                                </table>
+                            @else
+                                <div>
+                                    <div class="p-6 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <x-lucide-school class="w-10 h-10 text-orange-600" />
+                                            <p class="text-slate-500 text-lg animate-pulse">Aucune classe assignée</p>
+                                            <a href="#"
+                                                class="mt-2 px-4 w-full py-2 rounded-xl bg-slate-800 hover:bg-orange-700/25 text-sm transition hover:underline underline-offset-4 hover:text-orange-500">
+                                                Attribuer des classes
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                         </div>
 
                     </div>
-
-                    {{-- EMPLOI DU TEMPS --}}
-                    <div
-                        class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-4 sm:p-6">
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
 
                         <div class="flex items-center justify-between gap-4">
 
@@ -502,20 +497,10 @@
 
                         </div>
 
-                        {{-- TIMETABLE --}}
-                        <div
-                            class="mt-6 grid
-                                    grid-cols-1
-                                    lg:grid-cols-2
-                                    xl:grid-cols-3
-                                    gap-4">
+                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 
                             @foreach (range(1, 6) as $course)
-                                <div
-                                    class="rounded-2xl
-                                        border border-indigo-500/20
-                                        bg-indigo-500/10
-                                        p-4">
+                                <div class="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4">
 
                                     <div class="flex items-start justify-between gap-3">
 
@@ -531,10 +516,7 @@
 
                                         </div>
 
-                                        <span
-                                            class="px-2 py-1 rounded-xl
-                                                 bg-slate-950/40
-                                                 text-xs">
+                                        <span class="px-2 py-1 rounded-xl bg-slate-950/40 text-xs">
 
                                             Lundi
 
@@ -591,60 +573,38 @@
 
                 </div>
 
-                {{-- ===================================================== --}}
-                {{-- RIGHT --}}
-                {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- STATS --}}
-                    <div
-                        class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
+                    <div class="rounded-3xl border border-slate-800  bg-slate-900 p-5">
 
-                        <h2 class="text-lg font-semibold">
-                            Statistiques
+                        <h2 class="text-base font-semibold text-slate-400 w-full border-b border-b-slate-700">
+                            Titres et responsabilités <span
+                                class="text-amber-700">{{ session('school_year_selected') }}</span>
                         </h2>
 
                         <div class="mt-5 space-y-5">
 
-                            @foreach ([['Mathématiques', '92%', 'bg-indigo-500'], ['Physique', '81%', 'bg-emerald-500'], ['Informatique', '95%', 'bg-amber-500'], ['Électricité', '76%', 'bg-sky-500']] as $stat)
-                                <div>
+                            @php
+                                $pp_classes = $teacher?->getClassesWhereIsPrincipal();
+                            @endphp
 
-                                    <div class="flex items-center justify-between">
-
-                                        <span class="text-sm text-slate-300">
-                                            {{ $stat[0] }}
-                                        </span>
-
-                                        <span class="text-sm font-semibold">
-                                            {{ $stat[1] }}
-                                        </span>
-
-                                    </div>
-
-                                    <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
-
-                                        <div class="h-full rounded-full {{ $stat[2] }}"
-                                            style="width: {{ $stat[1] }}">
+                            <div class="flex flex-col gap-2 text-slate-500 text-sm">
+                                @if (count($pp_classes))
+                                    @foreach ($pp_classes as $cl)
+                                        <div class="flex items-center gap-x-3">
+                                            <x-lucide-user class="w-4 h-4" />
+                                            <span class="text-amber-600">Professeur principal (PP)</span>
+                                            <span>de la classe de {{ $cl->code ?? $cl->name }}</span>
                                         </div>
-
-                                    </div>
-
-                                </div>
-                            @endforeach
+                                    @endforeach
+                                @endif
+                            </div>
 
                         </div>
 
                     </div>
 
-                    {{-- INFOS --}}
-                    <div
-                        class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
+                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
 
                         <h2 class="text-lg font-semibold">
                             Informations
@@ -652,7 +612,7 @@
 
                         <div class="mt-5 space-y-4">
 
-                            @foreach ([['Email', 'enseignant@email.com'], ['Diplôme', 'Master en Mathématiques'], ['Adresse', 'Cotonou, Bénin'], ['Recrutement', '12 Septembre 2015']] as $info)
+                            @foreach ([['Email', $teacher->user?->email], ['Diplôme', 'Non renseigné'], ['Adresse', $teacher->user?->adresse], ['Recrutement', __formatDate($teacher->affiliated_at)]] as $info)
                                 <div class="rounded-2xl bg-slate-950 p-4">
 
                                     <p class="text-xs text-slate-500">
@@ -670,7 +630,6 @@
 
                     </div>
 
-                    {{-- PERFORMANCE --}}
                     <div
                         class="rounded-3xl
                                 border border-slate-800

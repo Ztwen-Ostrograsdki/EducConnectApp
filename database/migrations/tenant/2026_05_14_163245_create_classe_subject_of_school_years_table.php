@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
             $table->foreignId('school_year_id')->constrained('school_years')->cascadeOnDelete();
             $table->decimal('coefficient', 4, 2)->default(1);
+            $table->json('marks_locked_for_periods')->nullable();
             $table->boolean('is_active')->default(true);
 
             // ─── Remplacement ─────────────────────────────────────────

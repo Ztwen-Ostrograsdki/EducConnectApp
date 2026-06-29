@@ -12,15 +12,16 @@ class ClasseSubjectOfSchoolYear extends Model
 
     protected $fillable = [
         'classe_id', 'subject_id', 'teacher_id', 'school_year_id',
-        'coefficient', 'is_active', 'started_at', 'ended_at',
+        'coefficient', 'is_active', 'started_at', 'ended_at', 'marks_locked_for_periods',
         'replacement_reason', 'replaced_by',
     ];
 
     protected $casts = [
-        'coefficient' => 'decimal:2',
-        'is_active' => 'boolean',
-        'started_at' => 'datetime',
-        'ended_at' => 'datetime',
+        'coefficient'    => 'decimal:2',
+        'is_active'      => 'boolean',
+        'started_at'     => 'datetime',
+        'ended_at'       => 'datetime',
+        'marks_locked_for_periods'   => 'array',
     ];
 
     protected $connection = 'tenant';

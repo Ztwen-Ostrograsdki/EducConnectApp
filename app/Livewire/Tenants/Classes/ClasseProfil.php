@@ -7,11 +7,14 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title('Profil de classe ou groupe pédagogique')]
 class ClasseProfil extends Component
 {
+    use WireUiActions;
+    
     public $section = 'classe-home-page';
 
     public $classroom = '';

@@ -103,11 +103,16 @@ class Classe extends Model
         return $this->hasMany(ClasseSubjectOfSchoolYear::class, 'classe_id');
     }
 
+    public function activesTeachers()
+    {
+        return $this->teachers()->where('classe_subject_of_school_years.is_active', true)->whereNull('classe_subject_of_school_years.ended_at')->get();
+    }
+
 
     // Total enseignants intervenant dans cette classe
     public function teachersCount(): int
     {
-        return $this->teachers?->count();
+        return $this->teachers()?->where('is_active', true)->whereNull('ended_at')->distinct('teacher_id')->count();
     }
 
     // Élèves inscrits dans cette classe

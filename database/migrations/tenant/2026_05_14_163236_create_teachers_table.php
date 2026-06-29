@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->text('qr_code')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('identifiant')->unique();    // matricule
             $table->json('identity_card_details')->nullable();
             $table->string('email')->unique();

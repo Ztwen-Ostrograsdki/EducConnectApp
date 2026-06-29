@@ -36,7 +36,7 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
     public function __construct(
         public string $tenantId,
         public int    $teacherId,
-        public int    $school_year_id,
+        public ?int    $school_year_id = null,
         public ?string $domain = null,
     ) {}
 
@@ -62,9 +62,19 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
 
             }
 
-            $teacher = Teacher::find($this->teacherId);
+            if(!$this->school_year_id){
 
-            $school_year = SchoolYear::find($this->school_year_id);
+                $school_year = SchoolYear::current()?->first();
+
+                $this->school_year_id = $school_year->id;
+            }
+            else{
+
+                $school_year = SchoolYear::find($this->school_year_id);
+
+            }
+
+            $teacher = Teacher::find($this->teacherId);
 
             if(!$school_year || !$teacher || !$school_year?->is_active){
 
@@ -84,7 +94,7 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
 
                 $full_name = $teacher->getFullName();
 
-                $error_message = "Echec de création d'accès à l'enseignant " . $full_name . " . Car son, il posède déjà un accès pour cette année scolaire " . $school_year->slug;
+                $error_message = "Echec de création d'accès à l'enseignant " . $full_name . " . Car, il possède déjà un accès pour cette année scolaire " . $school_year->slug;
 
                 $director?->notify(new RealTimeNotification(
                     userEmail: $director?->email,

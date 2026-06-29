@@ -17,9 +17,9 @@
                         class="px-3 py-1 rounded-full
                                  bg-indigo-500/10
                                  border border-indigo-500/20
-                                 text-indigo-400 text-xs shrink-0">
+                                 text-indigo-400 text-xs shrink-0 ls-1">
 
-                        8 enseignants
+                        {{ __zero($classe->teachersCount()) }} enseignants
 
                     </span>
 
@@ -33,48 +33,10 @@
 
             </div>
 
-            {{-- ACTIONS --}}
-            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-indigo-500 hover:bg-indigo-600
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Ajouter Enseignant
-
-                </button>
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-slate-800
-                               border border-slate-700
-                               hover:bg-slate-700
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Exporter
-
-                </button>
-
-            </div>
-
         </div>
-
     </section>
     <section class="mb-6">
-
-        <div
-            class="grid
-                    grid-cols-1
-                    sm:grid-cols-2
-                    xl:grid-cols-4
-                    gap-4 sm:gap-6">
-
-            {{-- CARD --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
 
                 <p class="text-sm text-slate-400 truncate">
@@ -82,12 +44,10 @@
                 </p>
 
                 <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    8
+                    {{ __zero($classe->teachersCount()) }}
                 </h2>
-
             </div>
 
-            {{-- CARD --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
 
                 <p class="text-sm text-slate-400 truncate">
@@ -100,7 +60,6 @@
 
             </div>
 
-            {{-- CARD --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
 
                 <p class="text-sm text-slate-400 truncate">
@@ -113,7 +72,6 @@
 
             </div>
 
-            {{-- CARD --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
 
                 <p class="text-sm text-slate-400 truncate">
@@ -121,7 +79,7 @@
                 </p>
 
                 <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    12
+                    {{ __zero($classe->activesSubjects()->count()) }}
                 </h2>
 
             </div>
@@ -136,44 +94,23 @@
 
             <div class="flex flex-col xl:flex-row gap-4">
 
-                {{-- SEARCH --}}
                 <div class="flex-1 min-w-0">
 
                     <div class="relative">
 
                         <input wire:model.live='search' type="text" placeholder="Rechercher un enseignant..."
-                            class="w-full h-12
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   pl-12 pr-4
-                                   text-sm
-                                   outline-none
-                                   focus:border-indigo-500
-                                   transition-all">
-
+                            class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm outline-none focus:border-indigo-500transition-all">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-
                             🔍
-
                         </div>
 
                     </div>
-
                 </div>
 
-                {{-- FILTERS --}}
-                <div
-                    class="grid
-                            sm:grid-cols-3
-                            xl:flex
-                            gap-3">
+                <div class="grid sm:grid-cols-3 xl:flex gap-3">
 
                     <select wire:model.live='subjectType'
-                        class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
+                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
 
                         <option>Toutes Matières</option>
                         @foreach (config('app.subject_types') as $sub)
@@ -183,16 +120,11 @@
                     </select>
 
                     <select wire:model.live='gender'
-                        class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
+                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                         <option>Tout genre</option>
                         @foreach (config('app.genders') as $g => $gend)
                             <option value="{{ $gend }}">{{ $gend }}</option>
                         @endforeach
-
                     </select>
                     <button wire:click="resetFilters"
                         class="px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sm transition">
@@ -216,36 +148,20 @@
     <section class="w-full">
 
         <div class="flex justify-end flex-wrap gap-3 text-gray-950 p-2">
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-red-500 hover:bg-red-600">
-
+            <button class="px-3 py-2 rounded-2xl bg-red-500 hover:bg-red-600">
                 Verrouiller notes
-
             </button>
 
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-blue-500 hover:bg-blue-600">
-
+            <button class="px-3 py-2 rounded-2xl bg-blue-500 hover:bg-blue-600">
                 Imprimer PDF
-
             </button>
-
-            <button
-                class="px-3 py-2 rounded-2xl
-                                    bg-emerald-500 hover:bg-emerald-600">
-
+            <button class="px-3 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600">
                 Emprimer Excel
-
             </button>
 
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-amber-500 hover:bg-amber-600">
-
+            <button class="px-3 py-2 rounded-2xl bg-amber-500 hover:bg-amber-600">
                 Imprimer Excel et PDF
-
             </button>
-
         </div>
 
         <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 h-screen">
@@ -270,11 +186,8 @@
                     </div>
                 @else
                     <table class="w-full z-table z-table-border">
-
                         <thead class="bg-slate-950 border-b border-slate-800 truncate">
-
                             <tr>
-
                                 <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">
                                     N°
                                 </th>
@@ -353,15 +266,14 @@
                                     </td>
 
                                     <td class="px-6 py-5 truncate">
-                                        @foreach ($teacher->getSubjectsForThisClasse($classe->id) as $subjectRelation)
-                                            <span
-                                                class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400
-                                             text-sm">
-                                                {{ $subjectRelation->subject->code }}
-                                            </span>
-                                        @endforeach
+                                        <span class="flex gap-x-2 items-center justify-center">
+                                            @foreach ($teacher->getSubjectsForThisClasse($classe->id) as $subjectRelation)
+                                                <span
+                                                    class="px-3 py-1 border rounded-full bg-indigo-500/10 text-indigo-400 text-sm">
+                                                    {{ $subjectRelation->subject->code }}
+                                                </span>
+                                            @endforeach
+                                        </span>
                                     </td>
 
                                     <td class="px-6 py-5 truncate">
@@ -397,7 +309,7 @@
 
                                             <a wire:navigate
                                                 href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $teacher->uuid]) }}"
-                                                class="py-3 px-4  rounded-2xl cursor-pointer bg-indigo-800 hover:bg-indigo-500 transition-all flex gap-x-2 items-center">
+                                                class="cursor-pointer bg-indigo-800 hover:bg-indigo-500 ttext-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-xs">
                                                 <x-lucide-user class="w-4 h-4" />
                                                 <span>Profil</span>
                                             </a>
@@ -408,7 +320,7 @@
                                                     wire:click="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
                                                     wire:loading.attr="disabled"
                                                     wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
-                                                    class=" rounded-2xl flex py-3 px-4 items-center flex-1 justify-center cursor-pointer bg-sky-600/50 hover:bg-sky-800/50 text-sky-400">
+                                                    class=" inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 transition-all whitespace-nowrap disabled:opacity-50 text-xs">
                                                     <span wire:loading.remove
                                                         wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
                                                         class="flex items-center gap-1.5">
@@ -428,7 +340,7 @@
                                                 title="{{ $teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} cet enseigant "
                                                 wire:click="{{ $teacher->is_locked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
                                                 wire:loading.attr="disabled" wire:target="lockTeacher, unlockTeacher"
-                                                class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600/80 hover:bg-amber-800/80' : 'bg-purple-500/20 hover:bg-purple-600/60' }} transition-all text-xs font-medium">
+                                                class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600/80 hover:bg-amber-800/80' : 'bg-purple-500/20 hover:bg-purple-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50">
                                                 <span wire:loading.remove wire:target="lockTeacher, unlockTeacher"
                                                     class="inline-flex items-center justify-center gap-3">
                                                     <span class="inline-flex items-center justify-center gap-3">
@@ -461,7 +373,7 @@
                                                     : 'lockAccessToClasse(' . $teacher->id . ',' . $classe->id . ')' }}"
                                                 wire:loading.attr="disabled"
                                                 wire:target="lockAccessToClasse, unLockAccessToClasse"
-                                                class="relative py-3 px-4 rounded-xl {{ !$teacher->cannotAccessIntoClasse($classe->id) ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }} transition-all text-xs font-medium">
+                                                class="relative py-3 px-4 rounded-xl {{ !$teacher->cannotAccessIntoClasse($classe->id) ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }}  text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50">
                                                 <span wire:loading.remove
                                                     wire:target="lockAccessToClasse, unLockAccessToClasse"
                                                     class="inline-flex items-center justify-center gap-3">

@@ -1,45 +1,14 @@
 <div class="w-full overflow-x-hidden p-2">
-
-    {{-- ===================================================== --}}
-    {{-- GLOBAL CONTAINER --}}
-    {{-- ===================================================== --}}
-    <div
-        class="mx-auto
-                w-full
-                max-w-[1850px]
-                px-3
-                sm:px-3
-                lg:px-6
-                xl:px-8">
-
-        {{-- ===================================================== --}}
-        {{-- PAGE HEADER --}}
-        {{-- ===================================================== --}}
+    <div class="mx-auto w-full max-w-[1850px] px-3 sm:px-3 lg:px-6 xl:px-8">
         <section class="mb-6">
-
-            <div
-                class="flex flex-col
-                        xl:flex-row
-                        xl:items-center
-                        xl:justify-between
-                        gap-5">
-
-                {{-- LEFT --}}
+            <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
                 <div class="min-w-0">
-
                     <div class="flex flex-wrap items-center gap-3">
 
                         <h1 class="text-2xl sm:text-3xl font-bold">
-
                             Enseignants
-
                         </h1>
-
-                        <span
-                            class="px-3 py-1 rounded-full
-                                     bg-indigo-500/10
-                                     text-indigo-400
-                                     text-xs">
+                        <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
 
                             {{ __zero($allTeachersCounter) }} Enseignants
 
@@ -48,14 +17,9 @@
                     </div>
 
                     <p class="mt-2 text-slate-400 text-sm sm:text-base">
-
                         Vue globale du personnel enseignant de l’établissement
-
                     </p>
-
                 </div>
-
-                {{-- ACTIONS --}}
                 <div class="flex flex-wrap items-center gap-3">
 
                     <button wire:click='printTeachersList'
@@ -112,19 +76,10 @@
             </div>
 
         </section>
-
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
         <section class="mb-6">
+            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
 
-            <div
-                class="grid
-                        grid-cols-2
-                        xl:grid-cols-4
-                        gap-4">
-
-                @foreach ([['Total', __zero($allTeachersCounter), 'text-indigo-400'], ['Actifs', __zero($activesTeachersCounter), 'text-emerald-400'], ['Taux Présence', '96%', 'text-amber-400']] as $kpi)
+                @foreach ([['Total', __zero($allTeachersCounter), 'text-indigo-400'], ['Actifs', __zero($activesTeachersCounter), 'text-emerald-400'], ['Taux Présence', '96%', 'text-amber-400'], ['Sans accès', __zero(count(tenancy()->tenant?->getTeachersWithoutYearlyAccesses()))]] as $kpi)
                     <div
                         class="rounded-3xl
                             border border-slate-800
@@ -138,7 +93,7 @@
                         <h2
                             class="mt-3
                                text-2xl sm:text-3xl xl:text-4xl
-                               font-bold {{ $kpi[2] }}">
+                               font-bold {{ $kpi[2] ?? 'text-sky-600' }}">
 
                             {{ $kpi[1] }}
 
@@ -261,10 +216,6 @@
             </div>
 
         </section>
-
-        {{-- ===================================================== --}}
-        {{-- MAIN GRID --}}
-        {{-- ===================================================== --}}
         <section>
 
             @php
@@ -283,32 +234,16 @@
             @endif
 
             <div class="space-y-6 min-w-0">
-
-                {{-- TEACHERS TABLE --}}
-                <div
-                    class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                overflow-hidden">
-
-                    {{-- HEADER --}}
-                    <div class="border-b border-slate-800
-                                    p-4 sm:p-6">
-
+                <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden p-2">
+                    <div class="border-b border-slate-800 p-4 sm:p-6">
                         <div class="flex flex-col gap-y-3">
                             <div>
                                 <h2 class="text-lg sm:text-xl font-semibold">
-
                                     Liste des Enseignants
-
                                 </h2>
-
                                 <p class="mt-1 text-sm text-slate-400">
-
                                     Gestion et suivi du personnel enseignant
-
                                 </p>
-
                             </div>
 
                             <div class="flex w-full justify-end">
@@ -316,6 +251,23 @@
                                     <div class="flex flex-wrap items-center gap-3 text-sm">
 
                                         {{-- Débloquer tous --}}
+                                        <button wire:click="giveAccessesToTeachersForThisSchoolYear"
+                                            wire:loading.attr="disabled"
+                                            class="border h-11 rounded-2xl flex items-center px-2.5 justify-center cursor-pointer bg-violet-500/10 hover:bg-violet-700/50 text-violet-400 bg">
+                                            <span wire:loading.remove
+                                                wire:target="giveAccessesToTeachersForThisSchoolYear"
+                                                class="flex items-center gap-1.5">
+                                                <x-lucide-user-key class="w-4 h-4" />
+                                                Accoder accès aux enseignants
+                                            </span>
+                                            <span wire:loading wire:target="giveAccessesToTeachersForThisSchoolYear"
+                                                class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center gap-x-2">
+                                                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                    <span>En cours...</span>
+                                                </span>
+                                            </span>
+                                        </button>
                                         <button wire:click="unlockTeachers" wire:loading.attr="disabled"
                                             class="h-11 rounded-2xl flex items-center px-2.5 justify-center cursor-pointer bg-lime-500/10 hover:bg-lime-700/50 text-lime-400">
                                             <span wire:loading.remove wire:target="unlockTeachers"
@@ -434,7 +386,7 @@
                                         class="hover:bg-slate-800/40 transition-all">
                                         <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                            {{ __zero($loop->iteration) }}
+                                            {{ __zero($teachers->firstItem() + $loop->iteration - 1) }}
 
                                         </td>
 
@@ -492,10 +444,10 @@
                                         {{-- SUBJECT --}}
                                         <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                            <div class="mt-1 font-medium flex gap-2 text-sm">
+                                            <div class="mt-1 font-medium flex gap-2 text-sm justify-center">
                                                 @foreach ($teacher->getYearlySubjects() as $yearly_subject)
                                                     <span
-                                                        class="rounded-xl p-1 px-3 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->code }}</span>
+                                                        class="rounded-xl p-1 px-3 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform border border-amber-600/40 uppercase">{{ $yearly_subject->subject->code }}</span>
                                                 @endforeach
                                             </div>
 
@@ -505,11 +457,11 @@
                                         <td class="px-3 py-5 text-center">
 
                                             @php
-                                                $othersClasses = $teacher->getTeacherClassesForThisSchoolYear([]);
+                                                $teacher_classes = $teacher->getTeacherClassesForThisSchoolYear([]);
 
                                             @endphp
-                                            @if (count($othersClasses))
-                                                @foreach ($othersClasses as $cl)
+                                            @if (count($teacher_classes))
+                                                @foreach ($teacher_classes as $cl)
                                                     <span
                                                         class="px-2 py-1 rounded-xl bg-slate-800 text-xs uppercase font-mono border border-sky-700">
                                                         {{ $cl?->code ?? $cl->name }}
@@ -532,14 +484,15 @@
 
                                         </td>
 
-                                        <td class="px-3 py-5 truncate">
-                                            <div class="flex items-center gap-2 text-xs w-full ">
+                                        <td class="px-3 py-5">
+                                            <div class="flex flex-wrap items-center gap-2 text-xs">
 
+                                                {{-- Matières --}}
                                                 @if ($teacher->hasValidAccessForYear())
-                                                    <a title="Définir les matières spécialités de l'enseigant {{ $teacher->getFullName() }}"
+                                                    <a title="Définir les matières de {{ $teacher->getFullName() }}"
                                                         wire:navigate
                                                         href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $teacher->uuid]) }}"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-800/50 text-indigo-400 gap-x-2">
+                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-indigo-600/50 hover:bg-indigo-800/50 text-indigo-400 transition-all whitespace-nowrap">
                                                         <span>⚙️</span>
                                                         <span>Matières</span>
                                                     </a>
@@ -552,17 +505,18 @@
                                                         wire:click="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
                                                         wire:loading.attr="disabled"
                                                         wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
-                                                        class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-600/50 hover:bg-sky-800/50 text-sky-400">
+                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 transition-all whitespace-nowrap disabled:opacity-50">
                                                         <span wire:loading.remove
                                                             wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="flex items-center gap-1.5">
-                                                            <x-lucide-send class="w-4 h-4" />
-                                                            Envoyer
+                                                            class="inline-flex items-center gap-1.5">
+                                                            <x-lucide-send class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Envoyer</span>
                                                         </span>
                                                         <span wire:loading
                                                             wire:target="sendCredentialsToTeacher('{{ $teacher->user->uuid }}')"
-                                                            class="flex items-center gap-1.5">
-                                                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                                                            class="inline-flex items-center gap-1.5">
+                                                            <x-lucide-refresh-ccw
+                                                                class="w-3.5 h-3.5 animate-spin shrink-0" />
                                                             <span>En cours...</span>
                                                         </span>
                                                     </button>
@@ -570,130 +524,107 @@
 
                                                 {{-- Bloquer / Débloquer --}}
                                                 <button
-                                                    title="{{ $teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} l'enseigant {{ $teacher->getFullName() }}"
-                                                    wire:click="{{ $teacher->is_locked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
+                                                    title="{{ $teacher->blocked ? 'Débloquer' : 'Bloquer' }} {{ $teacher->getFullName() }}"
+                                                    wire:click="{{ $teacher->blocked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="lockTeacher, unlockTeacher"
-                                                    class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600/80 hover:bg-amber-800/80' : 'bg-purple-500/20 hover:bg-purple-600/60' }} transition-all text-xs font-medium">
-                                                    <span wire:loading.remove wire:target="lockTeacher, unlockTeacher"
-                                                        class="inline-flex items-center justify-center gap-3">
-                                                        <span class="inline-flex items-center justify-center gap-3">
-                                                            @if ($teacher->is_locked)
-                                                                <x-lucide-unlock class="w-4 h-4" />
-                                                                <span>Débloquer</span>
-                                                            @else
-                                                                <x-lucide-user-lock class="w-4 h-4" />
-                                                                <span>Bloquer</span>
-                                                            @endif
-                                                        </span>
+                                                    wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
+                                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $teacher->blocked ? 'bg-lime-600/50 hover:bg-lime-800/50 text-lime-400' : 'bg-amber-600/50 hover:bg-amber-800/50 text-amber-400' }}">
+                                                    <span wire:loading.remove
+                                                        wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
+                                                        class="inline-flex items-center gap-1.5">
+                                                        @if ($teacher->blocked)
+                                                            <x-lucide-lock-keyhole-open class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Débloquer</span>
+                                                        @else
+                                                            <x-lucide-ban class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Bloquer</span>
+                                                        @endif
                                                     </span>
-
-                                                    <span wire:loading wire:target="lockTeacher, unlockTeacher"
-                                                        class="inline-flex items-center gap-1">
-                                                        <svg class="animate-spin w-3 h-3" fill="none"
-                                                            viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12"
-                                                                r="10" stroke="currentColor" stroke-width="4" />
-                                                            <path class="opacity-75" fill="currentColor"
-                                                                d="M4 12a8 8 0 018-8v8z" />
-                                                        </svg>
+                                                    <span wire:loading
+                                                        wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
+                                                        class="inline-flex items-center gap-1.5">
+                                                        <x-lucide-refresh-ccw
+                                                            class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                        <span>En cours...</span>
                                                     </span>
                                                 </button>
 
-                                                {{-- Accorder accès --}}
+                                                {{-- Accorder / Retirer accès année --}}
                                                 @if (!$teacher->deleted_at)
                                                     <button
-                                                        title="{{ $teacher->hasValidAccessForYear() ? 'Retirer ' : 'Accorder ' }} l'accès à l'enseigant {{ $teacher->getFullName() }} pour cette année scolaire "
-                                                        wire:click="{{ !$teacher->hasValidAccessForYear() ? 'giveAccessForThisSchoolYear(' . $teacher->id . ')' : 'removeAccessForThisSchoolYear(' . $teacher->id . ')' }}"
+                                                        title="{{ $teacher->hasValidAccessForYear() ? 'Retirer' : 'Accorder' }} l'accès à {{ $teacher->getFullName() }}"
+                                                        wire:click="{{ $teacher->hasValidAccessForYear() ? 'removeAccessForThisSchoolYear(' . $teacher->id . ')' : 'giveAccessForThisSchoolYear(' . $teacher->id . ')' }}"
                                                         wire:loading.attr="disabled"
-                                                        wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
-                                                        class="relative py-3 px-4 rounded-xl {{ !$teacher->hasValidAccessForYear() ? 'bg-green-800/60 hover:bg-lime-500/80' : 'bg-orange-700/80 hover:bg-orange-600/40' }} transition-all text-xs font-medium">
+                                                        wire:target="giveAccessForThisSchoolYear({{ $teacher->id }}), removeAccessForThisSchoolYear({{ $teacher->id }})"
+                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $teacher->hasValidAccessForYear() ? 'bg-orange-600/50 hover:bg-orange-800/50 text-orange-400' : 'bg-emerald-600/50 hover:bg-emerald-800/50 text-emerald-400' }}">
                                                         <span wire:loading.remove
-                                                            wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
-                                                            class="inline-flex items-center justify-center gap-3">
-                                                            <span
-                                                                class="inline-flex items-center justify-center gap-3">
-                                                                @if ($teacher->hasValidAccessForYear())
-                                                                    <x-lucide-user-lock class="w-4 h-4" />
-                                                                    <span>Retirer accès</span>
-                                                                @else
-                                                                    <x-lucide-key class="w-4 h-4" />
-                                                                    <span>Accorder accès</span>
-                                                                @endif
-                                                            </span>
+                                                            wire:target="giveAccessForThisSchoolYear({{ $teacher->id }}), removeAccessForThisSchoolYear({{ $teacher->id }})"
+                                                            class="inline-flex items-center gap-1.5">
+                                                            @if ($teacher->hasValidAccessForYear())
+                                                                <x-lucide-user-lock class="w-3.5 h-3.5 shrink-0" />
+                                                                <span>Retirer accès</span>
+                                                            @else
+                                                                <x-lucide-key class="w-3.5 h-3.5 shrink-0" />
+                                                                <span>Accorder accès</span>
+                                                            @endif
                                                         </span>
-
                                                         <span wire:loading
-                                                            wire:target="removeAccessForThisSchoolYear, giveAccessForThisSchoolYear"
-                                                            class="inline-flex items-center gap-1">
-                                                            <svg class="animate-spin w-3 h-3" fill="none"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12"
-                                                                    cy="12" r="10" stroke="currentColor"
-                                                                    stroke-width="4" />
-                                                                <path class="opacity-75" fill="currentColor"
-                                                                    d="M4 12a8 8 0 018-8v8z" />
-                                                            </svg>
+                                                            wire:target="giveAccessForThisSchoolYear({{ $teacher->id }}), removeAccessForThisSchoolYear({{ $teacher->id }})"
+                                                            class="inline-flex items-center gap-1.5">
+                                                            <x-lucide-refresh-ccw
+                                                                class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                            <span>En cours...</span>
                                                         </span>
                                                     </button>
                                                 @endif
 
+                                                {{-- Corbeille / Restaurer --}}
                                                 <button
-                                                    title="{{ $teacher->deleted_at ? 'Restaurer ' : 'Envoyer ' }} l'enseigant {{ $teacher->getFullName() }} {{ $teacher->deleted_at ? ' de ' : ' dans ' }} la corbeille"
+                                                    title="{{ $teacher->deleted_at ? 'Restaurer' : 'Mettre en corbeille' }} {{ $teacher->getFullName() }}"
                                                     wire:click="{{ $teacher->deleted_at ? 'restoreTeacher(' . $teacher->id . ')' : 'deleteTeacher(' . $teacher->id . ')' }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="deleteTeacher, restoreTeacher"
-                                                    class="relative py-3 px-4 rounded-xl {{ !$teacher->deleted_at ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }} transition-all text-xs font-medium">
+                                                    wire:target="deleteTeacher({{ $teacher->id }}), restoreTeacher({{ $teacher->id }})"
+                                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $teacher->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-violet-400' : 'bg-rose-600/50 hover:bg-rose-800/50 text-rose-400' }}">
                                                     <span wire:loading.remove
-                                                        wire:target="deleteTeacher, restoreTeacher"
-                                                        class="inline-flex items-center justify-center gap-3">
-                                                        <span class="inline-flex items-center justify-center gap-3">
-                                                            @if ($teacher->deleted_at)
-                                                                <x-lucide-recycle class="w-4 h-4" />
-                                                                <span>Restaurer</span>
-                                                            @else
-                                                                <x-lucide-trash class="w-4 h-4" />
-                                                                <span>Corbeille</span>
-                                                            @endif
-                                                        </span>
+                                                        wire:target="deleteTeacher({{ $teacher->id }}), restoreTeacher({{ $teacher->id }})"
+                                                        class="inline-flex items-center gap-1.5">
+                                                        @if ($teacher->deleted_at)
+                                                            <x-lucide-recycle class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Restaurer</span>
+                                                        @else
+                                                            <x-lucide-trash class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Corbeille</span>
+                                                        @endif
                                                     </span>
-
-                                                    <span wire:loading wire:target="deleteTeacher, restoreTeacher"
-                                                        class="inline-flex items-center gap-1">
-                                                        <svg class="animate-spin w-3 h-3" fill="none"
-                                                            viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12"
-                                                                r="10" stroke="currentColor" stroke-width="4" />
-                                                            <path class="opacity-75" fill="currentColor"
-                                                                d="M4 12a8 8 0 018-8v8z" />
-                                                        </svg>
+                                                    <span wire:loading
+                                                        wire:target="deleteTeacher({{ $teacher->id }}), restoreTeacher({{ $teacher->id }})"
+                                                        class="inline-flex items-center gap-1.5">
+                                                        <x-lucide-refresh-ccw
+                                                            class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                        <span>En cours...</span>
                                                     </span>
                                                 </button>
+
+                                                {{-- Supprimer définitivement --}}
                                                 @if ($teacher->deleted_at)
                                                     <button
-                                                        wire:click="{{ 'forceDeleteTeacher(' . $teacher->id . ')' }}"
-                                                        wire:loading.attr="disabled" wire:target="forceDeleteTeacher"
-                                                        class="relative py-3 px-4 rounded-xl bg-red-500/20 hover:bg-red-600/60 transition-all text-xs font-medium">
-                                                        <span wire:loading.remove wire:target="forceDeleteTeacher"
-                                                            class="inline-flex items-center justify-center gap-3">
-                                                            <span
-                                                                class="inline-flex items-center justify-center gap-3">
-
-                                                                <x-lucide-trash-2 class="w-4 h-4" />
-                                                                <span>Suppr. Déf.</span>
-                                                            </span>
+                                                        title="Supprimer définitivement {{ $teacher->getFullName() }}"
+                                                        wire:click="forceDeleteTeacher({{ $teacher->id }})"
+                                                        wire:loading.attr="disabled"
+                                                        wire:target="forceDeleteTeacher({{ $teacher->id }})"
+                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-red-600/50 hover:bg-red-800/50 text-red-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                        <span wire:loading.remove
+                                                            wire:target="forceDeleteTeacher({{ $teacher->id }})"
+                                                            class="inline-flex items-center gap-1.5">
+                                                            <x-lucide-trash-2 class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>Suppr. déf.</span>
                                                         </span>
-
-                                                        <span wire:loading wire:target="forceDeleteTeacher"
-                                                            class="inline-flex items-center gap-1">
-                                                            <svg class="animate-spin w-3 h-3" fill="none"
-                                                                viewBox="0 0 24 24">
-                                                                <circle class="opacity-25" cx="12"
-                                                                    cy="12" r="10" stroke="currentColor"
-                                                                    stroke-width="4" />
-                                                                <path class="opacity-75" fill="currentColor"
-                                                                    d="M4 12a8 8 0 018-8v8z" />
-                                                            </svg>
+                                                        <span wire:loading
+                                                            wire:target="forceDeleteTeacher({{ $teacher->id }})"
+                                                            class="inline-flex items-center gap-1.5">
+                                                            <x-lucide-refresh-ccw
+                                                                class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                            <span>En cours...</span>
                                                         </span>
                                                     </button>
                                                 @endif
@@ -711,68 +642,42 @@
                     </div>
 
                     {{-- PAGINATION --}}
-                    <div class="border-t border-slate-800
-                                    px-3 sm:px-6 py-4">
+                    @if ($teachers->hasPages())
+                        <section class="py-6">
+                            <div class="border border-slate-800 bg-slate-900 p-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                    <div class="text-sm text-slate-400">
+                                        Affichage {{ $teachers->firstItem() }} à {{ $teachers->lastItem() }} sur
+                                        {{ $teachers->total() }} enseignants
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        @if (!$teachers->onFirstPage())
+                                            <button wire:click="previousPage" wire:loading.attr="disabled"
+                                                wire:target="previousPage"
+                                                class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                Précédent
+                                            </button>
+                                        @endif
 
-                        <div
-                            class="flex flex-col sm:flex-row
-                                        sm:items-center
-                                        sm:justify-between
-                                        gap-4">
+                                        @foreach ($teachers->getUrlRange(1, $teachers->lastPage()) as $page => $url)
+                                            <button wire:click="gotoPage({{ $page }})"
+                                                class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $teachers->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                {{ $page }}
+                                            </button>
+                                        @endforeach
 
-                            <p class="text-sm text-slate-400">
-
-                                Affichage de 1 à 10 sur 248 enseignants
-
-                            </p>
-
-                            <div class="flex items-center gap-2">
-
-                                <button
-                                    class="h-10 px-3 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                    Précédent
-
-                                </button>
-
-                                <button
-                                    class="h-10 px-3 rounded-xl
-                                                   bg-indigo-500
-                                                   hover:bg-indigo-600
-                                                   transition-all text-sm">
-
-                                    1
-
-                                </button>
-
-                                <button
-                                    class="h-10 px-3 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                    2
-
-                                </button>
-
-                                <button
-                                    class="h-10 px-3 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                    Suivant
-
-                                </button>
-
+                                        @if ($teachers->hasMorePages())
+                                            <button wire:click="nextPage" wire:loading.attr="disabled"
+                                                wire:target="nextPage"
+                                                class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                Suivant
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-
-                        </div>
-
-                    </div>
+                        </section>
+                    @endif
 
                 </div>
 

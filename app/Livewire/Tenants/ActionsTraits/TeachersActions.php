@@ -3,7 +3,9 @@
 namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
+use App\Events\InitProcessToGrantYearlyAccessToTeachersEvent;
 use App\Events\TeacherWasBlockedEvent;
+use App\Jobs\JobBulkerActionsOnModels;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\Classe;
 use App\Models\Teacher;
@@ -50,16 +52,20 @@ trait TeachersActions{
     #[On('ConfirmTeacherLocking')]
     public function ConfirmTeacherLocking(int $teacherId): void
     {
-        $user = User::where('uuid', $teacherId)->first();
-        if (!$user) {
-            $this->notification()->error(title: 'Utilisateur introuvable');
+        $teacher = Teacher::find($teacherId);
+
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
             return;
         }
-        $user->teacher->update(['blocked' => true]);
-        broadcast(new TeacherWasBlockedEvent(tenant('id'), $user->id));
+
+        $teacher->update(['blocked' => true]);
+
+        broadcast(new TeacherWasBlockedEvent(tenant('id'), $teacher->id));
+
         $this->notification()->success(
             title: 'Enseignant bloqué',
-            description: "{$user->teacher->getFullName()} a été bloqué.",
+            description: "L'enseignant {$teacher->getFullName()} a été bloqué.",
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -206,15 +212,19 @@ trait TeachersActions{
     #[On('ConfirmTeacherUnLocking')]
     public function OnConfirmTeacherUnLocking(int $teacherId): void
     {
-        $user = User::where('uuid', $teacherId)->first();
-        if (!$user) {
-            $this->notification()->error(title: 'Utilisateur introuvable');
+        $teacher = Teacher::find($teacherId);
+
+
+        if (!$teacher) {
+            $this->notification()->error(title: 'Enseignant introuvable');
             return;
         }
-        $user->teacher->update(['blocked' => false]);
+
+        $teacher->update(['blocked' => false]);
+
         $this->notification()->success(
             title: 'Enseignant débloqué',
-            description: "{$user->teacher->getFullName()} a été débloqué.",
+            description: "L'enseignant {$teacher->getFullName()} a été débloqué.",
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -240,6 +250,7 @@ trait TeachersActions{
     public function OnConfirmGivingAccessToTeacher(int $teacherId): void
     {
         $teacher = Teacher::whereId($teacherId)->first();
+
         if (!$teacher) {
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
@@ -275,6 +286,7 @@ trait TeachersActions{
     public function OnConfirmToRemoveAccessToTeacher(int $teacherId): void
     {
         $teacher = Teacher::whereId($teacherId)->first();
+
         if (!$teacher) {
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
@@ -308,16 +320,19 @@ trait TeachersActions{
     #[On('ConfirmTeacherDeletion')]
     public function OnConfirmTeacherDeletion(int $teacherId): void
     {
-        $user = User::where('uuid', $teacherId)->first();
+        $teacher = Teacher::find($teacherId);
         
-        if (!$user?->teacher) {
+        if (!$teacher) {
+
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
         }
-        $user->teacher->delete();
+
+        $teacher->delete();
+
         $this->notification()->success(
             title: 'Enseignant mis en corbeille',
-            description: "{$user->teacher->getFullName()} a été envoyé à la corbeille.",
+            description: "L'enseignant {$teacher->getFullName()} a été envoyé à la corbeille.",
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -342,8 +357,8 @@ trait TeachersActions{
     #[On('ConfirmTeacherRestoration')]
     public function OnConfirmTeacherRestoration(int $teacherId): void
     {
-        $user = User::where('uuid', $teacherId)->withTrashed()->first();
-        $teacher = $user?->teacher()->withTrashed()->first();
+        $teacher = Teacher::withTrashed()->whereId($teacherId)->first();
+
         if (!$teacher) {
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
@@ -351,7 +366,7 @@ trait TeachersActions{
         $teacher->restore();
         $this->notification()->success(
             title: 'Enseignant restauré',
-            description: "{$teacher->getFullName()} a été restauré.",
+            description: "L'enseignant {$teacher->getFullName()} a été restauré.",
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -376,19 +391,31 @@ trait TeachersActions{
     #[On('ConfirmTeacherForceDelete')]
     public function OnConfirmTeacherForceDelete(int $teacherId): void
     {
-        $user = User::where('uuid', $teacherId)->withTrashed()->first();
-        $teacher = $user?->teacher()->withTrashed()->first();
+        $teacher = Teacher::withTrashed()->whereId($teacherId)->first();
+
+        $teacherName = $teacher->getFullName() . ' (' . $teacher->user?->email .')';
+
         if (!$teacher) {
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
         }
-        $teacher->forceDelete();
-        $this->notification()->success(
-            title: 'Suppression planifiée',
-            description: "Effective dans 30 jours.",
-        );
 
+        if($teacher->created_at->gt(now()->subMonths(3))){
 
+            $this->notification()->success(
+                title: 'Suppression planifiée',
+                description: "Effective dans 30 jours.",
+            );
+        }
+        else{
+            $teacher->forceDelete();
+
+            $this->notification()->success(
+            title: "Enseignant supprimé définitivement",
+                description: "L'enseignant " . $teacherName . " a été supprimé définitivement de la plateforme!",
+            );
+
+        }
         broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
@@ -412,7 +439,19 @@ trait TeachersActions{
     #[On('ConfirmTeachersLocking')]
     public function OnConfirmTeachersLocking(): void
     {
-        Teacher::where('blocked', false)->update(['blocked' => true]);
+        $ids = Teacher::where('blocked', false)->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Teacher::class,
+            ids: $ids,
+            method: 'update',
+            options: ['blocked' => true],
+            withTrashedDeleted: true,
+            taskTitle: "BLOCAGE EN MASSE DES ENSEIGNANTS"
+        );
+        
+        
         $this->notification()->success(
             title: 'Enseignants bloqués',
             description: 'Tous les enseignants ont été bloqués.',
@@ -439,7 +478,18 @@ trait TeachersActions{
     #[On('ConfirmTeachersUnLocking')]
     public function OnConfirmTeachersUnLocking(): void
     {
-        Teacher::where('blocked', true)->update(['blocked' => false]);
+        $ids = Teacher::where('blocked', true)->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Teacher::class,
+            ids: $ids,
+            method: 'update',
+            options: ['blocked' => false],
+            withTrashedDeleted: false,
+            taskTitle: "DEBLOCAGE EN MASSE DES ENSEIGNANTS"
+        );
+
         $this->notification()->success(
             title: 'Enseignants débloqués',
             description: 'Tous les enseignants ont été débloqués.',
@@ -465,7 +515,18 @@ trait TeachersActions{
     #[On('ConfirmTeachersRestoration')]
     public function OnConfirmTeachersRestoration(): void
     {
-        Teacher::onlyTrashed()->whereNotNull('user_id')->restore();
+        $ids = Teacher::onlyTrashed()->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Teacher::class,
+            ids: $ids,
+            method: 'restore',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: "RESTORATION EN MASSE DES ENSEIGNANTS EN CORBEILLE"
+        );
+
         $this->notification()->success(
             title: 'Enseignants restaurés',
             description: 'Tous les enseignants ont été restaurés.',
@@ -492,7 +553,17 @@ trait TeachersActions{
     #[On('ConfirmTeachersForceDelete')]
     public function OnConfirmTeachersForceDelete(): void
     {
-        Teacher::onlyTrashed()->whereNotNull('user_id')->forceDelete();
+        $ids = Teacher::onlyTrashed()->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(tenantId: tenant('id'),
+            model: Teacher::class,
+            ids: $ids,
+            method: 'forceDelete',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: "SUPPRESSION DEFINITIVE EN MASSE DES ENSEIGNANTS"
+        );
+
         $this->notification()->success(
             title: 'Suppression planifiée',
             description: 'Effective dans 30 jours.',
@@ -528,6 +599,43 @@ trait TeachersActions{
             ]);
         }
 	}
+
+
+    public function giveAccessesToTeachersForThisSchoolYear(): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Accorder l'accès aux enseignants ?",
+            'text'               => "Les enseignants indexés auront accès à leurs classes respectives pour l'année scolaire ". ($this->activeYear?->slug ?? ''),
+            'icon'               => 'info',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, enrôler',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmGivingAccessesToTeachers',
+        ]);
+    }
+
+    #[On('ConfirmGivingAccessesToTeachers')]
+    public function OnConfirmGivingAccessesToTeachers(): void
+    {
+        $domain = request()->getSchemeAndHttpHost();
+
+        InitProcessToGrantYearlyAccessToTeachersEvent::dispatch(
+            tenantId: tenant('id'),
+            onlyForSubjects: null,
+            excepts: null,
+            school_year_id: null,
+            domain: $domain
+        );
+       
+        $this->notification()->success(
+            title: "Création d'accès lancée",
+            description: "Le processus de création d'accès lancé.",
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
 
 
     public function createTeachersFromExcelFile()

@@ -14,16 +14,17 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-
+use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Edition de classe")]
 class EditClasseComponent extends Component
 {
+    use WireUiActions;
 
     public Classe $classe;
 
-    public string $localization   = '';
+    public ?string $localization   = '';
     public string    $classe_slug = '';
     public int    $school_year_id = 0;
     public int    $promotion_id   = 0;

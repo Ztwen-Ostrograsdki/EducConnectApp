@@ -280,8 +280,8 @@
                         <p class="text-sm text-slate-500">Aucune matière assignée pour l'instant.</p>
                     </div>
                 @else
-                    <table class="divide-y divide-slate-800 w-full  ">
-                        <thead class="bg-slate-950 border-b border-slate-800">
+                    <table class="divide-y divide-slate-800 w-full z-table-border ">
+                        <thead class="bg-slate-950 ">
 
                             <tr>
 
@@ -305,39 +305,40 @@
                         </thead>
                         @foreach ($this->assignedLinks as $link)
                             <tr wire:key="link-{{ $link->id }}"
-                                class=" px-3 py-2 hover:bg-slate-800/30 transition w-full text-center text-slate-500">
+                                class=" px-3 py-2 hover:bg-slate-800/30 transition w-full text-slate-500">
 
-                                <td class="px-3 py-5 text-center whitespace-nowrap">
+                                <td class="px-3 py-5 whitespace-nowrap text-center">
 
                                     {{ __zero($loop->iteration) }}
 
                                 </td>
 
-                                <td
-                                    class=" flex flex-col items-center justify-center text-xs font-bold shrink-0 mt-0.5 truncate">
-                                    <p class="text-sm font-semibold text-white">
-                                        {{ $link->subject?->name ?? '—' }}
-                                    </p>
-                                    <div class="flex items-center gap-x-2">
-                                        @if ($link->subject?->code)
-                                            <p class="text-xs text-slate-500 font-mono">{{ $link->subject->code }}</p>
-                                        @endif
-                                        @if ($link->coefficient)
-                                            <p class="text-xs text-slate-600 mt-1">Coeff. {{ $link->coefficient }}</p>
-                                        @endif
+                                <td class=" truncate">
+
+                                    <div class="flex flex-col items-center text-xs font-bold ">
+                                        <p class="text-sm font-semibold text-orange-600">
+                                            {{ $link->subject?->name ?? '—' }}
+                                        </p>
+                                        <div class="flex flex-col text-left w-full justify-start px-3 gap-x-2">
+                                            @if ($link->coefficient)
+                                                <p class="text-xs text-slate-600 mt-1">Coeff. {{ $link->coefficient }}
+                                                </p>
+                                            @endif
+                                        </div>
                                     </div>
+
                                 </td>
 
-                                <td class=" min-w-0 truncate text-center">
+                                <td class=" min-w-0 truncate text-center text-sm">
 
                                     {{ $link->teacher?->getFullName() ?? 'Sans prof' }}
 
                                 </td>
 
-                                <td class="truncate">
+                                <td class="truncate p-2">
                                     <button wire:click="removeLink({{ $link->id }})" wire:loading.attr="disabled"
                                         wire:target="removeLink({{ $link->id }})"
-                                        class="relative inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white text-xs font-medium transition disabled:opacity-40 shrink-0">
+                                        class="relative inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white text-xs font-medium transition disabled:opacity-40 shrink-0 justify-center w-full border border-red-700">
                                         <span wire:loading.remove wire:target="removeLink({{ $link->id }})">
                                             <x-lucide-x class="w-3.5 h-3.5 inline -mt-0.5" /> Retirer
                                         </span>
