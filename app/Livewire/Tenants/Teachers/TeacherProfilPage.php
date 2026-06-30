@@ -20,9 +20,18 @@ class TeacherProfilPage extends Component
     
     public string $teacher_uuid;
 
+    public $counter = 0;
+
     public function mount(string $teacher_uuid)
     {
         $this->teacher_uuid = $teacher_uuid;
+    }
+
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
     }
 
     public function lockTeacher(int $teacherId): void

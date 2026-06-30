@@ -137,17 +137,14 @@
                                 class="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-800/40 transition">
 
                                 <div
-                                    class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0">
-                                    {{ strtoupper(substr($link->subject->name, 0, 2)) }}
+                                    class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center uppercase text-xs font-bold shrink-0">
+                                    {{ $link->subject->code ?? cutter($link->subject->name, 3) }}
                                 </div>
 
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-white truncate">{{ $link->subject->name }}</p>
+                                    <p class="text-sm font-medium text-green-400 truncate">{{ $link->subject->name }}
+                                    </p>
                                     <div class="flex items-center gap-2 mt-0.5 flex-wrap">
-                                        @if ($link->subject->code)
-                                            <span
-                                                class="text-xs text-slate-500 font-mono">{{ $link->subject->code }}</span>
-                                        @endif
                                         <span
                                             class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400 capitalize">
                                             {{ $link->subject->level }}
@@ -238,16 +235,13 @@
                             class="flex items-center gap-4 px-5 py-3.5 transition
                         {{ $linked ? 'bg-emerald-500/5' : 'hover:bg-slate-800/40' }}">
                             <div
-                                class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0
-                        {{ $linked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300' }}">
-                                {{ strtoupper(substr($subject->name, 0, 2)) }}
+                                class="p-3 uppercase rounded-xl flex items-center justify-center text-xs font-bold shrink-0
+                        {{ $linked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300 ' }}">
+                                {{ $subject->code ?? cutter($subject->name, 3) }}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-white truncate">{{ $subject->name }}</p>
+                                <p class="text-sm font-medium text-indigo-400 truncate">{{ $subject->name }}</p>
                                 <div class="flex items-center gap-2 mt-0.5 flex-wrap">
-                                    @if ($subject->code)
-                                        <span class="text-xs text-slate-500 font-mono">{{ $subject->code }}</span>
-                                    @endif
                                     <span
                                         class="text-xs px-2 py-0.5 rounded-full bg-slate-700/80 text-slate-400 capitalize">
                                         {{ $subject->level }}

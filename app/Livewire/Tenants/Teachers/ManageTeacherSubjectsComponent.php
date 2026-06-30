@@ -21,6 +21,7 @@ class ManageTeacherSubjectsComponent extends Component
     use WireUiActions, WithPagination;
 
     // ─── Sélection prof ───────────────────────────────────────────────
+    public ?Teacher    $teacher     = null;
     public ?int    $teacherId     = null;
     public string  $teacherSearch = '';
     public bool    $showDropdown  = false;
@@ -35,6 +36,7 @@ class ManageTeacherSubjectsComponent extends Component
         if ($teacher_uuid) {
             $teacher = Teacher::where('uuid', $teacher_uuid)->first();
             if ($teacher) {
+                $this->teacher     = $teacher;
                 $this->teacherId     = $teacher->id;
                 $this->teacherSearch = $teacher->user?->name ?? $teacher->email;
                 $this->showDropdown  = false;
@@ -159,7 +161,6 @@ class ManageTeacherSubjectsComponent extends Component
             'is_active' => true,
         ]);
 
-        // Reactive les soft-désactivées
         TeacherYearlySubject::where('teacher_id', $this->teacherId)
             ->where('subject_id', $subjectId)
             ->where('school_year_id', $this->activeYear->id)
@@ -180,6 +181,22 @@ class ManageTeacherSubjectsComponent extends Component
     {
         if (!$this->teacherId || !$this->activeYear) return;
 
+        $subject = Subject::find($subjectId);
+
+        if(!$this->teacher->ensureThatTeacherDoesntHaveClasseWithThisSubject($subjectId)){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'timeout' => 0,
+                'title'       => "Vous ne pouvez pas retirer cette matière!",
+                'description' => $this->teacher->getFullName() . " enseigne cette matière « {$subject->name} » dans au moins une classe. Pour lui retirer cette matière, vous devez d'abord lui retirer cette ou ces classe(s) concernée(s)!",
+            ]);
+
+
+            return;
+
+        }
+
         TeacherYearlySubject::where('teacher_id', $this->teacherId)
             ->where('subject_id', $subjectId)
             ->where('school_year_id', $this->activeYear->id)
@@ -187,7 +204,6 @@ class ManageTeacherSubjectsComponent extends Component
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 
-        $subject = Subject::find($subjectId);
         $this->notification()->warning(
             title: 'Matière retirée',
             description: "« {$subject->name} » a été retirée du prof.",

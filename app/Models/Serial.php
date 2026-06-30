@@ -39,6 +39,12 @@ class Serial extends Model
         return $this->hasMany(Classe::class, 'serial_id');
     }
 
+
+    public function promotions(): HasMany
+    {
+        return $this->hasMany(Promotion::class);
+    }
+
     // ─── Scopes ───────────────────────────────────────────────────────
 
     /**

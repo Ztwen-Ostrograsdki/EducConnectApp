@@ -288,10 +288,10 @@
 
                                 </div>
 
-                                <button
-                                    class="h-11 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
-                                    Ajouter Classe
-                                </button>
+                                <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $teacher->uuid]) }}"
+                                    class="py-3 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
+                                    Gérer classes
+                                </a>
 
                             </div>
 
@@ -470,7 +470,7 @@
                                         <div class="flex flex-col items-center gap-3">
                                             <x-lucide-school class="w-10 h-10 text-orange-600" />
                                             <p class="text-slate-500 text-lg animate-pulse">Aucune classe assignée</p>
-                                            <a href="#"
+                                            <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $teacher->uuid]) }}"
                                                 class="mt-2 px-4 w-full py-2 rounded-xl bg-slate-800 hover:bg-orange-700/25 text-sm transition hover:underline underline-offset-4 hover:text-orange-500">
                                                 Attribuer des classes
                                             </a>

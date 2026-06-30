@@ -300,7 +300,7 @@
                                     <button
                                         wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
                                         wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
-                                        class="relative py-3 px-4 rounded-xl {{ $classe->is_locked ? 'bg-emerald-600/20 hover:bg-emerald-500/50' : 'bg-amber-500/0 hover:bg-amber-600/50' }} transition-all text-xs font-medium">
+                                        class="relative py-3 px-4 rounded-xl {{ $classe->is_locked ? 'bg-emerald-600/20 hover:bg-emerald-500/50' : 'bg-orange-500/60 hover:bg-orange-600' }} transition-all text-xs font-medium">
                                         <span wire:loading.remove wire:target="lockClasse, unlockClasse"
                                             class="inline-flex items-center justify-center gap-3">
                                             <span class="inline-flex items-center justify-center gap-3">
@@ -327,7 +327,7 @@
                                     <button
                                         wire:click="{{ $classe->is_active ? 'closeClasse(' . $classe->id . ')' : 'activateClasse(' . $classe->id . ')' }}"
                                         wire:loading.attr="disabled" wire:target="activateClasse, closeClasse"
-                                        class="relative py-3 px-4 rounded-xl {{ !$classe->is_active ? 'bg-green-600/20 hover:bg-green-500/60' : 'bg-red-500/20 hover:bg-red-600/60' }} transition-all text-xs font-medium">
+                                        class="relative py-3 px-4 rounded-xl {{ !$classe->is_active ? 'bg-green-600/20 hover:bg-green-500/60' : 'bg-red-500/60 hover:bg-red-600/90' }} transition-all text-xs font-medium">
                                         <span wire:loading.remove wire:target="activateClasse, closeClasse"
                                             class="inline-flex items-center justify-center gap-3">
                                             <span class="inline-flex items-center justify-center gap-3">

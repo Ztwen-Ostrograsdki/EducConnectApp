@@ -48,6 +48,7 @@ use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
 use App\Livewire\Tenants\Teachers\ManageTeacherSubjectsComponent;
+use App\Livewire\Tenants\Teachers\ManageTeacherYearlyClassesAssignmentComponent;
 use App\Livewire\Tenants\Teachers\PrintableListComponent;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersCreationMonitorComponent;
@@ -197,6 +198,8 @@ Route::middleware([
             Route::get('/enseignants/impression', PrintableListComponent::class)->name('teachers.print.list');
             
             Route::get('/enseignants/gestion-des-matieres/{teacher_uuid?}', ManageTeacherSubjectsComponent::class)->name('teacher.manage.subjects');
+
+            Route::get('/enseignants/{teacher_uuid}/gestion-classes', ManageTeacherYearlyClassesAssignmentComponent::class)->name('teacher.manage.classes');
 
 
 

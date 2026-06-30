@@ -30,7 +30,7 @@ class TeachersPortal extends Component
 
     public ?string $status = null;
 
-    public int $perPage = 12;
+    public int $perPage = 30;
 
 
     

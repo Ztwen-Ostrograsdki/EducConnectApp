@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('order')->default(1);               // pour trier les promotions
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->foreignId('filiar_id')->nullable()->constrained('filiars')->nullOnDelete();
+            $table->foreignId('serial_id')->nullable()->constrained('serials')->nullOnDelete();
             $table->softDeletes();
 
             $table->unique('name');

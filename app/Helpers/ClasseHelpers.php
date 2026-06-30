@@ -27,7 +27,7 @@ class ClasseHelpers{
                 $card['idc'] = explode(' ', $name)[1];
             }
 
-            if (preg_match_all('/Sixi/', $name)) { 
+            if (preg_match_all('/Six/', $name)) { 
 
                 $card['code'] = "6ème";
 
@@ -35,7 +35,7 @@ class ClasseHelpers{
 
                 $card['root'] = "6";
             }
-            elseif (preg_match_all('/Cinqui/', $name)) {
+            elseif (preg_match_all('/Cinq/', $name)) {
 
 				$card['code'] = "5ème";
 
@@ -43,7 +43,7 @@ class ClasseHelpers{
 
                 $card['root'] = "5";
             }
-            elseif (preg_match_all('/Quatriem/', $name)) {
+            elseif (preg_match_all('/Quat/', $name)) {
 
 				$card['code'] = "4ème";
 
@@ -51,7 +51,7 @@ class ClasseHelpers{
 
                 $card['root'] = "4";
             }
-            elseif (preg_match_all('/Troisie/', $name)) {
+            elseif (preg_match_all('/Trois/', $name)) {
 
 				$card['code'] = "3ème";
 
@@ -59,7 +59,7 @@ class ClasseHelpers{
 
                 $card['root'] = "3";
             }
-            elseif (preg_match_all('/Seconde/', $name)) {
+            elseif (preg_match_all('/Sec/', $name)) {
 
 				$card['code'] = "2nde";
 
@@ -75,7 +75,7 @@ class ClasseHelpers{
 
                 $card['root'] = "1";
             }
-            elseif (preg_match_all('/Terminale/', $name)) {
+            elseif (preg_match_all('/Term/', $name)) {
 
 				$card['code'] = "Tle";
 

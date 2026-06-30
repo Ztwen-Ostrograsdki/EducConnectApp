@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Classe;
+use App\Models\Filiar;
+use App\Models\Serial;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,6 +27,8 @@ class Promotion extends Model
         'code',
         'level',
         'order',
+        'filiar_id',
+        'serial_id',
         'is_active',
     ];
 
@@ -36,6 +42,16 @@ class Promotion extends Model
     public function classes(): HasMany
     {
         return $this->hasMany(Classe::class, 'promotion_id');
+    }
+
+    public function filiar(): BelongsTo
+    {
+        return $this->belongsTo(Filiar::class);
+    }
+
+    public function serial(): BelongsTo
+    {
+        return $this->belongsTo(Serial::class);
     }
 
     // Classes d'une promotion pour une année donnée
@@ -74,5 +90,35 @@ class Promotion extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('order');
+    }
+
+    public function specialityModel()
+    {
+        if($this->filiar){
+
+            return $this->filiar;
+
+        }
+        elseif($this->serial){
+
+            return $this->serial;
+        }
+
+        return null;
+    }
+
+    public function speciality()
+    {
+        if($this->filiar){
+
+            return $this->filiar->name;
+
+        }
+        elseif($this->serial){
+
+            return $this->serial->name;
+        }
+
+        return $this->promotion->name;
     }
 }

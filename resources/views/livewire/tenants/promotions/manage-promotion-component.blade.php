@@ -1,9 +1,9 @@
-<div class="mx-auto max-w-2xl space-y-6 py-5.5">
+<div class="mx-auto space-y-6 py-5.5">
     {{-- Header --}}
     <div class="flex items-center gap-4">
-        <a href="{{ route('promotions.index') }}" wire:navigate
+        <a wire:navigate href="{{ route('tenant.promotion.edit', ['promotion_slug' => $promotion->slug]) }}"
             class="rounded-xl border border-slate-700 p-2 text-slate-400 hover:text-white hover:bg-slate-800 transition">
-            <x-heroicon-o-arrow-left class="w-4 h-4" />
+            <x-lucide-arrow-left class="w-4 h-4" />
         </a>
         <div>
             <h1 class="text-2xl font-bold text-white">Modifier la promotion</h1>
@@ -11,33 +11,77 @@
         </div>
     </div>
 
-    {{-- Formulaire --}}
     <div class="rounded-2xl border border-slate-700 bg-slate-900 p-6 space-y-5">
 
-        {{-- Name --}}
-        <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1.5">Nom de la promotion <span
-                    class="text-rose-400">*</span></label>
-            <input type="text" wire:model.live="name" placeholder="ex: Terminale, Troisième, Sixième"
-                class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
-            @error('name')
-                <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-            @enderror
-            @if ($previewSlug)
-                <p class="mt-1 text-xs text-slate-500">Slug : <span
-                        class="text-slate-400 font-mono">{{ $previewSlug }}</span></p>
+        <div class="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full">
+            @if (!$serial_id)
+                <div wire:loading.remove wire:target='promotion_id' class="transition-all">
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">
+                        Filière <span class="text-slate-600">(optionnel)</span>
+                    </label>
+                    <select wire:model.live="filiar_id"
+                        class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                        <option value="">— Aucune —</option>
+                        @foreach ($this->filiars as $filiar)
+                            <option value="{{ $filiar->id }}">
+                                {{ $filiar->name }}{{ $filiar->code ? ' (' . $filiar->code . ')' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('filiar_id')
+                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                    @enderror
+                </div>
             @endif
+
+            @if (!$filiar_id)
+                <div wire:loading.remove wire:target='promotion_id' class="transition-all">
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">
+                        Série <span class="text-slate-600">(optionnel)</span>
+                    </label>
+                    <select wire:model.live="serial_id"
+                        class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                        <option value="">— Aucune —</option>
+                        @foreach ($this->serials as $serial)
+                            <option value="{{ $serial->id }}">
+                                {{ $serial->name }}{{ $serial->code ? ' (' . $serial->code . ')' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('serial_id')
+                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                    @enderror
+                </div>
+            @endif
+
         </div>
 
-        {{-- Code --}}
-        <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1.5">Code <span
-                    class="text-slate-600">(optionnel)</span></label>
-            <input type="text" wire:model="code" placeholder="ex: TLE, 3EME, 6EME"
-                class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
-            @error('code')
-                <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-            @enderror
+        <div class="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full">
+            {{-- Name --}}
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Nom de la promotion <span
+                        class="text-rose-400">*</span></label>
+                <input type="text" wire:model.live="name" placeholder="ex: Terminale, Troisième, Sixième"
+                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
+                @error('name')
+                    <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                @enderror
+                @if ($previewSlug)
+                    <p class="mt-1 text-xs text-slate-500">Slug : <span
+                            class="text-slate-400 font-mono">{{ $previewSlug }}</span></p>
+                @endif
+            </div>
+
+            {{-- Code --}}
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Code <span
+                        class="text-slate-600">(optionnel)</span></label>
+                <input type="text" wire:model="code" placeholder="ex: TLE, 3EME, 6EME"
+                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
+                @error('code')
+                    <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                @enderror
+            </div>
         </div>
 
         {{-- Level --}}
@@ -61,7 +105,6 @@
             @enderror
         </div>
 
-        {{-- Order --}}
         <div>
             <label class="block text-xs font-medium text-slate-400 mb-1.5">Ordre d'affichage <span
                     class="text-rose-400">*</span></label>
@@ -88,14 +131,14 @@
 
     {{-- Footer actions --}}
     <div class="flex justify-end gap-3">
-        <a href="{{ route('promotions.index') }}" wire:navigate
+        <a wire:navigate href="{{ route('tenant.promotion.edit', ['promotion_slug' => $promotion->slug]) }}"
             class="px-5 py-2.5 text-sm rounded-xl border border-slate-700 text-slate-400 hover:bg-slate-800 transition">
             Annuler
         </a>
         <button wire:click="save" wire:loading.attr="disabled"
             class="inline-flex items-center gap-2 px-5 py-2.5 text-sm rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition disabled:opacity-50">
             <span wire:loading.remove wire:target="save">
-                <x-heroicon-o-check class="w-4 h-4 inline -mt-0.5" /> Enregistrer
+                <x-lucide-check class="w-4 h-4 inline -mt-0.5" /> Enregistrer
             </span>
             <span wire:loading wire:target="save">Enregistrement...</span>
         </button>

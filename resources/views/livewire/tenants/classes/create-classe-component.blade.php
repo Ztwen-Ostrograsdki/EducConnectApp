@@ -77,8 +77,8 @@
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">
                             Filière <span class="text-slate-600">(optionnel)</span>
                         </label>
-                        <select wire:model.live="filiar_id"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                        <select disabled wire:model.live="filiar_id"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition disabled:text-slate-500">
                             <option value="">— Aucune —</option>
                             @foreach ($this->filiars as $filiar)
                                 <option value="{{ $filiar->id }}">
@@ -95,8 +95,8 @@
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">
                             Série <span class="text-slate-600">(optionnel)</span>
                         </label>
-                        <select wire:model.live="serial_id"
-                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                        <select disabled wire:model.live="serial_id"
+                            class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition disabled:text-slate-500">
                             <option value="">— Aucune —</option>
                             @foreach ($this->serials as $serial)
                                 <option value="{{ $serial->id }}">

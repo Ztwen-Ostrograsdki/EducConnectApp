@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Promotion;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,6 +38,11 @@ class Filiar extends Model
     public function classes(): HasMany
     {
         return $this->hasMany(Classe::class, 'filiar_id');
+    }
+
+    public function promotions(): HasMany
+    {
+        return $this->hasMany(Promotion::class);
     }
 
     // ─── Scopes ───────────────────────────────────────────────────────

@@ -10,7 +10,9 @@
 
             <h1 class="text-lg sm:text-xl font-bold text-slate-400 px-3 py-2.5">
 
-                Profil de la Promotion <span class="font-mono text-amber-400 font-semibold">{{ $promotion->name }}</span>
+                Profil de la Promotion <span class="font-mono text-amber-400 font-semibold ls-1">
+                    {{ $promotion->name . ' ' . $promotion->specialityModel()?->code }}
+                </span>
 
             </h1>
 
@@ -66,10 +68,10 @@
                                             bg-indigo-500/10
                                             border border-indigo-500/20
                                             flex items-center justify-center
-                                            text-5xl
-                                            shrink-0">
+                                            text-lg
+                                            shrink-0 uppercase font-mono">
 
-                                    {{ initials($promotion_slug) }}
+                                    {{ $promotion->code ?? cutter($promotion->name, 1) }}
 
                                 </div>
 
@@ -86,6 +88,7 @@
                                     <h1 class="text-2xl sm:text-3xl font-bold">
 
                                         {{ $promotion->name }}
+                                        <span>{{ $promotion->specialityModel()?->code }}</span>
 
                                     </h1>
 
@@ -141,13 +144,11 @@
 
                             </button>
 
-                            <button
-                                class="h-11 px-5 rounded-2xl
-                                           bg-sky-500 hover:bg-sky-600">
-
-                                Statistiques
-
-                            </button>
+                            <a wire:navigate
+                                href="{{ route('tenant.promotion.edit', ['promotion_slug' => $promotion->slug]) }}"
+                                class="py-3 px-5 rounded-2xl bg-sky-500 hover:bg-sky-800">
+                                Editer cette promotion
+                            </a>
 
                         </div>
 

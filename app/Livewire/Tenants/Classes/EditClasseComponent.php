@@ -156,6 +156,12 @@ class EditClasseComponent extends Component
     public function updatedPromotionId($promotion_id)
     {
 
+        $promotion = Promotion::find($this->promotion_id);
+
+        $this->filiar_id = $promotion->filiar_id;
+
+        $this->serial_id = $promotion->serial_id;
+
         $this->getClasseName();
     }
 

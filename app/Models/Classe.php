@@ -317,6 +317,21 @@ class Classe extends Model
         return $this->effectif() >= $this->effectif_max;
     }
 
+    public function specialityModel()
+    {
+        if($this->filiar){
+
+            return $this->filiar;
+
+        }
+        elseif($this->serial){
+
+            return $this->serial;
+        }
+
+        return null;
+    }
+
     public function speciality()
     {
         if($this->filiar){

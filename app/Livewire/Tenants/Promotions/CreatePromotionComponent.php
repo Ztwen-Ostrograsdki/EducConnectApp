@@ -3,9 +3,13 @@
 namespace App\Livewire\Tenants\Promotions;
 
 use App\Events\DataUpdatedEvent;
+use App\Helpers\ClasseHelpers;
+use App\Models\Filiar;
 use App\Models\Promotion;
+use App\Models\Serial;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -33,11 +37,43 @@ class CreatePromotionComponent extends Component
     #[Validate('boolean')]
     public bool $is_active = true;
 
+    public ?int   $filiar_id      = null;
+    public ?int   $serial_id      = null;
+    public ?string   $suffix      = '';
+
     public string $previewSlug = '';
 
     public function updatedName(string $value): void
     {
         $this->previewSlug = Str::slug($value);
+    }
+
+
+    public function updated(string $propertyName)
+    {
+        if($propertyName == 'filiar_id' && $this->filiar_id){
+
+            $this->serial_id = null;
+
+            $this->suffix = '-' . Filiar::find($this->filiar_id)?->code;
+
+        }
+        elseif($propertyName == 'serial_id' && $this->serial_id){
+
+            $this->filiar_id = null;
+
+            $this->suffix = '-' . Serial::find($this->serial_id)?->code;
+
+        }
+        elseif(!$this->filiar_id && !$this->serial_id){
+
+            $this->reset('suffix');
+        }
+
+        if($propertyName !== 'code'){
+
+            $this->code = ClasseHelpers::getClasseNameFormatted($this->name)['code'] . '' . $this->suffix;
+        }
     }
 
     public function save(): void
@@ -53,8 +89,6 @@ class CreatePromotionComponent extends Component
                     'required',
                     'string',
                     'max:100',
-                    'unique:promotions,slug',
-                        
                 ],
                 'code'      => 'nullable|string|max:20',
                 'level'     => [
@@ -62,7 +96,30 @@ class CreatePromotionComponent extends Component
                 ],
                 'order'     => 'required|integer|min:1',
                 'is_active' => 'boolean',
+                'filiar_id'      => 'nullable|exists:filiars,id',
+                'serial_id'      => 'nullable|exists:serials,id',
             ]);
+
+            $exists = Promotion::whereName($this->name)
+                                ->when($this->serial_id, function($query){
+                                    $query->where('serial_id', $this->serial_id);
+                                })
+                                ->when($this->filiar_id, function($query){
+                                    $query->where('filiar_id', $this->filiar_id);
+                                })
+                                ->exists();
+
+            if($exists){
+
+                $this->addError('name', "Cette promotion existe déjà!");
+
+                $this->notification()->error(
+                    title: 'DUPLICATION DE PROMOTION',
+                    description: 'Erreur : La promotion que vous essayez de créer existe déjà!',
+                );
+
+                return;
+            }
 
             $promotion = Promotion::create([
                 'uuid'      => (string) Str::uuid(),
@@ -72,6 +129,8 @@ class CreatePromotionComponent extends Component
                 'level'     => $this->level,
                 'order'     => $this->order,
                 'is_active' => $this->is_active,
+                'filiar_id' => $this->filiar_id,
+                'serial_id' => $this->serial_id,
             ]);
 
             if($promotion){
@@ -94,6 +153,19 @@ class CreatePromotionComponent extends Component
         }
 
         
+    }
+
+
+    #[Computed]
+    public function serials()
+    {
+        return Serial::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
+    }
+
+    #[Computed]
+    public function filiars()
+    {
+        return Filiar::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
     }
 
     
