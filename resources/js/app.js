@@ -16,6 +16,12 @@ import Alpine from "alpinejs";
 
 // createIcons({ icons });
 
+import collapse from "@alpinejs/collapse";
+
+document.addEventListener("alpine:init", () => {
+    Alpine.plugin(collapse);
+});
+
 import Swal from "sweetalert2";
 
 document.addEventListener("livewire:initialized", () => {

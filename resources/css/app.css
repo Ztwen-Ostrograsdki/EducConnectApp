@@ -114,6 +114,8 @@
 
 button,
 label,
+option,
+select,
 a {
     cursor: pointer;
 }

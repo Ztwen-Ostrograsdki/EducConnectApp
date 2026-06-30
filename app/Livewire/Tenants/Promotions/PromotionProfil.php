@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\Promotions;
 
 use App\Models\Promotion;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -23,6 +24,9 @@ class PromotionProfil extends Component
 
     public ?string $school_year_selected;
 
+    public string $grid_cols = '2xl:grid-cols-7';
+
+
     public function mount(string $promotion_slug)
     {
         if(!$promotion_slug) return abort(404);
@@ -35,6 +39,22 @@ class PromotionProfil extends Component
 
         $this->promotion       = $promotion;
         $this->promotion_name       = $promotion->name;
+    }
+
+    #[Computed]
+    public function kpis()
+    {
+        $data = [
+            ['Classes', __zero($this->promotion->getPromotionClassesOfSchoolYearCount()), 'text-amber-400'], 
+            ['Enseignants', __zero($this->promotion->getPromotionTeachersOfSchoolYearCount()), 'text-violet-400'],
+            ['Apprenants', __zero($this->promotion->getPromotionStudentsOfSchoolYearCount()), 'text-indigo-400'], 
+            ['Meilleure classe', '-', 'text-emerald-400'], 
+            ['Faible classe', '-', 'text-rose-400'], 
+            ['Meilleur élève', '-', 'text-sky-400'], 
+            ['Meilleur moyenne', '-', 'text-sky-400'],  
+        ];
+
+        return $data;
     }
 
     #[On('DataUpdatedEventLiveEvent')]
@@ -51,6 +71,7 @@ class PromotionProfil extends Component
 
     public function render()
     {
+
         return view('livewire.tenants.promotions.promotion-profil');
     }
 }

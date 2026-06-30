@@ -77,6 +77,25 @@ class Promotion extends Model
     }
 
 
+    public function getPromotionTeachersOfSchoolYear(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return  Teacher::whereNotNull('affiliated_at')->whereHas('classeSubjects', fn($q) => 
+                                $q->where('school_year_id', $school_year_id)
+                                  ->where('is_active', true)
+                                  ->whereNull('ended_at')
+                                  ->whereHas('classe', fn($qc) => 
+                                        $qc->where('promotion_id', $this->id)
+                                           ->where('is_active', true)
+                                    )
+                            )->orderBy('name', 'desc')->orderBy('prenames', 'desc');
+    }
+
+    public function getPromotionTeachersOfSchoolYearCount(?int $school_year_id = null) : int
+    {
+        return $this->getPromotionTeachersOfSchoolYear($school_year_id)->count();
+    }
 
     public function filiar(): BelongsTo
     {
@@ -154,5 +173,22 @@ class Promotion extends Model
         }
 
         return $this->promotion->name;
+    }
+
+
+    public function toSpecialityProfilRoute()
+    {
+        if($this->filiar){
+
+            return route('tenant.filiar.profil', ['filiar_slug' => $this->filiar->slug]);
+
+        }
+        elseif($this->serial){
+
+            return route('tenant.serial.profil', ['serial_slug' => $this->serial->slug]);
+        }
+        else{
+            return '#';
+        }
     }
 }

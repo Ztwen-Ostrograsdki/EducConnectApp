@@ -84,19 +84,10 @@
 
         </section>
         <section class="my-5">
-            <div
-                class="flex flex-col
-                                lg:flex-row
-                                lg:items-center
-                                lg:justify-between
-                                gap-4">
-
-                {{-- INFO --}}
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="text-sm text-slate-400">
 
                 </div>
-
-                {{-- EXPORTS --}}
                 <div class="flex flex-wrap gap-3">
 
                     <a wire:navigate href="{{ route('tenant.promotion.create') }}"
@@ -109,19 +100,13 @@
                         </span>
                     </a>
 
-                    <button
-                        class="h-11 px-5 rounded-2xl
-                                           bg-emerald-500 hover:bg-emerald-600
-                                           transition">
+                    <button class="h-11 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition">
 
                         Export Excel
 
                     </button>
 
-                    <button
-                        class="h-11 px-5 rounded-2xl
-                                           bg-rose-500 hover:bg-rose-600
-                                           transition">
+                    <button class="h-11 px-5 rounded-2xlbg-rose-500 hover:bg-rose-600 transition">
 
                         Export PDF
 
@@ -132,45 +117,22 @@
             </div>
         </section>
         <section>
-
-            <div
-                class="rounded-[32px]
-                        bg-slate-900
-                        border border-slate-800
-                        overflow-hidden p-3 mb-20">
-
+            <div class="rounded-[32px] bg-slate-900 border border-slate-800 overflow-hidden p-3 mb-20">
                 <div class="border-b border-slate-800 my-5 py-6">
-
                     <div class="flex flex-col gap-y-3">
-
-                        {{-- TITLE --}}
                         <div>
-
                             <h2 class="text-xl font-semibold">
-
                                 Liste des Promotions
-
                             </h2>
 
                             <p class="mt-1 text-sm text-slate-400 font-mono">
-
                                 Analyse détaillée des promotions,
                                 performances et statistiques.
 
                             </p>
 
                         </div>
-
-                        {{-- FILTERS --}}
-                        <div
-                            class="flex flex-col
-                                    sm:flex-row
-                                    flex-wrap
-                                    gap-3
-                                    w-full
-                                    2xl:w-auto">
-
-                            {{-- SEARCH --}}
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-3 w-full 2xl:w-auto">
                             <div class="flex-1 min-w-0">
                                 <div class="relative">
                                     <input type="text" wire:model.live.debounce.300ms="search"
@@ -330,44 +292,24 @@
                                                 {{ __zero($promo->getPromotionStudentsOfSchoolYearCount()) }}
                                             </span>
                                         </td>
-
-                                        {{-- BEST --}}
                                         <td class="px-6 py-5">
-
                                             <div>
-
                                                 <h3 class="font-medium">
-
-                                                    KOUASSI Sarah
-
+                                                    En cours..
                                                 </h3>
-
                                                 <p class="text-sm text-emerald-400">
-
-                                                    (18.92)
+                                                    ....
                                                 </p>
-
                                             </div>
-
                                         </td>
-
-                                        {{-- WORST --}}
                                         <td class="px-6 py-5">
-
                                             <div>
-
                                                 <h3 class="font-medium">
-
-                                                    HOUNKPE David
-
+                                                    En cours...
                                                 </h3>
-
                                                 <p class="text-sm text-rose-400">
-
-                                                    (03.42)
-
+                                                    ....
                                                 </p>
-
                                             </div>
 
                                         </td>
@@ -382,7 +324,6 @@
                                                         <span>Editer</span>
                                                     </span>
                                                 </a>
-
                                                 <button
                                                     title="{{ $promo->is_active ? 'Fermer ' : 'Activer ' }} cette promotion "
                                                     wire:click="{{ $promo->is_active ? 'closePromotion(' . $promo->id . ')' : 'activatePromotion(' . $promo->id . ')' }}"

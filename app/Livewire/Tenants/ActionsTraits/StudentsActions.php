@@ -3,9 +3,9 @@
 namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
-use App\Jobs\JobToSendCredentialsToUser;
+use App\Models\Classe;
 use App\Models\Student;
-use App\Models\User;
+use App\Models\YearlyClasseStudent;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -29,496 +29,260 @@ trait StudentsActions{
 
     public int $perPage = 12;
 
-    public $showConfirmDeleteStudent = false;
+    public ?Classe $classe;
 
-    public $showConfirmStudentRestorationModal = false;
-
-    public $showConfirmForceDeleteStudent = false;
-
-    public $showConfirmStudentLock = false;
-
-    public $showConfirmStudentUnLock = false;
-
-
-    public $showConfirmDeleteStudents = false;
-
-    public $showConfirmStudentsRestorationModal = false;
-
-    public $showConfirmForceDeleteStudents = false;
-
-    public $showConfirmStudentsLock = false;
-
-    public $showConfirmStudentsUnLock = false;
-
-
-    public ?string $targetedStudentUuid = null;
-
-
-	public function closeModal()
+    public function markStudentAsLeaved(int $studentId): void
     {
-        $this->reset('showConfirmDeleteStudent', 'showConfirmStudentRestorationModal', 'showConfirmForceDeleteStudent', 'showConfirmStudentLock', 'showConfirmDeleteStudents', 'showConfirmStudentsRestorationModal', 'showConfirmForceDeleteStudents', 'showConfirmStudentsLock', 'targetedStudentUuid', 'showConfirmStudentsUnLock');
+        $this->dispatch('swal', [
+            'title'              => "Marquer comme abondonné ?",
+            'text'               => "Cet apprenant ne figurera plus dans la liste de la classe en cours d'année scolaire",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, valider',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'MarkAsLeaved',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
     }
 
-
-
-
-    public function lockStudent(string $studentUuid): void
+    #[On('MarkAsLeaved')]
+    public function OnMarkAsLeaved(int $studentId): void
     {
-        $this->showConfirmStudentLock = true;
+        $student = Student::find($studentId);
 
-        $this->targetedStudentUuid = $studentUuid;
+        if (!$student) {
 
-    }
-
-    public function ConfirmStudentLocking(): void
-    {
-       $user = User::whereUuid($this->targetedStudentUuid)->firstOrFail();
-        if($user){
-
-            $locked = $user->Student->update(['blocked' => true]);
-
-            if($locked){
-
-				// (broadcast(new StudentWasBlockedEvent(tenant('id'), $user->id)));
-				
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignant bloquée',
-                    'description' => "L'Enseignant a été bloqué!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la blocage',
-                    'description' => "L'Enseignant n'a pas été bloqué!",
-                ]);
-            }
-
+            $this->notification()->error(title: 'Apprenant introuvable');
+            return;
         }
-        else{
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
+        try {
             
-        }
-        $this->closeModal();
-        
-    }
-
-	public function sendCredentialsToStudent(string $studentUuid)
-	{
-		
-	}
-
-
-    
-
-
-    public function unlockStudent(string $studentUuid): void
-    {
-        $this->showConfirmStudentUnLock = true;
-
-        $this->targetedStudentUuid = $studentUuid;
-
-    }
-
-    public function ConfirmStudentUnLocking(): void
-    {
-        $user = User::whereUuid($this->targetedStudentUuid)->firstOrFail();
-
-        if($user){
-
-            $locked = $user->Student->update(['blocked' => false]);
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'Enseignant débloqué',
-                    'description' => "L'enseignant a été débloqué!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la déblocage',
-                    'description' => "L'enseignant n'a pas été débloqué!",
-                ]);
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-
-    public function deleteStudent(string $studentUuid): void
-    {
-        $this->showConfirmDeleteStudent = true;
-
-        $this->targetedStudentUuid = $studentUuid;
-
-    }
-
-    public function ConfirmStudentDeletion(): void
-    {
-       $student = Student::whereUuid($this->targetedStudentUuid)->firstOrFail();
-
-        if($student){
-
-            $deleted = $student->delete();
-
-            if($deleted){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'apprenant envoyé dans la corbeille',
-                    'description' => "L'apprenant a été envoyé dans la corbeille!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la suppresion',
-                    'description' => "L'apprenant n'a pas été supprimé!",
-                ]);
-            }
-        }
-        else{
-
-           $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => "Aucune donnée correspondante trouvées dans la base de données",
-                'description' => "Vérifiez la requête",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-    public function forceDeleteStudent(string $studentUuid): void
-    {
-        $this->showConfirmForceDeleteStudent = true;
-
-        $this->targetedStudentUuid = $studentUuid;
-
-    }
-
-    public function ConfirmStudentForceDelete(): void
-    {
-       $student = Student::whereUuid($this->targetedStudentUuid)->firstOrFail();
-        
-       if($student){
-
-            $deleted = $student->forceDelete();
-
-            if($deleted){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'apprenant supprimé définitivement',
-                    'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la suppresion',
-                    'description' => "L'apprenant n'a pas été supprimé!",
-                ]);
-            }
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => "Aucune donnée correspondante trouvées dans la base de données",
-                'description' => "Vérifiez la requête",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-    public function restoreStudent(string $studentUuid): void
-    {
-        $this->showConfirmStudentRestorationModal = true;
-
-        $this->targetedStudentUuid = $studentUuid;
-
-    }
-
-    public function ConfirmStudentRestoration(): void
-    {
-       $student = Student::whereUuid($this->targetedStudentUuid)->firstOrFail();
-
-        if($student){
-
-            $restored = $student->restore();
-
-            if($restored){
-
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'enseignant restauré',
-                    'description' => "L'enseignant " . $student->getFullName() . " a été restauré de la corbeille",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec de la restauration',
-                    'description' => "L'enseignant n'a pas été restauré!",
-                ]);
-            }
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => "Aucune donnée correspondante trouvées dans la base de données",
-                'description' => "Vérifiez la requête",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-	// GROUPS ACTIONS ON STUDENTS
-
-	public function lockStudents(): void
-    {
-        $this->showConfirmStudentsLock = true;
-
-    }
-
-    public function ConfirmStudentsLocking(): void
-    {
-       $query = Student::where('blocked', false);
-
-        if($query->count()){
-
-            $locked = true;
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'apprenant bloqués',
-                    'description' => "Les apprenant ont été bloqués!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec du blocage',
-                    'description' => "L'enseignant n'a pas été bloqué!",
-                ]);
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'Enseignant introuvable',
-                'description' => "L'enseignant n'existe pas dans la base de données",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-    public function unlockStudents(): void
-    {
-        $this->showConfirmStudentsUnLock = true;
-
-    }
-
-    public function ConfirmStudentsUnLocking(): void
-    {
-        $query = Student::where('blocked', true);
-
-        if($query){
-
-            $locked = true;
-
-            if($locked){
-                $this->notification()->send([
-                    'icon'        => 'success',
-                    'title'       => 'apprenant débloqués',
-                    'description' => "Les apprenant ont été débloqués!",
-                ]);
-            }
-            else{
-                $this->notification()->send([
-                    'icon'        => 'warning',
-                    'title'       => 'Echec du déblocage',
-                    'description' => "es apprenant n'a pas été débloqués!",
-                ]);
-            }
-
-        }
-        else{
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'utilisateur introuvable',
-                'description' => "L'utilisateur n'existe pas dans la base de données",
-            ]);
-            
-        }
-        $this->closeModal();
-        
-    }
-
-
-
-    public function deleteStudents(): void
-    {
-        $this->showConfirmDeleteStudents = true;
-    }
-
-    public function ConfirmStudentsDeletion(): void
-    {
-       $query = Student::withoutTrashed()->whereNotNull('user_id');
-
-        if($query->count()){
-
-			$done = true;
+            $done = $student->markStudentAsLeaved();
 
             if($done){
 
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'apprenants envoyés dans la corbeille',
-					'description' => "Les apprenants ont été envoyés dans la corbeille!",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "La suppresion a échoué!",
-				]);
-			}
-                   
+                $this->notification()->success(
+                    title: 'Apprenant marqué abandonné',
+                    description: "L'apprenant {$student->getFullName()} a été marqué comme un apprenant ayant abondonné.",
+                );
 
+                broadcast(new DataUpdatedEvent(tenant('id')));
+
+            }
+            else{
+
+                $this->notification()->error(
+                    title: 'Apprenant non marqué abandonné',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Apprenant non marqué abandonné',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
         }
-        else{
+        
+        
+    }
+    
+    public function reinsertIntoClasseAsActive(int $studentId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Réinséré cet apprenant dans la classe",
+            'text'               => "Cet apprenant figurera désormais dans la liste de la classe en cours d'année scolaire",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, réinséré',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ReinsertIntoClasse',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
 
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => "Pas d'apprenants trouvés",
-                'description' => "La liste des apprenants semble vide",
-            ]);
+    #[On('ReinsertIntoClasse')]
+    public function OnReinsertIntoClasse(int $studentId): void
+    {
+        $student = Student::find($studentId);
+
+        if (!$student) {
+
+            $this->notification()->error(title: 'Apprenant introuvable');
+            return;
+        }
+
+        try {
             
+            $done = $student->reinsertStudentIntoClasse();
+
+            if($done){
+
+                $this->notification()->success(
+                    title: 'Apprenant réinséré dans sa classe',
+                    description: "L'apprenant {$student->getFullName()} a été réinséré dans sa classe de départ au cours de l'année scolaire!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: 'Apprenant non réinséré',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Apprenant non réinséré',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
         }
-        $this->closeModal();
+        
         
     }
 
+    // ─── Suppression (soft delete) ────────────────────────────────────
 
-    public function forceDeleteStudents(): void
+    public function deleteStudent(?int $studentId = null): void
     {
-        $this->showConfirmForceDeleteStudents = true;
+        $this->dispatch('swal', [
+            'title'              => 'Supprimer cet apprenant ?',
+            'text'               => 'L\'apprenant sera envoyé à la corbeille.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmStudentDelete',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
     }
 
-    public function ConfirmStudentsForceDelete(): void
+    #[On('ConfirmStudentDelete')]
+    public function onConfirmStudentDelete(?int $studentId = null): void
     {
-       $query = Student::onlyTrashed()->whereNotNull('user_id');
+        $student = Student::findOrFail($studentId);
+        $student->delete();
 
-		if($query->count()){
+        broadcast(new DataUpdatedEvent(tenant('id')));
 
-			$deleted = true;
-
-			if($deleted){
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'apprenants de la corbeille supprimé définitivement',
-					'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "Les apprenants n'ont pas été supprimés!",
-				]);
-			}
-		}
-		else{
-
-			$this->notification()->send([
-				'icon'        => 'error',
-				'title'       => "Aucun enseignant trouvé dans la corbeille",
-				'description' => "Vérifiez la requête",
-			]);
-			
-		}
-        $this->closeModal();
-        
+        $this->notification()->success(
+            title: 'Apprenant supprimé',
+            description: "{$student->name} {$student->prenames} a été envoyé à la corbeille.",
+        );
     }
 
+    // ─── Bloquer / Débloquer ──────────────────────────────────────────
 
-    public function restoreStudents(): void
+    public function toggleBlockStudent(?int $studentId = null): void
     {
-        $this->showConfirmStudentsRestorationModal = true;
+        $student = Student::findOrFail($studentId);
+
+        if ($student->blocked) {
+            $this->dispatch('swal', [
+                'title'              => 'Débloquer cet apprenant ?',
+                'text'               => "{$student->name} {$student->prenames} retrouvera accès à la plateforme.",
+                'icon'               => 'question',
+                'showCancelButton'   => true,
+                'confirmButtonText'  => 'Oui, débloquer',
+                'cancelButtonText'   => 'Annuler',
+                'confirmButtonColor' => '#10b981',
+                'cancelButtonColor'  => '#475569',
+                'onConfirmed'        => 'ConfirmStudentUnblock',
+                'onConfirmedParams'  => ['studentId' => $studentId],
+            ]);
+        } else {
+            $this->dispatch('swal', [
+                'title'              => 'Bloquer cet apprenant ?',
+                'text'               => "{$student->name} {$student->prenames} ne pourra plus accéder à la plateforme.",
+                'icon'               => 'warning',
+                'showCancelButton'   => true,
+                'confirmButtonText'  => 'Oui, bloquer',
+                'cancelButtonText'   => 'Annuler',
+                'confirmButtonColor' => '#f59e0b',
+                'cancelButtonColor'  => '#475569',
+                'onConfirmed'        => 'ConfirmStudentBlock',
+                'onConfirmedParams'  => ['studentId' => $studentId],
+            ]);
+        }
     }
 
-    public function ConfirmStudentsRestoration(): void
+    #[On('ConfirmStudentBlock')]
+    public function onConfirmStudentBlock(?int $studentId = null): void
     {
-       $query = Student::onlyTrashed()->whereNotNull('user_id');
+        $student = Student::findOrFail($studentId);
+        $student->update(['blocked' => true]);
 
-		if($query->count()){
+        broadcast(new DataUpdatedEvent(tenant('id')));
 
-			$deleted = true;
-
-			if($deleted){
-				$this->notification()->send([
-					'icon'        => 'success',
-					'title'       => 'Apprenants de la corbeille supprimé définitivement',
-					'description' => "Toutefois cette action a été planifiée et ne sera effective qu'après trente (30) jours",
-				]);
-			}
-			else{
-				$this->notification()->send([
-					'icon'        => 'warning',
-					'title'       => 'Echec de la suppresion',
-					'description' => "Les Apprenants n'ont pas été supprimés!",
-				]);
-			}
-		}
-		else{
-
-			$this->notification()->send([
-				'icon'        => 'error',
-				'title'       => "Aucun enseignant trouvé dans la corbeille",
-				'description' => "Vérifiez la requête",
-			]);
-			
-		}
-        $this->closeModal();
-        
+        $this->notification()->warning(
+            title: 'Apprenant bloqué',
+            description: "{$student->name} {$student->prenames} a été bloqué.",
+        );
     }
+
+    #[On('ConfirmStudentUnblock')]
+    public function onConfirmStudentUnblock(?int $studentId = null): void
+    {
+        $student = Student::findOrFail($studentId);
+        $student->update(['blocked' => false]);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: 'Apprenant débloqué',
+            description: "{$student->name} {$student->prenames} a été débloqué.",
+        );
+    }
+
+    // ─── Retirer de la classe ─────────────────────────────────────────
+
+    public function removeFromClasse(?int $studentId = null): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Retirer de la classe ?',
+            'text'               => 'L\'apprenant sera retiré de cette classe pour cette année scolaire.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, retirer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f59e0b',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmRemoveFromClasse',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ConfirmRemoveFromClasse')]
+    public function onConfirmRemoveFromClasse(?int $studentId = null): void
+    {
+        $link = YearlyClasseStudent::where('student_id', $studentId)
+            ->where('classe_id', $this->classe->id)
+            ->where('school_year_id', $this->classe->school_year_id)
+            ->firstOrFail();
+
+        $link->update([
+            'is_active' => false,
+            'ended_at'  => now(),
+        ]);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $student = Student::find($studentId);
+
+        $this->notification()->warning(
+            title: 'Apprenant retiré',
+            description: "{$student?->name} {$student?->prenames} a été retiré de la classe.",
+        );
+    }
+
 
     public function createStudentsFromExcelFile()
     {

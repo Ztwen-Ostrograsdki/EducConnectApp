@@ -454,7 +454,7 @@
                                         </td>
 
                                         {{-- CLASSES --}}
-                                        <td class="px-3 py-5 text-center">
+                                        <td class="px-3 py-5 text-center truncate">
 
                                             @php
                                                 $teacher_classes = $teacher->getTeacherClassesForThisSchoolYear([]);
