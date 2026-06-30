@@ -306,11 +306,9 @@ class ClasseStudentsList extends Component
               ->where('is_active', true)
         )
         ->when($this->search, fn($q) =>
-            $q->where(fn($q) =>
-                $q->where('name', 'like', '%'.$this->search.'%')
-                  ->orWhere('prenames', 'like', '%'.$this->search.'%')
-                  ->orWhere('matricule', 'like', '%'.$this->search.'%')
-            )
+            $q->where('name', 'like', '%'.$this->search.'%')
+              ->orWhere('prenames', 'like', '%'.$this->search.'%')
+              ->orWhere('matricule', 'like', '%'.$this->search.'%')
         )
         ->when($this->gender, fn($q) => $q->where('gender', $this->gender))
         ->whereDoesntHave('yearlyStudentsLeaves')

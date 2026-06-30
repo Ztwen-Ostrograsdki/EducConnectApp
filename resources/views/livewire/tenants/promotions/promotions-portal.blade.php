@@ -42,27 +42,18 @@
 
                                 <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
-                                    124 Classes
+                                    {{ __zero($this->classes) }} Classes
 
                                 </div>
 
                                 <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
-                                    4 812 Apprenants
+                                    {{ __zero($this->students) }} Apprenants
 
                                 </div>
 
                             </div>
 
-                        </div>
-
-                        {{-- ACTIONS --}}
-                        <div class="flex flex-wrap gap-3">
-
-                            <a wire:navigate href="{{ route('tenant.promotion.create') }}"
-                                class="px-5 py-3 flex justify-center items-center rounded-2xl bg-blue-500 hover:bg-blue-800 transition">
-                                Nouvelle Promotion
-                            </a>
                         </div>
 
                     </div>
@@ -73,14 +64,11 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
 
-                @foreach ([['Promotions', __zero(tenancy()->tenant?->promotionsCount()), 'text-indigo-400'], ['Classes', '124', 'text-sky-400'], ['Apprenants', '4 812', 'text-emerald-400'], ['Moyenne Générale', '12.84', 'text-amber-400'], ['Taux Réussite', '78%', 'text-violet-400'], ['Filières', '14', 'text-rose-400']] as $kpi)
+                @foreach ([['Promotions', __zero(tenancy()->tenant?->promotionsCount()), 'text-indigo-400'], ['Classes', __zero($this->classes), 'text-sky-400'], ['Apprenants', __zero($this->students), 'text-emerald-400'], ['Séries', __zero(count($this->serials)), 'text-amber-400'], ['Filières', __zero(count($this->filiars)), 'text-rose-400']] as $kpi)
                     <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
                         <p class="text-sm text-slate-400">
                             {{ $kpi[0] }}
@@ -95,25 +83,65 @@
             </div>
 
         </section>
+        <section class="my-5">
+            <div
+                class="flex flex-col
+                                lg:flex-row
+                                lg:items-center
+                                lg:justify-between
+                                gap-4">
+
+                {{-- INFO --}}
+                <div class="text-sm text-slate-400">
+
+                </div>
+
+                {{-- EXPORTS --}}
+                <div class="flex flex-wrap gap-3">
+
+                    <a wire:navigate href="{{ route('tenant.promotion.create') }}"
+                        class="px-5 py-3 flex justify-center items-center rounded-2xl bg-blue-500 hover:bg-blue-800 transition">
+                        <span class="flex justify-center items-center">
+                            <span class="flex justify-center items-center gap-x-3">
+                                <x-lucide-plus class="w-4 h-4" />
+                                <span>Nouvelle Promotion</span>
+                            </span>
+                        </span>
+                    </a>
+
+                    <button
+                        class="h-11 px-5 rounded-2xl
+                                           bg-emerald-500 hover:bg-emerald-600
+                                           transition">
+
+                        Export Excel
+
+                    </button>
+
+                    <button
+                        class="h-11 px-5 rounded-2xl
+                                           bg-rose-500 hover:bg-rose-600
+                                           transition">
+
+                        Export PDF
+
+                    </button>
+
+                </div>
+
+            </div>
+        </section>
         <section>
 
             <div
                 class="rounded-[32px]
                         bg-slate-900
                         border border-slate-800
-                        overflow-hidden">
+                        overflow-hidden p-3 mb-20">
 
-                {{-- ===================================================== --}}
-                {{-- HEADER --}}
-                {{-- ===================================================== --}}
-                <div class="p-5 sm:p-6 border-b border-slate-800">
+                <div class="border-b border-slate-800 my-5 py-6">
 
-                    <div
-                        class="flex flex-col
-                                2xl:flex-row
-                                2xl:items-center
-                                2xl:justify-between
-                                gap-5">
+                    <div class="flex flex-col gap-y-3">
 
                         {{-- TITLE --}}
                         <div>
@@ -124,7 +152,7 @@
 
                             </h2>
 
-                            <p class="mt-1 text-sm text-slate-400">
+                            <p class="mt-1 text-sm text-slate-400 font-mono">
 
                                 Analyse détaillée des promotions,
                                 performances et statistiques.
@@ -143,368 +171,346 @@
                                     2xl:w-auto">
 
                             {{-- SEARCH --}}
-                            <div class="relative w-full sm:w-auto">
-
-                                <input type="text" placeholder="Rechercher une promotion..."
-                                    class="h-12
-                                              w-full sm:w-[260px]
-                                              rounded-2xl
-                                              bg-slate-950
-                                              border border-slate-800
-                                              pl-4 pr-4
-                                              text-sm">
-
+                            <div class="flex-1 min-w-0">
+                                <div class="relative">
+                                    <input type="text" wire:model.live.debounce.300ms="search"
+                                        placeholder="Rechercher une promotion..."
+                                        class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm outline-none focus:border-indigo-500 transition-all" />
+                                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</div>
+                                    <div wire:loading wire:target="search"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2">
+                                        <svg class="animate-spin w-4 h-4 text-indigo-400" fill="none"
+                                            viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4" />
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
-                            {{-- FILIERE --}}
-                            <select
-                                class="h-12
-                                           rounded-2xl
-                                           bg-slate-950
-                                           border border-slate-800
-                                           px-4
-                                           text-sm">
+                            <select wire:model.live='filiar_id'
+                                class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm">
 
-                                <option>
-                                    Toutes les Filières
-                                </option>
-
-                                <option>
-                                    F1
-                                </option>
-
-                                <option>
-                                    F2
-                                </option>
-
-                                <option>
-                                    F3
-                                </option>
-
-                                <option>
-                                    F4
-                                </option>
-
+                                <option>Toutes les Filières</option>
+                                @foreach ($this->filiars as $filiar)
+                                    <option value="{{ $filiar->id }}">{{ $filiar->name }}
+                                        (<span>{{ $filiar->code }}</span>)
+                                    </option>
+                                @endforeach
                             </select>
 
-                            {{-- SERIE --}}
-                            <select
-                                class="h-12
-                                           rounded-2xl
-                                           bg-slate-950
-                                           border border-slate-800
-                                           px-4
-                                           text-sm">
+                            <select wire:model.live='serial_id'
+                                class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm">
 
-                                <option>
-                                    Toutes les Séries
-                                </option>
-
-                                <option>
-                                    Série A
-                                </option>
-
-                                <option>
-                                    Série C
-                                </option>
-
-                                <option>
-                                    Série D
-                                </option>
-
+                                <option>Toutes les séries</option>
+                                @foreach ($this->serials as $serial)
+                                    <option value="{{ $serial->id }}">{{ $serial->name }}
+                                        (<span>{{ $serial->code }}</span>)
+                                    </option>
+                                @endforeach
                             </select>
+
+                            <button wire:click="resetFilters"
+                                class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm">
+                                Réinitialiser
+                            </button>
 
                         </div>
 
                     </div>
 
                 </div>
+                <div class="w-full flex gap-x-1 justify-start items-center">
+                    <div wire:loading
+                        wire:target='search,serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
+                        class="fixed inset-0 flex items-center justify-center bg-indigo-800/40"
+                        style="z-index: 200 !important;">
 
-                {{-- ===================================================== --}}
-                {{-- TABLE --}}
-                {{-- ===================================================== --}}
-                <div class="overflow-x-auto">
+                        <div
+                            class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-row">
+                            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                            </svg>
+                            <span class="text-2xl font-mono ls-1">Chargement en cours...</span>
 
-                    <table class="min-w-[2100px] w-full">
+                        </div>
 
-                        {{-- HEAD --}}
-                        <thead class="bg-slate-950
-                                     border-b border-slate-800">
+                    </div>
+                </div>
+                <div wire:loading.class="opacity-20"
+                    wire:target='search,serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
+                    class="overflow-x-auto mb-10">
 
-                            <tr>
+                    @if (count($promotions))
+                        <table class="z-table-border w-full">
 
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    N°
-                                </th>
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Promotion
-                                </th>
+                            <thead class="bg-slate-950 border-b border-slate-800 text-center">
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Nb Classes
-                                </th>
+                                <tr>
 
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Effectif
-                                </th>
+                                    <th class="px-6 py-4  text-sm text-slate-400">
+                                        N°
+                                    </th>
+                                    <th class="px-6 py-4  text-sm text-slate-400">
+                                        Promotion
+                                    </th>
 
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Meilleur Élève
-                                </th>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Plus Faible
-                                </th>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Plus Jeune
-                                </th>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Plus Âgé
-                                </th>
-
-                                <th class="px-6 py-4 text-right text-sm text-slate-400">
-                                    Actions
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        {{-- BODY --}}
-                        <tbody class="divide-y divide-slate-800 text-slate-400">
-
-                            @foreach ($promotions as $promo)
-                                <tr class="hover:bg-slate-800/40 transition-colors duration-200">
-
-                                    <td class="px-6 py-5 truncate">{{ $loop->iteration }}</td>
-
-                                    <td class="px-6 py-5">
-
-                                        <a wire:navigate
-                                            href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promo->slug]) }}"
-                                            class="hover:underline underline-offset-2">
-
-                                            <h3 class="font-semibold text-base">
-
-                                                {{ $promo->name }}
-
-                                            </h3>
-
-                                            <p class="mt-1 text-sm text-slate-400">
-                                                {{ $promo->code }}
-                                            </p>
-
-                                        </a>
-
-                                    </td>
-
-                                    {{-- CLASSES --}}
-                                    <td class="px-4 py-5 text-center">
-
-                                        <span class="font-semibold">
-
-                                            18
-
+                                    <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                        <span class="flex flex-col">
+                                            <span>Nombre de</span>
+                                            <span>classes</span>
                                         </span>
+                                    </th>
 
-                                    </td>
-
-                                    {{-- EFFECTIF --}}
-                                    <td class="px-4 py-5 text-center">
-
-                                        <span
-                                            class="font-semibold
-                                                 text-indigo-400">
-
-                                            684
-
+                                    <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                        <span class="flex flex-col">
+                                            <span>Effectif</span>
+                                            <span>apprenants</span>
                                         </span>
+                                    </th>
 
-                                    </td>
+                                    <th class="px-6 py-4  text-sm text-slate-400">
+                                        Meilleur Élève
+                                    </th>
 
-                                    {{-- BEST --}}
-                                    <td class="px-6 py-5">
+                                    <th class="px-6 py-4  text-sm text-slate-400">
+                                        Plus Faible
+                                    </th>
 
-                                        <div>
-
-                                            <h3 class="font-medium">
-
-                                                KOUASSI Sarah
-
-                                            </h3>
-
-                                            <p class="text-sm text-emerald-400">
-
-                                                (18.92)
-                                            </p>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- WORST --}}
-                                    <td class="px-6 py-5">
-
-                                        <div>
-
-                                            <h3 class="font-medium">
-
-                                                HOUNKPE David
-
-                                            </h3>
-
-                                            <p class="text-sm text-rose-400">
-
-                                                (03.42)
-
-                                            </p>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- YOUNGEST --}}
-                                    <td class="px-6 py-5">
-
-                                        <div>
-
-                                            <h3 class="font-medium">
-
-                                                ADJOVI Esther
-
-                                            </h3>
-
-                                            <p class="text-sm text-slate-400">
-
-                                                10 ans
-
-                                            </p>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- OLDEST --}}
-                                    <td class="px-6 py-5">
-
-                                        <div>
-
-                                            <h3 class="font-medium">
-
-                                                AKAKPO Jonas
-
-                                            </h3>
-
-                                            <p class="text-sm text-slate-400">
-
-                                                19 ans
-
-                                            </p>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- ACTIONS --}}
-                                    <td class="px-6 py-5">
-
-                                        <div class="flex justify-end gap-2">
-
-                                            {{-- PROFIL --}}
-                                            <a wire:navigate
-                                                href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promo->slug]) }}"
-                                                class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/30 transition-all text-sm inline-block text-center">
-                                                Profil
-                                            </a>
-
-                                            {{-- CLOSE --}}
-                                            <button
-                                                class="h-10 px-4
-                                                       rounded-xl
-                                                       bg-amber-500/10
-                                                       text-amber-400
-                                                       hover:bg-amber-500/20
-                                                       transition">
-
-                                                Fermer
-
-                                            </button>
-
-                                            {{-- DELETE --}}
-                                            <button
-                                                class="h-10 px-4
-                                                       rounded-xl
-                                                       bg-rose-500/10
-                                                       text-rose-400
-                                                       hover:bg-rose-500/20
-                                                       transition">
-
-                                                Supprimer
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
+                                    <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                        Actions
+                                    </th>
 
                                 </tr>
-                            @endforeach
 
-                        </tbody>
+                            </thead>
 
-                    </table>
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-slate-800 text-slate-400">
 
-                </div>
+                                @foreach ($promotions as $promo)
+                                    <tr class="hover:bg-slate-800/40 transition-colors duration-200">
 
-                {{-- ===================================================== --}}
-                {{-- FOOTER --}}
-                {{-- ===================================================== --}}
-                <div class="p-5 border-t border-slate-800">
+                                        <td class="px-6 py-5 truncate">
+                                            {{ __zero($promotions->firstItem() + $loop->iteration - 1) }}</td>
 
-                    <div
-                        class="flex flex-col
-                                lg:flex-row
-                                lg:items-center
-                                lg:justify-between
-                                gap-4">
+                                        <td class="px-6 py-5">
 
-                        {{-- INFO --}}
-                        <div class="text-sm text-slate-400">
+                                            <a wire:navigate
+                                                href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promo->slug]) }}"
+                                                class="hover:underline underline-offset-4 hover:text-amber-600">
 
-                            Affichage de
-                            <span class="text-slate-200 font-medium">
-                                7
-                            </span>
-                            promotions enregistrées.
+                                                <h3 class="font-semibold text-sm">
 
+                                                    {{ $promo->name . ' ' . $promo->specialityModel()?->code }}
+
+                                                </h3>
+
+                                                <p class="mt-1 text-sm text-slate-400">
+                                                    @if ($promo->code)
+                                                        {{ $promo->code }}
+                                                    @else
+                                                        {{ $promo->name . '-' . $promo->specialityModel()?->code }}
+                                                    @endif
+                                                </p>
+
+                                            </a>
+
+                                        </td>
+                                        <td class="px-4 py-5 text-center">
+                                            <span class="font-semibold">
+                                                {{ __zero($promo->getPromotionClassesOfSchoolYearCount()) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-5 text-center">
+                                            <span class="text-indigo-400">
+                                                {{ __zero($promo->getPromotionStudentsOfSchoolYearCount()) }}
+                                            </span>
+                                        </td>
+
+                                        {{-- BEST --}}
+                                        <td class="px-6 py-5">
+
+                                            <div>
+
+                                                <h3 class="font-medium">
+
+                                                    KOUASSI Sarah
+
+                                                </h3>
+
+                                                <p class="text-sm text-emerald-400">
+
+                                                    (18.92)
+                                                </p>
+
+                                            </div>
+
+                                        </td>
+
+                                        {{-- WORST --}}
+                                        <td class="px-6 py-5">
+
+                                            <div>
+
+                                                <h3 class="font-medium">
+
+                                                    HOUNKPE David
+
+                                                </h3>
+
+                                                <p class="text-sm text-rose-400">
+
+                                                    (03.42)
+
+                                                </p>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="px-6 py-5">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a wire:navigate
+                                                    href="{{ route('tenant.promotion.edit', ['promotion_slug' => $promo->slug]) }}"
+                                                    class="py-2 px-4 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/70 transition-all text-sm inline-block text-center hover:text-black">
+                                                    <span class="inline-flex items-center gap-x-2 justify-center">
+                                                        <x-lucide-pen class="w-4 h-4" />
+                                                        <span>Editer</span>
+                                                    </span>
+                                                </a>
+
+                                                <button
+                                                    title="{{ $promo->is_active ? 'Fermer ' : 'Activer ' }} cette promotion "
+                                                    wire:click="{{ $promo->is_active ? 'closePromotion(' . $promo->id . ')' : 'activatePromotion(' . $promo->id . ')' }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="activatePromotion, closePromotion"
+                                                    class="relative py-3 px-4 rounded-xl text-white {{ !$promo->is_active ? 'bg-lime-600/60 hover:bg-lime-500 hover:text-black' : 'bg-orange-500/20 hover:bg-orange-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50">
+                                                    <span wire:loading.remove
+                                                        wire:target="activatePromotion, closePromotion"
+                                                        class="inline-flex items-center justify-center gap-3">
+                                                        <span class="inline-flex items-center justify-center gap-3">
+                                                            @if ($promo->is_active)
+                                                                <x-lucide-lock class="w-4 h-4" />
+                                                                <span>Fermer</span>
+                                                            @else
+                                                                <x-lucide-unlock class="w-4 h-4" />
+                                                                <span>Activer</span>
+                                                            @endif
+                                                        </span>
+                                                    </span>
+
+                                                    <span wire:loading wire:target="activatePromotion, closePromotion"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                                <button
+                                                    title="{{ $promo->deleted_at ? 'Restaurer cette promotion de la corbeille ' : 'Mettre cette promotion dans la corbeille ' }} "
+                                                    wire:click="{{ $promo->deleted_at ? 'restorePromotion(' . $promo->id . ')' : 'deletePromotion(' . $promo->id . ')' }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="deletePromotion, restorePromotion"
+                                                    class="relative py-3 px-4 rounded-xl text-white {{ $promo->deleted_at ? 'bg-green-600/40 hover:bg-green-800/80' : 'bg-red-500/40 hover:bg-red-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50">
+                                                    <span wire:loading.remove
+                                                        wire:target="deletePromotion, restorePromotion"
+                                                        class="inline-flex items-center justify-center gap-3">
+                                                        <span class="inline-flex items-center justify-center gap-3">
+                                                            @if ($promo->deleted_at)
+                                                                <x-lucide-refresh-ccw class="w-4 h-4" />
+                                                                <span>Restaurer</span>
+                                                            @else
+                                                                <x-lucide-trash class="w-4 h-4" />
+                                                                <span>Corbeille</span>
+                                                            @endif
+                                                        </span>
+                                                    </span>
+
+                                                    <span wire:loading wire:target="restorePromotion, deletePromotion"
+                                                        class="inline-flex items-center gap-1">
+                                                        <svg class="animate-spin w-3 h-3" fill="none"
+                                                            viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12"
+                                                                r="10" stroke="currentColor" stroke-width="4" />
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                d="M4 12a8 8 0 018-8v8z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+                        @if ($promotions->hasPages())
+                            <section class="py-6">
+                                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                        <div class="text-sm text-slate-400">
+                                            Affichage {{ $promotions->firstItem() }} à {{ $promotions->lastItem() }}
+                                            sur
+                                            {{ $promotions->total() }} promotions
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            @if (!$promotions->onFirstPage())
+                                                <button wire:click="previousPage" wire:loading.attr="disabled"
+                                                    wire:target="previousPage"
+                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                    Précédent
+                                                </button>
+                                            @endif
+
+                                            @foreach ($promotions->getUrlRange(1, $promotions->lastPage()) as $page => $url)
+                                                <button @disabled($page === $promotions->currentPage())
+                                                    wire:click="gotoPage({{ $page }})"
+                                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $promotions->currentPage() ? 'bg-indigo-500 text-white ' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                    {{ $page }}
+                                                </button>
+                                            @endforeach
+
+                                            @if ($promotions->hasMorePages())
+                                                <button wire:click="nextPage" wire:loading.attr="disabled"
+                                                    wire:target="nextPage"
+                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                    Suivant
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        @endif
+                    @else
+                        <div class="w-full justify-center p-3">
+                            <div class="p-5 flex justify-center w-full text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <p class="text-slate-500 text-sm">Aucune promotion trouvée.</p>
+                                    @if ($search || $filiar_id || $serial_id)
+                                        <button wire:click="resetFilters"
+                                            class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+                                            Réinitialiser les filtres
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- EXPORTS --}}
-                        <div class="flex flex-wrap gap-3">
-
-                            <button
-                                class="h-11 px-5 rounded-2xl
-                                           bg-emerald-500 hover:bg-emerald-600
-                                           transition">
-
-                                Export Excel
-
-                            </button>
-
-                            <button
-                                class="h-11 px-5 rounded-2xl
-                                           bg-rose-500 hover:bg-rose-600
-                                           transition">
-
-                                Export PDF
-
-                            </button>
-
-                        </div>
-
-                    </div>
+                    @endif
 
                 </div>
 

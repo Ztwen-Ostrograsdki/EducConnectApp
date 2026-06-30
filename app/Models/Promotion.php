@@ -44,6 +44,40 @@ class Promotion extends Model
         return $this->hasMany(Classe::class, 'promotion_id');
     }
 
+    public function getPromotionClassesOfSchoolYear(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return $this->classes()->where('classes.school_year_id', $school_year_id)->where('classes.is_active', true)->where('classes.is_locked', false)->orderBy('name', 'desc');
+    }
+
+    public function getPromotionClassesOfSchoolYearCount(?int $school_year_id = null) : int
+    {
+        return $this->getPromotionClassesOfSchoolYear($school_year_id)->count();
+    }
+
+    public function getPromotionStudentsOfSchoolYear(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return  Student::where('is_active', true)->whereHas('yearlyClasseStudents', fn($q) => 
+                                $q->where('school_year_id', $school_year_id)
+                                  ->where('is_active', true)
+                                  ->whereNull('ended_at')
+                                  ->whereHas('classe', fn($qc) => 
+                                        $qc->where('promotion_id', $this->id)
+                                           ->where('is_active', true)
+                                    )
+                            )->orderBy('name', 'desc');
+    }
+
+    public function getPromotionStudentsOfSchoolYearCount(?int $school_year_id = null) : int
+    {
+        return $this->getPromotionStudentsOfSchoolYear($school_year_id)->count();
+    }
+
+
+
     public function filiar(): BelongsTo
     {
         return $this->belongsTo(Filiar::class);

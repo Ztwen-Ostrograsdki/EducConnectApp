@@ -278,9 +278,19 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return SchoolYear::whereNotNull('id')?->count();
     }
     
+    public function promotions(?int $limit = null)
+    {
+        $query = Promotion::whereNotNull('id')?->orderByDesc('name');
+
+        if($limit) $query->take($limit);
+
+        return $query->get();
+    }
+
+
     public function promotionsCount() : ?int
     {
-        return Promotion::whereNotNull('id')?->count();
+        return count($this->promotions());
     }
     
     public function filiarsCount() : ?int

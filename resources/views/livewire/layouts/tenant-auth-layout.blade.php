@@ -136,17 +136,25 @@
                             <a wire:navigate href="{{ route('tenant.promotions.portal') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Portail
+                                <span class="s-label">Toutes les promotions
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->promotionsCount()) }})</span>
                                 </span>
                             </a>
-                            <a wire:navigate
-                                href="{{ route('tenant.promotion.profil', ['promotion_slug' => 'premiere']) }}"
-                                class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Promotion Terminale</span>
-                            </a>
+                            @foreach (tenancy()->tenant?->promotions(4) as $promotion)
+                                <a wire:navigate
+                                    href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promotion->slug]) }}"
+                                    class="s-link" style="font-size:.78rem;">
+                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                    <span class="s-label">
+                                        @if ($promotion->code)
+                                            {{ $promotion->code }}
+                                        @else
+                                            {{ $promotion->name . '' . $promotion->specialityModel()?->code }}
+                                        @endif
+                                    </span>
+                                </a>
+                            @endforeach
                             <a wire:navigate href="{{ route('tenant.promotion.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
