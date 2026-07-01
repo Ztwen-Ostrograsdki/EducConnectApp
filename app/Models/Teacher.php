@@ -175,6 +175,23 @@ class Teacher extends Model
         return !$exists;
 
     }
+    
+    
+    public function ensureThatTeacherDoesntHaveClasse(?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $exists = ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->whereNull('ended_at')->exists();
+
+        return !$exists;
+
+    }
+
+    public function ensureThatTeacherHaveClasse(?int $school_year_id = null) : bool
+    {
+        return !$this->ensureThatTeacherDoesntHaveClasse($school_year_id);
+
+    }
 
 
     public function getYearlySubjects(?int $school_year_id = null)

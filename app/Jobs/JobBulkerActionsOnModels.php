@@ -81,9 +81,9 @@ class JobBulkerActionsOnModels implements ShouldQueue
                 $query = $this->model::withTrashed()->whereIn('id', $this->ids);
             }
 
-            if(!empty($this->options)){
+            if(empty($this->options)){
 
-                $query->{$this->method};
+                $query->{$this->method}();
 
             }
             else{
@@ -97,7 +97,7 @@ class JobBulkerActionsOnModels implements ShouldQueue
                 userEmail: $director?->email,
                 tenantId: $this->tenantId,
                 title:             $this->taskTitle . " TERMINEE",
-                message:           $this->taskTitle . " TERMINEE",
+                message:           $this->taskTitle . " TERMINEE. " . '(' . count($this->ids) . ') tâche(s) exécutée(s)!',
                 type:              'success',
             ));
 

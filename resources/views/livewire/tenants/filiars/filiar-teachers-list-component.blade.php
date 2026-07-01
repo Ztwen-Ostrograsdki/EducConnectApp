@@ -60,7 +60,7 @@
                     <option value="">Toutes les matières</option>
                     @foreach ($this->subjects as $tsubject)
                         <option value="{{ $tsubject->id }}">
-                            {{ $tsubject->code ?? $tsubject->name }}
+                            {{ $tsubject->code ? $tsubject->code : $tsubject->name }}
                         </option>
                     @endforeach
                 </select>
@@ -70,7 +70,7 @@
                     <option>Toutes les classes</option>
                     @foreach ($this->classes as $tclasse)
                         <option value="{{ $tclasse->id }}">
-                            Classe de {{ $tclasse->code ?? $tclasse->name }}
+                            Classe de {{ $tclasse->code ? $tclasse->code : $tclasse->name }}
                         </option>
                     @endforeach
                 </select>
@@ -80,7 +80,7 @@
                     <option>Toutes les promotions</option>
                     @foreach ($this->promotions as $tpromo)
                         <option value="{{ $tpromo->id }}">
-                            Promotion {{ $tpromo->code ?? $tpromo->name }}
+                            Promotion {{ $tpromo->code ? $tpromo->code : $tpromo->name }}
                         </option>
                     @endforeach
                 </select>

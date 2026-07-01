@@ -42,7 +42,7 @@ class ManagePromotionComponent extends Component
 
         $this->promotion_slug  = $promotion_slug;
 
-        $promotion = Promotion::whereSlug($promotion_slug)?->first();
+        $promotion = Promotion::withTrashed()->whereSlug($promotion_slug)?->first();
 
         $active = SchoolYear::current()->first();
         

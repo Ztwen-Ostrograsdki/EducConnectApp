@@ -33,7 +33,7 @@ class PromotionProfil extends Component
 
         $this->promotion_slug  = $promotion_slug;
 
-        $promotion = Promotion::whereSlug($promotion_slug)?->first();
+        $promotion = Promotion::withTrashed()->whereSlug($promotion_slug)?->first();
 
         if(!$promotion) return abort(404);
 

@@ -2,37 +2,90 @@
 
 namespace App\Livewire\Tenants\Filiars;
 
+use App\Livewire\Tenants\ActionsTraits\FiliarsActions;
 use App\Models\Filiar;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
-use WireUi\Traits\WireUiActions;
+use Livewire\WithPagination;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Portail des filières")]
 class FiliarsPortal extends Component
 {
-    use WireUiActions;
+    use WithPagination, FiliarsActions;
 
 
-    public $counter = 0;
+    public $is_active = "actives";
 
+    public ?string $search = null;
 
+    public int $perPage = 3;
 
-
-    #[On('DataUpdatedEventLiveEvent')]
-    public function reloaddata()
+    #[Computed]
+    public function kpis()
     {
-        $this->counter++;
+        $tenant = tenancy()->tenant;
+
+        $data = [
+            ['Promotions', __zero($tenant->promotionsCount()), 'text-amber-400'], 
+            ['Meilleure classe', '-', 'text-emerald-400'], 
+            ['Faible classe', '-', 'text-rose-400'], 
+            ['Meilleur élève', '-', 'text-sky-400'], 
+            ['Meilleur moyenne', '-', 'text-sky-400'],  
+        ];
+
+        return $data;
+    }
+
+    public function mount()
+    {
+        if(session()->has('filiars_is_active_selected')){
+
+            $this->is_active = session('filiars_is_active_selected');
+        }
+    }
+
+
+    public function updatedIsActive(string $value)
+    {
+        session()->put('filiars_is_active_selected', $this->is_active);
+    }
+
+
+    #[Computed]
+    public function filiars()
+    {
+        return Filiar::withTrashed($this->is_active && $this->is_active === 'corbeille')
+                        ->when($this->search, fn($qs) =>
+                            $qs->where('name', 'like', '%' . $this->search . '%')
+                            ->orWhere('code', 'like', '%' . $this->search . '%')
+                        )
+                        ->when($this->is_active && $this->is_active === 'actives', fn($qa) =>
+                            $qa->where('is_active', true)
+                        )
+                        ->when($this->is_active && $this->is_active === 'desactives', fn($qa) =>
+                            $qa->where('is_active', false)
+                        )
+                        ->when($this->is_active && $this->is_active === 'corbeille', fn($qa) =>
+                            $qa->whereNotNull('deleted_at')
+                        )
+                        ->orderBy('name')
+                        ->paginate($this->perPage);
+    }
+
+    public function resetFilters()
+    {
+        session()->forget('filiars_is_active_selected');
+        
+        $this->reset('is_active', 'search');
     }
 
 
 
     public function render()
     {
-        $filiars = Filiar::orderByDesc('name')->get();
-
-        return view('livewire.tenants.filiars.filiars-portal', compact('filiars'));
+        return view('livewire.tenants.filiars.filiars-portal');
     }
 }

@@ -34,7 +34,7 @@ class ManageFiliarComponent extends Component
 
         $this->filiar_slug = $filiar_slug;
 
-        $filiar = Filiar::firstWhere('slug', $filiar_slug);
+        $filiar = Filiar::withTrashed()->where('slug', $filiar_slug)->first();
 
         if(!$filiar) abort(404);
 

@@ -8,6 +8,7 @@ use App\Events\TeacherWasBlockedEvent;
 use App\Jobs\JobBulkerActionsOnModels;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\Classe;
+use App\Models\SchoolYear;
 use App\Models\Teacher;
 use App\Models\User;
 use Livewire\Attributes\On;
@@ -20,9 +21,8 @@ trait TeachersActions{
 	use WithPagination, WireUiActions;
     
     public $counter = 3;
-    
-    
 
+    public ?SchoolYear $current_active_year;
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
@@ -292,6 +292,22 @@ trait TeachersActions{
             return;
         }
 
+        //Assert if teacher don't have classes before
+
+        if(!$teacher->ensureThatTeacherDoesntHaveClasse()){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'timeout' => 0,
+                'title'       => "Vous ne pouvez pas supprimer l'accès de cet enseignant!",
+                'description' => $teacher->getFullName() . " enseigne dans au moins une classe. Pour supprimer l'accès de cet enseigant, vous devez d'abord lui retirer toutes ses classes !",
+            ]);
+
+
+            return;
+
+        }
+
         $teacher->removeTeacherAccessForThisSchoolYear(tenant('id'), null, request()->getSchemeAndHttpHost());
         $this->notification()->success(
             title: 'Accès révoqué',
@@ -327,6 +343,23 @@ trait TeachersActions{
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
         }
+
+        //Assert if teacher don't have classes before
+
+        if(!$teacher->ensureThatTeacherDoesntHaveClasse()){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'timeout' => 0,
+                'title'       => "Vous ne pouvez pas supprimer cet enseignant!",
+                'description' => $teacher->getFullName() . " enseigne dans au moins une classe. Pour supprimer cet enseigant, vous devez d'abord lui retirer toutes ses classes !",
+            ]);
+
+
+            return;
+
+        }
+
 
         $teacher->delete();
 
@@ -398,6 +431,20 @@ trait TeachersActions{
         if (!$teacher) {
             $this->notification()->error(title: 'Enseignant introuvable');
             return;
+        }
+
+        if(!$teacher->ensureThatTeacherDoesntHaveClasse()){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'timeout' => 0,
+                'title'       => "Vous ne pouvez pas supprimer cet enseignant!",
+                'description' => $teacher->getFullName() . " enseigne dans au moins une classe. Pour supprimer cet enseigant, vous devez d'abord lui retirer toutes ses classes !",
+            ]);
+
+
+            return;
+
         }
 
         if($teacher->created_at->gt(now()->subMonths(3))){
@@ -551,9 +598,27 @@ trait TeachersActions{
     }
 
     #[On('ConfirmTeachersForceDelete')]
-    public function OnConfirmTeachersForceDelete(): void
+    public function OnConfirmTeachersForceDelete()
     {
-        $ids = Teacher::onlyTrashed()->pluck('id')->toArray();
+        $school_year = SchoolYear::current()->first();
+
+        if(!$school_year){
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur processus',
+                'description' => "La reqûete ne peut aboutir car aucune année scolaire n'est active",
+            ]);
+             return;
+
+        } 
+
+        $ids = Teacher::onlyTrashed()
+                        ->whereDoesntHave('classeSubjects', fn($q) => 
+                            $q->where('school_year_id', $school_year->id)
+                        ) 
+                        ->pluck('id')
+                        ->toArray();
 
         JobBulkerActionsOnModels::dispatch(tenantId: tenant('id'),
             model: Teacher::class,
@@ -649,8 +714,5 @@ trait TeachersActions{
 
     }
     
-    public function clearFilters()
-    {
-        $this->reset('search', 'gender', 'city', 'gender', 'department');
-    }
+    
 }

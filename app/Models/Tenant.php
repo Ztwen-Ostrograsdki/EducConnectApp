@@ -280,46 +280,77 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     
     public function promotions(?int $limit = null)
     {
-        $query = Promotion::whereNotNull('id')?->orderByDesc('name');
+        $query = Promotion::where('is_active', true)?->orderByDesc('name');
 
         if($limit) $query->take($limit);
 
         return $query->get();
     }
 
-
     public function promotionsCount() : ?int
     {
         return count($this->promotions());
     }
+
+    public function filiars(?int $limit = null)
+    {
+        $query = Filiar::where('is_active', true)?->orderByDesc('name');
+
+        if($limit) $query->take($limit);
+
+        return $query->get();
+    }
     
     public function filiarsCount() : ?int
     {
-        return Filiar::whereNotNull('id')?->count();
+        return count($this->filiars());
+    }
+
+    public function serials(?int $limit = null)
+    {
+        $query = Serial::where('is_active', true)?->orderByDesc('name');
+
+        if($limit) $query->take($limit);
+
+        return $query->get();
     }
 
     public function serialsCount() : ?int
     {
-        return Serial::whereNotNull('id')?->count();
+        return count($this->serials());
+    }
+
+
+    public function subjects(?int $limit = null)
+    {
+        $query = Subject::where('is_active', true)?->orderByDesc('name');
+
+        if($limit) $query->take($limit);
+
+        return $query->get();
     }
 
     public function subjectsCount() : ?int
     {
-        return Subject::whereNotNull('id')?->count();
+        return count($this->subjects());
     }
 
 
-    public function getSchoolYearClasses(?int $school_year_id = null)
+    public function getSchoolYearClasses(?int $school_year_id = null, ?int $limit = null)
     {
         if(!$school_year_id) $school_year_id = $this->getActiveSchoolYear()?->id;
 
         if($school_year_id){
 
-            return Classe::where('school_year_id', $school_year_id)->orderByDesc('name')->get();
+            $query = Classe::where('school_year_id', $school_year_id);
+
+            if($limit) $query->take($limit);
+
+            return $query->orderByDesc('name')->get();
 
         }
 
-        return null;
+        return [];
 
 
     }

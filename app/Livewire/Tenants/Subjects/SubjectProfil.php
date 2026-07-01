@@ -28,7 +28,7 @@ class SubjectProfil extends Component
 
         $this->subject_slug  = $subject_slug;
 
-        $subject = Subject::whereSlug($subject_slug)?->first();
+        $subject = Subject::withTrashed()->whereSlug($subject_slug)?->first();
 
         if(!$subject) return abort(404);
 

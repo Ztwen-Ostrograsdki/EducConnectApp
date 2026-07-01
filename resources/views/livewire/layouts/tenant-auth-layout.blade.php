@@ -110,7 +110,7 @@
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail</span>
                             </a>
-                            @foreach (tenancy()->tenant?->getSchoolYearClasses() as $classe)
+                            @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 6) as $classe)
                                 <a wire:navigate
                                     href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">
@@ -172,16 +172,25 @@
                             <a wire:navigate href="{{ route('tenant.filiars.portal') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Portail
+                                <span class="s-label">Toutes les filières
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->filiarsCount()) }})</span>
                                 </span>
                             </a>
-                            <a wire:navigate href="{{ route('tenant.filiar.profil', ['filiar_slug' => 'BTP']) }}"
-                                class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">BTP</span>
-                            </a>
+                            @foreach (tenancy()->tenant?->filiars(4) as $filiar)
+                                <a wire:navigate
+                                    href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
+                                    class="s-link" style="font-size:.78rem;">
+                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                    <span class="s-label uppercase">
+                                        @if ($filiar->code)
+                                            {{ $filiar->code }}
+                                        @else
+                                            {{ $filiar->name }}
+                                        @endif
+                                    </span>
+                                </a>
+                            @endforeach
                             <a wire:navigate href="{{ route('tenant.filiar.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
@@ -199,16 +208,25 @@
                             <a wire:navigate href="{{ route('tenant.serials.portal') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Portail
+                                <span class="s-label">Toutes les séries
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->serialsCount()) }})</span>
                                 </span>
                             </a>
-                            <a wire:navigate href="{{ route('tenant.serial.profil', ['serial_slug' => 'c']) }}"
-                                class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">C</span>
-                            </a>
+                            @foreach (tenancy()->tenant?->serials(4) as $serial)
+                                <a wire:navigate
+                                    href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
+                                    class="s-link" style="font-size:.78rem;">
+                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                    <span class="s-label uppercase">
+                                        @if ($serial->code)
+                                            {{ $serial->code }}
+                                        @else
+                                            {{ $serial->name }}
+                                        @endif
+                                    </span>
+                                </a>
+                            @endforeach
                             <a wire:navigate href="{{ route('tenant.serial.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
@@ -226,16 +244,25 @@
                             <a wire:navigate href="{{ route('tenant.subjects.portal') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">Portail
+                                <span class="s-label">Toutes les matières
                                     <span
                                         class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->subjectsCount()) }})</span>
                                 </span>
                             </a>
-                            <a wire:navigate href="{{ route('tenant.subject.profil', ['subject_slug' => 'c']) }}"
-                                class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                <span class="s-label">C</span>
-                            </a>
+                            @foreach (tenancy()->tenant?->subjects(4) as $subject)
+                                <a wire:navigate
+                                    href="{{ route('tenant.subject.profil', ['subject_slug' => $subject->slug]) }}"
+                                    class="s-link" style="font-size:.78rem;">
+                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                    <span class="s-label uppercase">
+                                        @if ($subject->code)
+                                            {{ $subject->code }}
+                                        @else
+                                            {{ $subject->name }}
+                                        @endif
+                                    </span>
+                                </a>
+                            @endforeach
                             <a wire:navigate href="{{ route('tenant.subject.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle

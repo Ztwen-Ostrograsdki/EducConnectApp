@@ -82,15 +82,27 @@ trait ClassesActions{
     public function stats(): array
     {
 
-        $yearId = $this->activeYear?->id;
+        $school_year = SchoolYear::current()->first();
 
-        $classes = Classe::where('school_year_id', $yearId)->withCount('students')->get();
+        if(!$school_year){
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur processus',
+                'description' => "Aucune année scolaire n'est active",
+            ]);
+
+            return [];
+
+        } 
+
+        $classes = Classe::where('school_year_id', $school_year->id)->withCount('students')->get();
 
         return [
             'classes'    => $classes->count(),
             'students'   => $classes->sum('students_count'),
-            'teachers'   => TeacherYearlyAccess::where('school_year_id', $yearId)->where('status', 'active')->whereNull('suspended_at')->distinct('teacher_id')->count(),
-            'promotions' => Classe::where('school_year_id', $yearId)
+            'teachers'   => TeacherYearlyAccess::where('school_year_id', $school_year->id)->where('status', 'active')->whereNull('suspended_at')->distinct('teacher_id')->count(),
+            'promotions' => Classe::where('school_year_id', $school_year->id)
                                ->distinct('promotion_id')
                                ->count('promotion_id'),
         ];

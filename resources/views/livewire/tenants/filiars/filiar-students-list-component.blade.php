@@ -58,7 +58,7 @@
                     <option>Toutes les classes</option>
                     @foreach ($this->classes as $sclasse)
                         <option value="{{ $sclasse->id }}">
-                            Classe de {{ $sclasse->code ?? $sclasse->name }}
+                            Classe de {{ $sclasse->code ? $sclasse->code : $sclasse->name }}
                         </option>
                     @endforeach
                 </select>
@@ -68,7 +68,7 @@
                     <option>Toutes les promotions</option>
                     @foreach ($this->promotions as $spromo)
                         <option value="{{ $spromo->id }}">
-                            Promotion {{ $spromo->code ?? $spromo->name }}
+                            Promotion {{ $spromo->code ? $spromo->code : $spromo->name }}
                         </option>
                     @endforeach
                 </select>

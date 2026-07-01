@@ -156,7 +156,7 @@ class EditClasseComponent extends Component
     public function updatedPromotionId($promotion_id)
     {
 
-        $promotion = Promotion::find($this->promotion_id);
+        $promotion = Promotion::withTrashed()->whereId($this->promotion_id)->first();
 
         $this->filiar_id = $promotion->filiar_id;
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Filiars;
 
+use App\Events\DataUpdatedEvent;
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
@@ -37,7 +38,7 @@ class FiliarProfil extends Component
 
         $this->filiar_slug  = $filiar_slug;
 
-        $filiar = Filiar::whereSlug($filiar_slug)?->first();
+        $filiar = Filiar::withTrashed()->whereSlug($filiar_slug)?->first();
 
         if(!$filiar) return abort(404);
 
@@ -117,6 +118,120 @@ class FiliarProfil extends Component
                             ->orderBy('students.name')
                             ->orderBy('students.prenames')
                             ->get();
+    }
+
+    public function deleteFiliar(int $filiarId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Supprimer cette filière ? ",
+            'text'               => "Cette action enverra la filière dans la corbeille, alors cette filière ne sera plus disponible et active",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Supprimer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToDeleteFiliar',
+            'onConfirmedParams'  => ['filiarId' => $filiarId],
+        ]);
+    }
+
+    #[On('ConfirmToDeleteFiliar')]
+    public function OnConfirmToDeleteFiliar(int $filiarId): void
+    {
+        $filiar = Filiar::find($filiarId);
+
+        if (!$filiar) {
+
+            $this->notification()->error(title: 'Filière introuvable');
+            return;
+        }
+
+        try {
+            
+            $done = $filiar->delete();
+
+            if($done){
+
+                $this->notification()->success(
+                    title: 'Filière supprimée',
+                    description: "La filière {$filiar->name} {$filiar->code} a été envoyée dans la corbeille!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: 'Filière non supprimée',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Filière non supprimée',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
+        }
+        
+        
+    }
+
+	public function restoreFiliar(int $filiarId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Recuperer cette filière ? ",
+            'text'               => "Cette action restaurera la filière de la corbeille, alors cette filière sera disponible et active",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Recuperer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToRestoreFiliar',
+            'onConfirmedParams'  => ['filiarId' => $filiarId],
+        ]);
+    }
+
+    #[On('ConfirmToRestoreFiliar')]
+    public function OnConfirmToRestoreFiliar(int $filiarId): void
+    {
+        $filiar = Filiar::withoutTrashed()->whereId($filiarId)->first();
+
+        if (!$filiar) {
+
+            $this->notification()->error(title: 'Filière introuvable');
+            return;
+        }
+
+        try {
+            
+            $done = $filiar->restore();
+
+            if($done){
+
+                $this->notification()->success(
+                    title: 'Filière restaurée',
+                    description: "La filière {$filiar->name} {$filiar->code} a été restaurée de la corbeille!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: 'Filière non restaurée',
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Filière non restaurée',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 200),
+            );
+        }
+        
+        
     }
 
     public function render()

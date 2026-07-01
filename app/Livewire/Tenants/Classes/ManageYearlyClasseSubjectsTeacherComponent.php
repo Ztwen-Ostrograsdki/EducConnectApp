@@ -37,7 +37,7 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
     {
         if(!$classe_slug) return abort(404);
 
-        $classe = Classe::whereSlug($classe_slug)?->first();
+        $classe = Classe::withTrashed()->whereSlug($classe_slug)?->first();
 
         $this->classe_slug  = $classe_slug;
 

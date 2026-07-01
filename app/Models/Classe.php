@@ -61,17 +61,17 @@ class Classe extends Model
 
     public function promotion(): BelongsTo
     {
-        return $this->belongsTo(Promotion::class, 'promotion_id');
+        return $this->belongsTo(Promotion::class, 'promotion_id')->withTrashed();
     }
 
     public function filiar(): BelongsTo
     {
-        return $this->belongsTo(Filiar::class, 'filiar_id');
+        return $this->belongsTo(Filiar::class, 'filiar_id')->withTrashed();
     }
 
     public function serial(): BelongsTo
     {
-        return $this->belongsTo(Serial::class, 'serial_id');
+        return $this->belongsTo(Serial::class, 'serial_id')->withTrashed();
     }
 
     // Professeur principal
@@ -319,14 +319,14 @@ class Classe extends Model
 
     public function specialityModel()
     {
-        if($this->filiar){
+        if($this->filiar_id){
 
-            return $this->filiar;
+            return Filiar::withTrashed()->whereId($this->filiar_id)->first();
 
         }
-        elseif($this->serial){
+        elseif($this->serial_id){
 
-            return $this->serial;
+            return Serial::withTrashed()->whereId($this->serial_id)->first();
         }
 
         return null;
@@ -334,14 +334,14 @@ class Classe extends Model
 
     public function speciality()
     {
-        if($this->filiar){
+        if($this->filiar_id){
 
-            return $this->filiar->name;
+            return Filiar::withTrashed()->whereId($this->filiar_id)->first()?->name;
 
         }
-        elseif($this->serial){
+        elseif($this->serial_id){
 
-            return $this->serial->name;
+            return Serial::withTrashed()->whereId($this->serial_id)->first()?->name;
         }
 
         return $this->promotion->name;

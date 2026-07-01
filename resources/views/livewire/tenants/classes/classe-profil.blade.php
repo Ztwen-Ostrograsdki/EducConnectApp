@@ -43,15 +43,22 @@
                             @endif
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
-                            {{ $classe->speciality() }}
+                            @if ($classe->filiar_id)
+                                Filière|Spécialité :
+                            @elseif($classe->serial_id)
+                                Série :
+                            @else
+                            @endif
+                            {{ $classe->specialityModel()?->name }}
                         </p>
 
                         {{-- META --}}
                         <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                             <div class="break-words">👨‍🏫
-                                {{ $classe->principal ? $classe->principal?->getFullName() : 'Non précisée' }}</div>
+                                {{ $classe->principal ? 'PP : ' . $classe->principal?->getFullName() : 'Non précisée' }}
+                            </div>
                             <div class="break-words">📍 {{ $classe->localization ?? 'Non précisée' }}</div>
-                            <div class="break-words">🕒 {{ $classe->schoolYear->slug }}</div>
+                            <div class="break-words">📅 {{ $classe->schoolYear->slug }}</div>
                             <span class="flex font-mono text-xs items-center text-indigo-600 gap-x-2">
                                 <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
                                     {{ __zero($classe->getStudentsCountOnGender('Féminin')) }}

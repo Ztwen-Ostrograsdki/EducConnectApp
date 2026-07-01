@@ -55,6 +55,13 @@
                                     <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
                                         {{ __zero($filiar->getFiliarClassesOfSchoolYearCount()) }} Classes
                                     </div>
+                                    @if ($filiar->deleted_at)
+                                        <div
+                                            class="px-4 py-2 flex items-center justify-center rounded-2xl animate-pulse font-mono bg-rose-800/40 text-rose-400 text-xs">
+                                            Cette filière est supprimée et se trouve dans la corbeille
+                                        </div>
+                                    @endif
+
                                 </div>
                             </div>
 
@@ -83,9 +90,39 @@
                     class="py-3 px-5 rounded-2xl bg-blue-500 hover:bg-blue-800">
                     Créer une classe
                 </a>
-                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600">Export PDF</button>
+                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600">
+                    Export PDF
+                </button>
                 <a wire:navigate href="{{ route('tenant.filiar.edit', ['filiar_slug' => $filiar->slug]) }}"
-                    class="py-3 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600">Editer cette filière</a>
+                    class="py-3 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600">
+                    Editer cette filière
+                </a>
+                <button
+                    title="{{ $filiar->deleted_at ? 'Restaurer cette filière de la corbeille ' : 'Mettre cette filière dans la corbeille ' }} "
+                    wire:click="{{ $filiar->deleted_at ? 'restoreFiliar(' . $filiar->id . ')' : 'deleteFiliar(' . $filiar->id . ')' }}"
+                    wire:loading.attr="disabled" wire:target="deleteFiliar, restoreFiliar"
+                    class="relative py-3 px-4 rounded-xl text-white {{ $filiar->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-yellow-400">
+                    <span wire:loading.remove wire:target="deleteFiliar, restoreFiliar"
+                        class="inline-flex items-center justify-center gap-3">
+                        <span class="inline-flex items-center justify-center gap-3">
+                            @if ($filiar->deleted_at)
+                                <x-lucide-refresh-ccw class="w-4 h-4" />
+                                <span>Restaurer</span>
+                            @else
+                                <x-lucide-trash class="w-4 h-4" />
+                                <span>Corbeille</span>
+                            @endif
+                        </span>
+                    </span>
+
+                    <span wire:loading wire:target="restoreFiliar, deleteFiliar" class="inline-flex items-center gap-1">
+                        <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                    </span>
+                </button>
             </div>
         </section>
 
@@ -222,7 +259,8 @@
                     {{-- HEADER --}}
                     <div class="p-6 border-b border-slate-800">
                         <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-2xl bg-pink-500/10 flex items-center justify-center text-2xl">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-pink-500/10 flex items-center justify-center text-2xl">
                                 👑</div>
                             <div>
                                 <h2 class="text-xl font-semibold">Meilleure Fille</h2>

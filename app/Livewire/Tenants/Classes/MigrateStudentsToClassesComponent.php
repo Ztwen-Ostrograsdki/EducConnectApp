@@ -58,7 +58,7 @@ class MigrateStudentsToClassesComponent extends Component
 
             $schoolYearId = SchoolYear::current()->first()?->id;
 
-            $classe = Classe::where('slug', $classe_slug)->where('school_year_id', $schoolYearId)->first();
+            $classe = Classe::withTrashed()->where('slug', $classe_slug)->where('school_year_id', $schoolYearId)->first();
 
             if($classe){
 

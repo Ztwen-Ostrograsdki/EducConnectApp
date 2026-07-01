@@ -319,3 +319,11 @@ tr:hover {
 .ls-0 {
     letter-spacing: 0.5px;
 }
+
+.trashed-tr {
+    background-color: rgba(168, 24, 24, 0.199) !important;
+}
+
+.trashed-text {
+    color: red !important;
+}

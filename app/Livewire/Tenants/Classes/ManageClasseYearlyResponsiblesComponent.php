@@ -38,7 +38,7 @@ class ManageClasseYearlyResponsiblesComponent extends Component
 
         $this->classe_slug  = $classe_slug;
 
-        $classe = Classe::whereSlug($classe_slug)?->first();
+        $classe = Classe::withTrashed()->whereSlug($classe_slug)?->first();
 
         if(!$classe) return abort(404);
 

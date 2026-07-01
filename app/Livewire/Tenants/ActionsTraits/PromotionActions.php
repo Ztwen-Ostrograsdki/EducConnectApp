@@ -7,9 +7,11 @@ use App\Models\Promotion;
 use App\Models\SchoolYear;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-
+use WireUi\Traits\WireUiActions;
 
 trait PromotionActions{
+
+    use WireUiActions;
 
 	public $counter = 0;
 

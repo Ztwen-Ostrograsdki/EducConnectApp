@@ -6,6 +6,7 @@ use App\Events\DataUpdatedEvent;
 use App\Events\TeacherWasBlockedEvent;
 use App\Models\Classe;
 use App\Models\Teacher;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -20,11 +21,26 @@ class TeacherProfilPage extends Component
     
     public string $teacher_uuid;
 
+    public ?Teacher $teacher;
+
+    public ?User $user;
+
+
     public $counter = 0;
 
     public function mount(string $teacher_uuid)
     {
+        if(!$teacher_uuid) return abort(404);
+
+        $teacher = Teacher::withTrashed()->where('uuid', $teacher_uuid)->firstOrFail();
+
+        if(!$teacher) return abort(404);
+
         $this->teacher_uuid = $teacher_uuid;
+
+        $this->teacher = $teacher;
+
+        $this->user = $teacher->user;
     }
 
 
@@ -233,11 +249,6 @@ class TeacherProfilPage extends Component
 
     public function render()
     {
-        $teacher = Teacher::withTrashed()->where('uuid', $this->teacher_uuid)->firstOrFail();
-
-        $user = $teacher->user;
-
-
-        return view('livewire.tenants.teachers.teacher-profil-page', compact('teacher', 'user'));
+        return view('livewire.tenants.teachers.teacher-profil-page');
     }
 }
