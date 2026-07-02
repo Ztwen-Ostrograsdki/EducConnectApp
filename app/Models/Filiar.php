@@ -7,6 +7,7 @@ use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\YearlyFiliarChief;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -48,6 +49,14 @@ class Filiar extends Model
     public function promotions(): HasMany
     {
         return $this->hasMany(Promotion::class);
+    }
+
+    /**
+     * Get all yearly filiars where this subjects has chiefs (CA)
+     */
+    public function filiarChiefs(): HasMany
+    {
+        return $this->hasMany(YearlyFiliarChief::class, 'filiar_id');
     }
 
     public function getFiliarClassesOfSchoolYear(?int $school_year_id = null)

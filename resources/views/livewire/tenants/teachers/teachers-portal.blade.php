@@ -122,14 +122,19 @@
                             </div>
                         </div>
                         <button wire:click='clearFilters'
-                            class="h-11 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm col-span-2">
+                            class="py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 transition-all text-sm col-span-2">
                             <span wire:loading.remove wire:target='clearFilters'
-                                class="inline-flex gap-x-2 items-center">
-                                <x-lucide-brush-cleaning class="w-4 h-4" />
-                                Réinitialiser
+                                class="inline-flex gap-x-2 items-center ">
+                                <span class="inline-flex gap-x-2 items-center">
+                                    <x-lucide-refresh-ccw class="w-4 h-4" />
+                                    <span>Réinitialiser</span>
+                                </span>
                             </span>
                             <span wire:loading wire:target='clearFilters' class="inline-flex items-center gap-x-2">
-                                <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                <span class="inline-flex items-center gap-x-2">
+                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                    <span>Rechargement ...</span>
+                                </span>
                             </span>
 
                         </button>
@@ -233,7 +238,7 @@
             @if (count($unaccesses))
                 <div
                     class="rounded-2xl border border-red-800 bg-red-900/30 p-2 font-mono text-sm animate-pulse text-red-400 my-3">
-                    <span>{{ __zero(count($unaccesses)) }} enseigant(s) sont sans accès pour cette année scolaire
+                    <span>{{ __zero(count($unaccesses)) }} enseignant(s) sont sans accès pour cette année scolaire
                         {{ $this->activeYear?->slug ?? '' }}</span>
                     <p>
                         Veuillez leur accorder les accès. Autrement, vous ne
@@ -668,7 +673,7 @@
                                 <div class="p-6 flex justify-center text-center">
                                     <div class="flex flex-col items-center gap-3">
                                         <span class="text-4xl">🎯</span>
-                                        <p class="text-slate-500 text-sm">Aucune enseigant trouvé </p>
+                                        <p class="text-slate-500 text-sm">Aucune enseignant trouvé </p>
                                         @if ($search || $status || $classe_id || $subject_id || $promotion_id || $filiar_id || $gender || $city || $department)
                                             <button wire:click="clearFilters"
                                                 class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">

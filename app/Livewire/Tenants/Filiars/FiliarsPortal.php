@@ -47,8 +47,18 @@ class FiliarsPortal extends Component
         }
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    } 
+    
+    public function updatingIsActive()
+    {
+        $this->resetPage();
+    }
 
-    public function updatedIsActive(string $value)
+
+    public function updatedIsActive(?string $value)
     {
         session()->put('filiars_is_active_selected', $this->is_active);
     }

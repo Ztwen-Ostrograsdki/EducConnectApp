@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Models\Student;
+use App\Notifications\RealTimeNotification;
 use Countable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +48,74 @@ class Classe extends Model
         'locked_for_teachers' => 'array',
         'effectif_max' => 'integer',
     ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            
+            
+        });
+
+        static::created(function ($model) {
+            
+        });
+        
+        
+        static::deleting(function ($model) {
+
+            $director = User::first();
+
+            if(!$model->ensureThatClasseDoesntHaveActivesTeachersOrStudentsThisSchoolYear()){
+
+                $message = "La classe de " . $model->name . " comporte cette année au moins un enseignant ou un élève. Pour supprimer cette classe, vous devez d'abord lui retirer toutes ses élèves et enseignants !";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas supprimer cette classe!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException(
+                    $message
+                );
+
+            }
+        });
+
+        static::forceDeleting(function ($model) {
+
+            $director = User::first();
+
+            if(!$model->ensureThatClasseDoesntHaveActivesTeachersOrStudentsThisSchoolYear()){
+
+                $message = "La classe de " . $model->name . " comporte cette année au moins un enseignant ou un élève. Pour supprimer cette classe, vous devez d'abord lui retirer toutes ses élèves et enseignants !";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas supprimer cette classe!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException(
+                    $message
+                );
+            }
+        });
+
+
+    }
 
     // ─── Relations ────────────────────────────────────────────────────
 
@@ -204,6 +274,26 @@ class Classe extends Model
         }
 
         return $query->get();
+    }
+
+     public function ensureThatClasseDoesntHaveActivesTeachersOrStudentsThisSchoolYear(?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $hasTeachers = ClasseSubjectOfSchoolYear::where('classe_id', $this->id)
+                                           ->where('school_year_id', $school_year_id)
+                                           ->where('is_active', true)
+                                           ->whereNull('ended_at')->exists();
+
+        $hasStudents = Student::whereHas('yearlyClasseStudents', fn($q) =>
+                                $q->where('school_year_id', $school_year_id)
+                                ->where('classe_id', $this->id)
+                                ->whereNull('ended_at')
+                           )->exists();
+        
+
+        return $hasTeachers === false && $hasStudents === false;
+
     }
 
 

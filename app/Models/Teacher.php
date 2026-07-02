@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Jobs\JobToCreateYearlyAccessForTeacher;
 use App\Notifications\RealTimeNotification;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,6 +57,60 @@ class Teacher extends Model
         static::created(function ($model) {
             
         });
+        
+        
+        static::deleting(function ($model) {
+
+            $director = User::first();
+
+            if(!$model->ensureThatTeacherDoesntHaveClasse()){
+
+                $message = $model->getFullName() . " enseigne dans au moins une classe. Pour supprimer cet enseignant, vous devez d'abord lui retirer toutes ses classes !";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas supprimer cet enseignant!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException(
+                    $message
+                );
+
+            }
+        });
+
+        static::forceDeleting(function ($model) {
+
+            $director = User::first();
+
+            if(!$model->ensureThatTeacherDoesntHaveClasse()){
+
+                $message = $model->getFullName() . " enseigne dans au moins une classe. Pour supprimer cet enseignant, vous devez d'abord lui retirer toutes ses classes !";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas supprimer cet enseignant!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException(
+                    $message
+                );
+            }
+        });
+
+
     }
 
 
@@ -83,6 +138,23 @@ class Teacher extends Model
     public function yearlyAccesses(): HasMany
     {
         return $this->hasMany(TeacherYearlyAccess::class, 'teacher_id');
+    }
+
+    /**
+     * Get all yearly subjects where for this teacher is chief (AE).
+     */
+    public function subjectsChiefs(): HasMany
+    {
+        return $this->hasMany(YearlySubjectChief::class, 'teacher_id');
+    }
+
+
+    /**
+     * Get all yearly filiars where this teacher is chief (CA)
+     */
+    public function filiarsChiefs(): HasMany
+    {
+        return $this->hasMany(YearlyFiliarChief::class, 'teacher_id');
     }
 
     /**
@@ -172,7 +244,7 @@ class Teacher extends Model
 
         $exists = ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('subject_id', $subjectId)->where('is_active', true)->whereNull('ended_at')->exists();
 
-        return !$exists;
+        return $exists === false;
 
     }
     
@@ -183,13 +255,13 @@ class Teacher extends Model
 
         $exists = ClasseSubjectOfSchoolYear::where('teacher_id', $this->id)->where('school_year_id', $school_year_id)->where('is_active', true)->whereNull('ended_at')->exists();
 
-        return !$exists;
+        return $exists === false;
 
     }
 
     public function ensureThatTeacherHaveClasse(?int $school_year_id = null) : bool
     {
-        return !$this->ensureThatTeacherDoesntHaveClasse($school_year_id);
+        return $this->ensureThatTeacherDoesntHaveClasse($school_year_id) === true;
 
     }
 

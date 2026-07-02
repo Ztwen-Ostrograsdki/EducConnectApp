@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 
 class Promotion extends Model
@@ -76,20 +77,33 @@ class Promotion extends Model
         return $this->getPromotionStudentsOfSchoolYear($school_year_id)->count();
     }
 
-
-    public function getPromotionTeachersOfSchoolYear(?int $school_year_id = null)
+    public function getPromotionTeachersOfSchoolYear(?int $school_year_id = null, ?int $classe_id = null, ?int $filiar_id = null, ?int $subject_id = null, ?string $gender = null)
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        return  Teacher::whereNotNull('affiliated_at')->whereHas('classeSubjects', fn($q) => 
-                                $q->where('school_year_id', $school_year_id)
-                                  ->where('is_active', true)
-                                  ->whereNull('ended_at')
-                                  ->whereHas('classe', fn($qc) => 
-                                        $qc->where('promotion_id', $this->id)
-                                           ->where('is_active', true)
-                                    )
-                            )->orderBy('name', 'desc')->orderBy('prenames', 'desc');
+        return  Teacher::query()
+                        ->select('teachers.*')
+                        ->join('users', 'users.id', '=', 'teachers.user_id')
+                        ->with(['user'])
+                        ->whereNotNull('affiliated_at')
+                        ->whereHas('classeSubjects', fn($q) => 
+                            $q->where('school_year_id', $school_year_id)
+                                ->whereHas('classe', fn($qcc) => 
+                                    $qcc->where('promotion_id', $this->id)
+                                        ->where('school_year_id', $school_year_id)
+                                        ->where('is_active', true)
+                                        ->when($filiar_id, fn($q) => $q->where('filiar_id', $filiar_id)->where      ('is_active', true))
+                                )
+                                ->when($classe_id, fn($qc) => 
+                                    $qc->where('classe_id', $classe_id)
+                                )
+                                ->when($subject_id, fn($qs) => 
+                                    $qs->where('subject_id', $subject_id)
+                                )
+                                ->where('is_active', true)
+                                ->whereNull('ended_at')
+                        )
+                        ->when($gender, fn($q) => $q->whereIn('users.gender', [$gender, Str::lower($gender), Str::upper($gender)]));
     }
 
     public function getPromotionTeachersOfSchoolYearCount(?int $school_year_id = null) : int

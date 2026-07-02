@@ -200,7 +200,7 @@ class ManageTeacherSubjectsComponent extends Component
         TeacherYearlySubject::where('teacher_id', $this->teacherId)
             ->where('subject_id', $subjectId)
             ->where('school_year_id', $this->activeYear->id)
-            ->update(['is_active' => false]);
+            ->delete();
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 
