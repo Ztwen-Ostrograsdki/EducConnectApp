@@ -124,9 +124,11 @@
                 <div class="divide-y divide-slate-800">
                     @foreach ($this->teachers as $teacher)
                         @php $isSelected = $principalId === $teacher->id; @endphp
-                        <div wire:key="teacher-{{ $teacher->id }}" wire:click="togglePrincipal({{ $teacher->id }})"
+                        <div @if ($teacher->hasCurrentlyAERole() || $teacher->hasCurrentlyCARole()) title="{{ $teacher->getFullName() }} a déjà au moins un rôle de CA ou de AE" @endif
+                            @if (!$teacher->hasCurrentlyAERole() && !$teacher->hasCurrentlyCARole()) wire:key="teacher-{{ $teacher->id }}"
+                            wire:click="togglePrincipal({{ $teacher->id }})" @endif
                             class="flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-all
-                        {{ $isSelected ? 'bg-indigo-500/10' : 'hover:bg-slate-800/60' }}">
+                        {{ $isSelected ? 'bg-indigo-500/10' : 'hover:bg-slate-800/60' }} @if ($teacher->hasCurrentlyAERole() || $teacher->hasCurrentlyCARole()) opacity-50 @endif">
 
                             <div
                                 class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition
@@ -154,6 +156,18 @@
                                 <span
                                     class="shrink-0 px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs border border-indigo-500/20">
                                     ✓ Sélectionné
+                                </span>
+                            @endif
+                            @if ($teacher->hasCurrentlyAERole())
+                                <span
+                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-yellow-400 text-xs border border-yellow-300">
+                                    ✓ A déjà le rôle de AE
+                                </span>
+                            @endif
+                            @if ($teacher->hasCurrentlyCARole())
+                                <span
+                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-black text-xs border border-yellow-300">
+                                    ✓ A déjà le rôle de CA
                                 </span>
                             @endif
                         </div>

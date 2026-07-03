@@ -84,8 +84,129 @@
             </div>
         </section>
 
+        @if ($filiar->currentPrincipalCA() || $filiar->currentAjointCA())
+            <section class="my-5 border rounded-2xl p-4 border-slate-700 flex flex-col gap-3">
+                <h5 class="border-b border-slate-500 py-2 uppercase text-slate-400 font-mono text-lg">
+                    Les Chefs d'Atelier (CA) <span class="text-orange-600">{{ $this->activeYear?->slug }}</span>
+                </h5>
+
+                <div class=" grid md:grid-cols-2 grid-cols-1 gap-2 p-2">
+                    @if ($filiar->currentPrincipalCA())
+                        <div
+                            class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-green-700">
+                            <h5 class="rounded-2xl p-2 text-center bg-green-600/40 text-green-400">
+                                POSTE PRINCIPALE
+                            </h5>
+                            <div class="flex gap-4 items-center justify-start">
+                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                    <img src="{{ $filiar->currentPrincipalCA()?->user->profil_photo_url }}"
+                                        class="w-full h-full object-cover rounded-full">
+                                </div>
+                                <a wire:navigate
+                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $filiar->currentPrincipalCA()?->uuid]) }}"
+                                    class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
+                                    <h4 class="font-semibold truncate">
+                                        {{ $filiar->currentPrincipalCA()?->getFullName() ?? 'Non encore défini' }}
+                                    </h4>
+                                    <h4 class="font-semibold text-sm text-slate-600">
+                                        {{ $filiar->currentPrincipalCA()?->email }}
+                                    </h4>
+                                </a>
+
+                            </div>
+                            <div class="flex flex-col gap-2 border rounded-3xl border-slate-700 p-2">
+                                <h6 class="p-2 border-b border-slate-700 text-center uppercase text-slate-500">Classes
+                                    tenues
+                                </h6>
+                                <div class="flex gap-2 p-2">
+                                    @php
+                                        $teacher_classes1 = $filiar
+                                            ->currentPrincipalCA()
+                                            ->getTeacherClassesForThisSchoolYear([]);
+
+                                    @endphp
+                                    @if (count($teacher_classes1))
+                                        @foreach ($teacher_classes1 as $cl)
+                                            <span
+                                                class="px-6 py-3 rounded-3xl bg-slate-800 text-xs uppercase font-mono border border-sky-700">
+                                                {{ $cl?->code ?? $cl->name }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <span
+                                            class="px-2 py-1 rounded-xl text-slate-400 ls-2 italic text-xs flex justify-center flex-col">
+                                            <span>Aucune</span>
+                                            <span>classe assignée</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($filiar->currentAjointCA())
+                        <div
+                            class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-purple-700">
+                            <h5 class="rounded-2xl p-2 text-center bg-purple-600/40 text-purple-400">
+                                POSTE ADJOINT
+                            </h5>
+                            <div class="flex gap-4 items-center justify-start">
+                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                    <img src="{{ $filiar->currentAjointCA()?->user->profil_photo_url }}"
+                                        class="w-full h-full object-cover rounded-full">
+                                </div>
+                                <a wire:navigate
+                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $filiar->currentAjointCA()?->uuid]) }}"
+                                    class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
+                                    <h4 class="font-semibold truncate">
+                                        {{ $filiar->currentAjointCA()?->getFullName() ?? 'Non encore défini' }}
+                                    </h4>
+                                    <h4 class="font-semibold text-sm text-slate-600">
+                                        {{ $filiar->currentAjointCA()?->email }}
+                                    </h4>
+                                </a>
+
+                            </div>
+                            <div class="flex flex-col gap-2 border rounded-3xl border-slate-700 p-2">
+                                <h6 class="p-2 border-b border-slate-700 text-center uppercase text-slate-500">Classes
+                                    tenues
+                                </h6>
+                                <div class="flex gap-2 p-2">
+                                    @php
+                                        $teacher_classes2 = $filiar
+                                            ->currentAjointCA()
+                                            ->getTeacherClassesForThisSchoolYear([]);
+
+                                    @endphp
+                                    @if (count($teacher_classes2))
+                                        @foreach ($teacher_classes2 as $cl)
+                                            <span
+                                                class="px-6 py-3 rounded-3xl bg-slate-800 text-xs uppercase font-mono border border-sky-700">
+                                                {{ $cl?->code ?? $cl->name }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <span
+                                            class="px-2 py-1 rounded-xl text-slate-400 ls-2 italic text-xs flex justify-center flex-col">
+                                            <span>Aucune</span>
+                                            <span>classe assignée</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+            </section>
+        @endif
+
         <section class="my-4 mb-5 flex justify-end border-y border-y-slate-800 py-4">
             <div class="flex gap-3">
+                <a wire:navigate href="{{ route('tenant.filiar.edit.ca', ['filiar_slug' => $filiar->slug]) }}"
+                    class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600">
+                    Editer les postes CA
+                </a>
                 <a wire:navigate href="{{ route('tenant.classes.create') }}"
                     class="py-3 px-5 rounded-2xl bg-blue-500 hover:bg-blue-800">
                     Créer une classe
@@ -316,36 +437,142 @@
             </div>
         </section>
 
-        @livewire('tenants.filiars.filiar-teachers-list-component', ['filiar' => $filiar, 'activeYear' => $this->activeYear])
+        {{-- Remplacer les 2 @livewire(...) + la section "Élèves en Difficulté" par ce bloc --}}
 
-        @livewire('tenants.filiars.filiar-students-list-component', ['filiar' => $filiar, 'activeYear' => $this->activeYear])
+        <section class="mb-6" x-data="{ activeTab: 'teachers' }">
 
-        <section class="rounded-3xl bg-slate-900 border border-slate-800 p-5" x-data="{ open: true }">
-            <button type="button" @click="open = !open" class="w-full flex items-center justify-between text-left">
-                <h2 class="text-lg font-semibold">Élèves en Difficulté</h2>
-                <svg :class="open ? 'rotate-180' : 'rotate-0'" class="w-5 h-5 transition-transform duration-300"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
+            {{-- NAV TABS --}}
+            <div
+                class="flex flex-wrap gap-2
+                p-2 mb-6
+                rounded-2xl
+                bg-slate-900
+                border border-slate-800">
 
-            <div x-show="open" x-collapse x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0" class="mt-5 space-y-4">
-                @foreach (range(1, 5) as $weak)
-                    <div class="rounded-2xl bg-slate-950 p-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="font-medium">KOFFI Junior</h3>
-                                <p class="mt-1 text-sm text-slate-400">Terminale F2-2</p>
-                            </div>
-                            <span class="text-rose-400 font-bold">08.42</span>
+                <button @click="activeTab = 'teachers'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'teachers'
+                        ?
+                        'bg-indigo-500/15 text-indigo-400 shadow-[0_0_5px_-3px_rgba(99,102,241,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'teachers'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span :class="activeTab === 'teachers' ? 'bg-indigo-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-users class="w-4 h-4" />
+                    <span>Enseignants</span>
+                </button>
+
+                <button @click="activeTab = 'students'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'students'
+                        ?
+                        'bg-purple-500/15 text-purple-400 shadow-[0_0_5px_-3px_rgba(16,185,129,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'students'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                        <span :class="activeTab === 'students' ? 'bg-purple-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-graduation-cap class="w-4 h-4" />
+                    <span>Élèves</span>
+                </button>
+
+                <button @click="activeTab = 'weak-students'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'weak-students'
+                        ?
+                        'bg-rose-500/15 text-rose-400 shadow-[0_0_5px_-3px_rgba(244,63,94,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'weak-students'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span :class="activeTab === 'weak-students' ? 'bg-rose-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-triangle-alert class="w-4 h-4" />
+                    <span>Élèves en Difficulté</span>
+                </button>
+
+            </div>
+
+            {{-- PANELS --}}
+            <div class="relative">
+
+                {{-- ENSEIGNANTS --}}
+                <div x-show="activeTab === 'teachers'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
+                    @livewire('tenants.filiars.filiar-teachers-list-component', ['filiar' => $filiar, 'activeYear' => $this->activeYear])
+                </div>
+
+                {{-- ÉLÈVES --}}
+                <div x-show="activeTab === 'students'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
+                    @livewire('tenants.filiars.filiar-students-list-component', ['filiar' => $filiar, 'activeYear' => $this->activeYear])
+                </div>
+
+                {{-- ÉLÈVES EN DIFFICULTÉ (statique) --}}
+                <div x-show="activeTab === 'weak-students'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
+
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
+                        <div class="flex items-center gap-3">
+                            <span class="relative flex h-2.5 w-2.5 shrink-0">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-400"></span>
+                            </span>
+                            <h2 class="text-lg font-semibold text-rose-400">Élèves en Difficulté</h2>
+                        </div>
+
+                        <div class="mt-5 space-y-4">
+                            @foreach (range(1, 5) as $weak)
+                                <div class="rounded-2xl bg-slate-950 p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="font-medium">KOFFI Junior</h3>
+                                            <p class="mt-1 text-sm text-slate-400">Terminale F2-2</p>
+                                        </div>
+                                        <span class="text-rose-400 font-bold">08.42</span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
-                @endforeach
+
+                </div>
+
             </div>
+
         </section>
+
     </div>
 
 </div>

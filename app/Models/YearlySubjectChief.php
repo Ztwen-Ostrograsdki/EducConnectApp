@@ -16,11 +16,12 @@ class YearlySubjectChief extends Model
     protected $connection = 'tenant';
 
     protected $fillable = [
-        'subject_id', 'teacher_id', 'school_year_id', 'is_active'
+        'subject_id', 'teacher_id', 'school_year_id', 'is_active', 'is_master', 'order'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_master' => 'boolean',
     ];
 
 

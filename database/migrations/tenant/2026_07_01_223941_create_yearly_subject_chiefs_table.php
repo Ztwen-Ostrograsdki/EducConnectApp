@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
             $table->foreignId('school_year_id')->constrained('school_years')->cascadeOnDelete();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_master')->default(true);
+            $table->integer('order')->default(1);
             $table->unique(['teacher_id', 'school_year_id', 'subject_id'], 'ae');
             $table->timestamps();
         });

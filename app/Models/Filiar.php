@@ -59,6 +59,46 @@ class Filiar extends Model
         return $this->hasMany(YearlyFiliarChief::class, 'filiar_id');
     }
 
+
+    public function currentPrincipalCA(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return Teacher::query()
+                        ->select('teachers.*')
+                        ->join('users', 'users.id', '=', 'teachers.user_id')
+                        ->with(['user'])
+                        ->whereNotNull('affiliated_at')
+                        ->whereHas('filiarsChiefs', fn($q) => 
+                            $q->where('school_year_id', $school_year_id)
+                                ->where('filiar_id', $this->id)
+                                ->where('is_active', true)
+                                ->where('is_master', true)
+                        )->with('filiarsChiefs')->first();
+
+
+    }
+
+
+    public function currentAjointCA(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return Teacher::query()
+                        ->select('teachers.*')
+                        ->join('users', 'users.id', '=', 'teachers.user_id')
+                        ->with(['user'])
+                        ->whereNotNull('affiliated_at')
+                        ->whereHas('filiarsChiefs', fn($q) => 
+                            $q->where('school_year_id', $school_year_id)
+                                ->where('filiar_id', $this->id)
+                                ->where('is_active', true)
+                                ->where('is_master', false)
+                        )->with('filiarsChiefs')->first();
+
+
+    }
+
     public function getFiliarClassesOfSchoolYear(?int $school_year_id = null)
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;

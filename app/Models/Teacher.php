@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Jobs\JobToCreateYearlyAccessForTeacher;
+use App\Models\YearlySubjectChief;
 use App\Notifications\RealTimeNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -171,6 +172,36 @@ class Teacher extends Model
     public function principalClasses(): HasMany
     {
         return $this->hasMany(Classe::class, 'principal_id');
+    }
+
+    public function hasCurrentlyCARole(?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $exists = YearlyFiliarChief::where('school_year_id', $school_year_id)->where('teacher_id', $this->id)->exists();
+
+        return $exists === true;
+
+    }
+
+    public function hasCurrentlyPPRole(?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $exists = Classe::where('school_year_id', $school_year_id)->where('principal_id', $this->id)->exists();
+
+        return $exists === true;
+
+    }
+
+
+    public function hasCurrentlyAERole(?int $school_year_id = null) :  bool
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $exists = YearlySubjectChief::where('school_year_id', $school_year_id)->where('teacher_id', $this->id)->exists();
+
+        return $exists === true;
     }
 
 

@@ -12,11 +12,12 @@ class YearlyFiliarChief extends Model
     protected $connection = 'tenant';
 
     protected $fillable = [
-        'filiar_id', 'teacher_id', 'school_year_id', 'is_active'
+        'filiar_id', 'teacher_id', 'school_year_id', 'is_active', 'is_master', 'order'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_master' => 'boolean',
     ];
 
 

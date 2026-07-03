@@ -170,6 +170,12 @@ class Classe extends Model
         ];
     }
 
+    public function classeSubjects(): HasMany
+    {
+        return $this->hasMany(ClasseSubjectOfSchoolYear::class, 'classe_id');
+    }
+
+
     // Enseignants intervenant dans cette classe
     public function teachers(): HasMany
     {

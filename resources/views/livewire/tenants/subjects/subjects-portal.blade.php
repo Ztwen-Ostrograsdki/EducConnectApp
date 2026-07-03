@@ -28,7 +28,7 @@
                                      text-indigo-400
                                      text-xs">
 
-                        145 Matières
+                        {{ __zero(count($this->subjects)) }} Matières
 
                     </span>
 
@@ -219,7 +219,7 @@
         </div>
     </section>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto mb-40">
         <div wire:loading
             wire:target='clearFilters,is_active,type,activateSubject,activateUnactivesSubjects,restoreTrashedsSubjects,desactivateSubject,deleteSubject,forceDeleteSubject,search,previousPage,nextPage,gotoPage'
             class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
@@ -309,31 +309,20 @@
                             </td>
 
                             <td class="px-4 py-5 text-center">
-
                                 {{ __zero($subject->getSubjectTeachersOfSchoolYearCount()) }}
-
                             </td>
 
                             <td class="px-4 py-5 text-center">
-
-                                28
-
+                                {{ __zero($subject->getSubjectClassesOfSchoolYearCount()) }}
                             </td>
 
                             <td class="px-4 py-5 text-center">
-
                                 13.48
-
                             </td>
-
                             <td class="px-4 py-5 text-center">
-
                                 <span class="text-emerald-400">
-
                                     84%
-
                                 </span>
-
                             </td>
 
                             <td class="px-4 py-5 text-center">
@@ -434,14 +423,14 @@
 
             </table>
         @else
-            <div class="flex w-full itecn justify-center">
-                <div class="p-6 flex justify-center text-center">
-                    <div class="flex flex-col items-center gap-3">
+            <div class="flex w-full items-center justify-center">
+                <div class="p-6 flex justify-center text-center w-full">
+                    <div class="flex flex-col items-center gap-3 w-full">
                         <span class="text-4xl">🎯</span>
-                        <p class="text-slate-500 text-sm">Aucune matière trouvée </p>
-                        @if ($search || $type)
+                        <p class="text-slate-500 text-sm w-full">Aucune matière trouvée </p>
+                        @if ($search || $type || $is_active)
                             <button wire:click="clearFilters"
-                                class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+                                class="mt-2 px-6 py-4 rounded-xl flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-sm transition">
                                 Réinitialiser les filtres
                             </button>
                         @endif

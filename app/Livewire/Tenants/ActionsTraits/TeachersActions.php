@@ -9,7 +9,9 @@ use App\Jobs\JobBulkerActionsOnModels;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\Classe;
 use App\Models\SchoolYear;
+use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\TeacherYearlySubject;
 use App\Models\User;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -700,6 +702,83 @@ trait TeachersActions{
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+
+    public function retrieveSubject(int $teacherId, int $subjectId): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Retirer la matière au prof ?',
+            'text'               => 'Cette action est irréversible.',
+            'icon'               => 'error',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, retirer.',
+            'cancelButtonText'   => 'Annuler',
+            'onConfirmed'        => 'ConfirmToRetrieveTeacherSubject',
+            'onConfirmedParams'  => ['teacherId' => $teacherId, 'subjectId' => $subjectId],
+        ]);
+    }
+
+
+    #[On("ConfirmToRetrieveTeacherSubject")]
+    public function onConfirmToRetrieveTeacherSubject(int $teacherId, int $subjectId)
+    {
+        $school_year = SchoolYear::current()->first();
+
+        if(!$school_year){
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur processus',
+                'description' => "La reqûete ne peut aboutir car aucune année scolaire n'est active",
+            ]);
+             return;
+
+        } 
+
+
+        $subject = Subject::find($subjectId);
+
+        $teacher = Teacher::find($teacherId);
+
+        if(!$subject || !$teacher){
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur processus',
+                'description' => "La reqûete ne peut aboutir car la matière ou l'enseignant est introuvable",
+            ]);
+             return;
+        }
+
+        if(!$teacher->ensureThatTeacherDoesntHaveClasseWithThisSubject($subjectId)){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'timeout' => 0,
+                'title'       => "Vous ne pouvez pas retirer cette matière!",
+                'description' => $teacher->getFullName() . " enseigne cette matière « {$subject->name} » dans au moins une classe. Pour lui retirer cette matière, vous devez d'abord lui retirer cette ou ces classe(s) concernée(s)!",
+            ]);
+
+
+            return;
+
+        }
+
+        TeacherYearlySubject::where('teacher_id', $teacherId)
+            ->where('subject_id', $subjectId)
+            ->where('school_year_id', $school_year->id)
+            ->delete();
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->warning(
+            title: 'Matière retirée',
+            description: "« {$subject->name} » a été retirée du prof.",
+        );
+
+
+
     }
 
 

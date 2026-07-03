@@ -7,6 +7,7 @@ use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Student;
+use App\Models\Teacher;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -139,6 +140,27 @@ class ManageClasseYearlyResponsiblesComponent extends Component
                 title: 'Erreur',
                 description: 'Les deux responsables doivent être des apprenants différents.',
             );
+            return;
+        }
+
+        $teacher = Teacher::find($this->principalId);
+
+        if(!$teacher){
+
+            $this->notification()->error(
+                title: 'Erreur',
+                description: "Enseigant introuvable!",
+            );
+            return;
+        }
+
+        if($teacher->hasCurrentlyAERole() || $teacher->hasCurrentlyCARole()){
+
+            $this->notification()->error(
+                title: 'ERREUR CUMULE DE POSTE',
+                description: "L'enseignant " . $teacher->getFullName() . " a déjà un poste de CA ou de AE!",
+            );
+
             return;
         }
 

@@ -1,15 +1,15 @@
 <section class="mb-6 p-2 relative" x-data="{ open: true }">
     <div wire:loading
         wire:target='teachers_classe_id,teachers_gender,teachers_subject_id,teachers_promotion_id,previousPage,nextPage,resetFilters,resetTeachersFilters, gotoPage'
-        class="absolute inset-0 flex items-center justify-center rounded-[32px] bg-slate-800/20 backdrop-blur-sm"
+        class="absolute inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-sm"
         style="z-index: 200 !important;">
 
-        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-row">
+        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col">
             <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
-            <span class="text-2xl font-mono ls-1">Chargement en cours...</span>
+            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
         </div>
     </div>
     <div class="rounded-tl-2xl rounded-tr-2xl bg-indigo-900/10 border border-indigo-900 overflow-hidden">
@@ -388,24 +388,28 @@
 
                         </table>
                     @else
-                        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-16 text-center">
-                            <div class="text-4xl mb-4">
-                                <x-lucide-user class="w-4 h-4" />
-                            </div>
-                            <p class="text-slate-400 text-sm">Aucun enseigant trouvé</p>
-                            <button wire:click="resetTeachersFilters"
-                                class="mt-4 px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sm transition">
-                                <span wire:loading.remove wire:target='resetTeachersFilters'>Réinitialiser
-                                    les
-                                    filtres</span>
-                                <span wire:loading wire:target='resetTeachersFilters'
-                                    class="inline-flex justify-center gap-3.5 items-center">
-                                    <span class="inline-flex justify-center gap-3.5 items-center">
-                                        <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
-                                        <span>En cours...</span>
-                                    </span>
+                        <div class="rounded-3xl p-16 text-center">
+                            <p class="text-slate-400 text-sm flex-col flex gap-2.5 items-center justify-center">
+                                <span class="text-4xl">
+                                    <x-lucide-user-star class="w-6 h-6" />
                                 </span>
-                            </button>
+                                <span>Aucun enseigant trouvé</span>
+                            </p>
+                            @if ($teachers_gender || $teachers_classe_id || $teachers_promotion_id)
+                                <button wire:click="resetTeachersFilters"
+                                    class="mt-4 px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+                                    <span wire:loading.remove wire:target='resetTeachersFilters'>Réinitialiser
+                                        les
+                                        filtres</span>
+                                    <span wire:loading wire:target='resetTeachersFilters'
+                                        class="inline-flex justify-center gap-3.5 items-center">
+                                        <span class="inline-flex justify-center gap-3.5 items-center">
+                                            <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                            <span>En cours...</span>
+                                        </span>
+                                    </span>
+                                </button>
+                            @endif
                         </div>
 
                     @endif

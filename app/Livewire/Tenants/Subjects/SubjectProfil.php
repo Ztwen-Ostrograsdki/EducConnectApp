@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Tenants\Subjects;
 
+use App\Livewire\Tenants\ActionsTraits\SubjectsActions;
+use App\Models\SchoolYear;
 use App\Models\Subject;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -13,7 +16,7 @@ use WireUi\Traits\WireUiActions;
 #[Title("Profil de matière")]
 class SubjectProfil extends Component
 {
-    use WireUiActions;
+    use WireUiActions, SubjectsActions;
 
     public Subject $subject;
 
@@ -40,6 +43,12 @@ class SubjectProfil extends Component
     public function onYearChanged(string $schoolYear)
     {
         $this->school_year_selected = $schoolYear;
+    }
+
+    #[Computed]
+    public function activeYear(): ?SchoolYear
+    {
+        return SchoolYear::current()->first();
     }
 
     public function render()

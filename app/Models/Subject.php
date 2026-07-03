@@ -199,6 +199,46 @@ class Subject extends Model
     }
 
 
+    public function currentPrincipalAE(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return Teacher::query()
+                        ->select('teachers.*')
+                        ->join('users', 'users.id', '=', 'teachers.user_id')
+                        ->with(['user'])
+                        ->whereNotNull('affiliated_at')
+                        ->whereHas('subjectsChiefs', fn($q) => 
+                            $q->where('school_year_id', $school_year_id)
+                                ->where('subject_id', $this->id)
+                                ->where('is_active', true)
+                                ->where('is_master', true)
+                        )->with('subjectsChiefs')->first();
+
+
+    }
+
+
+    public function currentAdjointAE(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return Teacher::query()
+                        ->select('teachers.*')
+                        ->join('users', 'users.id', '=', 'teachers.user_id')
+                        ->with(['user'])
+                        ->whereNotNull('affiliated_at')
+                        ->whereHas('subjectsChiefs', fn($q) => 
+                            $q->where('school_year_id', $school_year_id)
+                                ->where('subject_id', $this->id)
+                                ->where('is_active', true)
+                                ->where('is_master', false)
+                        )->with('subjectsChiefs')->first();
+
+
+    }
+
+
     public function getSubjectTeachersOfSchoolYearCount(?int $school_year_id = null, ?int $classe_id = null, ?int $filiar_id = null, ?int $promotion_id = null, ?string $gender = null) : int
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
@@ -207,29 +247,26 @@ class Subject extends Model
     }
 
 
-    public function getSubjectClassesOfSchoolYear(?int $school_year_id = null, ?int $filiar_id = null, ?int $promotion_id = null, ?string $gender = null) : ?Builder
+    public function getSubjectClassesOfSchoolYear(?int $school_year_id = null, ?int $filiar_id = null, ?int $promotion_id = null) : ?Builder
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        return  Teacher::query()
-                        ->select('teachers.*')
-                        ->join('users', 'users.id', '=', 'teachers.user_id')
-                        ->with(['user'])
-                        ->whereNotNull('affiliated_at')
-                        ->whereHas('yearlySubjects', fn($q) => 
+        return  Classe::where('is_active', true)->where('school_year_id', $school_year_id)
+                        ->whereHas('classeSubjects', fn($q) => 
                             $q->where('school_year_id', $school_year_id)
                                 ->where('subject_id', $this->id)
                                 ->where('is_active', true)
                         )
-                        ->when($gender, fn($q) => $q->whereIn('users.gender', [$gender, Str::lower($gender), Str::upper($gender)]));
+                        ->when($filiar_id, fn($q) => $q->where('filiar_id', $filiar_id))
+                        ->when($promotion_id, fn($q) => $q->where('promotion_id', $promotion_id));
     }
 
 
-    public function getSubjectClassesOfSchoolYearCount(?int $school_year_id = null, ?int $filiar_id = null, ?int $promotion_id = null, ?string $gender = null) : int
+    public function getSubjectClassesOfSchoolYearCount(?int $school_year_id = null, ?int $filiar_id = null, ?int $promotion_id = null) : int
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        return  $this->getSubjectTeachersOfSchoolYear($school_year_id, $filiar_id, $promotion_id, $gender)->count();
+        return  $this->getSubjectClassesOfSchoolYear($school_year_id, $filiar_id, $promotion_id)->count();
     }
 
 

@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Exceptions\CouldNotDeletedDirectorException;
 use App\Helpers\Support\TenantStorage;
+use App\Notifications\RealTimeNotification;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -101,6 +104,59 @@ class User extends Authenticatable
                 'birth_place' => normalizeString($model->birth_place) ?? null
             ]);
             
+        });
+
+
+        static::deleting(function ($model) {
+
+            $director = User::first();
+
+            if($model->hasRole('director')){
+
+                $message = "Vous ne pouvez pas supprimer cet utilisateur";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas exécuter une telle action sur cet utilisateur!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new CouldNotDeletedDirectorException(
+                    $message
+                );
+
+            }
+        });
+
+        static::forceDeleting(function ($model) {
+
+            $director = User::first();
+
+            if($model->hasRole('director')){
+
+                $message = "Vous ne pouvez pas supprimer cet utilisateur";
+
+                if($director){
+
+                    $director->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Vous ne pouvez pas exécuter une telle action sur cet utilisateur!",
+                        message:           $message,
+                        type:              'error',
+                    ));
+                }
+
+                throw new CouldNotDeletedDirectorException(
+                    $message
+                );
+
+            }
         });
     }
 
