@@ -9,6 +9,7 @@ use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\TeacherYearlyAccess;
+use App\Services\DashboardCounterService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -106,6 +107,16 @@ trait ClassesActions{
                                ->distinct('promotion_id')
                                ->count('promotion_id'),
         ];
+    }
+
+    #[Computed]
+    public function counters(): array
+    {
+        return app(DashboardCounterService::class)->getMany([
+            'students_total',
+            'teachers_total',
+            'classes_active',
+        ]);
     }
 
 

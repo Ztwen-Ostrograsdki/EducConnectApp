@@ -125,7 +125,7 @@ class CreatePromotionComponent extends Component
                 'uuid'      => (string) Str::uuid(),
                 'slug'      => $slug,
                 'name'      => $this->name,
-                'code'      => $this->code ?? $slug,
+                'code'      => $this->code ? trim(trim($this->code, '-')) : $slug,
                 'level'     => $this->level,
                 'order'     => $this->order,
                 'is_active' => $this->is_active,

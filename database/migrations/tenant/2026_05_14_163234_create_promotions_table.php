@@ -27,7 +27,6 @@ return new class extends Migration
             $table->foreignId('serial_id')->nullable()->constrained('serials')->nullOnDelete();
             $table->softDeletes();
 
-            $table->unique('name');
             $table->index(['level', 'is_active']);
         });
         Schema::enableForeignKeyConstraints();

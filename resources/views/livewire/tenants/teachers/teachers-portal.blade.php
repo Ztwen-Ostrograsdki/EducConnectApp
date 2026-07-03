@@ -115,7 +115,8 @@
                     <div class="grid grid-cols-7 gap-x-3">
                         <div class="relative col-span-5">
 
-                            <input wire:model.live='search' type="text" placeholder="Rechercher un enseignant..."
+                            <input wire:model.live.debounce.400ms='search' type="text"
+                                placeholder="Rechercher un enseignant..."
                                 class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
                             <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
                                 🔍
@@ -357,20 +358,20 @@
 
                     </div>
 
-                    <div class="overflow-x-auto relative">
+                    <div class="overflow-x-auto">
                         <div wire:loading
                             wire:target='gender,status,department,city,restoreTeachers,unlockTeachers,giveAccessesToTeachersForThisSchoolYear,lockTeachers,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,search,previousPage,nextPage,gotoPage'
-                            class="absolute inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
+                            class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
                             style="z-index: 200 !important;">
 
                             <div
-                                class="items-center gap-1 text-slate-400 relative top-1/7 mx-auto flex justify-center flex-row">
+                                class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
                                 <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4" />
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                                 </svg>
-                                <span class="text-2xl font-mono ls-1">Chargement en cours...</span>
+                                <span class="text-xl font-mono ls-1">Chargement en cours...</span>
                             </div>
                         </div>
                         @if (count($teachers))
@@ -689,7 +690,7 @@
 
                     {{-- PAGINATION --}}
                     @if ($teachers->hasPages())
-                        <section class="py-6">
+                        <section class="py-6 p-2">
                             <div class="flex justify-center bg-slate-900 p-4">
                                 <div class="flex flex-col items-center gap-4">
                                     <div class="text-sm text-slate-400">

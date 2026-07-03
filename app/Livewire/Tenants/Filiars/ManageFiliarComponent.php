@@ -69,7 +69,7 @@ class ManageFiliarComponent extends Component
             $done = $this->filiar->update([
                 'slug'        => Str::slug($this->name),
                 'name'        => $this->name,
-                'code'        => $this->code ?: null,
+                'code'        => $this->code ? trim(trim($this->code, '-')) : Str::slug($this->name),
                 'description' => $this->description ?: null,
                 'is_active'   => $this->is_active,
             ]);

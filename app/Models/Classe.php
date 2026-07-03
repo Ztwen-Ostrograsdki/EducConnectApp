@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Models\Student;
 use App\Notifications\RealTimeNotification;
+use App\Traits\InvalidatesDashboardCounters;
 use Countable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Support\Str;
 
 class Classe extends Model
 {
-    use SoftDeletes;
+    use InvalidatesDashboardCounters, SoftDeletes;
 
     protected $table = 'classes';
 

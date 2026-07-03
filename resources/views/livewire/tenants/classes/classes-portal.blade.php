@@ -39,9 +39,8 @@
             </div>
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
+        {{-- {{ dd($this->counters) }} --}}
+
         <section class="p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
                 <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
@@ -150,12 +149,8 @@
             </div>
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- CLASSES GRID --}}
-        {{-- ===================================================== --}}
         <section class="p-4 sm:p-6 lg:p-8">
 
-            {{-- Loading overlay --}}
             <div wire:loading.flex class="mb-4 items-center gap-2 text-sm text-slate-400">
                 <svg class="animate-spin w-4 h-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24">

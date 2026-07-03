@@ -20,11 +20,12 @@
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">
                     Année scolaire <span class="text-rose-400">*</span>
                 </label>
-                <select wire:model.live="school_year_id"
-                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-300 focus:border-indigo-500 focus:outline-none transition">
+                <select disabled @disabled(true) wire:model.live="school_year_id"
+                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-slate-300 focus:border-indigo-500 focus:outline-none transition opacity-30">
                     <option value="0" disabled>Sélectionner une année</option>
                     @foreach ($this->schoolYears as $year)
-                        <option class="font-mono text-slate-300" value="{{ $year->id }}">
+                        <option @selected($year->is_active) class="font-mono text-slate-300"
+                            value="{{ $year->id }}">
                             {{ $year->slug }}{{ $year->is_active ? ' (active)' : '' }}
                         </option>
                     @endforeach

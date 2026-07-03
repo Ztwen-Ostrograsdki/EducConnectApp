@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
+use App\Jobs\JobBulkerActionsOnModels;
 use App\Models\Classe;
 use App\Models\Student;
 use App\Models\YearlyClasseStudent;
@@ -12,25 +13,10 @@ use WireUi\Traits\WireUiActions;
 
 trait StudentsActions{
 
-
 	use WithPagination, WireUiActions;
-    
-    public string $search = '';
-
-    public string $city = '';
-
-    public $counter = 3;
-
-    public string $gender = '';
-
-    public string $department = '';
-
-    public ?string $status = null;
-
-    public int $perPage = 12;
 
     public ?Classe $classe;
-
+    
     public function markStudentAsLeaved(int $studentId): void
     {
         $this->dispatch('swal', [
@@ -178,6 +164,133 @@ trait StudentsActions{
             description: "{$student->name} {$student->prenames} a été envoyé à la corbeille.",
         );
     }
+    
+    
+    public function activateStudent(?int $studentId = null): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Réactiver cet apprenant ?',
+            'text'               => 'L\'apprenant sera à nouveau actif.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Réactiver',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToActivateStudent',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ConfirmToActivateStudent')]
+    public function onConfirmToActivateStudent(?int $studentId = null): void
+    {
+        $student = Student::findOrFail($studentId);
+
+        $student->update(['is_active' => true]);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: 'Apprenant réactivé',
+            description: "L'apprenant {$student->name} {$student->prenames} a été réactivé.",
+        );
+    }
+
+
+    public function desactivateStudent(?int $studentId = null): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Désactiver cet apprenant ?',
+            'text'               => 'L\'apprenant ne sera plus accessible dans les classes.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Désactiver',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToDesactivateStudent',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ConfirmToDesactivateStudent')]
+    public function onConfirmToDesactivateStudent(?int $studentId = null): void
+    {
+        $student = Student::findOrFail($studentId);
+
+        $student->update(['is_active' => false]);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: 'Apprenant réactivé',
+            description: "L'apprenant {$student->name} {$student->prenames} a été réactivé.",
+        );
+    }
+    
+    
+    public function restoreStudent(?int $studentId = null): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Restorer cet apprenant ?',
+            'text'               => 'L\'apprenant sera retiré de la corbeille.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, Restorer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToRestoreStudent',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ConfirmToRestoreStudent')]
+    public function onConfirmToRestoreStudent(?int $studentId = null): void
+    {
+        $student = Student::findOrFail($studentId);
+
+        $student->restore();
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: 'Apprenant restoré',
+            description: "L'apprenant {$student->getFullName()} a été restoré de la corbeille.",
+        );
+    }
+    
+    
+    public function forceDeleteStudent(?int $studentId = null): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Supprimer définitivement cet apprenant ?',
+            'text'               => 'L\'apprenant sera définitivement supprimé.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToForceDeleteStudent',
+            'onConfirmedParams'  => ['studentId' => $studentId],
+        ]);
+    }
+
+    #[On('ConfirmToForceDeleteStudent')]
+    public function onConfirmToForceDeleteStudent(?int $studentId = null): void
+    {
+        $student = Student::findOrFail($studentId);
+        // $student->delete();
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: 'Apprenant supprimé',
+            description: "{$student->name} {$student->prenames} a été supprimé définitivement.",
+        );
+    }
 
     // ─── Bloquer / Débloquer ──────────────────────────────────────────
 
@@ -281,6 +394,81 @@ trait StudentsActions{
             title: 'Apprenant retiré',
             description: "{$student?->name} {$student?->prenames} a été retiré de la classe.",
         );
+    }
+
+
+    public function restoreStudents(): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Restorer tous les apprenants ?',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, restaurer tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#a855f7',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmStudentsRestoration',
+        ]);
+    }
+
+    #[On('ConfirmStudentsRestoration')]
+    public function OnConfirmStudentsRestoration(): void
+    {
+        $ids = Student::onlyTrashed()->take(50)->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'restore',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: "RESTORATION EN MASSE DES APPRENANTS DE LA CORBEILLE"
+        );
+
+        $this->notification()->success(
+            title: 'Apprenants restorés',
+            description: 'Tous les Apprenants ont été restorés.',
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function reactivateStudents(): void
+    {
+        $this->dispatch('swal', [
+            'title'              => 'Réactiver tous les apprenants ?',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, réactiver tous',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#a855f7',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmStudentsReactivation',
+        ]);
+    }
+
+    #[On('ConfirmStudentsReactivation')]
+    public function OnConfirmStudentsReactivation(): void
+    {
+        $ids = Student::withoutTrashed()->where('is_active', false)->take(50)->pluck('id')->toArray();
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'update',
+            options: ['is_active' => true],
+            withTrashedDeleted: false,
+            taskTitle: "REACTIVATION EN MASSE DES APPRENANTS"
+        );
+
+        $this->notification()->success(
+            title: 'Apprenants réactivés',
+            description: 'Tous les Apprenants ont été réactivés.',
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
 

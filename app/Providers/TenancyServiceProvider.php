@@ -157,7 +157,7 @@ class TenancyServiceProvider extends ServiceProvider
         /// @intelephense-ignore-next-line
         foreach (array_reverse($tenancyMiddleware) as $middleware) {
             // @intelephense-ignore-next-line
-            $this->app[Kernel::class]
+            $this->app[Kernel::class] 
                 ->prependToMiddlewarePriority($middleware);
         }
     }

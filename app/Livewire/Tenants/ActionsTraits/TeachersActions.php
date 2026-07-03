@@ -376,11 +376,11 @@ trait TeachersActions{
     public function restoreTeacher(int $teacherId): void
     {
         $this->dispatch('swal', [
-            'title'              => 'Restaurer cet enseignant ?',
+            'title'              => 'Restorer cet enseignant ?',
             'text'               => 'L\'enseignant retrouvera accès à son espace.',
             'icon'               => 'question',
             'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, restaurer',
+            'confirmButtonText'  => 'Oui, restorer',
             'cancelButtonText'   => 'Annuler',
             'confirmButtonColor' => '#a855f7',
             'cancelButtonColor'  => '#475569',
@@ -550,10 +550,10 @@ trait TeachersActions{
     public function restoreTeachers(): void
     {
         $this->dispatch('swal', [
-            'title'              => 'Restaurer tous les enseignants ?',
+            'title'              => 'Restorer tous les enseignants ?',
             'icon'               => 'question',
             'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, restaurer tous',
+            'confirmButtonText'  => 'Oui, restorer tous',
             'cancelButtonText'   => 'Annuler',
             'confirmButtonColor' => '#a855f7',
             'cancelButtonColor'  => '#475569',
@@ -577,8 +577,8 @@ trait TeachersActions{
         );
 
         $this->notification()->success(
-            title: 'Enseignants restaurés',
-            description: 'Tous les enseignants ont été restaurés.',
+            title: 'Enseignants restorés',
+            description: 'Tous les enseignants ont été restorés.',
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -611,13 +611,16 @@ trait TeachersActions{
                 'title'       => 'Erreur processus',
                 'description' => "La reqûete ne peut aboutir car aucune année scolaire n'est active",
             ]);
-             return;
+            
+            return;
 
         } 
 
         $ids = Teacher::onlyTrashed()
                         ->whereDoesntHave('classeSubjects', fn($q) => 
                             $q->where('school_year_id', $school_year->id)
+                              ->where('is_active', true)
+                              ->whereNull('ended_at')
                         ) 
                         ->pluck('id')
                         ->toArray();

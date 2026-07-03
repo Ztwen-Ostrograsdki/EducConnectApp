@@ -10,6 +10,7 @@ use App\Models\YearlyClasseStudent;
 use App\Services\StudentMigrationSession;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -22,6 +23,8 @@ use WireUi\Traits\WireUiActions;
 class MigrateStudentsToClassesComponent extends Component
 {
     use WithFileUploads, WithPagination, WireUiActions;
+
+    public $counter = 0;
 
     // ─── Mode ─────────────────────────────────────────────────────────
     public string $mode = 'manual';
@@ -49,7 +52,12 @@ class MigrateStudentsToClassesComponent extends Component
     public bool   $migrating    = false;
 
     // ─── Lifecycle ────────────────────────────────────────────────────
-
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+    
     public function mount(?string $classe_slug = null): void
     {
         $draft = StudentMigrationSession::get();
@@ -493,11 +501,20 @@ class MigrateStudentsToClassesComponent extends Component
                 ->when($this->browseSearch, fn($q) =>
                     $q->where(fn($q) =>
                         $q->where('name', 'like', '%'.$this->browseSearch.'%')
+                          ->whereDoesntHave('classes', function ($query) {
+                                    $query->where('school_year_id', $this->activeYear->id)
+                            ->where('is_active', true);
+                          })
                           ->orWhere('prenames', 'like', '%'.$this->browseSearch.'%')
                           ->orWhere('matricule', 'like', '%'.$this->browseSearch.'%')
                     )
                 )
+                ->whereDoesntHave('classes', function ($query) {
+                        $query->where('school_year_id', $this->activeYear->id)
+                ->where('is_active', true);
+                })
                 ->orderBy('name')
+                ->orderBy('prenames')
                 ->paginate(50);
         }
 

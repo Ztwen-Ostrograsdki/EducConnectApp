@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\DataUpdatedEvent;
 use App\Helpers\Support\TenantStorage;
 use App\Models\SchoolYear;
 use App\Models\User;
@@ -63,6 +64,14 @@ class Student extends Model
 
         static::created(function ($model) {
 
+            $director = User::first();
+
+            if($director){
+
+                broadcast(new DataUpdatedEvent($director->tenant_id));
+
+            }
+
             if($model->gender){
                 if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
 
@@ -114,7 +123,19 @@ class Student extends Model
 
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        return $this->yearlyClasseStudents()->where('school_year_id', $school_year_id)->where('status', 'active')->where('classe_id', $classe_id)?->first();
+        return $this->yearlyClasseStudents()->where('school_year_id', $school_year_id)->where('is_active', true)->where('classe_id', $classe_id)?->first();
+    }
+
+
+    public function currentClasse(?int $school_year_id = null)
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        return YearlyClasseStudent::with('classe')
+                                  ->where('student_id', $this->id)
+                                  ->where('school_year_id', $school_year_id)
+                                  ->where('is_active', true)
+                                  ->first();
     }
 
 

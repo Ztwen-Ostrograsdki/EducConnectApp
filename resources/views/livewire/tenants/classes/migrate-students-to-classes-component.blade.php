@@ -1,9 +1,5 @@
 <div class="min-h-screen bg-slate-950 text-slate-100">
     <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- HEADER --}}
-        {{-- ═══════════════════════════════════════════ --}}
         <div class="flex items-start justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold">Migration des apprenants
@@ -36,15 +32,11 @@
                                 stroke-width="4" />
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                         </svg>
-                        Vidage...
+                        Nettoyage...
                     </span>
                 </button>
             @endif
         </div>
-
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- SÉLECTION CLASSE --}}
-        {{-- ═══════════════════════════════════════════ --}}
         <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
             <label class="block text-xs font-medium text-slate-400 mb-2">
                 Classe de destination <span class="text-rose-400">*</span>
@@ -76,9 +68,6 @@
             @endif
         </div>
 
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- SWITCHER MODE --}}
-        {{-- ═══════════════════════════════════════════ --}}
         <div class="flex gap-2 p-1 rounded-2xl bg-slate-900 border border-slate-800">
             @foreach (['manual' => '✏️ Saisie manuelle', 'excel' => '📊 Import Excel', 'browse' => '☑️ Sélection liste'] as $m => $label)
                 <button wire:click="$set('mode', '{{ $m }}')"
@@ -117,7 +106,6 @@
                         <button wire:click="loadManual" wire:loading.attr="disabled" wire:target="loadManual"
                             class="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-medium transition disabled:opacity-60">
 
-                            {{-- Overlay de loading --}}
                             <span wire:loading wire:target="loadManual"
                                 class="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-indigo-700">
                                 <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -140,7 +128,6 @@
             @if ($mode === 'excel')
                 <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-5">
 
-                    {{-- Info colonnes attendues --}}
                     <div
                         class="rounded-xl bg-slate-800/60 border border-slate-700 px-4 py-3 text-xs text-slate-400 space-y-1">
                         <p class="font-medium text-slate-300">En-têtes acceptées :</p>
@@ -153,18 +140,15 @@
                             colonnes simultanément</p>
                     </div>
 
-                    {{-- Zone upload --}}
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-2">
                             Fichier Excel <span class="text-slate-500">(.xlsx, .xls — max 5 Mo)</span>
                         </label>
 
-                        {{-- Drop zone --}}
                         <label for="excel-upload"
                             class="relative flex flex-col items-center justify-center gap-3 w-full rounded-2xl border-2 border-dashed border-slate-700 bg-slate-800/40
                         hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all cursor-pointer p-8 group">
 
-                            {{-- Spinner pendant l'upload --}}
                             <div wire:loading wire:target="excelFile"
                                 class="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-slate-900/80 backdrop-blur-sm z-10">
                                 <svg class="animate-spin w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24">
@@ -205,7 +189,6 @@
                         @enderror
                     </div>
 
-                    {{-- Colonne détectée --}}
                     @if ($detectedColumn)
                         <div class="flex items-center gap-2 text-xs">
                             <span class="text-slate-500">Colonne détectée :</span>
@@ -217,7 +200,6 @@
                         </div>
                     @endif
 
-                    {{-- Erreurs d'import --}}
                     @if (!empty($importErrors))
                         <div class="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
                             <p class="text-xs font-medium text-amber-400 mb-2">
@@ -239,14 +221,12 @@
             @if ($mode === 'browse')
                 <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
 
-                    {{-- Search --}}
                     <div class="relative">
                         <input type="text" wire:model.live.debounce.300ms="browseSearch"
                             placeholder="Rechercher par nom, prénom ou matricule..."
                             class="w-full h-11 rounded-xl border border-slate-700 bg-slate-800 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">🔍</span>
 
-                        {{-- Spinner search --}}
                         <div wire:loading wire:target="browseSearch"
                             class="absolute right-3.5 top-1/2 -translate-y-1/2">
                             <svg class="animate-spin w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24">
@@ -259,7 +239,6 @@
 
                     @if ($browseStudents)
 
-                        {{-- Compteur sélection --}}
                         @if (count($draftStudents) > 0)
                             <div class="flex items-center justify-between text-xs text-slate-500">
                                 <span>{{ $browseStudents->total() }} apprenant(s) · Page
@@ -269,7 +248,6 @@
                             </div>
                         @endif
 
-                        {{-- Liste --}}
                         <div class="space-y-1 max-h-[500px] overflow-y-auto pr-1" wire:loading.class="opacity-50"
                             wire:target="browseSearch, previousPage, nextPage, gotoPage">
                             @forelse ($browseStudents as $student)
@@ -280,10 +258,8 @@
                                     wire:click="toggleStudent({{ $student->id }})"
                                     wire:loading.class="pointer-events-none opacity-60"
                                     wire:target="toggleStudent({{ $student->id }})"
-                                    class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all select-none
-                        {{ $inDraft ? 'bg-indigo-500/10 border border-indigo-500/30' : 'bg-slate-800 border border-transparent hover:border-slate-700' }}">
+                                    class="group flex items-center gap-3 px-4 py-1 rounded-xl cursor-pointer transition-all select-none {{ $inDraft ? 'bg-indigo-500/10 border border-indigo-500/30' : 'bg-slate-800 border border-transparent hover:border-slate-700' }} hover:bg-sky-600/80 hover:text-black hover:border-white">
 
-                                    {{-- Spinner sur l'item cliqué --}}
                                     <div wire:loading wire:target="toggleStudent({{ $student->id }})"
                                         class="w-5 h-5 flex items-center justify-center shrink-0">
                                         <svg class="animate-spin w-4 h-4 text-indigo-400" fill="none"
@@ -294,25 +270,22 @@
                                         </svg>
                                     </div>
 
-                                    {{-- Checkbox visuelle --}}
                                     <div wire:loading.remove wire:target="toggleStudent({{ $student->id }})"
-                                        class="w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition
-                            {{ $inDraft ? 'bg-indigo-600 border-indigo-600' : 'border-slate-600' }}">
+                                        class="w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition {{ $inDraft ? 'bg-indigo-600 border-indigo-600' : 'border-slate-600' }} group-hover:bg-white">
                                         @if ($inDraft)
-                                            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
+                                            <svg class="w-3 h-3 text-white group-hover:text-green-900" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                                     d="M5 13l4 4L19 7" />
                                             </svg>
                                         @endif
                                     </div>
 
-                                    {{-- Infos apprenant --}}
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-white truncate">
+                                        <p class="text-sm font-medium truncate">
                                             {{ $student->name }} {{ $student->prenames }}
                                         </p>
-                                        <p class="text-xs text-slate-500 font-mono">
+                                        <p class="text-xs text-slate-500 font-mono group-hover:text-sky-950">
                                             {{ $student->matricule }}
                                             @if ($student->educMaster)
                                                 · {{ $student->educMaster }}
@@ -320,7 +293,6 @@
                                         </p>
                                     </div>
 
-                                    {{-- Badge conflit --}}
                                     @if ($inDraft && $draftEntry && $draftEntry['conflict'])
                                         <span
                                             class="text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 shrink-0">
@@ -335,7 +307,6 @@
                             @endforelse
                         </div>
 
-                        {{-- Pagination browse --}}
                         @if ($browseStudents->hasPages())
                             <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-4">
                                 <span class="text-xs text-slate-500">
@@ -343,13 +314,24 @@
                                     {{ $browseStudents->total() }}
                                 </span>
                                 <div class="flex items-center gap-2">
-                                    @if (!$browseStudents->onFirstPage())
-                                        <button wire:click="previousPage" wire:loading.attr="disabled"
-                                            wire:target="previousPage"
-                                            class="h-8 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs transition disabled:opacity-50">
-                                            ← Préc.
-                                        </button>
-                                    @endif
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        @if (!$browseStudents->onFirstPage())
+                                            <button wire:click="previousPage" wire:loading.attr="disabled"
+                                                wire:target="previousPage"
+                                                class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                Précédent
+                                            </button>
+                                        @endif
+
+                                        @foreach ($browseStudents->getUrlRange(1, $browseStudents->lastPage()) as $page => $url)
+                                            <button @disabled($page === $browseStudents->currentPage())
+                                                wire:click="gotoPage({{ $page }})"
+                                                class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $browseStudents->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                {{ $page }}
+                                            </button>
+                                        @endforeach
+
+                                    </div>
 
                                     <span class="text-xs text-slate-400 px-2">
                                         Page {{ $browseStudents->currentPage() }} / {{ $browseStudents->lastPage() }}
@@ -374,9 +356,6 @@
                 sélectionner la classe de destination!</h5>
         @endif
 
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- ERREUR GLOBALE --}}
-        {{-- ═══════════════════════════════════════════ --}}
         @if ($errorMessage)
             <div
                 class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 flex items-center gap-3 text-sm text-rose-400">
@@ -389,7 +368,6 @@
             </div>
         @endif
 
-        {{-- Identifiants non trouvés --}}
         @if (!empty($notFoundIds))
             <div class="rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-400">
                 <p class="font-medium mb-1">{{ count($notFoundIds) }} identifiant(s) non trouvé(s) :</p>
@@ -397,13 +375,9 @@
             </div>
         @endif
 
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- LISTE DE TRAVAIL (DRAFT) --}}
-        {{-- ═══════════════════════════════════════════ --}}
         @if (!empty($draftStudents))
             <div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
 
-                {{-- Header --}}
                 <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3 flex-wrap">
                         <h3 class="font-semibold text-sm text-white">Apprenants sélectionnés</h3>
@@ -439,14 +413,12 @@
                             class="flex items-center gap-4 px-5 py-2 transition
                         {{ $student['conflict'] ? 'bg-amber-500/5 opacity-70' : 'hover:bg-slate-800/50' }}">
 
-                            {{-- Avatar --}}
                             <div
                                 class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0
                         {{ $student['conflict'] ? 'bg-amber-500/20 text-amber-400' : 'bg-indigo-500/20 text-indigo-400' }}">
                                 {{ strtoupper(substr($student['name'], 0, 1)) }}
                             </div>
 
-                            {{-- Infos --}}
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-white truncate">
                                     {{ $student['name'] }} {{ $student['prenames'] }}
@@ -459,7 +431,6 @@
                                 </p>
                             </div>
 
-                            {{-- Badge statut --}}
                             @if ($student['conflict'])
                                 <div class="shrink-0 text-right">
                                     <span
@@ -474,7 +445,6 @@
                                     Valide</span>
                             @endif
 
-                            {{-- Retirer avec loading --}}
                             <button wire:click="removeFromDraft({{ $student['id'] }})" wire:loading.attr="disabled"
                                 wire:target="removeFromDraft({{ $student['id'] }})"
                                 class="shrink-0 px-3 py-2.5 rounded-lg text-slate-600 hover:text-rose-400 hover:bg-rose-500/50 bg-rose-500/10 transition flex items-center justify-center disabled:opacity-40">
@@ -494,7 +464,6 @@
                     @endforeach
                 </div>
 
-                {{-- Footer migration --}}
                 <div
                     class="px-5 py-4 border-t border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
@@ -518,7 +487,6 @@
                         @disabled(count($this->validStudents) === 0 || !$this->classeId)
                         class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-sm font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed min-w-[180px] justify-center">
 
-                        {{-- Loading overlay --}}
                         <span wire:loading wire:target="migrate"
                             class="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-emerald-700">
                             <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -538,8 +506,6 @@
             </div>
         @endif
 
-        {{-- ═══════════════════════════════════════════ --}}
-        {{-- POST-MIGRATION --}}
         {{-- ═══════════════════════════════════════════ --}}
         @if ($migrating && empty($draftStudents))
             <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-4 flex items-center gap-3">

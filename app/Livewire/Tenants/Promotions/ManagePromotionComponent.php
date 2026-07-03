@@ -130,17 +130,6 @@ class ManagePromotionComponent extends Component
                 'is_active'      => 'boolean',
             ]);
 
-            $this->promotion->update([
-                'slug'      => $slug,
-                'name'      => $this->name,
-                'code'      => $this->code ?? $slug,
-                'level'     => $this->level,
-                'order'     => $this->order,
-                'is_active' => $this->is_active,
-                'filiar_id' => $this->filiar_id,
-                'serial_id' => $this->serial_id,
-            ]);
-
             $exists = Promotion::whereName($this->name)
                                 ->when($this->serial_id, function($query){
                                     $query->where('serial_id', $this->serial_id);
@@ -162,6 +151,17 @@ class ManagePromotionComponent extends Component
 
                 return;
             }
+
+            $this->promotion->update([
+                'slug'      => $slug,
+                'name'      => $this->name,
+                'code'      => $this->code ? trim(trim($this->code, '-')) : $slug,
+                'level'     => $this->level,
+                'order'     => $this->order,
+                'is_active' => $this->is_active,
+                'filiar_id' => $this->filiar_id,
+                'serial_id' => $this->serial_id,
+            ]);
 
             $this->promotion_slug = $slug;
 

@@ -133,7 +133,7 @@ class CreateClasseComponent extends Component
 
                 broadcast(new DataUpdatedEvent(tenant('id')));
 
-                $this->reset();
+                $this->resetExcept('school_year_id');
             }
         } catch (\Throwable $th) {
             $this->notification()->error(
@@ -215,7 +215,6 @@ class CreateClasseComponent extends Component
             $this->school_year = SchoolYear::find($schoolYearId)?->slug;
         }
     }
-
 
     public function render()
     {

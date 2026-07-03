@@ -425,6 +425,13 @@ class TeachersPortal extends Component
         
     }
 
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+
+
 
 
     public function render()
