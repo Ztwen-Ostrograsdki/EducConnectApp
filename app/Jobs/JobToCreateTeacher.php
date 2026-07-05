@@ -216,7 +216,14 @@ class JobToCreateTeacher implements ShouldQueue
 
             $space_url = get_tenant_url($this->domain, 'login');
 
-            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url)->delay(now()->addMinutes(2));
+            JobToSendCredentialsToUser::dispatch(
+                tenantId: tenant('id'), 
+                userEmail: $user->email, 
+                default_password: null, 
+                space_url : $space_url,
+                type_of_space: 'Enseignant' 
+            )->delay(now()->addMinutes(2));
+            
 
         } finally {
 

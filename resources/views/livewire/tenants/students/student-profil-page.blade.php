@@ -189,17 +189,19 @@
 
                                 </a>
 
-                                <button type="button" wire:click="removeStudentFromCurrent"
-                                    wire:loading.attr="disabled" wire:target="removeStudentFromCurrent"
+                                <button type="button" wire:click="markStudentAsLeaved({{ $this->student->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:target="markStudentAsLeaved({{ $this->student->id }})"
                                     class="rounded-2xl col-span-2 items-center gap-2 bg-orange-600/60 p-3 text-sm font-medium text-white transition hover:bg-orange-700 disabled:opacity-60 hover:text-black">
-                                    <span wire:loading.remove wire:target="removeStudentFromCurrent"
+                                    <span wire:loading.remove
+                                        wire:target="markStudentAsLeaved({{ $this->student->id }})"
                                         class="flex justify-center items-center">
                                         <span class="flex items-center gap-3">
                                             <x-lucide-user-x class="w-4 h-4 " />
                                             <span>Marquer comme abandon</span>
                                         </span>
                                     </span>
-                                    <span wire:loading wire:target="removeStudentFromCurrent"
+                                    <span wire:loading wire:target="markStudentAsLeaved({{ $this->student->id }})"
                                         class="flex items-center gap-2">
                                         <span class="flex items-center gap-2">
                                             <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">

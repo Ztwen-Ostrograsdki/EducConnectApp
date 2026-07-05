@@ -1,9 +1,17 @@
 <div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full overflow-x-hidden">
-    <div class="w-full max-w-[100vw] overflow-x-hidden">
+    <div wire:loading wire:target='gender,resetFilters,search,previousPage,nextPage,gotoPage'
+        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
+        style="z-index: 200 !important;">
 
-        {{-- ===================================================== --}}
-        {{-- HEADER --}}
-        {{-- ===================================================== --}}
+        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
+        </div>
+    </div>
+    <div class="w-full max-w-[100vw] overflow-x-hidden">
         <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl">
             <div class="px-2 sm:px-3 lg:px-5 py-5">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -62,8 +70,15 @@
                         </select>
 
                         <button wire:click="resetFilters"
-                            class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm">
-                            Réinitialiser
+                            class="px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+                            <span wire:loading.remove wire:target='resetFilters'>Réinitialiser les filtres</span>
+                            <span wire:loading wire:target='resetFilters'
+                                class="inline-flex justify-center gap-3.5 items-center">
+                                <span class="inline-flex justify-center gap-3.5 items-center">
+                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                    <span>En cours...</span>
+                                </span>
+                            </span>
                         </button>
                     </div>
 
@@ -74,8 +89,7 @@
         <section class="w-full my-4">
             @if (count($this->students))
                 <div class="border border-slate-800 bg-slate-900 overflow-hidden">
-                    <div class="overflow-x-auto" wire:loading.class="opacity-50"
-                        wire:target="search, gender, previousPage, nextPage, gotoPage">
+                    <div class="overflow-x-auto">
                         <table class="w-full min-w-full z-table-border">
                             <thead class="bg-slate-950 border-b border-slate-800 text-center">
                                 <tr>
@@ -335,7 +349,7 @@
 
             <div class=" border border-orange-700 p-2 bg-orange-900/10 overflow-hidden">
                 <div class="overflow-x-auto" wire:loading.class="opacity-50"
-                    wire:target="search, gender, previousPage, nextPage, gotoPage">
+                    wire:target="search, gender, previousPage, nextPage, gotoPage, resetFilters">
                     @if (count($this->leave_students))
                         <div class="p-4 bg-orange-500/15 border border-orange-500 my-2">
                             <h5 class="text-orange-500 text-base font-mono ls-1">Liste des apprenants ayant abandonnés

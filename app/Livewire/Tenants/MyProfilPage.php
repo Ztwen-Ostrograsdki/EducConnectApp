@@ -21,7 +21,9 @@ class MyProfilPage extends Component
 
     public function removePhoto(): void
     {
-        $user = auth()->guard('tenant')->user();
+
+        /** @var \App\Models\User $user */
+        $user = auth('tenant')->user();
 
         TenantStorage::delete(
             $user->profile_photo
@@ -56,7 +58,8 @@ class MyProfilPage extends Component
 
     public function render()
     {
+        /** @var \App\Models\User $user */
         $user = auth()->guard('tenant')->user();
-        return view('livewire.tenants.my-profil-page', compact('user'))->layout(auth('tenant')->user()->getDashboardLayout());
+        return view('livewire.tenants.my-profil-page', compact('user'))->layout($user->getDashboardLayout());
     }
 }

@@ -16,22 +16,21 @@ class Tutor extends Model
 
     protected $table = 'tutors';
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'uuid',
         'qr_code',
         'user_id',
         'email',
-        'whatsapp_number',
-        'job_name',
-        'status',
-        'blocked',
+        'is_active',
         'blocked_reasons',
         'affiliated_at',
         'birth_date',
     ];
 
     protected $casts = [
-        'blocked' => 'boolean',
+        'is_active' => 'boolean',
         'affiliated_at' => 'datetime',
     ];
 
@@ -60,7 +59,7 @@ class Tutor extends Model
      */
     public function activeStudents(): BelongsToMany
     {
-        return $this->students()->wherePivot('is_active', true);
+        return $this->students()->where('is_active', true);
     }
 
     /**
@@ -96,16 +95,9 @@ class Tutor extends Model
      */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', 'active')->where('blocked', false);
+        return $query->where('is_active', true);
     }
 
-    /**
-     * Scope to get only blocked tutors.
-     */
-    public function scopeBlocked(Builder $query): Builder
-    {
-        return $query->where('blocked', true);
-    }
 
     // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -122,16 +114,9 @@ class Tutor extends Model
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' && ! $this->blocked;
+        return $this->is_active === true;
     }
 
-    /**
-     * Check if the tutor is blocked.
-     */
-    public function isBlocked(): bool
-    {
-        return $this->blocked;
-    }
 
     /**
      * Check if the tutor has a valid access for a specific student and school year.

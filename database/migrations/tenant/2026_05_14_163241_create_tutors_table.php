@@ -19,15 +19,10 @@ return new class extends Migration
             $table->text('qr_code')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('email')->nullable()->unique();
-            $table->string('whatsapp_number')->nullable();
-            $table->string('job_name')->nullable()->default(null);
-            $table->enum('status', ['active', 'unactive'])->default('active');
-            $table->boolean('blocked')->default(false);
-            $table->string('blocked_reasons')->default('Non précisée');
+            $table->boolean('is_active')->default(true);
             $table->timestamp('affiliated_at')->nullable(); 
             $table->timestamps();
             $table->softDeletes();
-            $table->index('status');
         });
         Schema::enableForeignKeyConstraints();
     }

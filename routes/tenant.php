@@ -20,8 +20,10 @@ use App\Livewire\Tenants\Filiars\ManageFiliarChiefsComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
 use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
+use App\Livewire\Tenants\Parents\CreateTutors;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
+use App\Livewire\Tenants\Parents\TutorsCreationMonitorComponent;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\CreatePromotionComponent;
 use App\Livewire\Tenants\Promotions\ManagePromotionComponent;
@@ -224,7 +226,11 @@ Route::middleware([
 
 
             // LES PARENTS
-            Route::get('/parents-des-apprenants/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
+            Route::get('/parents-tuteurs/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
+
+            Route::get('/parents-tuteurs/ajout', CreateTutors::class)->name('parents.create');
+
+            Route::get('/parents-tuteurs/status-des-ajouts', TutorsCreationMonitorComponent::class)->name('parents.crud.tasks');
 
 
 

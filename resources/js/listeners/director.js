@@ -137,6 +137,31 @@ export function registerDirectorListeners(tenantId) {
                 "ProcessToCreateTeachersCompletedSuccesfullyLiveEvent",
                 data,
             );
+        })
+
+        // PARENTS CREATIONS EVENTS
+
+        .listen("TutorsCreationTaskStartedEvent", (e) => {
+            Livewire.dispatch("TutorsCreationsTasksStartedLiveEvent", {
+                totalJobs: e.totalJobs,
+                batchId: e.batchId,
+            });
+        })
+
+        .listen("TutorCreatedEvent", (e) => {
+            Livewire.dispatch("TutorCreatedSucessfullyLiveEvent", {
+                teacherName: e.userName,
+                message: null,
+            });
+        })
+        .listen("TutorsCreationStatusUpdatedEvent", (data) => {
+            Livewire.dispatch("TutorsCreationProgressLiveEvent", data);
+        })
+        .listen("ProcessToCreateTutorsCompletedSuccesfullyEvent", (data) => {
+            Livewire.dispatch(
+                "ProcessToCreateTutorsCompletedSuccesfullyLiveEvent",
+                data,
+            );
         });
 }
 

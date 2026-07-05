@@ -110,7 +110,7 @@ class StudentProfilPage extends Component
     {
         $this->dispatch('swal', [
             'title' => "Retirer l'apprenant " . $this->student->getFullName() . " de sa classe actuelle ?",
-            'text' => "L'apprenant " . $this->student->getFullName() . " a été retiré de sa classe actuelle (" . $this->currentClasse->name . ")",
+            'text' => "L'apprenant " . $this->student->getFullName() . " sera retiré de sa classe actuelle (" . $this->currentClasse->name . ")",
             'icon' => 'warning',
             'showCancelButton' => true,
             'confirmButtonText' => 'Retirer de la classe',

@@ -30,7 +30,8 @@ class JobToSendCredentialsToUser implements ShouldQueue
         public string $tenantId,
         public string $userEmail,
         public ?string $default_password = null,
-        public ?string $space_url = null
+        public ?string $space_url = null,
+        public ?string $type_of_space = "Enseignant"
     ) {
         if (!$default_password) {
             $this->default_password = Str::random(8);
@@ -55,7 +56,7 @@ class JobToSendCredentialsToUser implements ShouldQueue
 
             if (!$user) {
 
-                $msg = "Aucun utilisateur | enseignant trouvé  avec l'adresse " . $this->userEmail . " pour l'envoi des données ";
+                $msg = "Aucun utilisateur (" . $this->type_of_space . ") trouvé  avec l'adresse " . $this->userEmail . " pour l'envoi des données ";
 
                 broadcast(new FailedToSendCredentialsToUserEvent($this->tenantId, $this->userEmail, 'Enseignant', $msg));
 
@@ -96,7 +97,7 @@ class JobToSendCredentialsToUser implements ShouldQueue
                 )
             );
 
-            CredentialsToUserSuccessfullyEvent::dispatch($this->tenantId, $this->userEmail, 'Enseignant');
+            CredentialsToUserSuccessfullyEvent::dispatch($this->tenantId, $this->userEmail, $this->type_of_space);
 
             $director->notify(new RealTimeNotification(
                 userEmail: $director->email,
@@ -109,7 +110,7 @@ class JobToSendCredentialsToUser implements ShouldQueue
             $user->update(['credentials_sent' => true]);
 
         } catch (\Throwable $th) {
-            broadcast(new FailedToSendCredentialsToUserEvent($this->tenantId, $this->userEmail, 'Enseignant', cutter($th->getMessage(), 100)));
+            broadcast(new FailedToSendCredentialsToUserEvent($this->tenantId, $this->userEmail, $this->type_of_space, cutter($th->getMessage(), 100)));
 
             $director->notify(new RealTimeNotification(
                 userEmail: $director->email,

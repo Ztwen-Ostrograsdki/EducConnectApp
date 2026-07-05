@@ -3,7 +3,8 @@
     {{-- ===================================================== --}}
     {{-- GLOBAL CONTAINER --}}
     {{-- ===================================================== --}}
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1850px]
                 px-3
@@ -14,13 +15,14 @@
         {{-- ===================================================== --}}
         {{-- PAGE HEADER --}}
         {{-- ===================================================== --}}
-        <section class="mb-6">
+        <section class="mb-6 flex justify-between items-center">
 
-            <div class="flex flex-col
+            <div
+                class="flex flex-col
                         xl:flex-row
                         xl:items-center
                         xl:justify-between
-                        gap-5">
+                        gap-5 w-full">
 
                 {{-- LEFT --}}
                 <div class="min-w-0">
@@ -33,7 +35,8 @@
 
                         </h1>
 
-                        <span class="px-3 py-1 rounded-full
+                        <span
+                            class="px-3 py-1 rounded-full
                                      bg-indigo-500/10
                                      text-indigo-400
                                      text-xs">
@@ -51,10 +54,13 @@
                     </p>
 
                 </div>
-
-                {{-- ACTIONS --}}
+                <div>
+                    <a class="flex items-center gap-3 bg-primary-700/35 text-white hover:text-black hover:bg-primary-500 px-3 py-3 rounded-2xl active:scale-95"
+                        href="{{ route('tenant.parents.create') }}">
+                        <x-lucide-user-plus class="w-4 h-4" />
+                        <span> Créer des comptes parents</span>
+                    </a>
                 </div>
-
             </div>
 
         </section>
@@ -64,37 +70,33 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-2
                         xl:grid-cols-4
                         gap-4">
 
-                @foreach([
-                    ['Parents Actifs', '1180', 'text-emerald-400'],
-                    ['Accès Bloqués', '32', 'text-rose-400'],
-                    ['Notifications Envoyées', '8420', 'text-indigo-400'],
-                    ['Parents Connectés', '864', 'text-sky-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
+                @foreach ([['Parents Actifs', '1180', 'text-emerald-400'], ['Accès Bloqués', '32', 'text-rose-400'], ['Notifications Envoyées', '8420', 'text-indigo-400'], ['Parents Connectés', '864', 'text-sky-400']] as $kpi)
+                    <div
+                        class="rounded-3xl
                             border border-slate-800
                             bg-slate-900
                             p-4 sm:p-5">
 
-                    <p class="text-xs sm:text-sm text-slate-400">
-                        {{ $kpi[0] }}
-                    </p>
+                        <p class="text-xs sm:text-sm text-slate-400">
+                            {{ $kpi[0] }}
+                        </p>
 
-                    <h2 class="mt-3
+                        <h2
+                            class="mt-3
                                text-2xl sm:text-3xl xl:text-4xl
                                font-bold {{ $kpi[2] }}">
 
-                        {{ $kpi[1] }}
+                            {{ $kpi[1] }}
 
-                    </h2>
+                        </h2>
 
-                </div>
-
+                    </div>
                 @endforeach
 
             </div>
@@ -106,7 +108,8 @@
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-3xl
+            <div
+                class="rounded-3xl
                         border border-slate-800
                         bg-slate-900
                         p-4 sm:p-5">
@@ -116,9 +119,7 @@
                     {{-- SEARCH --}}
                     <div class="relative">
 
-                        <input
-                            type="text"
-                            placeholder="Rechercher un parent, téléphone ou enfant..."
+                        <input type="text" placeholder="Rechercher un parent, téléphone ou enfant..."
                             class="w-full h-12 rounded-2xl
                                    bg-slate-950
                                    border border-slate-800
@@ -126,10 +127,10 @@
                                    text-sm
                                    focus:outline-none
                                    focus:ring-2
-                                   focus:ring-indigo-500/40"
-                        >
+                                   focus:ring-indigo-500/40">
 
-                        <div class="absolute left-4 top-1/2
+                        <div
+                            class="absolute left-4 top-1/2
                                     -translate-y-1/2
                                     text-slate-500">
 
@@ -140,13 +141,15 @@
                     </div>
 
                     {{-- FILTER GRID --}}
-                    <div class="grid
+                    <div
+                        class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
                                 xl:grid-cols-7
                                 gap-3">
 
-                        <select class="h-11 px-4 rounded-2xl
+                        <select
+                            class="h-11 px-4 rounded-2xl
                                        bg-slate-950
                                        border border-slate-800 text-sm">
 
@@ -156,7 +159,8 @@
 
                         </select>
 
-                        <select class="h-11 px-4 rounded-2xl
+                        <select
+                            class="h-11 px-4 rounded-2xl
                                        bg-slate-950
                                        border border-slate-800 text-sm">
 
@@ -166,7 +170,8 @@
 
                         </select>
 
-                        <select class="h-11 px-4 rounded-2xl
+                        <select
+                            class="h-11 px-4 rounded-2xl
                                        bg-slate-950
                                        border border-slate-800 text-sm">
 
@@ -176,7 +181,8 @@
 
                         </select>
 
-                        <select class="h-11 px-4 rounded-2xl
+                        <select
+                            class="h-11 px-4 rounded-2xl
                                        bg-slate-950
                                        border border-slate-800 text-sm">
 
@@ -186,7 +192,8 @@
 
                         </select>
 
-                        <select class="h-11 px-4 rounded-2xl
+                        <select
+                            class="h-11 px-4 rounded-2xl
                                        bg-slate-950
                                        border border-slate-800 text-sm">
 
@@ -196,7 +203,8 @@
 
                         </select>
 
-                        <button class="h-11 rounded-2xl
+                        <button
+                            class="h-11 rounded-2xl
                                        bg-indigo-500
                                        hover:bg-indigo-600
                                        transition-all text-sm">
@@ -205,7 +213,8 @@
 
                         </button>
 
-                        <button class="h-11 rounded-2xl
+                        <button
+                            class="h-11 rounded-2xl
                                        bg-rose-500/20
                                        text-rose-400
                                        hover:bg-rose-500/30
@@ -218,13 +227,15 @@
                     </div>
 
                     {{-- GLOBAL ACTIONS --}}
-                    <div class="grid
+                    <div
+                        class="grid
                                 grid-cols-1
                                 sm:grid-cols-2
                                 xl:grid-cols-5
                                 gap-3">
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-indigo-500
                                        hover:bg-indigo-600
                                        transition-all text-sm">
@@ -233,7 +244,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-emerald-500
                                        hover:bg-emerald-600
                                        transition-all text-sm">
@@ -242,7 +254,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-sky-500
                                        hover:bg-sky-600
                                        transition-all text-sm">
@@ -251,7 +264,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-amber-500
                                        hover:bg-amber-600
                                        transition-all text-sm">
@@ -260,7 +274,8 @@
 
                         </button>
 
-                        <button class="h-12 rounded-2xl
+                        <button
+                            class="h-12 rounded-2xl
                                        bg-rose-500
                                        hover:bg-rose-600
                                        transition-all text-sm">
@@ -277,134 +292,6 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- MAIN GRID --}}
-        {{-- ===================================================== --}}
-        <section class="my-2.5">
-            <div class="space-y-6 min-w-0 grid
-                        grid-cols-2
-                        xl:grid-cols-2
-                        gap-4">
-
-                    {{-- STATS --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Activité des Parents
-
-                        </h2>
-
-                        <div class="mt-5 space-y-5">
-
-                            @foreach([
-                                ['Bulletins consultés', '78%', 'bg-indigo-500'],
-                                ['Notifications lues', '69%', 'bg-emerald-500'],
-                                ['Parents connectés', '57%', 'bg-sky-500'],
-                                ['Accès bloqués', '8%', 'bg-rose-500']
-                            ] as $item)
-
-                            <div>
-
-                                <div class="flex items-center justify-between">
-
-                                    <span class="text-sm text-slate-300">
-                                        {{ $item[0] }}
-                                    </span>
-
-                                    <span class="text-sm font-semibold">
-                                        {{ $item[1] }}
-                                    </span>
-
-                                </div>
-
-                                <div class="mt-2 h-2 rounded-full
-                                            bg-slate-800 overflow-hidden">
-
-                                    <div class="h-full rounded-full {{ $item[2] }}"
-                                         style="width: {{ $item[1] }}">
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- RECENT --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-
-                            Activités Récentes
-
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach(range(1,3) as $activity)
-
-                            <div class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <div class="flex items-start gap-3">
-
-                                    <div class="w-11 h-11 rounded-2xl
-                                                bg-indigo-500/10
-                                                flex items-center
-                                                justify-center
-                                                text-indigo-400">
-
-                                        ✓
-
-                                    </div>
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-medium text-sm">
-
-                                            Bulletin envoyé
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            Bulletin transmis au parent
-
-                                        </p>
-
-                                        <p class="mt-2 text-xs text-slate-500">
-
-                                            Il y a 35 min
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </div>
-        </section>
-        
         <section class="rounded-2xl border p-2 border-slate-800">
 
             <div class="flex flex-wrap gap-3 justify-end">
@@ -413,356 +300,379 @@
                     <button class="px-3 py-2 rounded-2xl
                                 bg-gray-500 hover:bg-gray-600">
 
-                    Ajouter un parent
+                        Ajouter un parent
 
-                </button>
+                    </button>
 
-                <button class="px-3 py-2 rounded-2xl
+                    <button class="px-3 py-2 rounded-2xl
                                 bg-red-500 hover:bg-red-600">
 
-                    Verrouiller accès
+                        Verrouiller accès
 
-                </button>
-                
-                <button class="px-3 py-2 rounded-2xl
+                    </button>
+
+                    <button class="px-3 py-2 rounded-2xl
                                 bg-blue-500 hover:bg-blue-600">
 
-                    Imprimer PDF
+                        Imprimer PDF
 
-                </button>
+                    </button>
 
-                <button class="px-3 py-2 rounded-2xl
+                    <button
+                        class="px-3 py-2 rounded-2xl
                                 bg-emerald-500 hover:bg-emerald-600">
 
-                    Emprimer Excel
+                        Emprimer Excel
 
-                </button>
+                    </button>
 
-                <button class="px-3 py-2 rounded-2xl
+                    <button
+                        class="px-3 py-2 rounded-2xl
                                 bg-amber-500 hover:bg-amber-600">
 
-                    Imprimer Excel et PDF
+                        Imprimer Excel et PDF
 
-                </button>
+                    </button>
 
-            </div>
+                </div>
 
-            <div class="grid
+                <div class="grid
                         grid-cols-1
                         gap-6">
 
-                
-                <div class="space-y-6 min-w-0 col-span-1">
+                    <div class="space-y-6 min-w-0 col-span-1">
 
-                    {{-- TABLE --}}
-                    <div class="rounded-3xl
+                        {{-- TABLE --}}
+                        <div
+                            class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 overflow-hidden">
 
-                        {{-- HEADER --}}
-                        <div class="border-b border-slate-800
+                            {{-- HEADER --}}
+                            <div class="border-b border-slate-800
                                     p-4 sm:p-6">
 
-                            <div class="flex flex-col
+                                <div
+                                    class="flex flex-col
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
                                         gap-4">
 
-                                <div>
+                                    <div>
 
-                                    <h2 class="text-lg sm:text-xl font-semibold">
+                                        <h2 class="text-lg sm:text-xl font-semibold">
 
-                                        Liste des Parents
+                                            Liste des Parents
 
-                                    </h2>
+                                        </h2>
 
-                                    <p class="mt-1 text-sm text-slate-400">
+                                        <p class="mt-1 text-sm text-slate-400">
 
-                                        Gestion des accès et suivi des représentants
+                                            Gestion des accès et suivi des représentants
 
-                                    </p>
+                                        </p>
 
-                                </div>
+                                    </div>
 
-                                <div class="flex flex-wrap gap-3">
+                                    <div class="flex flex-wrap gap-3">
 
-                                    <button class="h-11 px-4 rounded-2xl
+                                        <button
+                                            class="h-11 px-4 rounded-2xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Trier
+                                            Trier
 
-                                    </button>
+                                        </button>
 
-                                    <button class="h-11 px-4 rounded-2xl
+                                        <button
+                                            class="h-11 px-4 rounded-2xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Colonnes
+                                            Colonnes
 
-                                    </button>
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                        </div>
+                            {{-- TABLE --}}
+                            <div class="overflow-x-auto">
 
-                        {{-- TABLE --}}
-                        <div class="overflow-x-auto">
+                                <table class="min-w-[1900px] w-full">
 
-                            <table class="min-w-[1900px] w-full">
+                                    <thead class="bg-slate-950 border-b border-slate-800">
 
-                                <thead class="bg-slate-950 border-b border-slate-800">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                                N°
+                                            </th>
 
-                                    <tr>
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            N°
-                                        </th>
+                                            <th class="px-6 py-4 text-left text-sm text-slate-400">
+                                                Parent
+                                            </th>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Parent
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Téléphone
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Téléphone
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Enfant(s)
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Enfant(s)
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Dernière Connexion
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Dernière Connexion
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Statut
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Statut
-                                        </th>
+                                            <th class="px-6 py-4 text-right text-sm text-slate-400">
+                                                Actions
+                                            </th>
 
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
-                                            Actions
-                                        </th>
+                                        </tr>
 
-                                    </tr>
+                                    </thead>
 
-                                </thead>
+                                    <tbody class="divide-y divide-slate-800">
 
-                                <tbody class="divide-y divide-slate-800">
+                                        @foreach (range(1, 12) as $parent)
+                                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    @foreach(range(1,12) as $parent)
+                                                <td class="px-4 py-5 text-center">
 
-                                    <tr class="hover:bg-slate-800/40 transition-all">
+                                                    {{ $loop->iteration }}
 
-                                        <td class="px-4 py-5 text-center">
+                                                </td>
 
-                                            {{ $loop->iteration }}
+                                                {{-- PROFILE --}}
+                                                <td class="px-6 py-5">
 
-                                        </td>
+                                                    <a title="Charger le profil de ce parent"
+                                                        href="{{ route('tenant.parent.profil', ['parent_uuid' => 'f']) }}"
+                                                        class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl">
 
-                                        {{-- PROFILE --}}
-                                        <td class="px-6 py-5">
-
-                                            <a title="Charger le profil de ce parent" href="{{route('tenant.parent.profil', ['parent_uuid' => 'f'])}}" class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl">
-
-                                                <div class="w-14 h-14 rounded-2xl
+                                                        <div
+                                                            class="w-14 h-14 rounded-2xl
                                                             bg-slate-800 shrink-0">
-                                                </div>
+                                                        </div>
 
-                                                <div class="min-w-0 flex flex-col">
-                                                    <h3 class="font-medium truncate">
-                                                        Mme AGBODJI Clarisse
-                                                    </h3>
+                                                        <div class="min-w-0 flex flex-col">
+                                                            <h3 class="font-medium truncate">
+                                                                Mme AGBODJI Clarisse
+                                                            </h3>
 
-                                                    <p class="mt-1 text-sm text-sky-400 truncate">
-                                                        clarisse@email.com
-                                                    </p>
-                                                    <p class="mt-1 text-sm text-slate-400 truncate">
-                                                        Fonctionnaire
-                                                    </p>
+                                                            <p class="mt-1 text-sm text-sky-400 truncate">
+                                                                clarisse@email.com
+                                                            </p>
+                                                            <p class="mt-1 text-sm text-slate-400 truncate">
+                                                                Fonctionnaire
+                                                            </p>
 
-                                                    <p class="mt-1 text-sm text-amber-400 truncate">
-                                                        Cotonou
-                                                    </p>
-                                                </div>
+                                                            <p class="mt-1 text-sm text-amber-400 truncate">
+                                                                Cotonou
+                                                            </p>
+                                                        </div>
 
-                                            </a>
+                                                    </a>
 
-                                        </td>
+                                                </td>
 
-                                        {{-- PHONE --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
+                                                {{-- PHONE --}}
+                                                <td class="px-4 py-5 text-center whitespace-nowrap">
 
-                                            +229 01 00 00 00
+                                                    +229 01 00 00 00
 
-                                        </td>
+                                                </td>
 
-                                        {{-- CHILDREN --}}
-                                        <td class="px-4 py-5">
+                                                {{-- CHILDREN --}}
+                                                <td class="px-4 py-5">
 
-                                            <div class="space-y-2">
+                                                    <div class="space-y-2">
 
-                                                <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
+                                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
+                                                            class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
 
-                                                    KOUASSI Marc
+                                                            KOUASSI Marc
 
-                                                    <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                        2nde F2-2
-                                                    </span>
+                                                            <span
+                                                                class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
+                                                                2nde F2-2
+                                                            </span>
 
-                                                </a>
+                                                        </a>
 
-                                                <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
+                                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
+                                                            class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
 
-                                                    AGUADO Pièrrot
+                                                            AGUADO Pièrrot
 
-                                                    <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                        Tle F2-2
-                                                    </span>
+                                                            <span
+                                                                class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
+                                                                Tle F2-2
+                                                            </span>
 
-                                                </a>
+                                                        </a>
 
-                                            </div>
+                                                    </div>
 
-                                        </td>
+                                                </td>
 
-                                        {{-- LOGIN --}}
-                                        <td class="px-4 py-5 text-center whitespace-nowrap">
+                                                {{-- LOGIN --}}
+                                                <td class="px-4 py-5 text-center whitespace-nowrap">
 
-                                            Aujourd’hui 07:32
+                                                    Aujourd’hui 07:32
 
-                                        </td>
+                                                </td>
 
-                                        {{-- STATUS --}}
-                                        <td class="px-4 py-5 text-center">
+                                                {{-- STATUS --}}
+                                                <td class="px-4 py-5 text-center">
 
-                                            <span class="px-3 py-1 rounded-full
+                                                    <span
+                                                        class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                Actif
+                                                        Actif
 
-                                            </span>
+                                                    </span>
 
-                                        </td>
+                                                </td>
 
-                                        {{-- ACTIONS --}}
-                                        <td class="px-6 py-5">
+                                                {{-- ACTIONS --}}
+                                                <td class="px-6 py-5">
 
-                                            <div class="flex flex-wrap
+                                                    <div
+                                                        class="flex flex-wrap
                                                         justify-end gap-2">
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                        <button
+                                                            class="h-10 px-4 rounded-xl
                                                                bg-indigo-500/10
                                                                text-indigo-400
                                                                hover:bg-indigo-500/20
                                                                transition-all text-sm">
 
-                                                    Bulletin
+                                                            Bulletin
 
-                                                </button>
+                                                        </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                        <button
+                                                            class="h-10 px-4 rounded-xl
                                                                bg-sky-500/10
                                                                text-sky-400
                                                                hover:bg-sky-500/20
                                                                transition-all text-sm">
 
-                                                    Env. Notes
+                                                            Env. Notes
 
-                                                </button>
+                                                        </button>
 
-                                                <button class="h-10 px-4 rounded-xl
+                                                        <button
+                                                            class="h-10 px-4 rounded-xl
                                                                bg-emerald-500/10
                                                                text-emerald-400
                                                                hover:bg-emerald-500/20
                                                                transition-all text-sm">
 
-                                                    Notifier
+                                                            Notifier
 
-                                                </button>
+                                                        </button>
 
-
-                                                <button class="h-10 px-4 rounded-xl
+                                                        <button
+                                                            class="h-10 px-4 rounded-xl
                                                                bg-rose-500/10
                                                                text-rose-400
                                                                hover:bg-rose-500/20
                                                                transition-all text-sm">
 
-                                                    Bloquer
+                                                            Bloquer
 
-                                                </button>
+                                                        </button>
 
-                                            </div>
+                                                    </div>
 
-                                        </td>
+                                                </td>
 
-                                    </tr>
+                                            </tr>
+                                        @endforeach
 
-                                    @endforeach
+                                    </tbody>
 
-                                </tbody>
+                                </table>
 
-                            </table>
+                            </div>
 
-                        </div>
-
-                        {{-- PAGINATION --}}
-                        <div class="border-t border-slate-800
+                            {{-- PAGINATION --}}
+                            <div
+                                class="border-t border-slate-800
                                     px-4 sm:px-6 py-4">
 
-                            <div class="flex flex-col sm:flex-row
+                                <div
+                                    class="flex flex-col sm:flex-row
                                         sm:items-center
                                         sm:justify-between
                                         gap-4">
 
-                                <p class="text-sm text-slate-400">
+                                    <p class="text-sm text-slate-400">
 
-                                    Affichage de 1 à 12 sur 1248 parents
+                                        Affichage de 1 à 12 sur 1248 parents
 
-                                </p>
+                                    </p>
 
-                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="flex items-center gap-2 flex-wrap">
 
-                                    <button class="h-10 px-4 rounded-xl
+                                        <button
+                                            class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Précédent
+                                            Précédent
 
-                                    </button>
+                                        </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                        <button
+                                            class="h-10 px-4 rounded-xl
                                                    bg-indigo-500
                                                    hover:bg-indigo-600
                                                    transition-all text-sm">
 
-                                        1
+                                            1
 
-                                    </button>
+                                        </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                        <button
+                                            class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        2
+                                            2
 
-                                    </button>
+                                        </button>
 
-                                    <button class="h-10 px-4 rounded-xl
+                                        <button
+                                            class="h-10 px-4 rounded-xl
                                                    bg-slate-800
                                                    hover:bg-slate-700
                                                    transition-all text-sm">
 
-                                        Suivant
+                                            Suivant
 
-                                    </button>
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
@@ -772,17 +682,15 @@
 
                     </div>
 
+                    {{-- ===================================================== --}}
+                    {{-- RIGHT SIDEBAR --}}
+                    {{-- ===================================================== --}}
+
                 </div>
-
-                {{-- ===================================================== --}}
-                {{-- RIGHT SIDEBAR --}}
-                {{-- ===================================================== --}}
-                
-
-            </div>
 
         </section>
 
     </div>
 
 </div>
+

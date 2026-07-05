@@ -1,4 +1,16 @@
 <div class="w-full max-w-full overflow-x-hidden">
+    <div wire:loading wire:target='gender,subjectType,resetFilters,search,previousPage,nextPage,gotoPage'
+        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
+        style="z-index: 200 !important;">
+
+        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
+        </div>
+    </div>
 
     <section class="mb-6">
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\DataUpdatedEvent;
+use App\Exceptions\CouldNotMigrateStudentFromClasseToNewWhenHasMarksInSubjectsThatDoesntExistsInTheNewClasseDuringTheSameSchoolYearException;
 use App\Helpers\Support\TenantStorage;
 use App\Models\SchoolYear;
 use App\Models\User;
@@ -631,6 +632,44 @@ class Student extends Model
         return route('tenant.student.profil', ['student_uuid' => $this->uuid]);
     }
 
+    public function ensureThatStudentCanMigratedToThisClasse(int $newClasseId, ?int $school_year_id = null) : bool
+    {
+        if(!$school_year_id){
+
+            if(!$school_year_id) $schoolYear = SchoolYear::current()?->first();
+        }
+        else{
+
+            $schoolYear = SchoolYear::find($this->school_year_id);
+        }
+
+        $oldClasse = $this->currentClasse()?->classe;
+
+        if($oldClasse){
+
+            $newClasse = Classe::find($newClasseId);
+
+            if($newClasse){
+
+                $subjectIdsInNewClasse = $newClasse->classeSubjects()->pluck('subject_id')->all();
+
+                $subjectIdsInWhereStudentsHasMarksInOldClasse = $this->marks()->where('school_year_id', $schoolYear->id)->where('classe_id', $oldClasse->id)->pluck('subject_id')->all();
+
+                if(count($subjectIdsInWhereStudentsHasMarksInOldClasse) <= 0) return true;
+
+                if(count($subjectIdsInWhereStudentsHasMarksInOldClasse) > count($subjectIdsInNewClasse)) return false;
+
+                foreach($subjectIdsInWhereStudentsHasMarksInOldClasse as $sub_id){
+
+                    if(!in_array($sub_id, $subjectIdsInNewClasse)) return false;
+                }
+
+            }
+        }
+
+        return false;
+    }
+
 
     public function migrateStudentToClasse(int $classeId, ?int $school_year_id = null, bool $redirect_to_profil = false)
     {
@@ -650,6 +689,22 @@ class Student extends Model
                 }
                 else{
                     $schoolYear = SchoolYear::find($this->school_year_id);
+                }
+
+                if($this->ensureThatStudentCanMigratedToThisClasse($classeId) === false){
+
+                    $error_message = "Cet apprenant comporte des notes dans certaines matières de son ancienne classe et, certaines de ces matières n'existent pas dans la nouvelle classe.";
+
+                    $director?->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "MIGRATION IMPOSSIBLE : INCOHERENCE DE MATIERES",
+                        message:           $error_message,
+                        type:              'error',
+                    ));
+
+                    throw new CouldNotMigrateStudentFromClasseToNewWhenHasMarksInSubjectsThatDoesntExistsInTheNewClasseDuringTheSameSchoolYearException($error_message);
+
                 }
 
                 if($schoolYear && $schoolYear->is_active){
@@ -748,7 +803,7 @@ class Student extends Model
 
                     if($student){
 
-                        YearlyClasseStudent::where('student_id', $this->id)->where('school_year_id', $classe->school_year_id)?->delete();
+                        YearlyClasseStudent::where('student_id', $this->id)->where('school_year_id', $classe->school_year_id)->delete();
 
                         $director?->notify(new RealTimeNotification(
                             userEmail: $director->email,
