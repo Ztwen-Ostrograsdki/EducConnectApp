@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class StudentTutorRelation extends Model
 {
+    use InvalidatesDashboardCounters;
+    
     protected $table = 'student_tutor_relations';
 
     protected $fillable = [

@@ -11,6 +11,7 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Models\YearlySubjectChief;
 use App\Notifications\RealTimeNotification;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,7 +21,7 @@ use Illuminate\Support\Str;
 
 class Subject extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvalidatesDashboardCounters;
 
     protected $table = 'subjects';
 

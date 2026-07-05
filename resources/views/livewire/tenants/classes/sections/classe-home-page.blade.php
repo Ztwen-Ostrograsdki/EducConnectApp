@@ -137,12 +137,11 @@
                         <div
                             class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div class="min-w-0">
-                                <h3 class="font-semibold text-base sm:text-lg truncate">Récents Élèves ajoutés</h3>
+                                <h3 class="font-semibold text-base sm:text-lg truncate">Élèves récemment ajoutés</h3>
                                 <p class="mt-1 text-sm text-slate-400 truncate">Liste récente des ajouts
-                                    <span class="text-gray-700 italic">Il y a deux semaines</span>
+                                    <span class="text-gray-500 italic">Il y a deux semaines environ</span>
                                 </p>
                             </div>
-                            <button class="text-indigo-400 text-sm shrink-0">Voir tout</button>
                         </div>
 
                         <div class="divide-y divide-slate-800">

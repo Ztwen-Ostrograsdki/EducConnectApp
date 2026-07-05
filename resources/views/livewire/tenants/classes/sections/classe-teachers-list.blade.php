@@ -98,7 +98,8 @@
 
                     <div class="relative">
 
-                        <input wire:model.live='search' type="text" placeholder="Rechercher un enseignant..."
+                        <input wire:model.live.debounce.400ms='search' type="text"
+                            placeholder="Rechercher un enseignant..."
                             class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm outline-none focus:border-indigo-500transition-all">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
                             🔍
@@ -164,11 +165,11 @@
             </button>
         </div>
 
-        <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 h-screen">
+        <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 mb-28">
 
             <div class="overflow-x-auto">
 
-                @if ($teachers->isEmpty())
+                @if ($this->teachers->isEmpty())
                     <div class="rounded-3xl border border-slate-800 bg-slate-900 p-16 text-center">
                         <div class="text-4xl mb-4">🏫</div>
                         <p class="text-slate-400 text-sm">Aucune classe trouvée pour ces filtres.</p>
@@ -216,11 +217,11 @@
 
                         <tbody class="divide-y divide-slate-800 text-center">
 
-                            @foreach ($teachers as $teacher)
+                            @foreach ($this->teachers as $teacher)
                                 <tr class="hover:bg-slate-800/40 transition-all">
                                     <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                        {{ __zero($loop->iteration) }}
+                                        {{ __zero($this->teachers->firstItem() + $loop->iteration - 1) }}
 
                                     </td>
                                     <td class="px-6 py-5 truncate">
@@ -289,7 +290,7 @@
                                                 @foreach ($othersClasses as $cl)
                                                     <span
                                                         class="px-2 py-1 rounded-xl bg-slate-800 text-xs uppercase font-mono border border-sky-700">
-                                                        {{ $cl?->code ?? $cl->name }}
+                                                        {{ $cl?->code ? $cl->code : $cl->name }}
                                                     </span>
                                                 @endforeach
                                             @else
@@ -412,6 +413,45 @@
 
                     </table>
 
+                @endif
+
+                @if ($this->teachers->hasPages())
+                    <section class="py-6">
+                        <div class="flex justify-center bg-slate-900 p-4">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="text-sm text-slate-400">
+                                    Affichage {{ $this->teachers->firstItem() }} à {{ $this->teachers->lastItem() }}
+                                    sur
+                                    {{ $this->teachers->total() }} enseignants
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    @if (!$this->teachers->onFirstPage())
+                                        <button wire:click="previousPage" wire:loading.attr="disabled"
+                                            wire:target="previousPage"
+                                            class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                            Précédent
+                                        </button>
+                                    @endif
+
+                                    @foreach ($this->teachers->getUrlRange(1, $this->teachers->lastPage()) as $page => $url)
+                                        <button @disabled($page === $this->teachers->currentPage())
+                                            wire:click="gotoPage({{ $page }})"
+                                            class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->teachers->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                            {{ $page }}
+                                        </button>
+                                    @endforeach
+
+                                    @if ($this->teachers->hasMorePages())
+                                        <button wire:click="nextPage" wire:loading.attr="disabled"
+                                            wire:target="nextPage"
+                                            class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                            Suivant
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 @endif
 
             </div>

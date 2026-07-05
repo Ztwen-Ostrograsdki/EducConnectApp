@@ -20,6 +20,7 @@ class ClasseStudentsList extends Component
     public string  $classroom;
     public ?Classe $classe;
     public int     $perpage  = 30;
+    public int     $counterh  = 30;
 
     // ─── Filtres ──────────────────────────────────────────────────────
     public string $search = '';
@@ -39,16 +40,14 @@ class ClasseStudentsList extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata(): void
     {
-        $this->counter++;
+        $this->counterh++;
         $this->resetPage();
     }
 
-    
-    // ─── Render ───────────────────────────────────────────────────────
-
-    public function render()
+    #[Computed]
+    public function students()
     {
-        $students = Student::whereHas('yearlyClasseStudents', fn($q) =>
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
             $q->where('classe_id', $this->classe->id)
               ->where('school_year_id', $this->classe->school_year_id)
               ->where('is_active', true)
@@ -68,9 +67,12 @@ class ClasseStudentsList extends Component
         ->orderBy('name')
         ->orderBy('prenames')
         ->paginate($this->perpage);
+    }
 
-
-        $leave_students = Student::whereHas('yearlyClasseStudents', fn($q) =>
+    #[Computed]
+    public function leave_students()
+    {
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
             $q->where('classe_id', $this->classe->id)
               ->where('school_year_id', $this->classe->school_year_id)
               ->where('is_active', true)
@@ -92,7 +94,13 @@ class ClasseStudentsList extends Component
         ->orderBy('name')
         ->orderBy('prenames')
         ->get();
+    }
 
-        return view('livewire.tenants.classes.sections.classe-students-list', compact('students', 'leave_students'));
+    
+    // ─── Render ───────────────────────────────────────────────────────
+
+    public function render()
+    {
+        return view('livewire.tenants.classes.sections.classe-students-list');
     }
 }

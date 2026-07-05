@@ -38,6 +38,7 @@ use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
 use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
+use App\Livewire\Tenants\Students\ManageStudentClassroomComponent;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
@@ -213,6 +214,12 @@ Route::middleware([
 
             Route::get('/apprenants/impression', StudentsPrintableListComponent::class)->name('students.print.list');
 
+            Route::get('/apprenant/gestion-de-classe-actuelle/{student_uuid}', ManageStudentClassroomComponent::class)->name('student.manage.classe');
+
+            Route::get('/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');
+
+            
+
 
 
 
@@ -223,8 +230,6 @@ Route::middleware([
 
             
             Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
-
-            Route::get('/details/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');
 
             Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('parent.profil');
 

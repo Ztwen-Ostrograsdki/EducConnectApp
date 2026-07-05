@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class YearlyClasseStudent extends Model
 {
+    use InvalidatesDashboardCounters;
     protected $table = 'yearly_classe_students';
+
+    protected $connection = 'tenant';
 
     protected $fillable = [
         'school_year_id',

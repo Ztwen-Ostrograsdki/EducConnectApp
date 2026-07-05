@@ -26,7 +26,7 @@ trait ClassesActions{
     public string $filiar      = '';
     public string $serial      = '';
     public string $level       = '';
-    public int    $perPage     = 9;
+    public int    $perPage     = 10;
 
 
     public ?string $targetedClasseUuid = null;
@@ -82,40 +82,17 @@ trait ClassesActions{
     #[Computed]
     public function stats(): array
     {
-
-        $school_year = SchoolYear::current()->first();
-
-        if(!$school_year){
-
-            $this->notification()->send([
-                'icon'        => 'error',
-                'title'       => 'Erreur processus',
-                'description' => "Aucune année scolaire n'est active",
-            ]);
-
-            return [];
-
-        } 
-
-        $classes = Classe::where('school_year_id', $school_year->id)->withCount('students')->get();
-
-        return [
-            'classes'    => $classes->count(),
-            'students'   => $classes->sum('students_count'),
-            'teachers'   => TeacherYearlyAccess::where('school_year_id', $school_year->id)->where('status', 'active')->whereNull('suspended_at')->distinct('teacher_id')->count(),
-            'promotions' => Classe::where('school_year_id', $school_year->id)
-                               ->distinct('promotion_id')
-                               ->count('promotion_id'),
-        ];
-    }
-
-    #[Computed]
-    public function counters(): array
-    {
         return app(DashboardCounterService::class)->getMany([
-            'students_total',
-            'teachers_total',
-            'classes_active',
+            'students',
+            'students_in_classe',
+            'teachers_in_classes',
+            'teachers',
+            'classes_actives',
+            'classes_closeds',
+            'classes_unactives',
+            'promotions_actives',
+            'serials_actives',
+            'filiars_actives',
         ]);
     }
 

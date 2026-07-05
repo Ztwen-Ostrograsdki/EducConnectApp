@@ -6,11 +6,14 @@ use App\Models\Classe;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\User;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class YearlyClasseStudentsLeave extends Model
 {
+    use InvalidatesDashboardCounters;
+    
     protected $table = 'yearly_classe_students_leaves';
 
     protected $fillable = [

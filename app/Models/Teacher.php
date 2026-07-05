@@ -6,6 +6,7 @@ use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Jobs\JobToCreateYearlyAccessForTeacher;
 use App\Models\YearlySubjectChief;
 use App\Notifications\RealTimeNotification;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Teacher extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvalidatesDashboardCounters;
 
     protected $connection = 'tenant';
 

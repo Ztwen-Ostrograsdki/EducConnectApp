@@ -20,6 +20,10 @@ class ClasseTeachersList extends Component
 
     public string $classroom;
 
+    public $counterh = 25;
+
+    public $perPage = 25;
+
     public ?Classe $classe;
     public ?SchoolYear $schoolYear;
 
@@ -48,16 +52,15 @@ class ClasseTeachersList extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterh++;
     }
 
     #[Computed]
-    public function getTeachers()
+    public function teachers()
     {
         return Teacher::query()
         ->select('teachers.*')
         ->join('users', 'users.id', '=', 'teachers.user_id')
-        ->with(['user', 'classeSubjects'])
         ->whereHas('classeSubjects', fn($q) => 
               $q->where('school_year_id', $this->school_year_id)
               ->where('classe_id', $this->classe->id)
@@ -83,13 +86,14 @@ class ClasseTeachersList extends Component
             ->orwhere('identifiant', 'like', "%{$this->search}%");
         })
         
-        ->when($this->gender, function (Builder $query) {
-            $query->whereHas('user', function ($query) {
-                $query->where('gender', $this->gender);
+        ->when($this->gender, function (Builder $qq) {
+            $qq->whereHas('user', function ($qq) {
+                $qq->where('gender', $this->gender);
             });
         })
         ->orderBy('users.name')
-        ->orderBy('users.prenames');
+        ->orderBy('users.prenames')->paginate($this->perPage);
+        
     }
 
     public function resetFilters()
@@ -99,7 +103,6 @@ class ClasseTeachersList extends Component
 
     public function render()
     {
-        $teachers = $this->getTeachers()->get();
-        return view('livewire.tenants.classes.sections.classe-teachers-list', compact('teachers'));
+        return view('livewire.tenants.classes.sections.classe-teachers-list');
     }
 }

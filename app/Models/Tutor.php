@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tutor extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvalidatesDashboardCounters;
 
     protected $table = 'tutors';
 

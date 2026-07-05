@@ -6,18 +6,21 @@ use App\Events\DataUpdatedEvent;
 use App\Helpers\Support\TenantStorage;
 use App\Models\SchoolYear;
 use App\Models\User;
+use App\Notifications\RealTimeNotification;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 class Student extends Model
 {
-    use SoftDeletes, HasRoles;
+    use SoftDeletes, HasRoles, InvalidatesDashboardCounters;
 
     protected $connection = 'tenant'; 
 
@@ -136,6 +139,31 @@ class Student extends Model
                                   ->where('school_year_id', $school_year_id)
                                   ->where('is_active', true)
                                   ->first();
+    }
+
+    public function hasResponsibleInThisYear(?int $school_year_id = null) : ?string
+    {
+        if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
+
+        $current_classe = $this->currentClasse($school_year_id);
+
+        if($current_classe){
+
+            if($current_classe->classe){
+
+                if($current_classe->classe->respo_1_id && $current_classe->classe->respo_1_id === $this->id) return "Responsable N°1";
+
+                if($current_classe->classe->respo_2_id && $current_classe->classe->respo_2_id === $this->id) return "Responsable N°2";
+
+                return null;
+            }
+
+            return null;
+
+        }
+
+        return null;
+
     }
 
 
@@ -596,6 +624,186 @@ class Student extends Model
 
         return false;
 
+    }
+
+    public function toProfilRoute()
+    {
+        return route('tenant.student.profil', ['student_uuid' => $this->uuid]);
+    }
+
+
+    public function migrateStudentToClasse(int $classeId, ?int $school_year_id = null, bool $redirect_to_profil = false)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $director = User::first();
+
+            $classe = Classe::find($classeId);
+
+            if($classe){
+
+                if(!$school_year_id){
+
+                    if(!$school_year_id) $schoolYear = SchoolYear::current()?->first();
+                }
+                else{
+                    $schoolYear = SchoolYear::find($this->school_year_id);
+                }
+
+                if($schoolYear && $schoolYear->is_active){
+
+                    $studentId = $this->id;
+
+                    YearlyClasseStudent::where('student_id', $this->id)->where('school_year_id', $schoolYear->id)?->delete();
+
+                    YearlyClasseStudent::create([
+                        'student_id'     => $studentId,
+                        'classe_id'      => $classeId,
+                        'school_year_id' => $schoolYear->id,
+                        'author_id'      => $director->id,
+                        'is_active'      => true,
+                        'status'         => 'Approuvé',
+                        'started_at'     => now(),
+                    ]);
+
+                    $director?->notify(new RealTimeNotification(
+                        userEmail: $director->email,
+                        tenantId:  $director->tenant_id,
+                        title:     "MIGRATION TERMINEE AVEC SUCCES!",
+                        message:   $this->getFullName() . " est à présent un apprenant actif de la classe de " . $classe?->name,
+                        type:      'success',
+                    ));
+
+                    DB::commit();
+
+                    if($redirect_to_profil) $this->redirect($this->toProfilRoute(), true);
+                }
+                else{
+
+                    $error_message = "L'année scolaire est introuvable ou peut-être n'est pas active!";
+
+                    $director?->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Erreur de migration ",
+                        message:           $error_message,
+                        type:              'error',
+                    ));
+
+                }
+            }
+            else{
+
+                $error_message = "La classe de destination est introuvable!";
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
+                    tenantId: $director->tenant_id,
+                    title:             "Erreur de migration: la classe n'existe pas ",
+                    message:           $error_message,
+                    type:              'error',
+                ));
+
+            }
+
+        } catch (\Throwable $th) {
+
+            DB::rollback();
+
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director->email,
+                tenantId:  $director->tenant_id,
+                title:     "ECHEC DE LA MIGRATION DE L'APPRENANT " . $this->getFullName() . " VERS LA CLASSE " . $classe?->name,
+                message:   cutter($th->getMessage(), 200),
+                type:      'error',
+            ));
+        }
+        finally{
+
+            broadcast(new DataUpdatedEvent($director->tenant_id));
+
+        }
+    }
+
+
+    public function removeStudentFromHisCurrentClasse(bool $redirect_to_profil = false)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $director = User::first();
+
+            $classe = $this->currentClasse()?->classe;
+
+            if($classe){
+
+                $schoolYear = SchoolYear::find($classe->school_year_id);
+
+                if($schoolYear && $schoolYear->is_active){
+
+                    $student = $this;
+
+                    if($student){
+
+                        YearlyClasseStudent::where('student_id', $this->id)->where('school_year_id', $classe->school_year_id)?->delete();
+
+                        $director?->notify(new RealTimeNotification(
+                            userEmail: $director->email,
+                            tenantId:  $director->tenant_id,
+                            title:     "RETRAIT TERMINE AVEC SUCCES!",
+                            message:   $this->getFullName() . " est à présent un apprenant sans classe. Il a été retiré de la classe " . $classe?->name,
+                            type:      'success',
+                        ));
+
+                        DB::commit();
+                    }
+                }
+                else{
+
+                    $error_message = "L'année scolaire est introuvable ou peut-être n'est pas active!";
+
+                    $director?->notify(new RealTimeNotification(
+                        userEmail: $director?->email,
+                        tenantId: $director->tenant_id,
+                        title:             "Erreur de retrait ",
+                        message:           $error_message,
+                        type:              'error',
+                    ));
+
+                }
+            }
+            else{
+
+                $director?->notify(new RealTimeNotification(
+                    userEmail: $director?->email,
+                    tenantId: $director->tenant_id,
+                    title:             "Erreur de retrait: la classe n'existe pas ",
+                    message:           "Il semble que l'apprenant n'a pas de classe actuellement",
+                    type:              'error',
+                ));
+
+            }
+
+        } catch (\Throwable $th) {
+
+            DB::rollback();
+
+            $director?->notify(new RealTimeNotification(
+                userEmail: $director->email,
+                tenantId:  $director->tenant_id,
+                title:     "ECHEC DU RETRAIT DE L'APPRENANT " . $this->getFullName() . " DE SA CLASSE ACTUELLE" . $classe?->name,
+                message:   cutter($th->getMessage(), 200),
+                type:      'error',
+            ));
+        }
+        finally{
+
+            broadcast(new DataUpdatedEvent($director->tenant_id));
+
+        }
     }
     
 }

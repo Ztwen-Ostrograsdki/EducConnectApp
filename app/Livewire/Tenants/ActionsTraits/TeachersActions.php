@@ -22,14 +22,14 @@ trait TeachersActions{
 
 	use WithPagination, WireUiActions;
     
-    public $counter = 3;
+    public $counterl = 3;
 
     public ?SchoolYear $current_active_year;
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterl++;
     }
 
     

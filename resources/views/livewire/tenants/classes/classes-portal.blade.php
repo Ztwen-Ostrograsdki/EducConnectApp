@@ -1,9 +1,5 @@
 <div class="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
     <div class="w-full max-w-[100vw] overflow-x-hidden">
-
-        {{-- ===================================================== --}}
-        {{-- HEADER --}}
-        {{-- ===================================================== --}}
         <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl">
             <div class="px-4 sm:px-6 lg:px-8 py-5">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -12,7 +8,8 @@
                             <h1 class="text-2xl sm:text-3xl font-bold break-words">Portail des classes</h1>
                             <span
                                 class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0">
-                                {{ $classes->total() }} classe{{ $classes->total() > 1 ? 's' : '' }}
+                                {{ $this->stats['classes_actives'] }}
+                                classe{{ $this->stats['classes_actives'] > 1 ? 's' : '' }}
                             </span>
                             @if ($this->activeYear)
                                 <span
@@ -38,58 +35,111 @@
                 </div>
             </div>
         </section>
-
-        {{-- {{ dd($this->counters) }} --}}
-
         <section class="p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm text-slate-400">Total classes</p>
-                            <h2 class="mt-3 text-3xl xl:text-4xl font-bold">{{ $this->stats['classes'] }}</h2>
+
+                {{-- Classes --}}
+                <div
+                    class="rounded-3xl border border-slate-800 bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer opacity-80 hover:opacity-100">
+                    <div class="flex flex-col items-start justify-between gap-4">
+                        <div class="flex w-full justify-between">
+                            <p class="text-sm text-slate-400 flex flex-col">
+                                <span>Total classes</span>
+                                <span class="text-slate-600">actives</span>
+                            </p>
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                🏫
+                            </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0">🏫
-                        </div>
+                        <h2 class="mt-3 text-3xl xl:text-4xl font-bold flex justify-between items-center w-full">
+                            <span>{{ $this->stats['classes_actives'] }}</span>
+                            <span class="flex flex-col text-slate-600 text-sm justify-end items-end">
+                                <span class="text-orange-600/60">Non actives :
+                                    {{ $this->stats['classes_unactives'] }}</span>
+                                <span class="text-red-500/60">Fermées : {{ $this->stats['classes_closeds'] }}</span>
+                            </span>
+                        </h2>
                     </div>
                 </div>
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm text-slate-400">Apprenants</p>
-                            <h2 class="mt-3 text-3xl xl:text-4xl font-bold">
-                                {{ number_format($this->stats['students']) }}</h2>
+
+                {{-- Apprenants --}}
+                <div
+                    class="rounded-3xl border border-slate-800 bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer opacity-80 hover:opacity-100">
+                    <div class="flex flex-col items-start justify-between gap-4">
+                        <div class="flex w-full justify-between">
+                            <p class="text-sm text-slate-400 flex flex-col">
+                                <span>Apprenants</span>
+                                <span class="text-slate-600">ayant de classes</span>
+                            </p>
+                            <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center shrink-0">
+                                👨‍🎓
+                            </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center shrink-0">👨‍🎓
-                        </div>
+                        <h2 class="mt-3 text-3xl xl:text-4xl font-bold flex justify-between items-center w-full">
+                            <span>{{ number_format($this->stats['students']) }}</span>
+                            <span class="flex flex-col text-slate-600 text-sm justify-end items-end">
+                                <span class="text-green-700/40">Ayant de classe :
+                                    {{ number_format($this->stats['students_in_classe']) }}</span>
+                                <span class="text-red-600/60">Sans classe :
+                                    {{ number_format($this->stats['students'] - $this->stats['students_in_classe']) }}</span>
+                            </span>
+                        </h2>
                     </div>
                 </div>
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm text-slate-400">Enseignants</p>
-                            <h2 class="mt-3 text-3xl xl:text-4xl font-bold">{{ $this->stats['teachers'] }}</h2>
+
+                {{-- Enseignants --}}
+                <div
+                    class="rounded-3xl border border-slate-800 bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer opacity-80 hover:opacity-100">
+                    <div class="flex flex-col items-start justify-between gap-4">
+                        <div class="flex w-full justify-between">
+                            <p class="text-sm text-slate-400 flex flex-col">
+                                <span>Enseignants</span>
+                                <span class="text-slate-600">en classes</span>
+                            </p>
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center shrink-0">
+                                👩‍🏫
+                            </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-violet-500/10 flex items-center justify-center shrink-0">
-                            👩‍🏫</div>
+                        <h2 class="mt-3 text-3xl xl:text-4xl font-bold flex justify-between items-center w-full">
+                            <span>{{ $this->stats['teachers'] }}</span>
+                            <span class="flex flex-col text-slate-600 text-sm items-end justify-end">
+                                <span class="text-green-600/45">En classes :
+                                    {{ $this->stats['teachers_in_classes'] }}</span>
+                                <span class="text-red-600/60"> Sans classes :
+                                    {{ $this->stats['teachers'] - $this->stats['teachers_in_classes'] }}</span>
+                            </span>
+                        </h2>
                     </div>
                 </div>
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm text-slate-400">Promotions</p>
-                            <h2 class="mt-3 text-3xl xl:text-4xl font-bold">{{ $this->stats['promotions'] }}</h2>
+
+                {{-- Promotions (inchangée) --}}
+                <div
+                    class="rounded-3xl border border-slate-800 bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer opacity-80 hover:opacity-100">
+                    <div class="flex flex-col items-start justify-between gap-4">
+                        <div class="flex w-full justify-between">
+                            <p class="text-sm text-slate-400 flex flex-col">
+                                <span>Promotions</span>
+                                <span class="text-slate-600">actives</span>
+                            </p>
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                                🎯
+                            </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0">🎯
-                        </div>
+                        <h2 class="mt-3 text-3xl xl:text-4xl font-bold flex justify-between items-center w-full">
+                            <span>{{ $this->stats['promotions_actives'] }}</span>
+                            <span class="flex flex-col text-slate-600 text-sm items-end justify-end">
+                                <span>Filières : {{ $this->stats['filiars_actives'] }}</span>
+                                <span>Séries : {{ $this->stats['serials_actives'] }}</span>
+                            </span>
+                        </h2>
                     </div>
                 </div>
+
             </div>
         </section>
-
-        {{-- ===================================================== --}}
-        {{-- FILTERS --}}
-        {{-- ===================================================== --}}
         <section class="px-4 sm:px-6 lg:px-8">
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
                 <div class="flex flex-col xl:flex-row gap-4">
@@ -179,25 +229,28 @@
 
                             {{-- TOP --}}
                             <div class="p-5">
-                                <div class="flex items-start justify-between gap-4">
+                                <a wire:navigate
+                                    href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
+                                    class="flex items-start justify-between gap-4 group">
                                     <div class="min-w-0 flex-1">
-                                        <a wire:navigate
-                                            href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
-                                            class="flex flex-wrap items-center gap-2">
+                                        <div
+                                            class="flex flex-wrap items-center gap-2 group-hover:underline underline-offset-4 group-hover:text-sky-600 ">
                                             <h2 class="text-xl font-bold truncate">{{ $classe->name }}</h2>
-                                            @if ($classe->is_active)
-                                                <span
-                                                    class="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs shrink-0">Active</span>
-                                            @else
-                                                <span
-                                                    class="px-2 py-1 rounded-full bg-slate-700 text-slate-400 text-xs shrink-0">Inactive</span>
-                                            @endif
-                                            @if ($classe->is_locked)
-                                                <span
-                                                    class="px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs shrink-0">🔒
-                                                    Verrouillée</span>
-                                            @endif
-                                        </a>
+                                            <span class="">
+                                                @if ($classe->is_active)
+                                                    <span
+                                                        class="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs shrink-0">Active</span>
+                                                @else
+                                                    <span
+                                                        class="px-2 py-1 rounded-full bg-slate-700 text-slate-400 text-xs shrink-0">Inactive</span>
+                                                @endif
+                                                @if ($classe->is_locked)
+                                                    <span
+                                                        class="px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs shrink-0">🔒
+                                                        Verrouillée</span>
+                                                @endif
+                                            </span>
+                                        </div>
                                         <div class="mt-1.5 flex flex-wrap gap-2">
                                             @if ($classe->promotion)
                                                 <span
@@ -214,10 +267,10 @@
                                         </div>
                                     </div>
                                     <div
-                                        class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-2xl">
+                                        class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-2xl group-hover:border-4 group-hover:border-sky-600">
                                         🏫
                                     </div>
-                                </div>
+                                </a>
 
                                 {{-- STATS --}}
                                 <div class="mt-5 grid grid-cols-2 gap-3">

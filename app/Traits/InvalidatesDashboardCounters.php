@@ -5,9 +5,6 @@ namespace App\Traits;
 use App\Services\DashboardCounterService;
 
 /**
- * @mixin Model
- */
-/**
  * @method static void created(\Closure|string $callback)
  * @method static void updated(\Closure|string $callback)
  * @method static void deleted(\Closure|string $callback)

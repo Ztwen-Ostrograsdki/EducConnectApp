@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\Serial;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 
 class Promotion extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvalidatesDashboardCounters;
 
     protected $connection = 'tenant';
 

@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Exceptions\CouldNotDeletedDirectorException;
 use App\Helpers\Support\TenantStorage;
 use App\Notifications\RealTimeNotification;
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
 
-    use HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, Notifiable, SoftDeletes, InvalidatesDashboardCounters;
 
     protected $connection = 'tenant';
 

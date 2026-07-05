@@ -46,7 +46,9 @@ class TeachersPortal extends Component
 
     public ?int $classe_id = null;
 
-    public int $perPage = 10;
+    public int $counterh = 10;
+
+    public int $perPage = 35;
 
 
     
@@ -173,7 +175,7 @@ class TeachersPortal extends Component
 
     public function onReloadDashboard()
     {
-        $this->counter = randomNumber();
+        $this->counterh = randomNumber();
     }
 
     public function updatingSearch(): void
@@ -416,7 +418,7 @@ class TeachersPortal extends Component
         )
         ->when($this->subject_id, fn($qcl1) => 
             $qcl1->whereHas('yearlySubjects', fn($qcl2) => 
-                $qcl2->where('subject_id', $this->subject_id)->where('is_active', true)->where('school_year_id', $this->activeYear->id)->whereNull('ended_at')
+                $qcl2->where('subject_id', $this->subject_id)->where('is_active', true)->where('school_year_id', $this->activeYear->id)
             )
         )
         
@@ -428,7 +430,7 @@ class TeachersPortal extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterh++;
     }
 
 

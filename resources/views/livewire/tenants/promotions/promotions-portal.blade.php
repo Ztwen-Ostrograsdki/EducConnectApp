@@ -257,7 +257,8 @@
                                     <tr class="hover:bg-slate-800/40 transition-colors duration-200">
 
                                         <td class="px-6 py-5 truncate">
-                                            {{ __zero($promotions->firstItem() + $loop->iteration - 1) }}</td>
+                                            {{ __zero($promotions->firstItem() + $loop->iteration - 1) }}
+                                        </td>
 
                                         <td class="px-6 py-5">
 

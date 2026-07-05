@@ -110,7 +110,7 @@
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail</span>
                             </a>
-                            @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 6) as $classe)
+                            @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 4) as $classe)
                                 <a wire:navigate
                                     href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">

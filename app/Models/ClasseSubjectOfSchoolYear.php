@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClasseSubjectOfSchoolYear extends Model
 {
+    use InvalidatesDashboardCounters;
+    
     protected $table = 'classe_subject_of_school_years';
 
     protected $fillable = [

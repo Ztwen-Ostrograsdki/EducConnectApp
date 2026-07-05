@@ -192,7 +192,7 @@ class Classe extends Model
     // Total enseignants intervenant dans cette classe
     public function teachersCount(): int
     {
-        return $this->teachers()?->where('is_active', true)->whereNull('ended_at')->distinct('teacher_id')->count();
+        return $this->teachers()?->where('classe_subject_of_school_years.is_active', true)->whereNull('classe_subject_of_school_years.ended_at')->count();
     }
 
     // Élèves inscrits dans cette classe
@@ -259,7 +259,7 @@ class Classe extends Model
                             ->where('classe_id', $this->id)
                             ->where('created_at', '>=', now()->subMonths(2))
                         )
-                        ->latest('created_at')->take(10)->get();
+                        ->latest('created_at')->take(5)->get();
     }
 
 
