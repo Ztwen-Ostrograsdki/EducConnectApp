@@ -187,11 +187,6 @@ class CreateTutors extends Component
     public function deleteTutor(string $uuid): void
     {
         $this->deletingUuid = $uuid;
-        $this->showTutorRemoveModal = true;
-    }
-
-    public function confirmDeleteTutor(): void
-    {
         $uuid = $this->deletingUuid;
 
         $tutors = collect(session('pending_tutors', []))
@@ -202,10 +197,11 @@ class CreateTutors extends Component
         session(['pending_tutors' => $tutors]);
 
         $this->notification()->success(
-            title: 'Supprimé',
-            description: 'Tuteur retiré.'
+            title: 'RETRAIT TUTEUR/PARENT',
+            description: 'Tuteur/Parent retiré de la liste.'
         );
     }
+
 
     public function resetModal()
     {

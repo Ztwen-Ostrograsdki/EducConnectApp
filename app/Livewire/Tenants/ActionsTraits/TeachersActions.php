@@ -259,7 +259,7 @@ trait TeachersActions{
         }
         $teacher->giveAccessToTeacherForThisSchoolYear(tenant('id'), null, request()->getSchemeAndHttpHost());
         $this->notification()->success(
-            title: 'Accès accordé',
+            title: 'Processus lancé...',
             description: "Le processus d'accès pour {$teacher->getFullName()} a été lancé.",
         );
 

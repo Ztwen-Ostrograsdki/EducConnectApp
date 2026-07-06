@@ -50,8 +50,16 @@ class Tutor extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'student_tutor_relations', 'tutor_id', 'student_id')
-            ->withPivot(['parent_relation', 'is_primary_contact', 'is_active', 'locked'])
             ->withTimestamps();
+    }
+
+
+    /**
+     * Get all students linked to this tutor.
+     */
+    public function myChildren(): hasMany
+    {
+        return $this->hasMany(StudentTutorRelation::class, 'tutor_id');
     }
 
     /**
@@ -68,6 +76,16 @@ class Tutor extends Model
     public function yearlyAccesses(): HasMany
     {
         return $this->hasMany(TutorYearlyAccess::class, 'tutor_id');
+    }
+    
+    /**
+     * Get all yearly accesses for this tutor.
+     */
+    public function hasYearlyAccess(?int $schoolYearId = null): bool
+    {
+        if(!$schoolYearId) $schoolYearId = SchoolYear::where('is_active', true)->where('is_closed', false)->first()?->id;
+
+        return $this->yearlyAccesses()->where('school_year_id', $schoolYearId)->count() > 0;
     }
 
     /**
@@ -138,6 +156,27 @@ class Tutor extends Model
         return $this->students()
             ->where('students.id', $studentId)
             ->exists();
+    }
+
+    public function getFullName(bool $reverse = false)
+    {
+        return $this->user?->getFullName($reverse);
+    }
+
+    public function getUserNamePrefix(bool $withFullName = false, bool $reverseName = false)
+    {
+        return $this->user?->getUserNamePrefix($withFullName, $reverseName);
+    }
+
+    public function greating(bool $withFullName = true, bool $reverse = false)
+    {
+        return $this->user?->greating($withFullName, $reverse);
+    }
+
+
+    public function profil_photo_url() 
+    {
+        return $this->user?->profil_photo_url;
     }
 
     /**

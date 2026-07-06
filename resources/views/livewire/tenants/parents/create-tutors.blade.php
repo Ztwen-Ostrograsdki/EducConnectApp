@@ -1,6 +1,6 @@
 <div class="flex flex-col gap-1 p-5 w-full justify-center mx-auto">
-    <div class="">
-        <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600">
+    <div class="w-full">
+        <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600 w-full">
 
             <div class="w-full px-4 py-1">
 

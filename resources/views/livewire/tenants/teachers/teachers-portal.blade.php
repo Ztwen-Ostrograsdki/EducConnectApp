@@ -231,6 +231,7 @@
             </div>
 
         </section>
+
         <section>
 
             @php
@@ -674,7 +675,7 @@
                                 <div class="p-6 flex justify-center text-center">
                                     <div class="flex flex-col items-center gap-3">
                                         <span class="text-4xl">🎯</span>
-                                        <p class="text-slate-500 text-sm">Aucune enseignant trouvé </p>
+                                        <p class="text-slate-500 text-sm">Aucun enseignant trouvé </p>
                                         @if ($search || $status || $classe_id || $subject_id || $promotion_id || $filiar_id || $gender || $city || $department)
                                             <button wire:click="clearFilters"
                                                 class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">

@@ -130,7 +130,7 @@
                         class="border-t border-slate-700 p-4 flex-wrap gap-2 space-x-3 space-y-3 text-sm">
                         <button wire:click="showBatch('{{ $batchData['id'] }}')" wire:loading.attr="disabled"
                             wire:target="showBatch('{{ $batchData['id'] }}')"
-                            class="p-2 rounded-2xl bg-blue-600 hover:bg-blue-700 inline-flex items-center gap-1 transition-all">
+                            class="p-2 rounded-2xl bg-blue-600 hover:bg-blue-700 inline-flex items-center gap-1 transition-all active:scale-95">
                             <x-lucide-eye class="w-4 h-4" />
                             Voir les détails
                         </button>
@@ -151,7 +151,7 @@
 
                         <button wire:click="deleteBatchFailures('{{ $batchData['id'] }}')" wire:loading.attr="disabled"
                             wire:target="deleteBatchFailures('{{ $batchData['id'] }}')"
-                            class="p-2 rounded-2xl bg-red-600 hover:bg-red-700 transition-all">
+                            class="p-2 rounded-2xl bg-red-600 hover:bg-red-700 transition-all active:scale-95">
                             <span wire:loading.remove
                                 wire:target="deleteBatchFailures('{{ $batchData['id'] }}')">Suppr. les échecs</span>
                             <span wire:loading wire:target="deleteBatchFailures('{{ $batchData['id'] }}')">
@@ -162,7 +162,7 @@
 
                         <button wire:click="deleteBatchSuccess('{{ $batchData['id'] }}')" wire:loading.attr="disabled"
                             wire:target="deleteBatchSuccess('{{ $batchData['id'] }}')"
-                            class="p-2 rounded-2xl bg-red-600 hover:bg-red-700 transition-all">
+                            class="p-2 rounded-2xl bg-red-600 hover:bg-red-700 transition-all active:scale-95">
                             <span wire:loading.remove wire:target="deleteBatchSuccess('{{ $batchData['id'] }}')">Suppr.
                                 les succès</span>
                             <span wire:loading wire:target="deleteBatchSuccess('{{ $batchData['id'] }}')">
@@ -173,7 +173,7 @@
 
                         <button wire:click="deleteBatch('{{ $batchData['id'] }}')" wire:loading.attr="disabled"
                             wire:target="deleteBatch('{{ $batchData['id'] }}')"
-                            class="p-2 rounded-2xl bg-rose-700 hover:bg-rose-800 transition-all">
+                            class="p-2 rounded-2xl bg-rose-700 hover:bg-rose-800 transition-all active:scale-95">
                             <span wire:loading.remove wire:target="deleteBatch('{{ $batchData['id'] }}')">Suppr. le
                                 batch</span>
                             <span wire:loading wire:target="deleteBatch('{{ $batchData['id'] }}')">

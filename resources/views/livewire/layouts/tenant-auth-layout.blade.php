@@ -288,13 +288,13 @@
                     <div class="s-section-label">Personnes</div>
                     <div class="s-acc" id="acc-students">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-students')">
-                            <div class="s-icon">👩‍🏫</div>
+                            <div class="s-icon">👥</div>
                             <span class="s-label">Les apprenants</span>
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
                             <a wire:navigate href="{{ route('tenant.students.portal') }}" class="s-link">
-                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
+                                <div class="s-icon">👥</div><span class="s-label">Dashboard</span><span
                                     class="s-badge badge-green">42</span>
                             </a>
                             <a wire:navigate href="{{ route('tenant.students.create') }}" class="s-link">
@@ -335,9 +335,31 @@
                         </div>
                     </div>
 
-                    <a wire:navigate href="{{ route('tenant.parents.portal') }}" class="s-link">
-                        <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Parents / Tuteurs</span>
-                    </a>
+                    <div class="s-acc" id="acc-parents">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-parents')">
+                            <div class="s-icon">👨‍👩‍👧</div>
+                            <span class="s-label">Parents / Tuteurs</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a href="{{ route('tenant.parents.portal') }}" class="s-link">
+                                <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Dashboard</span><span
+                                    class="s-badge badge-green">42</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.parents.create') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-user-plus class="w-3 h-3" />
+                                </div><span class="s-label">Ajouter parent/tuteur</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-octagon-alert class="w-3 h-3" />
+                                </div><span class="s-label">Status des ajouts</span>
+                            </a>
+
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="s-section">

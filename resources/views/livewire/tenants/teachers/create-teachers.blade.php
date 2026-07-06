@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-1 p-5 w-4/5 justify-center mx-auto">
+<div class="flex flex-col gap-1 p-5 justify-center mx-auto">
     <div class="">
         <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600">
 
@@ -47,7 +47,7 @@
                 </div>
                 <div class="flex justify-end w-full">
                     <a href="{{ route('tenant.teachers.crud.tasks') }}"
-                        class="rounded-2xl flex items-center bg-blue-600 hover:bg-blue-800 text-white gap-x-3 px-3.5 py-2.5 my-2">
+                        class="rounded-2xl flex items-center bg-blue-600 hover:bg-blue-800 text-white gap-x-3 px-3.5 py-2.5 my-2 ">
                         <x-lucide-octagon-alert class="w-5 h-5" />
                         <span class="s-label">Voir le status des migrations lancées</span>
                     </a>
@@ -61,7 +61,7 @@
     {{-- Bouton bascule formulaire / import --}}
     <div class="flex gap-3 my-3 mb-4">
         <button
-            class="px-4 py-3.5 rounded-2xl text-black @if ($showImportMode) bg-gray-500 hover:bg-gray-500 @else bg-green-600 hover:bg-green-800 @endif"
+            class="px-4 py-3.5 rounded-2xl text-black active:scale-95 @if ($showImportMode) bg-gray-500 hover:bg-gray-500 @else bg-green-600 hover:bg-green-800 @endif"
             wire:click="toggleImportMode">
             <span wire:loading.remove wire:target='toggleImportMode' class="flex gap-1.5 items-center">
                 @if ($showImportMode)
@@ -86,7 +86,7 @@
                     {{ count($this->teachers) }} données ont été ajoutées et attendente d'être migrer en base de
                     données!
                 </a>
-                <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800"
+                <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800 active:scale-95"
                     wire:click="clearAddedData">
                     <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
                         <x-lucide-trash-2 class="w-4 h-4" />
@@ -373,7 +373,7 @@
 
                     <button type="button" wire:loading.attr="disabled"
                         wire:click="{{ $editingUuid ? 'updateTeacher' : 'addTeacher' }}"
-                        class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800">
+                        class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800 active:scale-95">
                         <span class="flex items-center gap-1.5" wire:target='updateTeacher, addTeacher'
                             wire:loading.remove>
                             <span>{{ $editingUuid ? 'Mettre à jour' : 'Ajouter' }}</span>
@@ -402,7 +402,7 @@
                             {{ count($this->teachers) }}
                         </span>
                     </div>
-                    <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800"
+                    <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800 active:scale-95"
                         wire:click="clearAddedData">
                         <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
                             <x-lucide-trash-2 class="w-4 h-4" />
@@ -498,7 +498,7 @@
                                                 <button wire:key="edit-teacher-{{ $teacher['uuid'] }}"
                                                     wire:click="editTeacher('{{ $teacher['uuid'] }}')"
                                                     wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 ">
+                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 active:scale-95">
                                                     <span wire:loading.remove class="flex items-center gap-1.5"
                                                         wire:target="editTeacher">
                                                         <x-lucide-pen class="w-4 h-4" />
@@ -514,7 +514,7 @@
                                                 <button wire:key="rem-teacher-{{ $teacher['uuid'] }}"
                                                     wire:click="deleteTeacher('{{ $teacher['uuid'] }}')"
                                                     wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 ">
+                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 active:scale-95">
                                                     <span wire:loading.remove class="flex items-center gap-1.5"
                                                         wire:target="deleteTeacher">
                                                         <x-lucide-trash-2 class="w-4 h-4" />
@@ -526,17 +526,6 @@
                                                         <span>En cours...</span>
                                                     </span>
                                                 </button>
-                                                <x-confirm-modal wire:key="confirm-teach-del-{{ $teacher['uuid'] }}"
-                                                    :show="$showTeacherRemoveModal" title="Retirer de la liste"
-                                                    confirm-text="Oui, Retirer" cancel-text="Annuler"
-                                                    confirm-action="confirmDeleteTeacher" close-action="resetModal">
-                                                    <p>
-                                                        Cette action retirera cette donnée de la liste.
-                                                    <p class="text-orange-500 font-semibold py-1.5">Action
-                                                        irreversible!</p>
-                                                    </p>
-                                                </x-confirm-modal>
-
                                             </div>
 
                                         </td>
@@ -554,7 +543,7 @@
 
             </section>
             <button type="button" wire:loading.attr="disabled" wire:click="{{ 'finish' }}"
-                class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800">
+                class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800 active:scale-95">
                 <span class="flex items-center gap-1.5" wire:target='finish' wire:loading.remove>
                     <span>Terminer</span>
                     <x-lucide-send class="w-5 h-5" />

@@ -240,12 +240,6 @@ class CreateTeachers extends Component
     {
         $this->deletingUuid = $uuid;
 
-        $this->showTeacherRemoveModal = true;
-
-    }
-
-    public function confirmDeleteTeacher(): void
-    {
         $uuid = $this->deletingUuid;
 
         $teachers = session('pending_teachers', []);
@@ -260,10 +254,12 @@ class CreateTeachers extends Component
         ]);
 
         $this->notification()->success(
-            title: 'Supprimé',
-            description: 'Enseignant retiré.'
+            title: 'RETRAIT ENSEIGNANT',
+            description: 'Enseignant retiré de la liste.'
         );
+
     }
+
 
     public function resetModal()
     {

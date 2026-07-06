@@ -228,6 +228,7 @@ class JobToCreateTutor implements ShouldQueue
                 ]);
 
                 $user = User::firstWhere('email', $task->payload['email']);
+                
                 $tutor = Tutor::firstWhere('email', $task->payload['email']);
 
                 if ($user && $tutor) {
