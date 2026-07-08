@@ -21,6 +21,7 @@ use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
 use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\CreateTutors;
+use App\Livewire\Tenants\Parents\ManageParentsStudentsRelationComponent;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Parents\TutorsCreationMonitorComponent;
@@ -231,6 +232,8 @@ Route::middleware([
             Route::get('/parents-tuteurs/ajout', CreateTutors::class)->name('parents.create');
 
             Route::get('/parents-tuteurs/status-des-ajouts', TutorsCreationMonitorComponent::class)->name('parents.crud.tasks');
+
+            Route::get('/parents-tuteurs/editions-des-relations-parents-apprenants/{parent_uuid}', ManageParentsStudentsRelationComponent::class)->name('parents.manage.relations');
 
 
 

@@ -75,7 +75,6 @@
                                                 {{ $user->getFullName(true) }}
 
                                             </h1>
-
                                             <span
                                                 class="px-3 py-1 rounded-full
                                                          bg-indigo-500/10
@@ -83,9 +82,7 @@
                                                          text-xs shrink-0">
 
                                                 Enseignant
-
                                             </span>
-
                                         </div>
 
                                         <p class="mt-2 text-slate-400 text-sm">

@@ -1,22 +1,22 @@
 <div class="w-full overflow-x-hidden">
 
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1900px]
                 px-3 sm:px-4 lg:px-6 xl:px-8">
 
-        {{-- ===================================================== --}}
-        {{-- HEADER --}}
-        {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="relative overflow-hidden
+            <div
+                class="relative overflow-hidden
                         rounded-[32px]
                         border border-slate-800
                         bg-slate-900">
 
                 {{-- BG --}}
-                <div class="absolute inset-0
+                <div
+                    class="absolute inset-0
                             bg-gradient-to-br
                             from-indigo-500/10
                             via-slate-900
@@ -25,14 +25,16 @@
 
                 <div class="relative p-2 py-3">
 
-                    <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                 xl:flex-row
                                 xl:items-start
                                 xl:justify-between
                                 gap-8">
 
                         {{-- LEFT --}}
-                        <div class="flex flex-col
+                        <div
+                            class="flex flex-col
                                     lg:flex-row
                                     gap-6
                                     min-w-0">
@@ -40,76 +42,91 @@
                             {{-- PHOTO --}}
                             <div class="flex justify-center items-center lg:block p-2">
 
-                                <div class="w-32 h-32 sm:w-36 sm:h-36
-                                            rounded-[30px]
-                                            bg-slate-800
-                                            border border-slate-700
-                                            overflow-hidden
-                                            shrink-0">
-                                </div>
+                                <img src="{{ $user->profil_photo_url }}"
+                                    class="w-full h-full rounded-2xl border-4 border-slate-500 object-cover">
 
                             </div>
 
                             {{-- INFOS --}}
                             <div class="min-w-0">
 
-                                <div class="flex flex-wrap
+                                <div
+                                    class="flex flex-wrap
                                             items-center
                                             gap-3">
 
                                     <h1 class="text-2xl sm:text-3xl font-bold">
 
-                                        KOUASSI Marceline
+                                        {{ $parent->getFullName() }}
 
                                     </h1>
 
-                                    <span class="px-3 py-1 rounded-full
+                                    @if ($parent->is_active)
+                                        <span
+                                            class="px-3 py-1 rounded-full
                                                  bg-emerald-500/10
                                                  text-emerald-400 text-xs">
 
-                                        Parent Actif
+                                            Compte actif
+                                        </span>
+                                    @else
+                                        <span
+                                            class="px-3 py-1 rounded-full
+                                                 bg-red-500/10
+                                                 text-red-400 text-xs">
 
-                                    </span>
+                                            Compte non cctif
+                                        </span>
+                                    @endif
 
                                 </div>
 
                                 <p class="mt-2 text-amber-400">
 
                                     Email :
-                                    marceline@gmail.com
+                                    {{ $user->email }}
 
                                 </p>
                                 <p class="mt-2 text-slate-400">
 
-                                    Parent principal —
-                                    3 enfants inscrits dans l’établissement.
+                                    @if (count($this->children))
+                                        Parent avec accès à
+                                        <span class="text-orange-600">
+                                            {{ __zero(count($this->children)) }} apprenant(s) </span>
+                                        de l’établissement.
+                                    @else
+                                        Pas d'apprenant lié
+                                    @endif
 
                                 </p>
 
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                                 bg-slate-800
                                                 border border-slate-700">
 
-                                        Profession : Commerçante
+                                        Profession : {{ $user->job_name }}
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                                 bg-slate-800
                                                 border border-slate-700">
 
-                                        Ville : Cotonou
+                                        Ville : {{ $user->adresse }}
 
                                     </div>
 
-                                    <div class="px-4 py-2 rounded-2xl
+                                    <div
+                                        class="px-4 py-2 rounded-2xl
                                                 bg-slate-800
                                                 border border-slate-700">
 
-                                        Sexe : Féminin
+                                        Sexe : {{ $user->gender }}
 
                                     </div>
 
@@ -122,35 +139,41 @@
                         {{-- ACTIONS --}}
                         <div class="flex flex-wrap gap-3">
 
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600">
+                            <a wire:navigate
+                                href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
+                                class="px-5 py-3 rounded-2xl
+                                           bg-indigo-500/40 hover:bg-indigo-400 hover:text-black active:scale-95">
 
-                                Modifier
+                                Ajouter des apprenants
 
-                            </button>
+                            </a>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-emerald-500 hover:bg-emerald-600">
 
                                 Envoyer Bulletin
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-sky-500 hover:bg-sky-600">
 
                                 Envoyer Notes
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-amber-500 hover:bg-amber-600">
 
                                 Notifier
 
                             </button>
 
-                            <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                            bg-rose-500 hover:bg-rose-600">
 
                                 Bloquer Accès
@@ -167,57 +190,10 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="grid
-                        grid-cols-2
-                        lg:grid-cols-4
-                        2xl:grid-cols-6
-                        gap-4">
-
-                @foreach([
-                    ['Enfants','3','text-indigo-400'],
-                    ['Présences','94%','text-emerald-400'],
-                    ['Moyenne Globale','13.42','text-sky-400'],
-                    ['Retards','6','text-amber-400'],
-                    ['Absences','3','text-rose-400'],
-                    ['Notifications','18','text-violet-400']
-                ] as $kpi)
-
-                <div class="rounded-3xl
-                            bg-slate-900
-                            border border-slate-800
-                            p-5">
-
-                    <p class="text-sm text-slate-400">
-
-                        {{ $kpi[0] }}
-
-                    </p>
-
-                    <h2 class="mt-3 text-3xl font-bold {{ $kpi[2] }}">
-
-                        {{ $kpi[1] }}
-
-                    </h2>
-
-                </div>
-
-                @endforeach
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- MAIN GRID --}}
-        {{-- ===================================================== --}}
         <section>
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-1
                         2xl:grid-cols-[minmax(0,1fr)_420px]
                         gap-6">
@@ -230,7 +206,8 @@
                     {{-- ===================================================== --}}
                     {{-- ETAT CIVIL --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-[32px]
+                    <div
+                        class="rounded-[32px]
                                 bg-slate-900
                                 border border-slate-800
                                 p-5 sm:p-6">
@@ -255,40 +232,33 @@
 
                         </div>
 
-                        <div class="mt-6 grid
+                        <div
+                            class="mt-6 grid
                                     grid-cols-1
                                     md:grid-cols-2
                                     xl:grid-cols-3
                                     gap-4">
 
-                            @foreach([
-                                ['Téléphone','+229 01 97 00 00 00'],
-                                ['Nationalité','Béninoise'],
-                                ['Adresse','Akpakpa — Cotonou'],
-                                ['N° Identité','BJ-998721'],
-                                ['Situation','Mariée'],
-                                ['Date naissance','12 Juin 1982'],
-                            ] as $info)
-
-                            <div class="rounded-2xl
+                            @foreach ($this->parentInfos as $info)
+                                <div
+                                    class="rounded-2xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-4">
 
-                                <p class="text-xs text-slate-500">
+                                    <p class="text-xs text-slate-500">
 
-                                    {{ $info[0] }}
+                                        {{ $info[0] }}
 
-                                </p>
+                                    </p>
 
-                                <h3 class="mt-2 font-medium">
+                                    <h3 class="mt-2 font-medium">
 
-                                    {{ $info[1] }}
+                                        {{ $info[1] }}
 
-                                </h3>
+                                    </h3>
 
-                            </div>
-
+                                </div>
                             @endforeach
 
                         </div>
@@ -298,14 +268,16 @@
                     {{-- ===================================================== --}}
                     {{-- ENFANTS --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-[32px]
+                    <div
+                        class="rounded-[32px]
                                 bg-slate-900
                                 border border-slate-800
                                 overflow-hidden">
 
                         <div class="p-5 border-b border-slate-800">
 
-                            <div class="flex flex-col
+                            <div
+                                class="flex flex-col
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
@@ -316,6 +288,9 @@
                                     <h2 class="text-xl font-semibold">
 
                                         Enfants Associés
+                                        <span class="font-mono text-orange-500/70">
+                                            ({{ __zero(count($this->children)) }} apprenant(s))
+                                        </span>
 
                                     </h2>
 
@@ -327,20 +302,22 @@
 
                                 </div>
 
-                                <button class="h-10 px-4 rounded-xl
-                                               bg-indigo-500 hover:bg-indigo-600">
+                                <a wire:navigate
+                                    href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
+                                    class="px-5 py-3 rounded-2xl
+                                           bg-indigo-500/40 hover:bg-indigo-400 hover:text-black active:scale-95 text-center">
 
-                                    Ajouter Enfant
+                                    Gérer les apprenants associés
 
-                                </button>
+                                </a>
 
                             </div>
 
                         </div>
 
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto p-2">
 
-                            <table class="min-w-[1700px] w-full">
+                            <table class="z-table-border w-full text-slate-400">
 
                                 <thead class="bg-slate-950 text-center border-b border-slate-800">
 
@@ -358,14 +335,6 @@
                                             Âge
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Présence
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Statut
-                                        </th>
-
                                         <th class="px-6 py-4 text-center text-sm text-slate-400">
                                             Actions
                                         </th>
@@ -376,95 +345,107 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,3) as $child)
+                                    @foreach ($this->children as $rel)
+                                        @php
+                                            $student = $rel->student;
+                                        @endphp
+                                        <tr class="hover:bg-slate-800/40">
 
-                                    <tr class="hover:bg-slate-800/40">
+                                            <td class="px-2 py-5 truncate">
 
-                                        <td class="px-6 py-5">
+                                                <a wire:navigate
+                                                    href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                                    class="px-2 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-slate-900 border border-slate-950 hover:border-sky-600 items-center gap-2 group">
 
-                                            <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
+                                                    {{ $student->getFullName() }}
 
-                                                KOUASSI Marc
+                                                    <span
+                                                        class="text-xs text-amber-500 rounded-2xl bg-slate-800 text-center inline-flex p-2 font-mono group-hover:text-orange-700 group-hover:bg-slate-950 group-hover:rounded-2xl">
+                                                        @if ($student->currentClasse() && $student->currentClasse()->classe)
+                                                            @php
+                                                                $r = $student->currentClasse()->classe;
+                                                            @endphp
+                                                            <span>{{ $r->code ? $r->code : $r->name }}</span>
+                                                        @else
+                                                            <span
+                                                                class="flex gap-1 justify-center text-xs text-orange-600 group-hover:text-orange-700 group-hover:bg-slate-950 group-hover:rounded-2xl p-1">
+                                                                <span>Pas encore de classe en
+                                                                    {{ $this->activeYear?->slug }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </span>
 
-                                                <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                    2nde F2-2
-                                                </span>
+                                                </a>
 
-                                            </a>
+                                            </td>
 
-                                        </td>
+                                            <td class="px-4 py-5 text-center font-mono text-xs">
 
+                                                {{ $student->gender }}
 
-                                        <td class="px-4 py-5 text-center">
+                                            </td>
 
-                                            F
+                                            <td class="px-4 py-5 text-center truncate">
 
-                                        </td>
+                                                {{ __getAge($student->birth_date) }} ans
 
-                                        <td class="px-4 py-5 text-center">
+                                            </td>
 
-                                            17 ans
+                                            <td class="px-6 py-5 text-xs">
 
-                                        </td>
+                                                <div class="flex items-center justify-end gap-2">
 
-                                        <td class="px-4 py-5 text-center">
-
-                                            96%
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center">
-
-                                            <span class="px-3 py-1 rounded-full
-                                                         bg-emerald-500/10
-                                                         text-emerald-400 text-xs">
-
-                                                Régulier
-
-                                            </span>
-
-                                        </td>
-
-                                        <td class="px-6 py-5">
-
-                                            <div class="flex items-center justify-end gap-2">
-
-                                                <a href="{{route('tenant.student.profil', ['student_uuid' => 'f'])}}" class="p-2.5 rounded-2xl
+                                                    <a wire:navigate
+                                                        href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                                        class="p-2.5 rounded-2xl
                                                bg-blue-500/20
                                                text-blue-400
                                                hover:bg-blue-500/30
                                                transition-all text-sm inline-block text-center">
 
-                                                    Profil 
+                                                        Profil
 
-                                                </a>
+                                                    </a>
 
-
-                                                <a href="{{route('tenant.student.marks', ['student_uuid' => 'dddd'])}}" class="p-2.5 rounded-2xl
+                                                    <a href="{{ route('tenant.student.marks', ['student_uuid' => 'dddd']) }}"
+                                                        class="p-2.5 rounded-2xl
                                                bg-green-500/20
                                                text-green-400
                                                hover:bg-green-500/30
                                                transition-all text-sm inline-block text-center">
 
-                                                    Notes 
+                                                        Notes
 
-                                                </a>
-                                                <button class="p-2.5 rounded-2xl
+                                                    </a>
+                                                    <button wire:click="removeRelation({{ $rel->student_id }})"
+                                                        wire:loading.attr="disabled"
+                                                        wire:target="removeRelation({{ $rel->student_id }})"
+                                                        class="p-2.5 rounded-2xl
                                                bg-red-500/20
                                                text-red-400
-                                               hover:bg-red-500/30
-                                               transition-all text-sm inline-block text-center">
+                                               hover:bg-red-500/70 hover:text-black
+                                               transition-all text-sm inline-block text-center active:scale-95">
 
-                                                    Dissocier
+                                                        <span wire:loading.remove
+                                                            wire:target='removeRelation({{ $rel->student_id }})'>
+                                                            Dissocier
+                                                        </span>
+                                                        <span wire:loading
+                                                            wire:target='removeRelation({{ $rel->student_id }})'
+                                                            class="flex items-center gap-x-2">
+                                                            <span class="flex items-center gap-x-2">
+                                                                <x-lucide-refresh-ccw
+                                                                    class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                            </span>
+                                                        </span>
 
-                                                </button>
+                                                    </button>
 
-                                            </div>
+                                                </div>
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -478,7 +459,8 @@
                     {{-- ===================================================== --}}
                     {{-- NOTES RECENTES --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-[32px]
+                    <div
+                        class="rounded-[32px]
                                 bg-slate-900
                                 border border-slate-800
                                 overflow-hidden">
@@ -497,7 +479,8 @@
 
                             <table class="min-w-[1700px] w-full">
 
-                                <thead class="bg-slate-950
+                                <thead
+                                    class="bg-slate-950
                                              border-b border-slate-800">
 
                                     <tr>
@@ -536,56 +519,55 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach(range(1,3) as $note)
+                                    @foreach (range(1, 3) as $note)
+                                        <tr class="hover:bg-slate-800/40">
 
-                                    <tr class="hover:bg-slate-800/40">
+                                            <td class="px-6 py-5 font-medium">
 
-                                        <td class="px-6 py-5 font-medium">
+                                                KOUASSI Sarah
 
-                                            KOUASSI Sarah
+                                            </td>
 
-                                        </td>
+                                            <td class="px-4 py-5 text-center">
 
-                                        <td class="px-4 py-5 text-center">
+                                                Mathématiques
 
-                                            Mathématiques
+                                            </td>
 
-                                        </td>
+                                            <td class="px-4 py-5 text-center">
 
-                                        <td class="px-4 py-5 text-center">
+                                                Interro 2
 
-                                            Interro 2
+                                            </td>
 
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center
+                                            <td
+                                                class="px-4 py-5 text-center
                                                    font-semibold
                                                    text-emerald-400">
 
-                                            17.5
+                                                17.5
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center">
+                                            <td class="px-4 py-5 text-center">
 
-                                            4
+                                                4
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-6 py-5">
+                                            <td class="px-6 py-5">
 
-                                            M. HOUNKPATI
+                                                M. HOUNKPATI
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-6 py-5 text-slate-300">
+                                            <td class="px-6 py-5 text-slate-300">
 
-                                            Très bon travail.
+                                                Très bon travail.
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
@@ -606,7 +588,8 @@
                     {{-- ===================================================== --}}
                     {{-- CONTACT --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 bg-slate-900
                                 border border-slate-800
                                 p-5">
@@ -619,23 +602,16 @@
 
                         <div class="mt-5 space-y-3">
 
-                            @foreach([
-                                'Envoyer Notification',
-                                'Envoyer Email',
-                                'Envoyer SMS',
-                                'Envoyer WhatsApp',
-                                'Partager Bulletin'
-                            ] as $action)
-
-                            <button class="w-full h-11 rounded-2xl
+                            @foreach (['Envoyer Notification', 'Envoyer Email', 'Envoyer SMS', 'Envoyer WhatsApp', 'Partager Bulletin'] as $action)
+                                <button
+                                    class="w-full h-11 rounded-2xl
                                            bg-slate-950
                                            hover:bg-slate-800
                                            border border-slate-800">
 
-                                {{ $action }}
+                                    {{ $action }}
 
-                            </button>
-
+                                </button>
                             @endforeach
 
                         </div>
@@ -645,7 +621,8 @@
                     {{-- ===================================================== --}}
                     {{-- GLOBAL PERFORMANCE --}}
                     {{-- ===================================================== --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 bg-slate-900
                                 border border-slate-800
                                 p-5">
@@ -658,88 +635,60 @@
 
                         <div class="mt-5 space-y-5">
 
-                            @foreach([
-                                ['Moyenne Générale','13.42','bg-emerald-500'],
-                                ['Présence','94%','bg-indigo-500'],
-                                ['Retards','12%','bg-amber-500'],
-                                ['Admissibilité','100%','bg-sky-500']
-                            ] as $perf)
+                            @foreach ([['Moyenne Générale', '13.42', 'bg-emerald-500'], ['Présence', '94%', 'bg-indigo-500'], ['Retards', '12%', 'bg-amber-500'], ['Admissibilité', '100%', 'bg-sky-500']] as $perf)
+                                <div>
 
-                            <div>
+                                    <div class="flex justify-between">
 
-                                <div class="flex justify-between">
+                                        <span class="text-sm text-slate-300">
 
-                                    <span class="text-sm text-slate-300">
+                                            {{ $perf[0] }}
 
-                                        {{ $perf[0] }}
+                                        </span>
 
-                                    </span>
+                                        <span class="font-semibold">
 
-                                    <span class="font-semibold">
+                                            {{ $perf[1] }}
 
-                                        {{ $perf[1] }}
+                                        </span>
 
-                                    </span>
+                                    </div>
 
-                                </div>
-
-                                <div class="mt-2 h-2 rounded-full
+                                    <div
+                                        class="mt-2 h-2 rounded-full
                                             bg-slate-800 overflow-hidden">
 
-                                    <div class="h-full rounded-full {{ $perf[2] }}"
-                                         style="width: {{ $perf[1] }}">
+                                        <div class="h-full rounded-full {{ $perf[2] }}"
+                                            style="width: {{ $perf[1] }}">
+                                        </div>
+
                                     </div>
 
                                 </div>
-
-                            </div>
-
                             @endforeach
 
                         </div>
 
                     </div>
 
-                    {{-- ===================================================== --}}
-                    {{-- ACTIVITE --}}
-                    {{-- ===================================================== --}}
-                    <div class="rounded-3xl
-                                bg-gradient-to-br
-                                from-indigo-500/20
-                                to-slate-900
-                                border border-indigo-500/20
+                    <div class="mt-5 space-y-4">
+
+                        <div
+                            class="rounded-3xl
+                                border border-slate-800
+                                bg-slate-900
                                 p-5">
 
-                        <h2 class="text-lg font-semibold">
+                            <h2 class="text-lg font-semibold">
+                                Qr Code
+                            </h2>
 
-                            Activité Récente
+                            <div class="mt-6 flex justify-center items-center">
 
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach(range(1,5) as $activity)
-
-                            <div class="rounded-2xl
-                                        bg-slate-900/60
-                                        border border-slate-800
-                                        p-4">
-
-                                <h3 class="font-medium">
-
-                                    Bulletin téléchargé
-
-                                </h3>
-
-                                <p class="mt-1 text-sm text-slate-400">
-
-                                    19 Mai 2026 — 18:32
-
-                                </p>
+                                <img class="w-52 h-52" src="{{ $parent->qr_code }}"
+                                    alt="QR Code de {{ $parent->getFullName() }}">
 
                             </div>
-
-                            @endforeach
 
                         </div>
 
@@ -754,3 +703,4 @@
     </div>
 
 </div>
+

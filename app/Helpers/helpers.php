@@ -32,6 +32,19 @@ if (!function_exists('getAge')) {
     }
 }
 
+if (!function_exists('__getAge')) {
+    function __getAge(string|null $birthDate): ?int
+    {
+        if (empty($birthDate)) {
+            return null;
+        }
+        return Carbon::parse($birthDate)->age;
+    }
+}
+
+
+
+
 if (! function_exists('formatBirthDate')) {
 
     function formatBirthDate(

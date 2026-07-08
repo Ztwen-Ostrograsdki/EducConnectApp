@@ -5,8 +5,10 @@ namespace App\Livewire\Tenants\Teachers;
 use App\Events\DataUpdatedEvent;
 use App\Events\TeacherWasBlockedEvent;
 use App\Models\Classe;
+use App\Models\SchoolYear;
 use App\Models\Teacher;
 use App\Models\User;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -28,6 +30,8 @@ class TeacherProfilPage extends Component
 
     public $counter = 0;
 
+
+
     public function mount(string $teacher_uuid)
     {
         if(!$teacher_uuid) return abort(404);
@@ -41,6 +45,12 @@ class TeacherProfilPage extends Component
         $this->teacher = $teacher;
 
         $this->user = $teacher->user;
+    }
+
+    #[Computed]
+    public function activeYear(): ?SchoolYear
+    {
+        return SchoolYear::current()->first();
     }
 
 
