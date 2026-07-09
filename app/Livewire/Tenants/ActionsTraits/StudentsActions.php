@@ -281,8 +281,19 @@ trait StudentsActions{
     #[On('ConfirmToForceDeleteStudent')]
     public function onConfirmToForceDeleteStudent(?int $studentId = null): void
     {
-        $student = Student::findOrFail($studentId);
-        // $student->delete();
+        $student = Student::withTrashed()->firstWhere('id', $studentId);
+
+        if(!$student) return;
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: [$studentId],
+            method: 'forceDelete',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: "SUPPRESSION DEFINITIVE EN MASSE DES APPRENANTS DE LA CORBEILLE"
+        );
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 

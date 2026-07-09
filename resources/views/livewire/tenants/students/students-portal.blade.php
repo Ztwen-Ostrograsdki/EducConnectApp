@@ -240,6 +240,14 @@
 
         </section>
 
+        <section class="flex items-end justify-end gap-3 py-4 my-3">
+            <a href="{{ route('tenant.students.print.configuration') }}"
+                class="py-3 px-5 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-printer class="w-4 h-4" />
+                <span>Page d'impression dynamique</span>
+            </a>
+        </section>
+
         <section>
 
             <div class="space-y-6 min-w-0">
@@ -600,123 +608,6 @@
 
             </div>
 
-        </section>
-        <section class="my-4">
-            <div class="space-y-6">
-
-                {{-- QUICK STATS --}}
-                <div
-                    class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                    <h2 class="text-lg font-semibold">
-
-                        Répartition Matières
-
-                    </h2>
-
-                    <div class="mt-5 space-y-5">
-
-                        @foreach ([['Mathématiques', '82%', 'bg-indigo-500'], ['Physique', '70%', 'bg-emerald-500'], ['Informatique', '65%', 'bg-amber-500'], ['Français', '58%', 'bg-sky-500']] as $item)
-                            <div>
-
-                                <div class="flex items-center justify-between">
-
-                                    <span class="text-sm text-slate-300">
-                                        {{ $item[0] }}
-                                    </span>
-
-                                    <span class="text-sm font-semibold">
-                                        {{ $item[1] }}
-                                    </span>
-
-                                </div>
-
-                                <div
-                                    class="mt-2 h-2 rounded-full
-                                            bg-slate-800 overflow-hidden">
-
-                                    <div class="h-full rounded-full {{ $item[2] }}"
-                                        style="width: {{ $item[1] }}">
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                </div>
-
-                {{-- RECENT ACTIVITY --}}
-                <div
-                    class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                    <h2 class="text-lg font-semibold">
-
-                        Activités Récentes
-
-                    </h2>
-
-                    <div class="mt-5 space-y-4">
-
-                        @foreach (range(1, 5) as $activity)
-                            <div
-                                class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <div class="flex items-start gap-3">
-
-                                    <div
-                                        class="w-11 h-11 rounded-2xl
-                                                bg-indigo-500/10
-                                                shrink-0
-                                                flex items-center justify-center
-                                                text-indigo-400">
-
-                                        ✓
-
-                                    </div>
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-medium text-sm">
-
-                                            Notes publiées
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            M. Jean Kouassi a publié les notes de Terminale F2-1
-
-                                        </p>
-
-                                        <p class="mt-2 text-xs text-slate-500">
-
-                                            Il y a 2 heures
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                </div>
-
-            </div>
         </section>
 
     </div>

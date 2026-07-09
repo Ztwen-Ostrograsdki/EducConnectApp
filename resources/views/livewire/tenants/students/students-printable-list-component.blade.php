@@ -1,25 +1,22 @@
 <div class="print-wrapper">
-    <div class="text-center mx-auto mt-2 px-3 border-2 border-gray-900 p-3 my-3">
-        <h6 class="letter-spacing-2 flex flex-col items-center gap-y-1">
-            <div class="text-sky-400 flex w-full">
-                <span class="flex flex-col font-bold mx-auto">
-                    <span class="uppercase text-orange-600">
-                        République du Bénin
-                    </span>
-                    <span class="text-gray-800 text-sm">
-                        Ministère de l'Enseignement Technique et de la Formation Professionnelle
-                    </span>
-                    <span class="mx-auto inline-block w-full mt-1">
-                        <span class="w-full flex mx-auto ">
-                            <span class="bg-green-500 inline-block p-0.5 w-1/3"></span>
-                            <span class="bg-yellow-500 inline-block p-0.5 w-1/3"></span>
-                            <span class="bg-red-600 inline-block p-0.5 w-1/3"></span>
-                        </span>
-                    </span>
-                </span>
-            </div>
-        </h6>
+
+    {{-- ═══════════════════════════════════════════
+         BANDEAU OFFICIEL RÉPUBLIQUE DU BÉNIN
+         (converti en CSS custom — ne dépend plus de Tailwind)
+    ════════════════════════════════════════════ --}}
+    <div class="official-banner">
+        <div class="official-banner-content">
+            <span class="official-country">République du Bénin</span>
+            <span class="official-ministry">Ministère de l'Enseignement Technique et de la Formation
+                Professionnelle</span>
+            <span class="official-flag">
+                <span class="flag-green"></span>
+                <span class="flag-yellow"></span>
+                <span class="flag-red"></span>
+            </span>
+        </div>
     </div>
+
     {{-- ═══════════════════════════════════════════
          ENTÊTE INSTITUTIONNEL
     ════════════════════════════════════════════ --}}
@@ -37,7 +34,7 @@
 
             {{-- Nom & coordonnées --}}
             <div class="school-identity">
-                <h1 class="school-name uppercase font-semibold font-mono">{{ tenancy()->tenant->school_name }}</h1>
+                <h1 class="school-name">{{ tenancy()->tenant->school_name }}</h1>
                 <p class="school-subtitle">
                     Enseignement {{ tenancy()->tenant->enseignement_type }}
                 </p>
@@ -54,7 +51,8 @@
             <div class="doc-stamp">
                 <span class="stamp-label">Document officiel</span>
                 <span class="stamp-date">{{ $printed_at }}</span>
-                <span class="stamp-ref">Réf : PERS-ENS-{{ now()->format('Ymd') }}-{{ str_pad($allStudents, 3, '0', STR_PAD_LEFT) }}</span>
+                <span class="stamp-ref">Réf :
+                    PERS-ENS-{{ now()->format('Ymd') }}-{{ str_pad($allStudents, 3, '0', STR_PAD_LEFT) }}</span>
             </div>
         </div>
 
@@ -66,16 +64,12 @@
         </div>
 
         {{-- Titre du document --}}
-        <div class="doc-title-block text-center">
-
+        <div class="doc-title-block">
             @if ($pdf_title)
-                <h4 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" class="text-gray-900 my-0 uppercase letter-spacing-1 fas fa-2x">
+                <h4 class="doc-title">
                     {{ $pdf_title }}
                 </h4>
             @endif
-
-            {{-- Statistiques sommaires --}}
-
         </div>
 
     </header>
@@ -90,68 +84,100 @@
                 <p>Aucun apprenant à afficher pour les critères sélectionnés.</p>
             </div>
         @else
-            <table class="students-table text-center truncate">
+            <table class="students-table">
+                {{-- Largeurs fixes par colonne : nécessaire avec table-layout:fixed,
+                     sinon le navigateur répartit l'espace à parts égales entre
+                     les 10 colonnes, sans tenir compte du contenu réel --}}
+                <colgroup>
+                    <col style="width:4%"> {{-- # --}}
+                    <col style="width:10%"> {{-- EducMaster --}}
+                    <col style="width:18%"> {{-- Nom & Prénom --}}
+                    <col style="width:4%"> {{-- sexe --}}
+                    <col style="width:11%"> {{-- Père --}}
+                    <col style="width:11%"> {{-- Mère --}}
+                    <col style="width:8%"> {{-- Classe --}}
+                    <col style="width:15%"> {{-- Contact --}}
+                    <col style="width:11%"> {{-- Date naissance / Age --}}
+                    <col style="width:9%"> {{-- Statut --}}
+                    <col style="width:8%"> {{-- Statut --}}
+                </colgroup>
                 <thead>
                     <tr>
                         <th class="col-num">#</th>
-                        <th class="col-matricule">Matricule</th>
+                        <th class="col-grade">EducMaster</th>
                         <th class="col-nom">Nom & Prénom</th>
+                        <th class="text-center">Sexe</th>
                         <th class="col-nom">Père</th>
                         <th class="col-nom">Mère</th>
                         <th class="col-dept">Classe</th>
-                        <th class="col-grade">EducMaster</th>
                         <th class="col-contact">Contact</th>
-                        <th class="col-recrutement">Insérés le</th>
+                        <th class="col-recrutement">
+                            <span class="th-stacked">
+                                <span>Date de naissance</span>
+                                <span>Age</span>
+                            </span>
+                        </th>
                         <th class="col-statut">Statut</th>
+                        <th class="col-statut">Obs.</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($students as $index => $student)
                         <tr class="{{ $loop->even ? 'row-even' : 'row-odd' }}">
 
-                            <td class="">{{ $loop->iteration }}</td>
+                            <td class="td-center">{{ $loop->iteration }}</td>
 
-                            <td class="font-semibold text-gray-800 text-sm">
-                                <span class="">{{ $student->matricule ?? '—' }}</span>
+                            <td class="cell-matricule">
+                                <span>{{ $student->educMaster }} </span>
                             </td>
 
-                            <td class="">
-                                <div class="text-left">
-                                    <div>
-                                        <p class="name-full">{{ $student->getFullName() }}</p>
-                                        @if ($student->roles)
-                                            <p class="name-titre">{{ $student->myRoles() }}</p>
-                                        @endif
-                                    </div>
+                            <td class="cell-wrap cell-name ">
+                                <div class="cell-flex-col">
+                                    <span>{{ $student->getFullName() }}</span>
+                                    <span class="text-xs text-slate-400 font-mono">{{ $student->matricule }}</span>
+                                </div>
+                            </td>
+                            <td class="td-center">
+                                {{ str()->upper(str()->substr($student->gender, 0, 1)) }}
+                            </td>
+
+                            <td class="cell-wrap">{{ $student->father_full_name }}</td>
+                            <td class="cell-wrap">{{ $student->mother_full_name }}</td>
+
+                            <td class="cell-wrap">
+                                @if ($student->currentClasse() && $student->currentClasse()->classe)
+                                    @php
+                                        $rel = $student->currentClasse()->classe;
+                                    @endphp
+                                    <span class="dept-main">{{ $rel->code ? $rel->code : $rel->name }}</span>
+                                @else
+                                    <span class="dept-empty">Pas de classe</span>
+                                @endif
+                            </td>
+
+                            <td class="cell-wrap cell-contact">
+                                @if ($student->contacts)
+                                    <p>{{ $student->contacts }}</p>
+                                @endif
+                                @if ($student->email)
+                                    <p class="contact-email">{{ $student->email ?? 'non renseigné' }}</p>
+                                @endif
+                            </td>
+
+                            <td class="td-center cell-age ">
+                                <div class="cell-flex-col">
+                                    <span>{{ __formatDate($student->birth_date) }}</span>
+                                    <span>{{ __getAge($student->birth_date) }} ans</span>
                                 </div>
                             </td>
 
-                            <td class="col-grade">{{ $student->father_full_name }}</td>
-                            <td class="col-grade">{{ $student->mother_full_name }}</td>
-
-                            <td class="col-dept">
-                                <p class="dept-main">{{ 'classe' }}</p>
-                            </td>
-
-                            <td class="col-grade">{{ $student->educMaster }}</td>
-
-                            <td class="col-contact">
-                                @if ($student->contacts)
-                                    <p class="contact-line">{{ $student->contacts }}</p>
-                                @endif
-                                @if ($student->email)
-                                    <p class="contact-line contact-email">{{ $student->email ?? 'non renseigné' }}</p>
-                                @endif
-                            </td>
-
-                            <td class="col-recrutement td-center">
-                                {{ $student->created_at ? \Carbon\Carbon::parse($student->created_at)->isoFormat('DD/MM/YYYY') : '—' }}
-                            </td>
-
-                            <td class="italic font-semibold">
-                                <span class="statut-badge--{{ $student->status ?? 'inactif' }}">
+                            <td class="td-center">
+                                <span class="statut-badge statut-badge--{{ $student->status ?? 'inactif' }}">
                                     {{ ucfirst($student->status ? 'Actif' : 'Inactif') }}
                                 </span>
+                            </td>
+                            <td class="td-center">
+
                             </td>
 
                         </tr>
@@ -161,10 +187,6 @@
         @endif
 
     </main>
-
-    {{-- ═══════════════════════════════════════════
-         PIED DE PAGE
-    ════════════════════════════════════════════ --}}
 
 </div>
 
@@ -218,6 +240,60 @@
         background: var(--white);
     }
 
+    /* ══ BANDEAU OFFICIEL (ex-Tailwind, en CSS custom) ══ */
+    .official-banner {
+        width: 100%;
+        margin: 0 auto 1rem;
+        padding: 0.6rem 1.25rem;
+        text-align: center;
+    }
+
+    .official-banner-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .official-country {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #EA580C;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+    }
+
+    .official-ministry {
+        font-size: 0.78rem;
+        color: var(--text);
+    }
+
+    .official-flag {
+        display: flex;
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    .flag-green,
+    .flag-yellow,
+    .flag-red {
+        display: inline-block;
+        flex: 1;
+        height: 6px;
+    }
+
+    .flag-green {
+        background: #22C55E;
+    }
+
+    .flag-yellow {
+        background: #EAB308;
+    }
+
+    .flag-red {
+        background: #DC2626;
+    }
+
     /* ══ ENTÊTE ═════════════════════════════════ */
     .header-band {
         display: flex;
@@ -226,7 +302,6 @@
         padding-bottom: 1.25rem;
     }
 
-    /* Logo circulaire */
     .school-logo {
         flex-shrink: 0;
         position: relative;
@@ -261,18 +336,18 @@
         border: 2px solid var(--white);
     }
 
-    /* Identité école */
     .school-identity {
         flex: 1;
     }
 
     .school-name {
-        font-family: var(--font-serif);
+        font-family: var(--font-mono);
         font-size: 1.6rem;
         font-weight: 700;
         color: var(--navy);
         letter-spacing: 0.02em;
         line-height: 1.2;
+        text-transform: uppercase;
     }
 
     .school-subtitle {
@@ -291,7 +366,6 @@
         line-height: 1.5;
     }
 
-    /* Cachet date */
     .doc-stamp {
         flex-shrink: 0;
         text-align: right;
@@ -324,7 +398,6 @@
         margin-top: 4px;
     }
 
-    /* Règle tricolore */
     .header-rule {
         display: flex;
         height: 6px;
@@ -349,69 +422,17 @@
         border: 1px solid var(--border);
     }
 
-    /* Titre document */
     .doc-title-block {
         padding-bottom: 1.25rem;
         border-bottom: 2px solid var(--navy);
+        text-align: center;
     }
 
     .doc-title {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 1.25rem;
         font-weight: 700;
         color: var(--navy);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .doc-subtitle {
-        display: block;
-        font-size: 0.82rem;
-        color: var(--text-muted);
-        margin-top: 3px;
-    }
-
-    /* Stat pills */
-    .doc-stats {
-        display: flex;
-        gap: 10px;
-        margin-top: 12px;
-        flex-wrap: wrap;
-    }
-
-    .stat-pill {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--navy-light);
-        border: 1px solid #BFDBFE;
-        border-radius: 20px;
-        padding: 4px 14px 4px 10px;
-    }
-
-    .stat-pill--gold {
-        background: var(--gold-light);
-        border-color: #FDE68A;
-    }
-
-    .stat-pill--muted {
-        background: var(--slate-mid);
-        border-color: var(--border);
-    }
-
-    .stat-num {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--navy);
-        font-family: var(--font-mono);
-    }
-
-    .stat-pill--gold .stat-num {
-        color: #92400E;
-    }
-
-    .stat-label {
-        font-size: 0.73rem;
-        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
@@ -426,29 +447,31 @@
         border-collapse: collapse;
         font-size: 0.8rem;
         table-layout: fixed;
+        /* nécessite le <colgroup> ci-dessus pour bien répartir l'espace */
     }
 
-    /* En-tête table */
     .students-table thead tr {
         background: var(--navy);
     }
 
     .students-table thead th {
-        padding: 9px 8px;
+        padding: 9px 6px;
         color: var(--white);
         font-weight: 600;
         font-size: 0.72rem;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.06em;
         border: 1px solid var(--navy-mid);
         vertical-align: middle;
-    }
-
-    .students-table thead th.td-center {
         text-align: center;
     }
 
-    /* Lignes alternées */
+    .th-stacked {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
     .students-table tbody tr.row-odd {
         background: var(--white);
     }
@@ -461,108 +484,82 @@
         background: var(--navy-light);
     }
 
-    /* Cellules */
+    /* Cellules : par défaut on autorise le retour à la ligne
+       (plus de troncature globale qui masquait noms/emails) */
     .students-table tbody td {
-        padding: 8px 8px;
+        padding: 7px 6px;
         border: 1px solid var(--border);
         vertical-align: middle;
         color: var(--text);
-        line-height: 1.45;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        line-height: 1.4;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        text-align: left;
     }
 
     .td-center {
         text-align: center;
     }
 
-    /* Matricule badge */
-    .matricule-badge {
+    /* Matricule : reste sur une ligne, c'est court par nature */
+    .cell-matricule {
         font-family: var(--font-mono);
         font-size: 0.72rem;
-        background: var(--navy);
-        color: var(--gold);
-        padding: 2px 7px;
-        border-radius: 3px;
-        white-space: nowrap;
-        letter-spacing: 0.05em;
-    }
-
-    /* Nom enseignant */
-    .teacher-name {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .name-initials {
-        flex-shrink: 0;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: var(--navy-light);
-        border: 1.5px solid var(--navy-mid);
-        color: var(--navy);
-        font-size: 0.65rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        letter-spacing: 0.03em;
-    }
-
-    .row-even .name-initials {
-        background: var(--white);
-    }
-
-    .name-full {
         font-weight: 600;
         color: var(--navy);
-        font-size: 0.82rem;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        text-align: center;
     }
 
-    .name-titre {
-        font-size: 0.7rem;
-        color: var(--text-muted);
+    .cell-name {
+        font-weight: 600;
+        color: var(--text);
     }
 
-    /* Département */
     .dept-main {
         font-weight: 600;
         color: var(--text);
     }
 
-    .dept-matiere {
+    .dept-empty {
         font-size: 0.72rem;
-        color: var(--text-muted);
-        margin-top: 1px;
+        color: var(--slate);
+        font-style: italic;
     }
 
-    /* Contact */
-    .contact-line {
-        font-size: 0.75rem;
-        color: var(--text);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .cell-contact p {
+        font-size: 0.76rem;
+        line-height: 1.35;
+        word-break: break-all;
+        /* les emails longs ne débordent plus de la colonne */
     }
 
     .contact-email {
         color: var(--navy-mid);
+        font-size: 0.7rem !important;
+    }
+
+    .cell-flex-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-collapse: collapse !important;
+    }
+
+    .cell-age {
+        font-size: 0.75rem;
     }
 
     /* Statut badge */
     .statut-badge {
         display: inline-block;
-        padding: 2px 10px;
+        padding: 2px 9px;
         border-radius: 12px;
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.07em;
+        letter-spacing: 0.06em;
         white-space: nowrap;
     }
 
@@ -600,65 +597,9 @@
         margin-top: 1rem;
     }
 
-    /* ══ PIED DE PAGE ═══════════════════════════ */
-    .doc-footer {
-        margin-top: 1.75rem;
-    }
-
-    .footer-rule {
-        height: 2px;
-        background: linear-gradient(to right, var(--navy) 60%, var(--gold) 80%, var(--navy-light) 100%);
-        margin-bottom: 0.75rem;
-        border-radius: 1px;
-    }
-
-    .footer-body {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        font-size: 0.73rem;
-        color: var(--text-muted);
-        line-height: 1.6;
-    }
-
-    .footer-left {
-        flex: 1;
-    }
-
-    .footer-confidential {
-        margin-top: 3px;
-        font-size: 0.68rem;
-        color: #B45309;
-        font-weight: 500;
-    }
-
-    .footer-right {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
-    /* Cachet vide */
-    .footer-seal {
-        width: 80px;
-        height: 80px;
-        border: 2px dashed var(--border-dark);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        flex-shrink: 0;
-        margin: 0 auto;
-    }
-
-    .seal-text {
-        font-size: 0.58rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--border-dark);
-        font-weight: 600;
-        line-height: 1.3;
+    td,
+    th {
+        text-align: center !important;
     }
 
     /* ══ RÈGLES D'IMPRESSION @media print ══════ */
@@ -672,22 +613,15 @@
             background: white;
         }
 
-        /* Numérotation auto des pages */
-        .page-num::after {
-            content: counter(page);
-        }
-
         .print-wrapper {
             max-width: 100%;
             padding: 0;
         }
 
-        /* Évite les coupures à l'intérieur d'une ligne */
         .students-table tbody tr {
             page-break-inside: avoid;
         }
 
-        /* Répète l'entête de table sur chaque page */
         .students-table thead {
             display: table-header-group;
         }
@@ -696,47 +630,24 @@
             display: table-footer-group;
         }
 
-        /* Forcer les couleurs à l'impression */
-        .students-table thead tr {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .row-even {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .statut-badge {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .matricule-badge {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .header-rule {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
+        .students-table thead tr,
+        .row-even,
+        .statut-badge,
+        .cell-matricule,
+        .header-rule,
         .rule-navy,
         .rule-gold,
-        .rule-light {
+        .rule-light,
+        .official-flag,
+        .flag-green,
+        .flag-yellow,
+        .flag-red {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
-        /* Cacher les éléments non-imprimables si présents */
         .no-print {
             display: none !important;
-        }
-
-        td,
-        th {
-            text-align: center !important;
         }
     }
 </style>

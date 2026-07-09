@@ -8,9 +8,11 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.guest')]
+#[Title('Page de connexion')]
 class TenantLogin extends Component
 {
     #[Rule('required|email')]
@@ -35,7 +37,9 @@ class TenantLogin extends Component
         $key = 'login.'.Str::lower($this->email).'.'.request()->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
+
             $seconds = RateLimiter::availableIn($key);
+            
             $this->errorMessage = "Trop de tentatives. Réessayez dans {$seconds} secondes.";
 
             return;
@@ -74,12 +78,11 @@ class TenantLogin extends Component
 
             session()->regenerate();
 
-            /** @noinspection PhpUndefinedMethodInspection */
+             /** @var \App\Models\User $user */
             $user = auth('tenant')->user();
 
             $logged_count = $user->logged_count;
 
-            /** @noinspection PhpUndefinedMethodInspection */
             if(!$user->hasRole('directeur')){
 
                 if(!$user->teacher?->hasValidAccessForYear()){

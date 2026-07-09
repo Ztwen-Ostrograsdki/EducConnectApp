@@ -112,9 +112,11 @@
                     <div wire:key="notif-{{ $notif['id'] }}" wire:transition.duration.300ms x-data
                         x-init="$el.style.opacity = 0;
                         $el.style.transform = 'translateY(10px) scale(0.98)';
-                        requestAnimationFrame(() => { $el.style.transition = 'all .35s cubic-bezier(0.16, 1, 0.3, 1)';
+                        requestAnimationFrame(() => {
+                            $el.style.transition = 'all .35s cubic-bezier(0.16, 1, 0.3, 1)';
                             $el.style.opacity = 1;
-                            $el.style.transform = 'translateY(0) scale(1)'; })"
+                            $el.style.transform = 'translateY(0) scale(1)';
+                        })"
                         class="group flex flex-col gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-4 hover:bg-white/[0.06] hover:ring-1 {{ $ring }} transition-all duration-200 {{ !is_null($notif['read_at']) ? 'opacity-50' : '' }}">
 
                         <div class="flex gap-x-2.5">
@@ -153,8 +155,10 @@
                 @empty
                     <div class="col-span-full flex flex-col items-center justify-center gap-3 px-4 py-14 text-center"
                         x-data x-init="$el.style.opacity = 0;
-                        requestAnimationFrame(() => { $el.style.transition = 'opacity .4s ease';
-                            $el.style.opacity = 1; })">
+                        requestAnimationFrame(() => {
+                            $el.style.transition = 'opacity .4s ease';
+                            $el.style.opacity = 1;
+                        })">
                         <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center">
                             <x-lucide-bell-off class="w-6 h-6 text-gray-500" />
                         </div>
@@ -197,3 +201,4 @@
         @endif
     </div>
 </div>
+

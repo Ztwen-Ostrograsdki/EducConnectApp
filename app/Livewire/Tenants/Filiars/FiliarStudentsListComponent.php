@@ -29,6 +29,8 @@ class FiliarStudentsListComponent extends Component
 
     public int $studentsPerPage = 50;
 
+    public int $counterh = 0;
+
     #[Computed]
     public function activeYear(): ?SchoolYear
     {
@@ -43,7 +45,7 @@ class FiliarStudentsListComponent extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterh++;
     }
 
 

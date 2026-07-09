@@ -9,10 +9,12 @@
             </h2>
         </div>
         <a wire:navigate
-            class="rounded-2xl p-2 bg-indigo-600/35 text-white hover:text-black hover:bg-indigo-500 active:scale-95 flex items-center gap-2 px-5"
+            class="rounded-2xl p-2 bg-indigo-600/35 text-white hover:text-black hover:bg-indigo-500 active:scale-95 flex items-center gap-2 px-5 text-sm"
             href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent_uuid]) }}">
             <x-lucide-user class="w-4 h-4 " />
-            <span>Aller à la page profil</span>
+            <span>
+                <span class="md:inline-flex hidden">Aller à la page</span>
+                profil</span>
         </a>
     </div>
 

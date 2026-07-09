@@ -38,16 +38,16 @@ class ManageParentsStudentsRelationComponent extends Component
     public array $pendingSelections = [];
 
     public const RELATION_TYPES = [
-        'pere' => 'Père',
-        'mere' => 'Mère',
-        'oncle' => 'Oncle',
-        'tante' => 'Tante',
-        'frere' => 'Frère',
-        'soeur' => 'Sœur',
-        'grand_pere' => 'Grand-père',
-        'grand_mere' => 'Grand-mère',
-        'tuteur_legal' => 'Tuteur légal',
-        'autre' => 'Autre',
+        'Père' => 'Père',
+        'Mère' => 'Mère',
+        'Oncle' => 'Oncle',
+        'Tante' => 'Tante',
+        'Frère' => 'Frère',
+        'Sœur' => 'Sœur',
+        'Grand-père' => 'Grand-père',
+        'Grand-mère' => 'Grand-mère',
+        'Tuteur légal' => 'Tuteur légal',
+        'Autre' => 'Autre',
     ];
 
     public function mount(string $parent_uuid)

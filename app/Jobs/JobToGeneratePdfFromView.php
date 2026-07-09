@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\AnyErrorEvent;
+use App\Events\DataUpdatedEvent;
 use App\Models\GeneratedDocument;
 use App\Models\User;
 use App\Notifications\PDFIsReady;
@@ -78,7 +79,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
             . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
             . '</div>';
 
-            $browsershot = Browsershot::html($html)
+           $browsershot = Browsershot::html($html)
                 ->setNodeBinary(config('browsershot.node_binary'))
                 ->setNpmBinary(config('browsershot.npm_binary'))
                 ->setChromePath(config('browsershot.chrome_binary'))
@@ -88,10 +89,18 @@ class JobToGeneratePdfFromView implements ShouldQueue
                 ->ignoreHttpsErrors()
                 ->showBackground()
                 ->margins(15, 15, 15, 15)
-                ->showBrowserHeaderAndFooter() // Active l'affichage du header/footer
+                ->showBrowserHeaderAndFooter()
                 ->headerHtml($headerHtml)
                 ->footerHtml($footerHtml)
                 ->waitUntilNetworkIdle();
+
+            // ── Injection du CSS Tailwind compilé ──
+            if ($cssPath = $this->resolveCompiledCssPath()) {
+                $browsershot->addStyleTag(['path' => $cssPath]);
+            } else {
+                // Log utile en dev pour détecter un manifest absent (ex: assets pas encore buildés)
+                logger()->warning('PDF généré sans CSS Tailwind : manifest.json introuvable ou entrée CSS absente.');
+            }
 
             if (config('browsershot.no_sandbox')) {
                 $browsershot->noSandbox();
@@ -187,6 +196,8 @@ class JobToGeneratePdfFromView implements ShouldQueue
             eventName: $this->data['eventName'],
         ));
 
+        broadcast(new DataUpdatedEvent($this->tenantId));
+
     }
 
     /**
@@ -197,4 +208,24 @@ class JobToGeneratePdfFromView implements ShouldQueue
         return PDFFactory::resolvePublicUrl($this->outputPath);
     }
     
+
+    private function resolveCompiledCssPath(): ?string
+    {
+        $manifestPath = public_path('build/manifest.json');
+
+        if (! File::exists($manifestPath)) {
+            return null;
+        }
+
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        // La clé exacte dépend de ton entrée Vite, ex: "resources/css/app.css"
+        $entry = $manifest['resources/css/app.css'] ?? null;
+
+        if (! $entry || ! isset($entry['file'])) {
+            return null;
+        }
+
+        return public_path('build/' . $entry['file']);
+    }
 }

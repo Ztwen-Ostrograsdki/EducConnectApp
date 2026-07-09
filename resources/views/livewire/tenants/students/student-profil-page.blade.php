@@ -160,11 +160,11 @@
                             </div>
 
                             {{-- ACTIONS --}}
-                            <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-3 w-full xl:w-[300px]">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-3 w-full xl:w-75">
 
                                 <a title="Changer la photo de profil de {{ $this->student->getFullName() }}"
                                     href="{{ route('tenant.director.manage.profil.photo', ['target' => 'apprenant', 'modelUuid' => $this->student->uuid]) }}"
-                                    class="p-3 rounded-2xl bg-slate-500 hover:bg-slate-600 transition-all text-sm flex items-center justify-center text-center">
+                                    class="p-3 rounded-2xl bg-slate-500 hover:bg-slate-600 transition-all text-sm flex items-center justify-center text-center active:scale-95">
 
                                     <span class="inline-flex items-center gap-x-2">
                                         <x-lucide-image-upscale class="w-4 h-4" />
@@ -174,7 +174,7 @@
                                 </a>
                                 <a title="Mettre à jour les informations de l'apprenant {{ $this->student->getFullName() }}"
                                     href="{{ route('tenant.director.manage.student.data', ['studentUuid' => $this->student->uuid]) }}"
-                                    class="p-3 rounded-2xl bg-blue-500 hover:bg-blue-600 transition-all text-sm flex items-center justify-center text-center">
+                                    class="p-3 rounded-2xl bg-blue-500 hover:bg-blue-600 transition-all text-sm flex items-center justify-center text-center active:scale-95">
 
                                     <span class="inline-flex items-center gap-x-2">
                                         <x-lucide-user-pen class="w-4 h-4" />
@@ -183,7 +183,7 @@
 
                                 </a>
                                 <a href="{{ route('tenant.student.marks', ['student_uuid' => $this->student_uuid]) }}"
-                                    class="p-3 rounded-2xl bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-all text-sm inline-block text-center">
+                                    class="p-3 rounded-2xl bg-green-500/20 col-span-2 text-green-400 hover:bg-green-500/30 transition-all text-sm inline-block text-center active:scale-95">
 
                                     Les notes
 
@@ -192,7 +192,7 @@
                                 <button type="button" wire:click="markStudentAsLeaved({{ $this->student->id }})"
                                     wire:loading.attr="disabled"
                                     wire:target="markStudentAsLeaved({{ $this->student->id }})"
-                                    class="rounded-2xl col-span-2 items-center gap-2 bg-orange-600/60 p-3 text-sm font-medium text-white transition hover:bg-orange-700 disabled:opacity-60 hover:text-black">
+                                    class="rounded-2xl col-span-2 items-center gap-2 bg-orange-600/60 p-3 text-sm font-medium text-white transition hover:bg-orange-700 disabled:opacity-60 hover:text-black active:scale-95">
                                     <span wire:loading.remove
                                         wire:target="markStudentAsLeaved({{ $this->student->id }})"
                                         class="flex justify-center items-center">
@@ -218,13 +218,13 @@
 
                                 @if ($this->currentClasse)
                                     <a href="{{ route('tenant.classe.profil', ['classe_slug' => $this->currentClasse->slug]) }}"
-                                        class="p-3 col-span-2 rounded-2xl bg-sky-500/20 text-sky-400 hover:bg-sky-500/60 transition-all text-sm inline-block text-center hover:text-black">
+                                        class="p-3 col-span-2 rounded-2xl bg-sky-500/20 text-sky-400 hover:bg-sky-500/60 transition-all text-sm inline-block text-center hover:text-black active:scale-95">
 
-                                        Acceder à la classe
+                                        Voir sa classe actuelle
                                     </a>
                                     <button type="button" wire:click="removeStudentFromCurrent"
                                         wire:loading.attr="disabled" wire:target="removeStudentFromCurrent"
-                                        class="p-3 col-span-2 rounded-2xl items-center gap-2 bg-red-600/40 p-3 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60">
+                                        class="p-3 col-span-2 rounded-2xl items-center gap-2 bg-red-600/40 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60 active:scale-95">
                                         <span wire:loading.remove wire:target="removeStudentFromCurrent"
                                             class="flex justify-center items-center">
                                             <span class="flex items-center gap-3">
@@ -248,10 +248,16 @@
                                     </button>
                                 @endif
                                 <a href="{{ route('tenant.student.manage.classe', ['student_uuid' => $student_uuid]) }}"
-                                    class="p-3 col-span-2 rounded-2xl bg-orange-500/20 text-orange-400 hover:bg-orange-500/60 transition-all text-sm inline-block text-center hover:text-black">
+                                    class="p-3 col-span-2 rounded-2xl bg-orange-500/20 text-orange-400 hover:bg-orange-500/60 transition-all text-sm inline-block text-center hover:text-black active:scale-95">
 
                                     {{ $this->currentClasse ? 'Changer de classe ' : 'Définir nouvelle classe' }}
 
+                                </a>
+                                <a wire:navigate
+                                    href="{{ route('tenant.student.manage.relations', ['student_uuid' => $this->student->uuid]) }}"
+                                    class="rounded-2xl col-span-2 justify-center p-3 bg-indigo-500/40 text-white hover:text-black hover:bg-indigo-700 active:scale-95 flex items-center gap-2 text-sm">
+                                    <x-lucide-edit class="w-4 h-4" />
+                                    <span>Editer les parents</span>
                                 </a>
 
                             </div>
@@ -268,72 +274,6 @@
 
     </section>
 
-    {{-- ===================================================== --}}
-    {{-- KPI --}}
-    {{-- ===================================================== --}}
-    <section class="mb-6">
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 sm:gap-6">
-
-            {{-- MOYENNE --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Moyenne Générale
-                </p>
-
-                <h2 class="mt-3 text-4xl font-bold text-indigo-400">
-                    15.24
-                </h2>
-
-            </div>
-
-            {{-- RANK --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Rang
-                </p>
-
-                <h2 class="mt-3 text-4xl font-bold">
-                    3e
-                </h2>
-
-            </div>
-
-            {{-- PRESENCE --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Présence
-                </p>
-
-                <h2 class="mt-3 text-4xl font-bold text-emerald-400">
-                    96%
-                </h2>
-
-            </div>
-
-            {{-- PROBA --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Probabilité Réussite
-                </p>
-
-                <h2 class="mt-3 text-4xl font-bold text-amber-400">
-                    92%
-                </h2>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    {{-- ===================================================== --}}
-    {{-- MAIN GRID --}}
-    {{-- ===================================================== --}}
     <section class="grid grid-cols-1 2xl:grid-cols-12 gap-6">
 
         {{-- LEFT --}}
@@ -643,8 +583,15 @@
             {{-- PARENTS --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6">
 
-                <h2 class="text-xl font-semibold">
-                    Parents / Tuteurs
+                <h2 class="text-sm font-semibold flex justify-between items-center">
+                    <span>Parents / Tuteurs</span>
+
+                    <a wire:navigate
+                        href="{{ route('tenant.student.manage.relations', ['student_uuid' => $this->student->uuid]) }}"
+                        class="rounded-2xl p-3 bg-indigo-500/40 text-white hover:text-black hover:bg-indigo-700 font-mono active:scale-95 flex items-center gap-2">
+                        <x-lucide-edit class="w-4 h-4" />
+                        <span>Editer les parents</span>
+                    </a>
                 </h2>
 
                 <div class="mt-6 flex flex-col gap-3">

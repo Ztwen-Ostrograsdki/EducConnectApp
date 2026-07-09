@@ -126,7 +126,8 @@ class NotificationsPage extends Component
         ]);
     }
 
-    public function deleteNotification(string $id): void
+    #[On('ConfirmTodeleteNotification')]
+    public function onConfirmTodeleteNotification(string $id): void
     {
         /** @var \App\Models\User $user */
         $user = Auth::guard('tenant')->user();
@@ -152,14 +153,16 @@ class NotificationsPage extends Component
             'showCancelButton'  => true,
             'confirmButtonText' => 'Oui, tout supprimer',
             'cancelButtonText'  => 'Annuler',
-            'onConfirmed'       => 'deleteAll',
+            'onConfirmed'       => 'ConfirmToDelete',
         ]);
     }
 
+    #[On('ConfirmToDelete')]
     public function deleteAll(): void
     {
         /** @var \App\Models\User $user */
         $user = Auth::guard('tenant')->user();
+        
 
         $user->notifications()->limit(50)->delete();
 

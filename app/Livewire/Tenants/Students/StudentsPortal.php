@@ -296,7 +296,7 @@ class StudentsPortal extends Component
 
         $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
-        $pdf_title = "Liste des apprenants";
+        $pdf_title = "Liste de tous les apprenants";
 
         $viewData = [
             'students'        => $students,

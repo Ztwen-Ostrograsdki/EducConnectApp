@@ -68,17 +68,17 @@ class JobToCreateStudent implements ShouldQueue
             // Anti-doublon
             if(!empty($payload['email'])){
 
-                    if (Student::where('email', $payload['email'])->first() || User::where('email', $payload['email'])->first()) {
+                    if (Student::where('email', $payload['email'])->first() || Student::where('name', $payload['name'])->where('prenames', $payload['prenames'])->exists() || User::where('email', $payload['email'])->exists()) {
 
                     $task->update(['status' => 'failed']);
 
-                    $this->fail("Données de l'apprenant est déjà existant dans la base de données!");
+                    $this->fail("Ces informations sont déjà dans la base de données!");
 
                     User::first()->notify(new RealTimeNotification(
                         userEmail: $tenant->email,
                         tenantId: $this->tenantId,
                         title:             "Duplication de compte apprenant",
-                        message:           "Le Compte de l'apprenant" . $full_name . " déjà existant dans la base de données!",
+                        message:           "Le Compte de l'apprenant" . $full_name . " existe déjà dans la base de données!",
                         type:              'error',
                     ));
 
@@ -133,8 +133,6 @@ class JobToCreateStudent implements ShouldQueue
             $task->update(['status' => 'success']);
 
             $student->update(['is_active' => true, 'status' => 'active']);
-
-            // StudentCreatedEvent::dispatch($this->tenantId, $task->id, null);
 
             $can_sent = randomNumber(1, 10);
 

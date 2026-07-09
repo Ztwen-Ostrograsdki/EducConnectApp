@@ -42,11 +42,13 @@ use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
 use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
 use App\Livewire\Tenants\Students\ManageStudentClassroomComponent;
+use App\Livewire\Tenants\Students\ManageStudentParentsRelationComponent;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
 use App\Livewire\Tenants\Students\StudentsPortal;
 use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
+use App\Livewire\Tenants\Students\StudentsPrintsManagerComponent;
 use App\Livewire\Tenants\Subjects\CreateSubjectComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectChiefsComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
@@ -104,7 +106,7 @@ Route::middleware([
     })->name('logout')->middleware('auth:tenant');
 
     // ─── Pages authentifiées ──────────────────────────────────────────
-    Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at'])->group(function () {
+    Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at', 'logout.when.inactivity.too.long'])->group(function () {
 
         Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
@@ -215,11 +217,15 @@ Route::middleware([
 
             Route::get('/apprenants/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
 
-            Route::get('/apprenants/impression', StudentsPrintableListComponent::class)->name('students.print.list');
+            Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
+
+            Route::get('/apprenants/gestion-impression/configuration', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
 
             Route::get('/apprenant/gestion-de-classe-actuelle/{student_uuid}', ManageStudentClassroomComponent::class)->name('student.manage.classe');
 
             Route::get('/apprenant/profil/{student_uuid}', StudentProfilPage::class)->name('student.profil');
+
+            Route::get('/apprenant/editions-des-relations-parents-apprenants/{student_uuid}', ManageStudentParentsRelationComponent::class)->name('student.manage.relations');
 
             
 

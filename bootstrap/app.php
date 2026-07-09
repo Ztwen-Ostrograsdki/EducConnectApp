@@ -12,6 +12,7 @@ use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\EnsureTenantNotDeletedAt;
 use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
+use App\Http\Middleware\LogoutUserWhenInactivityIsTakeLongTimeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TenantAuthenticate;
 use Illuminate\Foundation\Application;
@@ -68,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
             'has.valid.access' => CheckIfTeacherHasValidAccessForActiveSchoolYear::class,
+            'logout.when.inactivity.too.long' => LogoutUserWhenInactivityIsTakeLongTimeMiddleware::class,
         ]);
 
     })
