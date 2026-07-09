@@ -113,7 +113,7 @@ class ManageStudentClassroomComponent extends Component
     #[On("migrateStudent")]
     public function OnMigrateStudent(int $classeId)
     {
-        $this->student->migrateStudentToClasse($classeId, true);
+        $this->student->migrateStudentToClasse($classeId, null,  true);
 
         unset($this->student, $this->currentClasse);
 

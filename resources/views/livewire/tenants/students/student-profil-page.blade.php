@@ -647,36 +647,52 @@
                     Parents / Tuteurs
                 </h2>
 
-                <div class="mt-6 space-y-5">
+                <div class="mt-6 flex flex-col gap-3">
+                    @if ($this->parents)
+                        <h4 class="border-b border-b-slate-800 py-1 text-right text-slate-500">
+                            {{ __zero(count($this->parents)) }}
+                            parents ou tuteurs</h4>
+                        @foreach ($this->parents as $parent_rel)
+                            <a wire:navigate
+                                href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent_rel->parent->uuid]) }}"
+                                class="rounded-2xl bg-slate-950 p-4 group active:scale-95 w-full">
 
-                    @foreach (range(1, 2) as $parent)
-                        <div class="rounded-2xl bg-slate-950 p-4">
+                                <div class="flex w-full gap-4">
 
-                            <div class="flex items-start gap-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
+                                        <img src="{{ $parent_rel->parent->user->profil_photo_url }}"
+                                            class="w-full h-full rounded-2xl border-4 border-slate-500 object-cover group-hover:border-sky-600">
+                                    </div>
 
-                                <div class="w-14 h-14 rounded-2xl bg-slate-800 shrink-0">
+                                    <div class="w-full">
+
+                                        <h3 class="font-medium truncate group-hover:text-sky-700">
+                                            {{ $parent_rel->parent->getFullName() }}
+                                        </h3>
+
+                                        <p class="mt-1 text-sm text-slate-400 truncate group-hover:text-orange-700">
+                                            {{ $parent_rel->parent->user->contacts }}
+                                        </p>
+
+                                        <p class="mt-1 text-sm text-slate-500 truncate group-hover:text-orange-700">
+                                            {{ $parent_rel->parent->user->email }}
+                                        </p>
+                                        <p
+                                            class="mt-1 text-sm text-lime-500 truncate group-hover:text-orange-700 text-right border-t border-t-lime-400">
+                                            {{ $parent_rel->parent_relation }}
+                                        </p>
+
+                                    </div>
+
                                 </div>
 
-                                <div class="min-w-0">
-
-                                    <h3 class="font-medium truncate">
-                                        Parent {{ $parent }}
-                                    </h3>
-
-                                    <p class="mt-1 text-sm text-slate-400 truncate">
-                                        +229 01 00 00 00 00
-                                    </p>
-
-                                    <p class="mt-1 text-sm text-slate-500 truncate">
-                                        parent@email.com
-                                    </p>
-
-                                </div>
-
-                            </div>
-
+                            </a>
+                        @endforeach
+                    @else
+                        <div class="flex justify-center items-center text-slate-700 animate-pulse font-mono">
+                            <h4>Aucun parent lié</h4>
                         </div>
-                    @endforeach
+                    @endif
 
                 </div>
 

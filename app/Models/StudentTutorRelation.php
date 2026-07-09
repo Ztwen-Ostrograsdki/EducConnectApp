@@ -38,6 +38,14 @@ class StudentTutorRelation extends Model
     public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class, 'tutor_id');
+    } 
+    
+    /**
+     * Get the tutor in this relation.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Tutor::class, 'tutor_id');
     }
 
     /**

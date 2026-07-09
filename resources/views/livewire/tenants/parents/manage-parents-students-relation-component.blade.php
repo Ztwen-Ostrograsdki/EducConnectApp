@@ -133,7 +133,7 @@
                                         class="w-full rounded-xl border-slate-700 bg-slate-800 text-sm text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2 px-2 ">
                                         <option class="w-full" value="">-- Sélectionner --</option>
                                         @foreach ($relationTypes as $value => $label)
-                                            <option class="w-full" value="{{ $value }}">{{ $label }}
+                                            <option class="w-full" value="{{ $label }}">{{ $label }}
                                             </option>
                                         @endforeach
                                     </select>

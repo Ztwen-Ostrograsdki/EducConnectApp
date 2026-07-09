@@ -178,11 +178,16 @@ class Student extends Model
     /**
      * Get all tutors linked to this student.
      */
-    public function tutors(): BelongsToMany
+    public function tutors(): HasMany
     {
-        return $this->belongsToMany(Tutor::class, 'student_tutor_relations', 'student_id', 'tutor_id')
-            ->withPivot(['parent_relation', 'is_primary_contact', 'is_active', 'locked'])
-            ->withTimestamps();
+        return $this->hasMany(StudentTutorRelation::class, 'student_id');
+    } 
+    
+    /* Get all tutors linked to this student.
+     */
+    public function parents(): HasMany
+    {
+        return $this->hasMany(StudentTutorRelation::class, 'student_id');
     }
 
     /**
@@ -190,7 +195,7 @@ class Student extends Model
      */
     public function primaryTutor(): BelongsToMany
     {
-        return $this->tutors()->wherePivot('is_primary_contact', true);
+        return $this->tutors()->where('is_primary_contact', true);
     }
 
     /**
@@ -198,7 +203,7 @@ class Student extends Model
      */
     public function activeTutors(): BelongsToMany
     {
-        return $this->tutors()->wherePivot('is_active', true);
+        return $this->tutors()->where('is_active', true);
     }
 
     /**
@@ -666,6 +671,10 @@ class Student extends Model
 
             }
         }
+        else{
+
+            return true;
+        }
 
         return false;
     }
@@ -685,7 +694,7 @@ class Student extends Model
 
                 if(!$school_year_id){
 
-                    if(!$school_year_id) $schoolYear = SchoolYear::current()?->first();
+                   $schoolYear = SchoolYear::current()?->first();
                 }
                 else{
                     $schoolYear = SchoolYear::find($this->school_year_id);
@@ -733,7 +742,7 @@ class Student extends Model
 
                     DB::commit();
 
-                    if($redirect_to_profil) $this->redirect($this->toProfilRoute(), true);
+                    if($redirect_to_profil) return redirect($this->toProfilRoute());
                 }
                 else{
 

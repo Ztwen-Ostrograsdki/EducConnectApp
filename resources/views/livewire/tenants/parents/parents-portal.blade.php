@@ -465,34 +465,53 @@
                                                     </td>
 
                                                     {{-- CHILDREN --}}
-                                                    <td class="px-4 py-5">
+                                                    <td class="px-4 py-5 truncate">
 
-                                                        <div class="space-y-2">
-
-                                                            <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
-                                                                class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
-
-                                                                KOUASSI Marc
-
+                                                        <div class="flex justify-center  flex-col gap-3 text-center">
+                                                            @if (count($parent->myChildren))
                                                                 <span
-                                                                    class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                                    2nde F2-2
+                                                                    class="text-center rounded-2xl p-0.5 border border-slate-600">
+                                                                    {{ count($parent->myChildren) }} apprenant(s)
                                                                 </span>
+                                                                @foreach ($parent->myChildren()->take(2)->get() as $rel)
+                                                                    @php
+                                                                        $student = $rel->student;
+                                                                    @endphp
+                                                                    <a wire:navigate
+                                                                        href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                                                        class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-900 border border-slate-950 hover:border-sky-600 active:scale-95 flex-col items-center justify-center">
 
-                                                            </a>
+                                                                        <span>{{ $student->getFullName() }}</span>
 
-                                                            <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
-                                                                class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600">
+                                                                        @if ($student->currentClasse() && $student->currentClasse()->classe)
+                                                                            @php
+                                                                                $r = $student->currentClasse()->classe;
+                                                                            @endphp
+                                                                            <span
+                                                                                class="p-2 rounded-xl border border-orange-500 my-1">{{ $r->code ? $r->code : $r->name }}</span>
+                                                                        @else
+                                                                            <span
+                                                                                class="inline-flex gap-1 justify-center text-xs text-orange-600/50 group-hover:text-orange-700 group-hover:bg-slate-950 group-hover:rounded-2xl p-1">
+                                                                                <span>Pas encore de classe en
+                                                                                    {{ $this->activeYear?->slug }}</span>
+                                                                            </span>
+                                                                        @endif
 
-                                                                AGUADO Pièrrot
-
+                                                                    </a>
+                                                                @endforeach
+                                                                @if (count($parent->myChildren) > 2)
+                                                                    <a href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent->uuid]) }}"
+                                                                        class="items-center gap-4 hover:bg-indigo-800 p-2 rounded-2xl active:scale-95 text-2xs hover:text-black text-center bg-indigo-800/40 flex justify-center">
+                                                                        <span>Voir le reste des apprenants</span>
+                                                                        <x-lucide-chevron-down class="w-4 h-4" />
+                                                                    </a>
+                                                                @endif
+                                                            @else
                                                                 <span
-                                                                    class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                                    Tle F2-2
-                                                                </span>
-
-                                                            </a>
-
+                                                                    class="text-slate-500 font-mono text-center animate-pulse">Aucun
+                                                                    apprenant
+                                                                    lié</span>
+                                                            @endif
                                                         </div>
 
                                                     </td>
@@ -529,8 +548,16 @@
 
                                                     </td>
 
-                                                    <td class="px-6 py-5">
+                                                    <td class="px-6 py-5 truncate">
                                                         <div class="flex items-center gap-2 text-xs">
+                                                            <a wire:navigate
+                                                                href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
+                                                                class="px-3 py-3 rounded-2xl
+                                           bg-indigo-500/40 hover:bg-indigo-400 hover:text-black active:scale-95 text-center text-white">
+
+                                                                Apprenants associés
+
+                                                            </a>
 
                                                             @if (!$parent->user->credentials_sent)
                                                                 <button
@@ -538,7 +565,7 @@
                                                                     wire:click="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
-                                                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                                    class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 transition-all whitespace-nowrap disabled:opacity-50">
                                                                     <span wire:loading.remove
                                                                         wire:target="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
                                                                         class="inline-flex items-center gap-1.5">
@@ -567,7 +594,7 @@
                                                                 wire:click="{{ !$parent->is_active ? 'activateTutor(' . $parent->id . ')' : 'desactivateTutor(' . $parent->id . ')' }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="desactivateTutor({{ $parent->id }}), activateTutor({{ $parent->id }})"
-                                                                class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ !$parent->is_active ? 'bg-lime-600/50 hover:bg-lime-800/50 text-lime-400' : 'bg-amber-600/50 hover:bg-amber-800/50 text-amber-400' }}">
+                                                                class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ !$parent->is_active ? 'bg-lime-600/50 hover:bg-lime-800/50 text-lime-400' : 'bg-amber-600/50 hover:bg-amber-800/50 text-amber-400' }}">
                                                                 <span wire:loading.remove
                                                                     wire:target="desactivateTutor({{ $parent->id }}), activateTutor({{ $parent->id }})"
                                                                     class="inline-flex items-center gap-1.5">
@@ -598,7 +625,7 @@
                                                                 wire:click="{{ $parent->deleted_at ? 'restoreTutor(' . $parent->id . ')' : 'deleteTutor(' . $parent->id . ')' }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="deleteTutor({{ $parent->id }}), restoreTutor({{ $parent->id }})"
-                                                                class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $parent->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-violet-400' : 'bg-rose-600/50 hover:bg-rose-800/50 text-rose-400' }}">
+                                                                class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $parent->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-violet-400' : 'bg-rose-600/50 hover:bg-rose-800/50 text-rose-400' }}">
                                                                 <span wire:loading.remove
                                                                     wire:target="deleteTutor({{ $parent->id }}), restoreTutor({{ $parent->id }})"
                                                                     class="inline-flex items-center gap-1.5">
@@ -628,7 +655,7 @@
                                                                     wire:click="forceDeleteTutor({{ $parent->id }})"
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="forceDeleteTutor({{ $parent->id }})"
-                                                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-red-600/50 hover:bg-red-800/50 text-red-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                                    class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-red-600/50 hover:bg-red-800/50 text-red-400 transition-all whitespace-nowrap disabled:opacity-50">
                                                                     <span wire:loading.remove
                                                                         wire:target="forceDeleteTutor({{ $parent->id }})"
                                                                         class="inline-flex items-center gap-1.5">

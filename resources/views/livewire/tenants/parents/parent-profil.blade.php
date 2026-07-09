@@ -355,7 +355,7 @@
 
                                                 <a wire:navigate
                                                     href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                    class="px-2 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-slate-900 border border-slate-950 hover:border-sky-600 items-center gap-2 group">
+                                                    class="px-2 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-slate-900 border border-slate-950 hover:border-sky-600 items-center gap-2 group justify-between">
 
                                                     {{ $student->getFullName() }}
 
@@ -374,6 +374,10 @@
                                                             </span>
                                                         @endif
                                                     </span>
+                                                    <p
+                                                        class="mt-1 text-sm text-lime-500 truncate group-hover:text-orange-700 text-right border-t border-t-lime-400">
+                                                        {{ $rel->parent_relation }}
+                                                    </p>
 
                                                 </a>
 

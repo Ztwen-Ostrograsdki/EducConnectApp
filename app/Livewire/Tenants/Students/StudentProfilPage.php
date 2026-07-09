@@ -105,6 +105,21 @@ class StudentProfilPage extends Component
         $this->dispatch('ReloadTheStudentBulletin', null, null);
     }
 
+    #[Computed]
+    public function parents()
+    {
+        if($this->student){
+
+            return $this->student->parents;
+        }
+        else{
+
+            return [];
+        }
+
+        
+    }
+
 
     public function removeStudentFromCurrent(): void
     {

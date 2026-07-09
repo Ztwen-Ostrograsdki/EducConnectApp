@@ -409,9 +409,9 @@ class ManageParentsStudentsRelationComponent extends Component
         $exists = StudentTutorRelation::query()
             ->where('tutor_id', $this->tutor->id)
             ->where('student_id', $studentId)
-            ->exists();
+            ->first();
 
-        if ($exists) {
+        if (!$exists) {
              $this->notification()->error(
                 'RELATION INTROUVABLE',
                 "Aucune relation trouvée correspondant"
