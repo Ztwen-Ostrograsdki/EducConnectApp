@@ -12,17 +12,18 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Spatie\Browsershot\Browsershot;
 
+#[Timeout(300)]
 class JobToGeneratePdfFromView implements ShouldQueue
 {
     use Queueable, Batchable, Dispatchable, InteractsWithQueue, SerializesModels;
 
-    public int $timeout = 120;
     public int $tries   = 2;
 
     /**
@@ -44,6 +45,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?int    $notifiableId    = null,
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
+        public readonly ?array  $tableColumns    = null,
     ) {}
 
     public function handle(): void
@@ -70,11 +72,11 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
             $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimée sur la plateforme ' . $name;
 
-            $headerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:gray;">'
+            $headerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:gray;">'
                 . $header_title
                 . '</div>';
 
-            $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
+            $footerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:black;">'
             . $formattedDate
             . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
             . '</div>';

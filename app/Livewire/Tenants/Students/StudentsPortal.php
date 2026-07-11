@@ -458,6 +458,25 @@ class StudentsPortal extends Component
             );
         })
         ->when($this->gender, fn($q) => $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender)]))
+        ->when($this->status, function($qst){
+
+            if($this->status === 'actifs'){
+
+                $qst->where('is_active', true);
+            }
+            elseif($this->status === 'desactives'){
+
+                $qst->where('is_active', false);
+
+            }
+            elseif($this->status === 'de la corbeille'){
+
+                $qst->whereNotNull('deleted_at');
+
+            }
+
+
+        })
         ->orderBy('students.name')
         ->orderBy('students.prenames');
         

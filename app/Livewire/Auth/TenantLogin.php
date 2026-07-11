@@ -115,11 +115,11 @@ class TenantLogin extends Component
 
                 if($user->hasRole('directeur')){
 
-                    return $this->redirectRoute('tenant.dashboard');
+                    return $this->redirectIntended(route('tenant.dashboard'), navigate: true);
                 }
                 else{
 
-                    return $this->redirectRoute('tenant.my.profil');
+                    return $this->redirectIntended(route('tenant.my.profil'), navigate: true);
                 }
             }
         }

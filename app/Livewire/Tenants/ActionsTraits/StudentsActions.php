@@ -154,7 +154,10 @@ trait StudentsActions{
     #[On('ConfirmStudentDelete')]
     public function onConfirmStudentDelete(?int $studentId = null): void
     {
-        $student = Student::findOrFail($studentId);
+        $student = Student::find($studentId);
+
+        if(!$student) return;
+
         $student->delete();
 
         broadcast(new DataUpdatedEvent(tenant('id')));
@@ -185,7 +188,9 @@ trait StudentsActions{
     #[On('ConfirmToActivateStudent')]
     public function onConfirmToActivateStudent(?int $studentId = null): void
     {
-        $student = Student::findOrFail($studentId);
+        $student = Student::find($studentId);
+
+        if(!$student) return;
 
         $student->update(['is_active' => true]);
 
@@ -249,7 +254,9 @@ trait StudentsActions{
     #[On('ConfirmToRestoreStudent')]
     public function onConfirmToRestoreStudent(?int $studentId = null): void
     {
-        $student = Student::findOrFail($studentId);
+        $student = Student::withTrashed()->find($studentId);
+
+        if(!$student) return;
 
         $student->restore();
 

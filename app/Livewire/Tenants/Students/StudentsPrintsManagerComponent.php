@@ -2,15 +2,14 @@
 
 namespace App\Livewire\Tenants\Students;
 
+use App\Jobs\JobToGeneratePrintableStudentsDataForThePrintViewComponent;
 use App\Models\Classe;
 use App\Models\Filiar;
-use App\Models\GeneratedDocument;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Subject;
-use App\Services\PDFFactory;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -19,14 +18,19 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 #[Title("Page de gestion des impression de la liste des apprenants")]
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class StudentsPrintsManagerComponent extends Component
 {
-    public string $withoutLeaves = 'all';
+    use WireUiActions;
+    
+    public string $studentTypesActivesOrNotTargeted = 'onlyActives';
 
-    public string $onlyHasClasse = '';
+    public string $studentsTypesWithOrWithoutClasses = 'onlyHasClasse';
+
+    public string $trashedStatus = 'withoutTrashed';
 
     public ?string $city = null;
 
@@ -36,23 +40,74 @@ class StudentsPrintsManagerComponent extends Component
 
     public ?string $status = null;
 
-    public ?int $subject_id = null;
-
     public ?int $filiar_id = null;
 
     public ?int $serial_id = null;
 
     public ?int $promotion_id = null;
 
+    public ?string $promotionInGroups = null;
+
     public ?int $classe_id = null;
 
     public int $counter = 0;
 
+    public array $studentsTypesActivesOrNot = [
+        'onlyActives' => "Seulement apprenants actifs",
+        'onlyLeaves' => "Seulement apprenants déclarés abandons",
+        'withLeaves' => "Tous les apprenants abandons inclus",
+    ];
 
+    public array $studentsWithOrWithoutClasses = [
+        'onlyHasClasse' => "Seulement apprenants ayant de classes",
+        'onlyHasntClasse' => "Seulement apprenants n'ayant pas de classe",
+        'withHasntClasse' => "Tous les apprenants ayant ou pas pas de classe",
+    ];
     
-    public function mount(?string $status = null)
+    public array $trashedStatuses = [
+        'onlyTrashed' => "Uniquement les apprenants de la corbeille",
+        'withoutTrashed' => "Tous les apprenants qui ne sont pas dans la corbeille",
+        'withTrashed' => "Tous les apprenants y compris ceux de la corbeille",
+    ];
+
+
+
+    protected string $sessionKey = 'student-list-selected-columns';
+
+    public array $columns = [
+        'name' => "Nom et Prénoms",
+        'sexe' => "Sexe",
+        'educMaster' => "EducMaster",
+        'matricule' => "Matricule",
+        'pere' => "Père",
+        'mere' => "Mère",
+        'contacts' => "Contacts",
+        'classe' => "Classe",
+        'dateNaissance' => "Date de naissance - Age",
+        'status' => "Statut",
+        'observation' => "Observations",
+    ];
+
+    public array $defaultColumns = [
+        'name' => "Nom et Prénoms",
+        'sexe' => "Sexe",
+        'educMaster' => "EducMaster",
+        'classe' => "Classe",
+        'dateNaissance' => "Date de naissance - Age",
+        'status' => "Statut",
+        'observation' => "Observations",
+    ];
+
+    public array $selectedColumns = [];
+
+    public function mount(): void
     {
-        if($status) $this->status = $status;
+        $this->selectedColumns = session()->get($this->sessionKey, []);
+
+        $this->selectedColumns = array_values(array_filter(
+            $this->selectedColumns,
+            fn (string $key) => array_key_exists($key, $this->columns)
+        ));
 
         if(session()->has('print_students_status_selected')){
 
@@ -69,14 +124,14 @@ class StudentsPrintsManagerComponent extends Component
             $this->filiar_id = session('print_students_filiar_selected');
         }
 
-        if(session()->has('print_students_subject_selected')){
-
-            $this->subject_id = session('print_students_subject_selected');
-        }
-
         if(session()->has('print_students_promotion_selected')){
 
             $this->promotion_id = session('print_students_promotion_selected');
+        } 
+        
+        if(session()->has('print_students_promotions_grouped_selected')){
+
+            $this->promotionInGroups = session('print_students_promotions_grouped_selected');
         }
 
         if(session()->has('print_students_gender_selected')){
@@ -98,11 +153,48 @@ class StudentsPrintsManagerComponent extends Component
 
             $this->serial_id = session('print_students_serial_selected');
         }
+    }
 
+
+    public function restoreSelects(): void
+    {
+        $this->selectedColumns = [];
+
+        $this->persistSelection();
 
     }
 
-    public function clearFilters()
+    protected function persistSelection(): void
+    {
+        session()->put($this->sessionKey, $this->selectedColumns);
+    }
+
+    public function toggleColumn(string $key): void
+    {
+        $index = array_search($key, $this->selectedColumns, true);
+
+        if ($index !== false) {
+            unset($this->selectedColumns[$index]);
+            $this->selectedColumns = array_values($this->selectedColumns);
+        } else {
+            $this->selectedColumns[] = $key;
+        }
+
+        $this->persistSelection();
+    }
+
+    // Propriété calculée : ['name' => 'Nom et Prénoms', 'classe' => 'Classe', ...] dans l'ORDRE choisi
+    #[Computed]
+    public function orderedColumns(): array
+    {
+        return collect($this->selectedColumns)
+            ->mapWithKeys(fn (string $key) => [$key => $this->columns[$key] ?? $key])
+            ->toArray();
+    }
+
+
+
+    public function resetFilters()
     {
         session()->forget(
             [
@@ -110,17 +202,18 @@ class StudentsPrintsManagerComponent extends Component
                 'print_students_department_selected', 
                 'print_students_gender_selected', 
                 'print_students_promotion_selected', 
+                'print_students_promotions_grouped_selected', 
                 'print_students_classe_selected',
                 'print_students_filiar_selected',
                 'print_students_serial_selected', 
-                'print_students_subject_selected',
                 'print_students_status_selected',
             ]
         );
 
 
-        $this->reset('gender', 'city', 'gender', 'department', 'classe_id', 'subject_id', 'promotion_id', 'filiar_id', 'serial_id', 'status');
+        $this->reset('city', 'gender', 'department', 'classe_id', 'promotion_id', 'promotionInGroups', 'filiar_id', 'serial_id', 'status');
     }
+
 
     #[Computed]
     public function filiars()
@@ -171,6 +264,12 @@ class StudentsPrintsManagerComponent extends Component
     {
         return Promotion::where('is_active', true)->orderBy('name', 'desc')->get();
     }
+    
+    #[Computed]
+    public function promotionsGrouped()
+    {
+        return array_unique(Promotion::where('is_active', true)->orderBy('name', 'asc')->pluck('name')->toArray());
+    }
 
 
     public function updatedDepartment(?string $value): void
@@ -199,6 +298,20 @@ class StudentsPrintsManagerComponent extends Component
 
     public function updatedClasseId(?string $value): void
     {
+        if($value) {
+
+            $this->reset(['serial_id', 'filiar_id', 'promotion_id', 'promotionInGroups']);
+
+            session()->forget(
+                [
+                    'print_students_serial_selected',
+                    'print_students_filiar_selected',
+                    'print_students_promotions_grouped_selected',
+                    'print_students_promotion_selected',
+                ]
+            );
+
+        }
         session()->put('print_students_classe_selected', $value);
     }
 
@@ -211,18 +324,76 @@ class StudentsPrintsManagerComponent extends Component
 
     public function updatedPromotionId(?string $value): void
     {
+        if($value) {
+
+            $this->reset(['filiar_id', 'serial_id', 'classe_id', 'promotionInGroups']);
+
+            session()->forget(
+                [
+                    'print_students_promotions_grouped_selected', 
+                    'print_students_classe_selected',
+                    'print_students_filiar_selected',
+                    'print_students_serial_selected', 
+                ]
+            );
+
+        }
+
         session()->put('print_students_promotion_selected', $value);
+    }
+    
+    public function updatedPromotionInGroups(?string $value): void
+    {
+        if($value) {
+
+            $this->reset(['classe_id', 'promotion_id']);
+
+            session()->forget(
+                [
+                    'print_students_classe_selected',
+                    'print_students_promotion_selected',
+                ]
+            );
+
+        }
+        session()->put('print_students_promotions_grouped_selected', $value);
     }
     
 
     public function updatedFiliarId(?string $value): void
     {
+        if($value) {
+
+            $this->reset(['serial_id', 'promotion_id', 'classe_id']);
+
+            session()->forget(
+                [
+                    'print_students_classe_selected',
+                    'print_students_serial_selected',
+                    'print_students_promotion_selected',
+                ]
+            );
+
+        }
         session()->put('print_students_filiar_selected', $value);
     }
 
 
     public function updatedSerialId(?string $value): void
     {
+        if($value) {
+
+            $this->reset(['filiar_id', 'promotion_id', 'classe_id']);
+
+            session()->forget(
+                [
+                    'print_students_classe_selected',
+                    'print_students_filiar_selected',
+                    'print_students_promotion_selected',
+                ]
+            );
+
+        }
         session()->put('print_students_serial_selected', $value);
     }
 
@@ -239,22 +410,11 @@ class StudentsPrintsManagerComponent extends Component
         $this->onReloadDashboard();
     }
 
-   
-
-	public function resetFilters(): void
-    {
-        $this->reset(['search', 'gender', 'city', 'department', 'classe_id', 'promotion_id', 'filiar_id', 'serial_id']);
-        
-        $this->resetPage();
-    }
-
-
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
         $this->counter++;
     }
-
 
 	#[Computed]
     public function activeYear(): ?SchoolYear
@@ -311,6 +471,19 @@ class StudentsPrintsManagerComponent extends Component
                   )
             );
         })
+        ->when($this->promotionInGroups, function (Builder $query) {
+            $query->whereHas('classes', fn($q) => 
+                $q->where('is_active', true)
+                  ->where('school_year_id', $this->activeYear->id)
+                  ->whereHas('classe', fn($qr0) => 
+                    $qr0->whereHas('promotion', fn($qr) => 
+                        $qr->where('name', $this->promotionInGroups)
+                            ->where('is_active', true)
+                            ->where('school_year_id', $this->activeYear->id)
+                    )
+                  )
+            );
+        })
         ->when($this->filiar_id, function (Builder $query) {
             $query->whereHas('classes', fn($q) => 
                 $q->where('is_active', true)
@@ -335,6 +508,41 @@ class StudentsPrintsManagerComponent extends Component
         })
         ->when($this->gender, fn($q) => $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender)]));
         
+    }
+
+
+    public function initPrintProcess()
+    {
+        if(!$this->allStudentsCounter){
+
+            $this->notification()->info(
+                title: "La procédure ne peut être lancée : aucun enregistrement trouvé",
+                description: "Pour les conditions que vous avez définies, aucun enregistrement n'a été trouvé dans la base de données!",
+            );
+        }
+
+        return;
+
+        JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
+            tenantId: tenant('id') ,
+            notifiableId : auth('tenant')->user()->id,
+            docTitle: 'liste apprenants',
+            school_year_id: $this->activeYear->id,
+            config: [
+                "trashedConfig" => $this->trashedStatus,
+                "leavesConfig" => $this->studentTypesActivesOrNotTargeted,
+                "hasClasseConfig" => $this->studentsTypesWithOrWithoutClasses,
+                "classe_id" => $this->classe_id,
+                "filiar_id" => $this->filiar_id,
+                "serial_id" => $this->serial_id,
+                "promotion_id" => $this->promotion_id,
+                "promotionInGroups" => $this->promotionInGroups,
+                "gender" => $this->gender,
+                "city" => $this->city,
+                "department" => $this->department,
+            ],
+
+        );
     }
 
 

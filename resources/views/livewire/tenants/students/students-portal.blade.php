@@ -220,15 +220,15 @@
                             <option value="">
                                 <span>Tout statut </span>
                             </option>
-                            <option class="text-green-400" value="actives">
+                            <option class="text-green-400" value="actifs">
                                 <span>
                                     <span>Actifs</span>
                                 </span>
                             </option>
                             <option value="desactives">
-                                <span>Bloqués</span>
+                                <span>Désactivés</span>
                             </option>
-                            <option class="text-orange-600" value="corbeille">
+                            <option class="text-orange-600" value="de la corbeille">
                                 <span>La corbeille</span>
                             </option>
                         </select>
@@ -257,10 +257,19 @@
                         <div class="flex flex-col gap-y-3">
                             <div>
                                 <h2 class="text-lg sm:text-xl font-semibold">
-                                    Liste des apprenants
+                                    Liste @if (!$status)
+                                        de tous les
+                                    @else
+                                        des
+                                        @endif apprenants @if ($status)
+                                            <span class="uppercase text-orange-600">
+                                                {{ $status }}
+                                            </span>
+                                        @endif
                                 </h2>
                                 <p class="mt-1 text-sm text-slate-400">
                                     Gestion et suivi des apprenants
+
                                 </p>
                             </div>
 
@@ -462,7 +471,7 @@
                                                         wire:click="{{ $student->is_active ? 'desactivateStudent(' . $student->id . ')' : 'activateStudent(' . $student->id . ')' }}"
                                                         wire:loading.attr="disabled"
                                                         wire:target="activateStudent({{ $student->id }}), desactivateStudent({{ $student->id }})"
-                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $student->is_active ? 'bg-amber-600/40 hover:bg-amber-600/80 text-amber-400' : 'bg-green-600/30 hover:bg-green-600/90 text-green-400' }} hover:text-black">
+                                                        class=" active:scale-95 inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $student->is_active ? 'bg-amber-600/40 hover:bg-amber-600/80 text-amber-400' : 'bg-green-600/30 hover:bg-green-600/90 text-green-400' }} hover:text-black">
                                                         <span wire:loading.remove
                                                             wire:target="activateStudent({{ $student->id }}), desactivateStudent({{ $student->id }})"
                                                             class="inline-flex items-center gap-1.5">
@@ -490,7 +499,7 @@
                                                         wire:click="{{ $student->deleted_at ? 'restoreStudent(' . $student->id . ')' : 'deleteStudent(' . $student->id . ')' }}"
                                                         wire:loading.attr="disabled"
                                                         wire:target="deleteStudent({{ $student->id }}), restoreStudent({{ $student->id }})"
-                                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $student->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-black-400 hover:text-yellow-300' : 'bg-orange-600/40 hover:bg-orange-600/90 text-yellow-400 hover:text-black' }}">
+                                                        class="active:scale-95 inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $student->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-black-400 hover:text-yellow-300' : 'bg-orange-600/40 hover:bg-orange-600/90 text-yellow-400 hover:text-black' }}">
                                                         <span wire:loading.remove
                                                             wire:target="deleteStudent({{ $student->id }}), restoreStudent({{ $student->id }})"
                                                             class="inline-flex items-center gap-1.5">
@@ -519,7 +528,7 @@
                                                             wire:click="forceDeleteStudent({{ $student->id }})"
                                                             wire:loading.attr="disabled"
                                                             wire:target="forceDeleteStudent({{ $student->id }})"
-                                                            class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-red-600/50 hover:bg-red-800/50 text-red-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                            class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-red-600/40 hover:bg-red-600/90 text-white hover:text-black transition-all whitespace-nowrap disabled:opacity-50 active:scale-95">
                                                             <span wire:loading.remove
                                                                 wire:target="forceDeleteStudent({{ $student->id }})"
                                                                 class="inline-flex items-center gap-1.5">
