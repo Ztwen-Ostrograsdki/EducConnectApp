@@ -1,6 +1,9 @@
 <div class="print-wrapper">
 
-    {{-- ═══ BANDEAU OFFICIEL ═══ --}}
+    {{-- ═══════════════════════════════════════════
+         BANDEAU OFFICIEL RÉPUBLIQUE DU BÉNIN
+         (converti en CSS custom — ne dépend plus de Tailwind)
+    ════════════════════════════════════════════ --}}
     <div class="official-banner">
         <div class="official-banner-content">
             <span class="official-country">République du Bénin</span>
@@ -14,9 +17,14 @@
         </div>
     </div>
 
-    {{-- ═══ ENTÊTE INSTITUTIONNEL ═══ --}}
+    {{-- ═══════════════════════════════════════════
+         ENTÊTE INSTITUTIONNEL
+    ════════════════════════════════════════════ --}}
     <header class="doc-header">
+
+        {{-- Bandeau top : identité de l'établissement --}}
         <div class="header-band">
+            {{-- Logo / initiales --}}
             <div class="school-logo">
                 <span class="logo-initials">
                     {{ str()->initials(tenancy()->tenant->school_name) }}
@@ -24,6 +32,7 @@
                 <div class="logo-dot"></div>
             </div>
 
+            {{-- Nom & coordonnées --}}
             <div class="school-identity">
                 <h1 class="school-name">{{ tenancy()->tenant->school_name }}</h1>
                 <p class="school-subtitle">
@@ -38,53 +47,56 @@
                 </p>
             </div>
 
+            {{-- Cachet / date --}}
             <div class="doc-stamp">
                 <span class="stamp-label">Document officiel</span>
                 <span class="stamp-date">{{ $printed_at }}</span>
-                <span class="stamp-ref">
-                    Réf : PERS-ENS-{{ now()->format('Ymd') }}-{{ str_pad($allStudents, 3, '0', STR_PAD_LEFT) }}
-                </span>
+                <span class="stamp-ref">Réf :
+                    PERS-ENS-{{ now()->format('Ymd') }}-{{ str_pad($allStudents, 3, '0', STR_PAD_LEFT) }}</span>
             </div>
         </div>
 
+        {{-- Ligne décorative tricolore --}}
         <div class="header-rule">
             <div class="rule-navy"></div>
             <div class="rule-gold"></div>
             <div class="rule-light"></div>
         </div>
 
-        @if ($pdf_title)
-            <div class="doc-title-block">
-                <h4 class="doc-title">{{ $pdf_title }}</h4>
-            </div>
-        @endif
+        {{-- Titre du document --}}
+        <div class="doc-title-block">
+            @if ($pdf_title)
+                <h4 class="doc-title">
+                    {{ $pdf_title }}
+                </h4>
+            @endif
+        </div>
+
     </header>
 
-    {{-- ═══ TABLEAU PRINCIPAL ═══ --}}
+    {{-- ═══════════════════════════════════════════
+         TABLEAU PRINCIPAL
+    ════════════════════════════════════════════ --}}
     <main class="doc-body">
+
         @if ($students->isEmpty())
             <div class="empty-state">
                 <p>Aucun apprenant à afficher pour les critères sélectionnés.</p>
             </div>
         @else
-            @php
-                $columns = $tableColumns ?: $defaultColumns;
-                $widths = \App\Livewire\Tenants\Students\StudentsPrintableListComponent::normalizedWidths($columns);
-            @endphp
-
             <table class="students-table">
                 <colgroup>
-                    <col style="width:4%">
-                    @foreach ($columns as $col)
-                        <col style="width: {{ $widths[$col['key']] ?? 'auto' }}">
+                    <col style="width:4%"> {{-- # --}}
+                    @foreach ($tableColumns ?: $defaultColumns as $col)
+                        <col>
                     @endforeach
                 </colgroup>
 
                 <thead>
-                    <tr class="tr-head">
+                    <tr class="hover:bg-indigo-950 tr-head">
                         <th class="col-num">#</th>
-                        @foreach ($columns as $col)
-                            <th>{{ $col['label'] }}</th>
+                        @foreach ($tableColumns ?: $defaultColumns as $col)
+                            <th class="col-grade">{{ $col['label'] }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -94,24 +106,12 @@
                         <tr class="{{ $loop->even ? 'row-even' : 'row-odd' }}">
                             <td class="td-center">{{ $loop->iteration }}</td>
 
-                            @foreach ($columns as $col)
-                                <td class="{{ $col['key'] === 'full_name' ? 'cell-name' : 'td-center' }}">
+                            @foreach ($tableColumns ?: $defaultColumns as $col)
+                                <td class="cell-wrap @if ($col['key'] === 'full_name') cell-name-col @endif">
                                     @if ($col['key'] === 'full_name')
-                                        <div class="cell-flex-col cell-flex-start">
-                                            <span class="name-main">
-                                                {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
-                                            </span>
-                                            <span class="name-sub">{{ $student->matricule }}</span>
-                                        </div>
-                                    @elseif ($col['key'] === 'classe.name')
-                                        {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) ?:
-                                            '<span class="dept-empty">Pas de classe</span>' !!}
-                                    @elseif ($col['key'] === 'contacts')
-                                        <div class="cell-contact">
-                                            {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
-                                            @if ($student->email)
-                                                <p class="contact-email">{{ $student->email }}</p>
-                                            @endif
+                                        <div class="cell-flex-col cell-name-block">
+                                            <span class="name-main">{!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}</span>
+                                            <span class="name-matricule">Matricule : {{ $student->matricule }}</span>
                                         </div>
                                     @else
                                         {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
@@ -123,10 +123,16 @@
                 </tbody>
             </table>
         @endif
+
     </main>
+
 </div>
 
+{{-- ═══════════════════════════════════════════
+     STYLES DÉDIÉS À L'IMPRESSION
+════════════════════════════════════════════ --}}
 <style>
+    /* ── Variables ──────────────────────────────── */
     :root {
         --navy: #1E3A5F;
         --navy-mid: #2C5282;
@@ -136,28 +142,17 @@
         --slate: #475569;
         --slate-light: #F8FAFC;
         --slate-mid: #F1F5F9;
-        --text: #000000;
-        --text-muted: #4B5563;
+        --text: #0F172A;
+        --text-muted: #64748B;
         --border: #CBD5E1;
         --border-dark: #94A3B8;
         --white: #FFFFFF;
-        --green-bg: #DCFCE7;
-        --green-text: #166534;
-        --green-border: #86EFAC;
-        --red-bg: #FEE2E2;
-        --red-text: #991B1B;
-        --red-border: #FCA5A5;
-        --yellow-bg: #FEF9C3;
-        --yellow-text: #854D0E;
-        --yellow-border: #FDE047;
-        --purple-bg: #F3E8FF;
-        --purple-text: #6B21A8;
-        --purple-border: #D8B4FE;
         --font-serif: 'Georgia', 'Times New Roman', serif;
         --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
         --font-mono: 'DM Mono', 'Courier New', monospace;
     }
 
+    /* ── Reset impression ───────────────────────── */
     *,
     *::before,
     *::after {
@@ -174,6 +169,7 @@
         print-color-adjust: exact;
     }
 
+    /* ── Wrapper principal ──────────────────────── */
     .print-wrapper {
         width: 100%;
         max-width: 1300px;
@@ -182,7 +178,7 @@
         background: var(--white);
     }
 
-    /* ══ BANDEAU OFFICIEL ══ */
+    /* ══ BANDEAU OFFICIEL (ex-Tailwind, en CSS custom) ══ */
     .official-banner {
         width: 100%;
         margin: 0 auto 1rem;
@@ -236,7 +232,7 @@
         background: #DC2626;
     }
 
-    /* ══ ENTÊTE ══ */
+    /* ══ ENTÊTE ═════════════════════════════════ */
     .header-band {
         display: flex;
         align-items: flex-start;
@@ -379,7 +375,7 @@
         letter-spacing: 0.08em;
     }
 
-    /* ══ TABLEAU ══ */
+    /* ══ TABLEAU ════════════════════════════════ */
     .doc-body {
         margin-top: 1.25rem;
     }
@@ -389,6 +385,7 @@
         border-collapse: collapse;
         font-size: 0.8rem;
         table-layout: fixed;
+        /* nécessite le <colgroup> ci-dessus pour bien répartir l'espace */
     }
 
     .students-table thead tr {
@@ -407,6 +404,12 @@
         text-align: center;
     }
 
+    .th-stacked {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
     .students-table tbody tr.row-odd {
         background: var(--white);
     }
@@ -415,6 +418,17 @@
         background: var(--slate-mid);
     }
 
+    .students-table tbody tr:hover {
+        background: var(--navy-light);
+    }
+
+    .students-table thead tr:hover,
+    .tr-head:hover {
+        background: rgb(4, 1, 24) !important;
+    }
+
+    /* Cellules : par défaut on autorise le retour à la ligne
+       (plus de troncature globale qui masquait noms/emails) */
     .students-table tbody td {
         padding: 7px 6px;
         border: 1px solid var(--border);
@@ -424,74 +438,63 @@
         word-break: break-word;
         overflow-wrap: break-word;
         white-space: normal;
-        text-align: center;
+        text-align: left;
     }
 
     .td-center {
         text-align: center;
     }
 
-    /* Nom : aligné à gauche, matricule discret en dessous */
+    /* Matricule : reste sur une ligne, c'est court par nature */
+    .cell-matricule {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--navy);
+        white-space: nowrap;
+        text-align: center;
+    }
+
     .cell-name {
-        text-align: left;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .dept-main {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .dept-empty {
+        font-size: 0.72rem;
+        color: var(--slate);
+        font-style: italic;
+    }
+
+    .cell-contact p {
+        font-size: 0.76rem;
+        line-height: 1.35;
+        word-break: break-all;
+        /* les emails longs ne débordent plus de la colonne */
+    }
+
+    .contact-email {
+        color: var(--navy-mid);
+        font-size: 0.7rem !important;
     }
 
     .cell-flex-col {
         display: flex;
         flex-direction: column;
         align-items: center;
+        border-collapse: collapse !important;
     }
 
-    .cell-flex-start {
-        align-items: flex-start;
+    .cell-age {
+        font-size: 0.75rem;
     }
 
-    .name-main {
-        font-weight: 600;
-        color: var(--text);
-        font-size: 0.8rem;
-    }
-
-    .name-sub {
-        font-family: var(--font-mono);
-        font-size: 0.68rem;
-        font-weight: 400;
-        color: var(--text-muted);
-        margin-top: 1px;
-    }
-
-    .dept-empty {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-        font-style: italic;
-    }
-
-    .cell-contact {
-        font-size: 0.76rem;
-        line-height: 1.35;
-        word-break: break-all;
-    }
-
-    .contact-email {
-        color: var(--navy-mid);
-        font-size: 0.7rem;
-        margin-top: 2px;
-    }
-
-    /* Âge : date en haut, âge en dessous, plus discret */
-    .age-date {
-        font-size: 0.76rem;
-        color: var(--text);
-    }
-
-    .age-years {
-        font-size: 0.66rem;
-        font-weight: 400;
-        color: var(--text-muted);
-        margin-top: 1px;
-    }
-
-    /* Badges statut */
+    /* Statut badge */
     .statut-badge {
         display: inline-block;
         padding: 2px 9px;
@@ -504,29 +507,30 @@
     }
 
     .statut-badge--actif {
-        background: var(--green-bg);
-        color: var(--green-text);
-        border: 1px solid var(--green-border);
+        background: #DCFCE7;
+        color: #166534;
+        border: 1px solid #86EFAC;
     }
 
     .statut-badge--inactif {
-        background: var(--red-bg);
-        color: var(--red-text);
-        border: 1px solid var(--red-border);
+        background: #FEE2E2;
+        color: #991B1B;
+        border: 1px solid #FCA5A5;
     }
 
     .statut-badge--conge {
-        background: var(--yellow-bg);
-        color: var(--yellow-text);
-        border: 1px solid var(--yellow-border);
+        background: #FEF9C3;
+        color: #854D0E;
+        border: 1px solid #FDE047;
     }
 
     .statut-badge--suspend {
-        background: var(--purple-bg);
-        color: var(--purple-text);
-        border: 1px solid var(--purple-border);
+        background: #F3E8FF;
+        color: #6B21A8;
+        border: 1px solid #D8B4FE;
     }
 
+    /* État vide */
     .empty-state {
         padding: 2rem;
         text-align: center;
@@ -536,6 +540,48 @@
         margin-top: 1rem;
     }
 
+    td,
+    th {
+        text-align: center !important;
+    }
+
+    /* Cellule nom : alignée à gauche, matricule discret en dessous */
+    .cell-name-block {
+        align-items: flex-start !important;
+        text-align: left !important;
+    }
+
+    .cell-name-block .name-main {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.8rem;
+    }
+
+    .cell-name-block .name-matricule {
+        font-size: 0.68rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        margin-top: 7px;
+    }
+
+    td.cell-name-col {
+        text-align: left !important;
+    }
+
+    /* Cellule âge : date en haut, âge en bas, plus petit et moins dense */
+    .cell-age-col .age-date {
+        font-size: 0.76rem;
+        color: var(--text);
+    }
+
+    .cell-age-col .age-years {
+        font-size: 0.66rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    /* ══ RÈGLES D'IMPRESSION @media print ══════ */
     @media print {
         @page {
             size: A4 landscape;
@@ -557,6 +603,26 @@
 
         .students-table thead {
             display: table-header-group;
+        }
+
+        .students-table tfoot {
+            display: table-footer-group;
+        }
+
+        .students-table thead tr,
+        .row-even,
+        .statut-badge,
+        .cell-matricule,
+        .header-rule,
+        .rule-navy,
+        .rule-gold,
+        .rule-light,
+        .official-flag,
+        .flag-green,
+        .flag-yellow,
+        .flag-red {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .no-print {

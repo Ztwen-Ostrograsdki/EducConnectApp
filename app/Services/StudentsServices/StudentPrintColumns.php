@@ -2,7 +2,6 @@
 
 namespace App\Services\StudentsServices;
 
-
 class StudentPrintColumns
 {
     public static array $columns = [
@@ -24,6 +23,8 @@ class StudentPrintColumns
         'status', 'observations',
     ];
 
+    protected static string $sessionKey = 'student-list-selected-columns';
+
     /**
      * Construit tableColumns à partir des clés sélectionnées (ordre = ordre de coche).
      * Retombe sur l'ordre par défaut si $selectedKeys est vide.
@@ -42,5 +43,25 @@ class StudentPrintColumns
                 'position' => $index + 1,
             ])
             ->toArray();
+    }
+
+    /**
+     * Point d'entrée UNIQUE pour résoudre tableColumns, peu importe d'où
+     * l'impression est lancée. Ordre de priorité :
+     *   1. $explicit (colonnes déjà construites et passées à la main)
+     *   2. Session (choix persistant de l'utilisateur, si présent)
+     *   3. Ordre par défaut du service
+     *
+     * Ne renvoie JAMAIS un tableau vide.
+     */
+    public static function resolve(?array $explicit = null): array
+    {
+        if (! empty($explicit)) {
+            return $explicit;
+        }
+
+        $sessionSelection = session()->get(self::$sessionKey, []);
+
+        return self::build($sessionSelection);
     }
 }

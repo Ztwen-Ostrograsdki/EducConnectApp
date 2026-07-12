@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use App\Services\PDFFactory;
+use App\Services\StudentsServices\StudentPrintColumns;
 use App\Services\StudentsServices\StudentPrintQuery;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -185,7 +186,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             'pdf_title'       => $this->docTitle,
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
-            'tableColumns'    => $this->config['tableColumns']
+            'tableColumns'    => StudentPrintColumns::resolve($this->config['tableColumns'] ?? null),
         ];
 
         PDFFactory::dispatch(

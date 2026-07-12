@@ -12,6 +12,7 @@ use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Services\PDFFactory;
+use App\Services\StudentsServices\StudentPrintColumns;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -306,6 +307,7 @@ class StudentsPortal extends Component
             'pdf_title'       => $pdf_title,
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
+            'tableColumns'    => StudentPrintColumns::resolve(null),
         ];
 
         PDFFactory::dispatch(

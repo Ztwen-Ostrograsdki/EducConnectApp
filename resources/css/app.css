@@ -11,7 +11,7 @@
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
-/* @source "../../app*.php"; */
+@source "../../app*.php";
 @source '../../app/Livewire/**/*.php';
 @import "../../vendor/wireui/wireui/ts/global.css";
 @source '../../vendor/wireui/wireui';

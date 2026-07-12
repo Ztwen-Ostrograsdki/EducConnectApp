@@ -86,36 +86,39 @@ class StudentsPrintableListComponent extends Component
             'gender' => $value ? e(strtoupper(substr($value, 0, 1))) : '—',
 
             'age' => $value
-                ? '<div class="flex flex-col items-center">'
-                    . '<span class="text-[0.76rem] text-black">' . __formatDate($value) . '</span>'
-                    . '<span class="text-[0.66rem] font-normal text-gray-600 mt-0.5">' . __getAge($value) . ' ans</span>'
-                  . '</div>'
-                : '—',
+                ? '<div class="cell-flex-col">'
+                    . '<span class="age-date">' . __formatDate($value) . '</span>'
+                    . '<span class="age-years">' . __getAge($value) . ' ans</span>'
+                . '</div>'
+                : '',
 
             'badge' => static::badgeMarkup($value),
 
-            'phone' => $value ? e($value) : '—',
+            'phone' => $value ? e($value) : '',
 
-            default => ($value !== null && $value !== '') ? e((string) $value) : '—',
+            default => ($value !== null && $value !== '') ? e((string) $value) : '',
         };
     }
 
-    /**
-     * Classes Tailwind littérales par statut — nécessaire pour le scan JIT
-     * (une concaténation type "bg-{$status}-100" ne serait jamais détectée).
-     */
     protected static function badgeMarkup(mixed $status): string
     {
-        [$classes, $label] = match ($status) {
-            'active', true, 1 => ['bg-green-100 text-green-800 border border-green-300', 'Actif'],
-            'conge'            => ['bg-yellow-100 text-yellow-800 border border-yellow-300', 'Congé'],
-            'suspend'          => ['bg-purple-100 text-purple-800 border border-purple-300', 'Suspendu'],
-            default            => ['bg-red-100 text-red-800 border border-red-300', 'Inactif'],
+        $modifier = match ($status) {
+            'active', true, 1 => 'actif',
+            'conge'            => 'conge',
+            'suspend'          => 'suspend',
+            default            => 'inactif',
         };
 
-        return '<span class="inline-block px-2.5 py-0.5 rounded-full text-[0.66rem] font-bold uppercase tracking-wide whitespace-nowrap ' . $classes . '">'
-            . $label . '</span>';
+        $label = match ($modifier) {
+            'actif'   => 'Actif',
+            'conge'   => 'Congé',
+            'suspend' => 'Suspendu',
+            default   => 'Inactif',
+        };
+
+        return '<span class="statut-badge statut-badge--' . $modifier . '">' . $label . '</span>';
     }
+
 
     /**
      * Calcule la largeur en % de chaque colonne active, normalisée sur 96%

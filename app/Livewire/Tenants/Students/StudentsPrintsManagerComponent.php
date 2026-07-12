@@ -508,8 +508,10 @@ class StudentsPrintsManagerComponent extends Component
         }
 
         $config = [
-                ...$this->currentFilterConfig(),
-                'tableColumns' => StudentPrintColumns::build($this->selectedColumns),
+            'tableColumns' => StudentPrintColumns::resolve($this->selectedColumns
+                ? StudentPrintColumns::build($this->selectedColumns)
+                : null
+            )
         ];
 
         JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
