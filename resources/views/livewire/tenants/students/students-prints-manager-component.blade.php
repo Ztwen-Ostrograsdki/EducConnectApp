@@ -13,6 +13,15 @@
                 <span class="text-xl font-mono ls-1">Chargement en cours...</span>
             </div>
         </div>
+        <div class="flex justify-end p-3">
+            <a href="{{ route('tenant.students.print.list') }}"
+                class="py-2.5 px-5 rounded-2xl bg-purple-500/60 hover:bg-purple-600 text-white hover:text-black border border-purple-400 transition-all text-sm inline-flex items-center justify-center active:scale-95">
+                <span class="flex items-center gap-2">
+                    <x-lucide-eye class="h4 w-4" />
+                    <span>Prévisulaisation de la liste à imprimer</span>
+                </span>
+            </a>
+        </div>
         <section
             class="rounded-2xl p-3 bg-indigo-900/10 border border-indigo-900 overflow-hidden flex flex-col gap-3 mb-3">
 
@@ -194,7 +203,7 @@
                 </button>
             </div>
             <div class="grid sm:grid-cols-4 grid-cols-2 gap-5">
-                @foreach ($columns as $key => $column)
+                @foreach ($this->availableColumns as $key => $column)
                     @php($order = array_search($key, $selectedColumns, true))
                     <div class="flex flex-col gap-2 items-center rounded-2xl p-2 border border-slate-500"
                         wire:key="col-{{ $key }}">
@@ -206,7 +215,7 @@
                                         {{ $order + 1 }}
                                     </span>
                                 @endif
-                                <h4>{{ $column }}</h4>
+                                <h4>{{ $column['label'] }}</h4> {{-- <-- ici --}}
                             </span>
                             <span class="relative flex shrink-0 items-center justify-end">
                                 <input type="checkbox" wire:click="toggleColumn('{{ $key }}')"
@@ -266,7 +275,7 @@
                                 <th class="px-3 py-4 text-center text-sm text-slate-400">N°</th>
                                 @foreach ($defaultColumns as $dfkc => $dfth)
                                     <th class="px-3 py-4 text-center text-sm text-slate-400 font-thin">
-                                        {{ $dfth }}</th>
+                                        {{ $dfth['label'] }}</th>
                                 @endforeach
                             </tr>
                         </thead>

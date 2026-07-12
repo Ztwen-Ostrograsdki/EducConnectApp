@@ -8,11 +8,10 @@ use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
-use App\Models\Student;
 use App\Models\Subject;
+use App\Services\StudentsServices\StudentPrintColumns;
+use App\Services\StudentsServices\StudentPrintQuery;
 use App\Tools\BeninData;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -70,32 +69,16 @@ class StudentsPrintsManagerComponent extends Component
         'withTrashed' => "Tous les apprenants y compris ceux de la corbeille",
     ];
 
-
-
     protected string $sessionKey = 'student-list-selected-columns';
 
-    public array $columns = [
-        'name' => "Nom et Prénoms",
-        'sexe' => "Sexe",
-        'educMaster' => "EducMaster",
-        'matricule' => "Matricule",
-        'pere' => "Père",
-        'mere' => "Mère",
-        'contacts' => "Contacts",
-        'classe' => "Classe",
-        'dateNaissance' => "Date de naissance - Age",
-        'status' => "Statut",
-        'observation' => "Observations",
-    ];
-
     public array $defaultColumns = [
-        'name' => "Nom et Prénoms",
-        'sexe' => "Sexe",
-        'educMaster' => "EducMaster",
-        'classe' => "Classe",
-        'dateNaissance' => "Date de naissance - Age",
-        'status' => "Statut",
-        'observation' => "Observations",
+        ['key' => 'full_name',        'label' => 'Nom complet',      'position' => 1, 'type' => 'text'],
+        ['key' => 'gender',           'label' => 'Sexe',             'position' => 2, 'type' => 'text'],
+        ['key' => 'educMaster',       'label' => 'EducMaster',       'position' => 3, 'type' => 'text'],
+        ['key' => 'birth_date',       'label' => 'Date de naissance','position' => 4, 'type' => 'date'],
+        ['key' => 'classe.name',      'label' => 'Classe',           'position' => 5, 'type' => 'text'],
+        ['key' => 'guardian.phone',   'label' => 'Tél. tuteur',      'position' => 6, 'type' => 'phone'],
+        ['key' => 'is_active',        'label' => 'Statut',           'position' => 7, 'type' => 'badge'],
     ];
 
     public array $selectedColumns = [];
@@ -106,8 +89,18 @@ class StudentsPrintsManagerComponent extends Component
 
         $this->selectedColumns = array_values(array_filter(
             $this->selectedColumns,
-            fn (string $key) => array_key_exists($key, $this->columns)
+            fn (string $key) => array_key_exists($key, $this->availableColumns)
         ));
+
+        if (session()->has('print_students_trashed_status')) {
+            $this->trashedStatus = session('print_students_trashed_status');
+        }
+        if (session()->has('print_students_leaves_status')) {
+            $this->studentTypesActivesOrNotTargeted = session('print_students_leaves_status');
+        }
+        if (session()->has('print_students_has_classe_status')) {
+            $this->studentsTypesWithOrWithoutClasses = session('print_students_has_classe_status');
+        }
 
         if(session()->has('print_students_status_selected')){
 
@@ -164,6 +157,28 @@ class StudentsPrintsManagerComponent extends Component
 
     }
 
+
+    // // Pour construire le tableColumns final, prêt pour le job
+    // protected function buildTableColumns(): array
+    // {
+    //     $source = ! empty($this->selectedColumns)
+    //         ? collect($this->selectedColumns)->map(fn (string $key) => [
+    //             'key'   => $key,
+    //             'label' => $this->availableColumns[$key]['label'] ?? $key,
+    //             'type'  => $this->availableColumns[$key]['type'] ?? 'text',
+    //         ])
+    //         : collect($this->defaultColumns)->map(fn (array $col) => [
+    //             'key'   => $col['key'],
+    //             'label' => $col['label'],
+    //             'type'  => $col['type'],
+    //         ]);
+
+    //     return $source
+    //         ->values()
+    //         ->map(fn (array $col, int $index) => [...$col, 'position' => $index + 1])
+    //         ->toArray();
+    // }
+
     protected function persistSelection(): void
     {
         session()->put($this->sessionKey, $this->selectedColumns);
@@ -188,7 +203,7 @@ class StudentsPrintsManagerComponent extends Component
     public function orderedColumns(): array
     {
         return collect($this->selectedColumns)
-            ->mapWithKeys(fn (string $key) => [$key => $this->columns[$key] ?? $key])
+            ->mapWithKeys(fn (string $key) => [$key => $this->availableColumns[$key]['label'] ?? $key])
             ->toArray();
     }
 
@@ -207,11 +222,14 @@ class StudentsPrintsManagerComponent extends Component
                 'print_students_filiar_selected',
                 'print_students_serial_selected', 
                 'print_students_status_selected',
+                'print_students_trashed_status',
+                'print_students_leaves_status',
+                'print_students_has_classe_status',
+
             ]
         );
 
-
-        $this->reset('city', 'gender', 'department', 'classe_id', 'promotion_id', 'promotionInGroups', 'filiar_id', 'serial_id', 'status');
+        $this->reset('city', 'gender', 'department', 'classe_id', 'promotion_id', 'promotionInGroups', 'filiar_id', 'serial_id', 'trashedStatus', 'studentsTypesWithOrWithoutClasses', 'studentTypesActivesOrNotTargeted');
     }
 
 
@@ -269,6 +287,21 @@ class StudentsPrintsManagerComponent extends Component
     public function promotionsGrouped()
     {
         return array_unique(Promotion::where('is_active', true)->orderBy('name', 'asc')->pluck('name')->toArray());
+    }
+
+    public function updatedTrashedStatus(?string $value): void
+    {
+        session()->put('print_students_trashed_status', $value);
+    }
+
+    public function updatedStudentTypesActivesOrNotTargeted(?string $value): void
+    {
+        session()->put('print_students_leaves_status', $value);
+    }
+
+    public function updatedStudentsTypesWithOrWithoutClasses(?string $value): void
+    {
+        session()->put('print_students_has_classe_status', $value);
     }
 
 
@@ -434,114 +467,57 @@ class StudentsPrintsManagerComponent extends Component
         return $this->getStudentsCounter()->count();
     }
 
+    #[Computed]
+    public function availableColumns(): array
+    {
+        return StudentPrintColumns::$columns;
+    }
 
 
 
     public function getStudentsCounter()
     {
-        return Student::query()
-        ->select('students.*')
-        ->withTrashed()
-        ->when($this->city, function (Builder $query) {
-            $query->where('city', $this->city);
-        })
-        ->when($this->department, function (Builder $query) {
-            $query->where('department', $this->department);
-        })
-        ->when($this->classe_id, function (Builder $query) {
-            if($this->classe_id !== 'sans-classe'){
-                $query->whereHas('classes', fn($q) => 
-                    $q->where('is_active', true)->where('classe_id', $this->classe_id)->where('school_year_id', $this->activeYear->id)
-                );
-            }
-            else{
-                $query->whereDoesntHave('classes', fn($q) => 
-                    $q->where('is_active', true)->where('school_year_id', $this->activeYear->id)
-                );
-            }
-        })
-        ->when($this->promotion_id, function (Builder $query) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->activeYear->id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('promotion_id', $this->promotion_id)
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->activeYear->id)
-                  )
-            );
-        })
-        ->when($this->promotionInGroups, function (Builder $query) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->activeYear->id)
-                  ->whereHas('classe', fn($qr0) => 
-                    $qr0->whereHas('promotion', fn($qr) => 
-                        $qr->where('name', $this->promotionInGroups)
-                            ->where('is_active', true)
-                            ->where('school_year_id', $this->activeYear->id)
-                    )
-                  )
-            );
-        })
-        ->when($this->filiar_id, function (Builder $query) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->activeYear->id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('filiar_id', $this->filiar_id)
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->activeYear->id)
-                  )
-            );
-        })
-        ->when($this->serial_id, function (Builder $query) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->activeYear->id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('serial_id', $this->serial_id)
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->activeYear->id)
-                  )
-            );
-        })
-        ->when($this->gender, fn($q) => $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender)]));
-        
+        return StudentPrintQuery::build($this->currentFilterConfig(), $this->activeYear->id)->withTrashed();
     }
 
+    protected function currentFilterConfig(): array
+    {
+        return [
+            "trashedConfig"     => $this->trashedStatus,
+            "leavesConfig"      => $this->studentTypesActivesOrNotTargeted,
+            "hasClasseConfig"   => $this->studentsTypesWithOrWithoutClasses,
+            "classe_id"         => $this->classe_id,
+            "filiar_id"         => $this->filiar_id,
+            "serial_id"         => $this->serial_id,
+            "promotion_id"      => $this->promotion_id,
+            "promotionInGroups" => $this->promotionInGroups,
+            "gender"            => $this->gender,
+            "city"              => $this->city,
+            "department"        => $this->department,
+        ];
+    }
 
     public function initPrintProcess()
     {
-        if(!$this->allStudentsCounter){
-
+        if (! $this->allStudentsCounter) {
             $this->notification()->info(
                 title: "La procédure ne peut être lancée : aucun enregistrement trouvé",
                 description: "Pour les conditions que vous avez définies, aucun enregistrement n'a été trouvé dans la base de données!",
             );
+            return;
         }
 
-        return;
+        $config = [
+                ...$this->currentFilterConfig(),
+                'tableColumns' => StudentPrintColumns::build($this->selectedColumns),
+        ];
 
         JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
-            tenantId: tenant('id') ,
-            notifiableId : auth('tenant')->user()->id,
+            tenantId: tenant('id'),
+            notifiableId: auth('tenant')->user()->id,
             docTitle: 'liste apprenants',
             school_year_id: $this->activeYear->id,
-            config: [
-                "trashedConfig" => $this->trashedStatus,
-                "leavesConfig" => $this->studentTypesActivesOrNotTargeted,
-                "hasClasseConfig" => $this->studentsTypesWithOrWithoutClasses,
-                "classe_id" => $this->classe_id,
-                "filiar_id" => $this->filiar_id,
-                "serial_id" => $this->serial_id,
-                "promotion_id" => $this->promotion_id,
-                "promotionInGroups" => $this->promotionInGroups,
-                "gender" => $this->gender,
-                "city" => $this->city,
-                "department" => $this->department,
-            ],
-
+            config: $config,
         );
     }
 

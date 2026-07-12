@@ -96,7 +96,6 @@ class PDFFactory
         ?string $notifiable           = null,
         ?int    $notifiableId         = null,
         ?string $notification         = null,
-        ?array  $tableColumns         = [],
     ): void {
 
         $folder       = self::CATEGORY_MAP[$category] ?? 'documents';
@@ -123,7 +122,6 @@ class PDFFactory
             notifiableId:   $notifiableId,
             notifiable:     $notifiable,
             notification:   $notification,
-            tableColumns:   $tableColumns,
         )->onQueue('pdf');
     }
 }

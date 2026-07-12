@@ -45,7 +45,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?int    $notifiableId    = null,
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
-        public readonly ?array  $tableColumns    = null,
+        
     ) {}
 
     public function handle(): void

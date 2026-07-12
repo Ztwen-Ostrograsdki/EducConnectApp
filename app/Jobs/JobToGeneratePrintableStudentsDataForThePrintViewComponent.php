@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use App\Services\PDFFactory;
+use App\Services\StudentsServices\StudentPrintQuery;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -80,15 +81,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             "gender" => null,
             "city" => null,
             "department" => null,
-            'tableColumns' => [
-                'name' => "Nom et Prénoms",
-                'sexe' => "Sexe",
-                'educMaster' => "EducMaster",
-                'classe' => "Classe",
-                'dateNaissance' => "Date de naissance - Age",
-                'status' => "Statut",
-                'observation' => "Observations",
-            ],
+            'tableColumns' => [],
         ],
 
 
@@ -119,7 +112,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
                 userEmail: $director->email,
                 tenantId:  $this->tenantId,
                 title:     "ECHEC DE LA GENERATION DU DOCUMENT",
-                message:   cutter($th->getMessage(), 200),
+                message:   cutter($th->getMessage(), 20000),
                 type:      'error',
             ));
 
@@ -146,7 +139,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
         }
         else{
 
-            $schoolYear = SchoolYear::firstWhere($this->school_year_id);
+            $schoolYear = SchoolYear::firstWhere('id', $this->school_year_id);
 
             if($schoolYear && $schoolYear->is_active){
 
@@ -173,137 +166,14 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
         }
     }
 
-    public function getStudentsIds() :  array
+    public function getStudents() : \Illuminate\Support\Collection
     {
-
-        $query = Student::query()->select('students.id');
-
-        if($this->config['trashedConfig']){
-
-            $trashedConfig = $this->config['trashedConfig'];
-
-            $query->{$trashedConfig}();
-
-        }
-        if($this->config['leavesConfig']){
-
-            $leavesConfig = $this->config['leavesConfig'];
-
-            if($leavesConfig === 'onlyLeaves'){
-
-                $query->whereHas('yearlyStudentsLeaves', function($q){
-
-                    $q->where('school_year_id', $this->school_year_id);
-
-                });
-            }
-            elseif($leavesConfig === 'onlyActives'){
-
-                $query->whereDoesntHave('yearlyStudentsLeaves', function($q){
-
-                    $q->where('school_year_id', $this->school_year_id);
-
-                });
-            }
-
-        }
-        
-        if($this->config['hasClasseConfig']){
-
-            $hasClasseConfig = $this->config['hasClasseConfig'];
-
-            if($hasClasseConfig === 'onlyHasClasse'){
-                $query->whereHas('classes', function($q){
-                    $q->where('school_year_id', $this->school_year_id)->where('is_active', true);
-
-                });
-            }
-            elseif($hasClasseConfig === 'onlyHasntClasse'){
-
-                $query->whereDoesntHave('classes', function($q){
-
-                    $q->where('school_year_id', $this->school_year_id);
-
-                });
-            }
-
-        }
-
-        if($this->config['city']){
-
-            $query->where('city', $this->config['city']);
-        }
-        if($this->config['gender']){
-
-            $query->whereIn('gender', [$this->config['gender'], Str::lower($this->config['gender']), Str::upper($this->config['gender'])]);
-        }
-
-        if($this->config['department']){
-
-            $query->where('department', $this->config['department']);
-        }
-        if($this->config['classe_id']){
-
-            $query->whereHas('classes', fn($q) => 
-                    $q->where('is_active', true)->where('classe_id', $this->config['classe_id'])->where('school_year_id', $this->school_year_id)
-                );
-        }
-
-        if($this->config['promotion_id']){
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->school_year_id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('promotion_id', $this->config['promotion_id'])
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->school_year_id)
-                  )
-            );
-        }
-
-        if($this->config['promotionInGroups']){
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->school_year_id)
-                  ->whereHas('classe', fn($qr0) => 
-                    $qr0->whereHas('promotion', fn($qr) => 
-                        $qr->where('name', $this->config['promotionInGroups'])
-                            ->where('is_active', true)
-                            ->where('school_year_id', $this->school_year_id)
-                    )
-                  )
-            );
-        }
-
-        if($this->config['filiar_id']) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->school_year_id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('filiar_id', $this->config['filiar_id'])
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->school_year_id)
-                  )
-            );
-        }
-
-        if($this->config['serial_id']) {
-            $query->whereHas('classes', fn($q) => 
-                $q->where('is_active', true)
-                  ->where('school_year_id', $this->school_year_id)
-                  ->whereHas('classe', fn($qr) => 
-                    $qr->where('serial_id', $this->config['serial_id'])
-                       ->where('is_active', true)
-                       ->where('school_year_id', $this->school_year_id)
-                  )
-            );
-        }
-        return $query->toArray();
+        return StudentPrintQuery::get($this->config, $this->school_year_id);
     }
 
     public function factoryBuilder()
     {
-        $students = self::getStudentsIds();
+        $students = self::getStudents();
 
         $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
@@ -315,6 +185,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             'pdf_title'       => $this->docTitle,
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
+            'tableColumns'    => $this->config['tableColumns']
         ];
 
         PDFFactory::dispatch(
@@ -326,7 +197,6 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             documentType:    'student_list',
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
-            tableColumns: $this->config['tableColumns']
         );
 
     }
