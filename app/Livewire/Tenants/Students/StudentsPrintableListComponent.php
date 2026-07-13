@@ -5,6 +5,7 @@ namespace App\Livewire\Tenants\Students;
 use App\Models\SchoolYear;
 use App\Services\StudentsServices\StudentPrintColumns;
 use App\Services\StudentsServices\StudentPrintQuery;
+use App\Services\StudentsServices\StudentPrintSessionConfig;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -53,26 +54,34 @@ class StudentsPrintableListComponent extends Component
 
     /**
      * Résout et formate la valeur d'une colonne pour un apprenant donné.
-     * Appelée statiquement depuis le Blade, car ce composant n'est jamais
-     * instancié dans le pipeline PDF (rendu via view() brut par Browsershot).
+     * Appelée statiquement — utilisée aussi bien par le pipeline PDF batché
+     * (via StudentPrintQuery::getFormattedRows) que par tout appel isolé.
+     *
+     * @param array $context Valeurs pré-résolues pour éviter les requêtes N+1
+     *                        (ex: 'classeLabel' déjà calculé en amont via une map).
      */
-    public static function getData($student, array $column): string
+    public static function getData($student, array $column, array $context = []): string
     {
-        $value = static::resolveValue($student, $column['key']);
+        $value = static::resolveValue($student, $column['key'], $context);
 
         return static::formatValue($value, $column['type'] ?? 'text');
     }
 
-    protected static function resolveValue($student, string $key): mixed
+    protected static function resolveValue($student, string $key, array $context = []): mixed
     {
         return match ($key) {
             'full_name'   => $student->getFullName(),
-            'classe.name' => static::resolveClasseLabel($student),
+            'classe.name' => $context['classeLabel'] ?? static::resolveClasseLabel($student),
             'birth_date'  => $student->birth_date,
             default       => data_get($student, $key),
         };
     }
 
+    /**
+     * Fallback si aucun contexte n'est fourni. Reste une requête à la volée
+     * (currentClasse() n'est pas une relation eager-loadable) — acceptable
+     * en usage isolé, mais jamais à appeler en boucle sans contexte pré-résolu.
+     */
     protected static function resolveClasseLabel($student): ?string
     {
         $classe = $student->currentClasse()?->classe;
@@ -89,14 +98,14 @@ class StudentsPrintableListComponent extends Component
                 ? '<div class="cell-flex-col">'
                     . '<span class="age-date">' . __formatDate($value) . '</span>'
                     . '<span class="age-years">' . __getAge($value) . ' ans</span>'
-                . '</div>'
-                : '',
+                  . '</div>'
+                : '—',
 
             'badge' => static::badgeMarkup($value),
 
-            'phone' => $value ? e($value) : '',
+            'phone' => $value ? e($value) : '—',
 
-            default => ($value !== null && $value !== '') ? e((string) $value) : '',
+            default => ($value !== null && $value !== '') ? e((string) $value) : '—',
         };
     }
 
@@ -119,7 +128,6 @@ class StudentsPrintableListComponent extends Component
         return '<span class="statut-badge statut-badge--' . $modifier . '">' . $label . '</span>';
     }
 
-
     /**
      * Calcule la largeur en % de chaque colonne active, normalisée sur 96%
      * (les 4% restants sont réservés à la colonne "#").
@@ -140,44 +148,27 @@ class StudentsPrintableListComponent extends Component
         return $raw->map(fn ($w) => round(($w / $sum) * 96, 2) . '%')->toArray();
     }
 
-    protected function filterConfigFromSession(): array
-    {
-        return [
-            "trashedConfig"     => session('print_students_trashed_status', 'withoutTrashed'),
-            "leavesConfig"      => session('print_students_leaves_status', 'onlyActives'),
-            "hasClasseConfig"   => session('print_students_has_classe_status', 'onlyHasClasse'),
-            "classe_id"         => session('print_students_classe_selected'),
-            "filiar_id"         => session('print_students_filiar_selected'),
-            "serial_id"         => session('print_students_serial_selected'),
-            "promotion_id"      => session('print_students_promotion_selected'),
-            "promotionInGroups" => session('print_students_promotions_grouped_selected'),
-            "gender"            => session('print_students_gender_selected'),
-            "city"              => session('print_students_city_selected'),
-            "department"        => session('print_students_department_selected'),
-        ];
-    }
-
     public function mount(): void
     {
-        $this->tableColumns = StudentPrintColumns::build(
-            session()->get('student-list-selected-columns', [])
-        );
+        $this->tableColumns = StudentPrintColumns::resolve();
     }
 
     public function render()
     {
         $schoolYearId = SchoolYear::current()->first()?->id;
 
-        $students = $schoolYearId
-            ? StudentPrintQuery::get($this->filterConfigFromSession(), $schoolYearId)
-            : collect();
+        $columns = $this->tableColumns ?: $this->defaultColumns;
+
+        $rows = $schoolYearId
+            ? StudentPrintQuery::getFormattedRows(StudentPrintSessionConfig::filterConfig(), $schoolYearId, $columns)
+            : [];
 
         return view('livewire.tenants.students.students-printable-list-component', [
-            'students'     => $students,
+            'rows'         => $rows,
             'printed_at'   => now()->isoFormat('dddd D MMMM YYYY [à] HH:mm'),
-            'allStudents'  => $students->count(),
+            'allStudents'  => count($rows),
             'pdf_title'    => $this->pdf_title,
-            'tableColumns' => $this->tableColumns,
+            'tableColumns' => $columns,
         ]);
     }
 }

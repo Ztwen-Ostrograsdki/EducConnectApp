@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Students;
 
+use App\Jobs\JobToGeneratePrintableStudentsDataForThePrintViewComponent;
 use App\Livewire\Tenants\ActionsTraits\StudentsActions;
 use App\Models\Classe;
 use App\Models\Filiar;
@@ -13,6 +14,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Services\PDFFactory;
 use App\Services\StudentsServices\StudentPrintColumns;
+use App\Services\StudentsServices\StudentPrintSessionConfig;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -291,36 +293,40 @@ class StudentsPortal extends Component
         $this->onReloadDashboard();
     }
 
+
+
+    #[Computed]
+    public function hasPrintSessionConfig(): bool
+    {
+        return StudentPrintSessionConfig::hasActiveSelection();
+    }
+
     public function printStudentsList()
     {
-        $students = $this->getStudentsData()->get();
+        if (! StudentPrintSessionConfig::hasActiveSelection()) {
+            $this->notification()->warning(
+                title: "Aucune configuration d'impression trouvée",
+                description: "Configure d'abord les filtres et colonnes depuis la page d'impression.",
+            );
+            return;
+        }
 
-        $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
-
-        $pdf_title = "Liste de tous les apprenants";
-
-        $viewData = [
-            'students'        => $students,
-            'printed_at'      => $printed_at,
-            'allStudents'     => $students->count(),
-            'totalActifs'     => $students->where('status', 'active')->count(),
-            'pdf_title'       => $pdf_title,
-            'target'          => 'students',
-            'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
-            'tableColumns'    => StudentPrintColumns::resolve(null),
+        $config = [
+            ...StudentPrintSessionConfig::filterConfig(),
+            'tableColumns' => StudentPrintSessionConfig::tableColumns(),
         ];
 
-        PDFFactory::dispatch(
-            view:          'livewire.tenants.students.Students-printable-list-component',
-            data:           $viewData,
-            filename:      'liste-apprenants',
-            category:      'students',
-            overrides:    ['landscape' => true],
-            documentType:  'student_list',
-            tenantId:      tenant('id'),
-            notifiableId: auth('tenant')->user()->id
+        JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
+            tenantId:       tenant('id'),
+            notifiableId:   auth('tenant')->user()->id,
+            docTitle:       'liste apprenants',
+            school_year_id: $this->activeYear->id,
+            config:         $config,
         );
 
+        $this->notification()->success(
+            title: 'Génération du document lancée',
+        );
         $this->notification()->success(
             title: 'Génération du document lancée',
         );

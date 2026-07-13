@@ -121,6 +121,11 @@ a {
     cursor: pointer;
 }
 
+a:active,
+button:active {
+    transform: scale(0.95) !important;
+}
+
 .swal2-actions button {
     border: thin solid white !important;
     border-radius: 15px !important;

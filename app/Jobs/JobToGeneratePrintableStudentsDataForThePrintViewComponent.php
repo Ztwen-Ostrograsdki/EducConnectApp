@@ -172,21 +172,66 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
         return StudentPrintQuery::get($this->config, $this->school_year_id);
     }
 
+    // public function factoryBuilder()
+    // {
+    //     $students = self::getStudents();
+
+    //     $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
+
+    //     $viewData = [
+    //         'students'        => $students,
+    //         'printed_at'      => $printed_at,
+    //         'allStudents'     => count($students),
+    //         'totalActifs'     => count($students),
+    //         'pdf_title'       => $this->docTitle,
+    //         'target'          => 'students',
+    //         'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
+    //         'tableColumns'    => StudentPrintColumns::resolve($this->config['tableColumns'] ?? null),
+    //     ];
+
+    //     PDFFactory::dispatch(
+    //         view:           'livewire.tenants.students.Students-printable-list-component',
+    //         data:            $viewData,
+    //         filename:        Str::slug($this->docTitle),
+    //         category:        'students',
+    //         overrides:       ['landscape' => true],
+    //         documentType:    'student_list',
+    //         tenantId:        $this->tenantId,
+    //         notifiableId:    $this->notifiableId,
+    //     );
+
+    // }
+
+
     public function factoryBuilder()
     {
-        $students = self::getStudents();
+        $tableColumns = StudentPrintColumns::resolve($this->config['tableColumns'] ?? null);
 
-        $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
+        $totalCount = StudentPrintQuery::count($this->config, $this->school_year_id);
+
+        $threshold = config('app.pdf_large_dataset_warning', 5000);
+
+        if ($totalCount > $threshold) {
+            logger()->warning('Génération PDF sur un volume important', [
+                'tenant_id' => $this->tenantId,
+                'count'     => $totalCount,
+                'doc_title' => $this->docTitle,
+            ]);
+        }
+
+        $rows = StudentPrintQuery::getFormattedRows($this->config, $this->school_year_id, $tableColumns);
+
+        $printed_at = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
         $viewData = [
-            'students'        => $students,
+            'rows'            => $rows,
             'printed_at'      => $printed_at,
-            'allStudents'     => count($students),
-            'totalActifs'     => count($students),
+            'allStudents'     => $totalCount,
+            'totalActifs'     => $totalCount, // à ajuster si tu veux un compte distinct des actifs
             'pdf_title'       => $this->docTitle,
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
-            'tableColumns'    => StudentPrintColumns::resolve($this->config['tableColumns'] ?? null),
+            'tableColumns'    => $tableColumns,
         ];
 
         PDFFactory::dispatch(
@@ -199,7 +244,6 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
         );
-
     }
 }
   

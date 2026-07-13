@@ -158,27 +158,6 @@ class StudentsPrintsManagerComponent extends Component
     }
 
 
-    // // Pour construire le tableColumns final, prêt pour le job
-    // protected function buildTableColumns(): array
-    // {
-    //     $source = ! empty($this->selectedColumns)
-    //         ? collect($this->selectedColumns)->map(fn (string $key) => [
-    //             'key'   => $key,
-    //             'label' => $this->availableColumns[$key]['label'] ?? $key,
-    //             'type'  => $this->availableColumns[$key]['type'] ?? 'text',
-    //         ])
-    //         : collect($this->defaultColumns)->map(fn (array $col) => [
-    //             'key'   => $col['key'],
-    //             'label' => $col['label'],
-    //             'type'  => $col['type'],
-    //         ]);
-
-    //     return $source
-    //         ->values()
-    //         ->map(fn (array $col, int $index) => [...$col, 'position' => $index + 1])
-    //         ->toArray();
-    // }
-
     protected function persistSelection(): void
     {
         session()->put($this->sessionKey, $this->selectedColumns);
@@ -198,7 +177,6 @@ class StudentsPrintsManagerComponent extends Component
         $this->persistSelection();
     }
 
-    // Propriété calculée : ['name' => 'Nom et Prénoms', 'classe' => 'Classe', ...] dans l'ORDRE choisi
     #[Computed]
     public function orderedColumns(): array
     {

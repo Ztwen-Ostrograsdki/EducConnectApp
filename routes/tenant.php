@@ -47,6 +47,7 @@ use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
 use App\Livewire\Tenants\Students\StudentsPortal;
+use App\Livewire\Tenants\Students\StudentsPrintableDocumentsPage;
 use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
 use App\Livewire\Tenants\Students\StudentsPrintsManagerComponent;
 use App\Livewire\Tenants\Subjects\CreateSubjectComponent;
@@ -218,6 +219,8 @@ Route::middleware([
             Route::get('/apprenants/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
 
             Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
+
+            Route::get('/apprenants/documents/imprimable', StudentsPrintableDocumentsPage::class)->name('students.docs');
 
             Route::get('/apprenants/gestion-impression/configuration', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
 

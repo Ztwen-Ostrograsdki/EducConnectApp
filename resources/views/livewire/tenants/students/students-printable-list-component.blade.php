@@ -62,7 +62,7 @@
 
     {{-- ═══ TABLEAU PRINCIPAL ═══ --}}
     <main class="doc-body">
-        @if ($students->isEmpty())
+        @if (empty($rows))
             <div class="empty-state">
                 <p>Aucun apprenant à afficher pour les critères sélectionnés.</p>
             </div>
@@ -90,31 +90,28 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($students as $student)
+                    @foreach ($rows as $row)
                         <tr class="{{ $loop->even ? 'row-even' : 'row-odd' }}">
-                            <td class="td-center">{{ $loop->iteration }}</td>
+                            <td class="td-center">{{ $row['index'] }}</td>
 
                             @foreach ($columns as $col)
                                 <td class="{{ $col['key'] === 'full_name' ? 'cell-name' : 'td-center' }}">
                                     @if ($col['key'] === 'full_name')
                                         <div class="cell-flex-col cell-flex-start">
-                                            <span class="name-main">
-                                                {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
-                                            </span>
-                                            <span class="name-sub">{{ $student->matricule }}</span>
+                                            <span class="name-main">{!! $row['cells']['full_name'] !!}</span>
+                                            <span class="name-sub">{{ $row['matricule'] }}</span>
                                         </div>
                                     @elseif ($col['key'] === 'classe.name')
-                                        {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) ?:
-                                            '<span class="dept-empty">Pas de classe</span>' !!}
+                                        {!! $row['cells']['classe.name'] ?: '<span class="dept-empty">Pas de classe</span>' !!}
                                     @elseif ($col['key'] === 'contacts')
                                         <div class="cell-contact">
-                                            {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
-                                            @if ($student->email)
-                                                <p class="contact-email">{{ $student->email }}</p>
+                                            {!! $row['cells']['contacts'] !!}
+                                            @if ($row['email'])
+                                                <p class="contact-email">{{ $row['email'] }}</p>
                                             @endif
                                         </div>
                                     @else
-                                        {!! \App\Livewire\Tenants\Students\StudentsPrintableListComponent::getData($student, $col) !!}
+                                        {!! $row['cells'][$col['key']] ?? '—' !!}
                                     @endif
                                 </td>
                             @endforeach
