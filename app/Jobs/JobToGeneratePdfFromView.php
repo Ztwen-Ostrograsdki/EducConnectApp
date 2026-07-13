@@ -17,7 +17,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
+use Laravel\Reverb\Loggers\Log;
 use Spatie\Browsershot\Browsershot;
+
+use function Illuminate\Log\log;
 
 #[Timeout(300)]
 class JobToGeneratePdfFromView implements ShouldQueue
@@ -48,94 +51,11 @@ class JobToGeneratePdfFromView implements ShouldQueue
         
     ) {}
 
-    // public function handle(): void
-    // {
-    //    if ($this->tenantId) {
-    //         tenancy()->initialize($this->tenantId);
-    //     }
-
-    //     try {
-    //         $html = view($this->view, $this->data)->render();
-
-    //         // Configure la locale française
-    //         Carbon::setLocale('fr');
-
-    //         // Crée la date actuelle avec timezone (exemple Africa/Abidjan)
-    //         $now = Carbon::now('Africa/Abidjan');
-
-    //         $name = env('APP_NAME');
-
-    //         $formattedDate = 'Générée et imprimée sur la plateforme ' . $name . ' le ' 
-    //             . $now->isoFormat('dddd D MMMM YYYY')  // Ex: lundi 25 mai 2025
-    //             . ' à ' 
-    //             . $now->isoFormat('HH\H mm\min ss\s'); // Ex: 10H 15min 24s
-
-    //         $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimée sur la plateforme ' . $name;
-
-    //         $headerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:gray;">'
-    //             . $header_title
-    //             . '</div>';
-
-    //         $footerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:black;">'
-    //         . $formattedDate
-    //         . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
-    //         . '</div>';
-
-    //        $browsershot = Browsershot::html($html)
-    //             ->setNodeBinary(config('browsershot.node_binary'))
-    //             ->setNpmBinary(config('browsershot.npm_binary'))
-    //             ->setChromePath(config('browsershot.chrome_binary'))
-    //             ->timeout(config('browsershot.timeout'))
-    //             ->addChromiumArguments(config('browsershot.chromium_args'))
-    //             ->setIncludePath(public_path('build/assets'))
-    //             ->ignoreHttpsErrors()
-    //             ->showBackground()
-    //             ->margins(15, 15, 15, 15)
-    //             ->showBrowserHeaderAndFooter()
-    //             ->headerHtml($headerHtml)
-    //             ->footerHtml($footerHtml)
-    //             ->waitUntilNetworkIdle();
-
-    //         // ── Injection du CSS Tailwind compilé ──
-    //         if ($cssPath = $this->resolveCompiledCssPath()) {
-    //             $browsershot->addStyleTag(['path' => $cssPath]);
-    //         } else {
-    //             // Log utile en dev pour détecter un manifest absent (ex: assets pas encore buildés)
-    //             logger()->warning('PDF généré sans CSS Tailwind : manifest.json introuvable ou entrée CSS absente.');
-    //         }
-
-    //         if (config('browsershot.no_sandbox')) {
-    //             $browsershot->noSandbox();
-    //         }
-
-    //         $this->applyOptions($browsershot);
-
-    //         $browsershot->save($this->outputPath);
-
-    //         $this->robotNotifyer();
-
-    //     }
-    //     catch (\Throwable $th){
-
-    //         broadcast(new AnyErrorEvent('error', $th->getMessage(), $this->tenantId, $this->notifiableId));
-            
-    //         $this->fail($th->getMessage()); 
-            
-    //         return;
-
-    //     }
-    //      finally {
-    //         if ($this->tenantId) {
-    //             tenancy()->end();
-    //         }
-    //     }
-    // }
-
-
-    // JobToGeneratePdfFromView::handle()
 
     public function handle(): void
     {
+        
+
         if ($this->tenantId) {
             tenancy()->initialize($this->tenantId);
         }
@@ -273,7 +193,6 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
         $url  = $this->resolvePublicUrl();
 
-        // Sauvegarde le document généré
         GeneratedDocument::create([
             'type'                   => $this->options['document_type'] ?? 'document',
             'filename'               => basename($this->outputPath),
@@ -284,7 +203,6 @@ class JobToGeneratePdfFromView implements ShouldQueue
             'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
         ]);
 
-        // Notifie
         $user?->notify(new PDFIsReady(
             title:     "PDF EST PRÊT",
             message:   "Votre document a été bien généré et est à présent prêt!",
@@ -319,7 +237,6 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
         $manifest = json_decode(File::get($manifestPath), true);
 
-        // La clé exacte dépend de ton entrée Vite, ex: "resources/css/app.css"
         $entry = $manifest['resources/css/app.css'] ?? null;
 
         if (! $entry || ! isset($entry['file'])) {

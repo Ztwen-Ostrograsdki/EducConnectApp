@@ -6,6 +6,7 @@ use App\Helpers\Support\TenantStorage;
 use App\Models\GeneratedDocument;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -112,6 +113,11 @@ class StudentsPrintableDocumentsPage extends Component
 
         unset($this->documents);
 
+        if ($this->documents->currentPage() > 1 && $this->documents->isEmpty()) {
+            $this->setPage($this->documents->currentPage() - 1);
+            unset($this->documents); // <-- indispensable : force le recalcul avec la nouvelle page
+        }
+
         $this->notification()->success(title: 'Document supprimé avec succès.');
     }
 
@@ -125,7 +131,7 @@ class StudentsPrintableDocumentsPage extends Component
         $absolutePath = str_replace('\\', '/', $absolutePath);
         $storageRoot  = str_replace('\\', '/', Storage::disk('public')->path(''));
 
-        return ltrim(\Illuminate\Support\Str::after($absolutePath, $storageRoot), '/');
+        return ltrim(Str::after($absolutePath, $storageRoot), '/');
     }
 
     public function render()

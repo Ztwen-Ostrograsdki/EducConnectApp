@@ -9,6 +9,7 @@ use App\Notifications\RealTimeNotification;
 use App\Services\PDFFactory;
 use App\Services\StudentsServices\StudentPrintColumns;
 use App\Services\StudentsServices\StudentPrintQuery;
+use App\Services\StudentsServices\StudentPrintSessionConfig;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -172,36 +173,6 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
         return StudentPrintQuery::get($this->config, $this->school_year_id);
     }
 
-    // public function factoryBuilder()
-    // {
-    //     $students = self::getStudents();
-
-    //     $printed_at  = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
-
-    //     $viewData = [
-    //         'students'        => $students,
-    //         'printed_at'      => $printed_at,
-    //         'allStudents'     => count($students),
-    //         'totalActifs'     => count($students),
-    //         'pdf_title'       => $this->docTitle,
-    //         'target'          => 'students',
-    //         'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
-    //         'tableColumns'    => StudentPrintColumns::resolve($this->config['tableColumns'] ?? null),
-    //     ];
-
-    //     PDFFactory::dispatch(
-    //         view:           'livewire.tenants.students.Students-printable-list-component',
-    //         data:            $viewData,
-    //         filename:        Str::slug($this->docTitle),
-    //         category:        'students',
-    //         overrides:       ['landscape' => true],
-    //         documentType:    'student_list',
-    //         tenantId:        $this->tenantId,
-    //         notifiableId:    $this->notifiableId,
-    //     );
-
-    // }
-
 
     public function factoryBuilder()
     {
@@ -223,12 +194,14 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
 
         $printed_at = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
+        $pdf_title = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
+
         $viewData = [
             'rows'            => $rows,
             'printed_at'      => $printed_at,
             'allStudents'     => $totalCount,
             'totalActifs'     => $totalCount, // à ajuster si tu veux un compte distinct des actifs
-            'pdf_title'       => $this->docTitle,
+            'pdf_title'       => $pdf_title,
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
             'tableColumns'    => $tableColumns,

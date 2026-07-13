@@ -187,12 +187,12 @@
         <section class="flex flex-col gap-3 py-4 my-3">
             <div class="flex justify-start flex-wrap items-center gap-2">
 
-                <a href="{{ route('tenant.students.create') }}"
+                <a wire:navigate href="{{ route('tenant.students.create') }}"
                     class="py-2.5 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
                     Ajouter apprenants
                 </a>
 
-                <a href="{{ route('tenant.students.docs') }}"
+                <a wire:navigate href="{{ route('tenant.students.docs') }}"
                     class="py-2.5 px-5 active:scale-95 rounded-2xl bg-sky-500 hover:bg-sky-600 transition-all text-sm">
                     <span class="inline-flex gap-x-3 items-center">
                         <x-lucide-file class="w-4 h-4" />

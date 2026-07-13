@@ -58,6 +58,9 @@
                 <h4 class="doc-title">{{ $pdf_title }}</h4>
             </div>
         @endif
+        <div class="doc-counter">
+            <h4 class="">Total: {{ __zero($allStudents) }} Apprenant(s)</h4>
+        </div>
     </header>
 
     {{-- ═══ TABLEAU PRINCIPAL ═══ --}}
@@ -364,7 +367,19 @@
     .doc-title-block {
         padding-bottom: 1.25rem;
         border-bottom: 2px solid var(--navy);
-        text-align: center;
+        text-align: left;
+    }
+
+    .doc-counter h4 {
+        text-align: right;
+        padding: 7px 10px;
+        font-size: 1.5em;
+        font-family: monospace;
+        border: thin solid gray;
+        display: inline-flex;
+        float: right;
+        margin: 5px 0 5px 0;
+        border-radius: 10px;
     }
 
     .doc-title {
@@ -402,6 +417,26 @@
         border: 1px solid var(--navy-mid);
         vertical-align: middle;
         text-align: center;
+    }
+
+    .students-table thead th {
+        padding: 9px 4px;
+        color: var(--white);
+        font-weight: 600;
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border: 1px solid var(--navy-mid);
+        vertical-align: middle;
+        text-align: center;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.25;
+    }
+
+    .students-table thead tr:hover {
+        background: #000;
     }
 
     .students-table tbody tr.row-odd {
@@ -533,6 +568,10 @@
         margin-top: 1rem;
     }
 
+    .students-table thead tr:hover {
+        background: #09001bfd !important;
+    }
+
     @media print {
         @page {
             size: A4 landscape;
@@ -561,3 +600,4 @@
         }
     }
 </style>
+

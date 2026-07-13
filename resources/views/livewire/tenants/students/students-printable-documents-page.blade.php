@@ -3,14 +3,20 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-xl md:text-2xl font-bold text-white">Documents générés — Liste des apprenants</h1>
-            <p class="text-sm text-slate-400 mt-1">Retrouvez, téléchargez ou supprimez vos documents PDF générés.</p>
+            <p class="text-sm text-slate-400 mt-1 inline-flex flex-col my-3 gap-y-3">
+                <span> Retrouvez, téléchargez ou supprimez vos documents PDF générés.</span>
+                <span
+                    class="rounded-2xl py-1.5 px-3 bg-green-600/30 text-green-500 inline-flex uppercase text-center items-center justify-center font-mono">
+                    {{ $this->documents->total() }} documents disponibles
+                </span>
+            </p>
         </div>
 
-        <div class="relative w-full sm:w-72">
-            <x-lucide-search class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input type="text" wire:model.live.debounce.400ms="search" placeholder="Rechercher un document..."
-                class="w-full h-10 pl-9 pr-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
-        </div>
+    </div>
+    <div class="relative w-full my-3">
+        <x-lucide-search class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <input type="text" wire:model.live.debounce.400ms="search" placeholder="Rechercher un document..."
+            class="w-full h-10 pl-9 pr-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
     </div>
 
     <div wire:loading.class="opacity-20 pointer-events-none"
@@ -67,10 +73,10 @@
                         </div>
 
                         <div
-                            class="mt-auto grid grid-cols-7  items-center gap-2 pt-3 border-t border-slate-700/60 w-full">
+                            class="mt-auto grid grid-cols-7  items-center gap-2 pt-3 border-t border-slate-700/60 w-full text-sm font-mono">
                             <button wire:click="trackDownload({{ $doc->id }})" wire:loading.attr="disabled"
                                 wire:target="trackDownload({{ $doc->id }})"
-                                class="items-center justify-center p-2 rounded-lg bg-indigo-600/30 hover:bg-indigo-500 text-white hover:text-black border border-slate-950 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50 gap-2 col-span-4">
+                                class="items-center justify-center p-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-500 text-white hover:text-black border border-slate-950 font-semibold transition-all active:scale-95 disabled:opacity-50 gap-2 col-span-4">
                                 <span wire:loading.remove wire:target="trackDownload({{ $doc->id }})"
                                     class="inline-flex items-center gap-1.5 ">
                                     <x-lucide-download class="w-3.5 h-3.5" />

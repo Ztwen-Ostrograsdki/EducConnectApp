@@ -32,6 +32,7 @@ class StudentsPrintableListComponent extends Component
         ['key' => 'contacts',          'label' => 'Contact',          'position' => 7, 'type' => 'phone'],
         ['key' => 'birth_date',        'label' => 'Naissance / Âge',  'position' => 8, 'type' => 'age'],
         ['key' => 'status',            'label' => 'Statut',           'position' => 9, 'type' => 'badge'],
+        ['key' => 'is_active',         'label' => 'Est actif',           'position' => 9, 'type' => 'badge'],
         ['key' => 'observations',      'label' => 'Obs.',             'position' => 10, 'type' => 'text'],
     ];
 
@@ -73,6 +74,7 @@ class StudentsPrintableListComponent extends Component
             'full_name'   => $student->getFullName(),
             'classe.name' => $context['classeLabel'] ?? static::resolveClasseLabel($student),
             'birth_date'  => $student->birth_date,
+            'is_active'   => $student->is_active,
             default       => data_get($student, $key),
         };
     }
@@ -99,30 +101,32 @@ class StudentsPrintableListComponent extends Component
                     . '<span class="age-date">' . __formatDate($value) . '</span>'
                     . '<span class="age-years">' . __getAge($value) . ' ans</span>'
                   . '</div>'
-                : '—',
+                : '',
 
             'badge' => static::badgeMarkup($value),
 
-            'phone' => $value ? e($value) : '—',
+            'phone' => $value ? e($value) : '',
 
-            default => ($value !== null && $value !== '') ? e((string) $value) : '—',
+            default => ($value !== null && $value !== '') ? e((string) $value) : '',
         };
     }
 
     protected static function badgeMarkup(mixed $status): string
     {
         $modifier = match ($status) {
-            'active', true, 1 => 'actif',
+            'active', true, 1  => 'actif',
             'conge'            => 'conge',
             'suspend'          => 'suspend',
-            default            => 'inactif',
+            false, 0           => 'inactif',
+            default            => '',
         };
 
         $label = match ($modifier) {
             'actif'   => 'Actif',
             'conge'   => 'Congé',
             'suspend' => 'Suspendu',
-            default   => 'Inactif',
+            'inactif' => 'inactif',
+            default   => '',
         };
 
         return '<span class="statut-badge statut-badge--' . $modifier . '">' . $label . '</span>';
@@ -151,6 +155,9 @@ class StudentsPrintableListComponent extends Component
     public function mount(): void
     {
         $this->tableColumns = StudentPrintColumns::resolve();
+
+        $this->pdf_title = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
+
     }
 
     public function render()
@@ -158,6 +165,8 @@ class StudentsPrintableListComponent extends Component
         $schoolYearId = SchoolYear::current()->first()?->id;
 
         $columns = $this->tableColumns ?: $this->defaultColumns;
+
+        $doc_title = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
 
         $rows = $schoolYearId
             ? StudentPrintQuery::getFormattedRows(StudentPrintSessionConfig::filterConfig(), $schoolYearId, $columns)
@@ -167,7 +176,6 @@ class StudentsPrintableListComponent extends Component
             'rows'         => $rows,
             'printed_at'   => now()->isoFormat('dddd D MMMM YYYY [à] HH:mm'),
             'allStudents'  => count($rows),
-            'pdf_title'    => $this->pdf_title,
             'tableColumns' => $columns,
         ]);
     }

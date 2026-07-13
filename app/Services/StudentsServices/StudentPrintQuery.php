@@ -3,6 +3,10 @@
 namespace App\Services\StudentsServices;
 
 use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
+use App\Models\Classe;
+use App\Models\Filiar;
+use App\Models\Promotion;
+use App\Models\Serial;
 use App\Models\Student;
 use App\Models\YearlyClasseStudent;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,13 +17,14 @@ class StudentPrintQuery
 {
     public static function build(array $config, int $schoolYearId): Builder
     {
+        
         $query = Student::query()->select('students.*');
 
-        if (! empty($config['trashedConfig'])) {
+        if (isset($config['trashedConfig'])) {
             $query->{$config['trashedConfig']}();
         }
 
-        if (! empty($config['leavesConfig'])) {
+        if (isset($config['leavesConfig'])) {
             match ($config['leavesConfig']) {
                 'onlyLeaves'  => $query->whereHas('yearlyStudentsLeaves', fn ($q) => $q->where('school_year_id', $schoolYearId)),
                 'onlyActives' => $query->whereDoesntHave('yearlyStudentsLeaves', fn ($q) => $q->where('school_year_id', $schoolYearId)),
@@ -27,7 +32,7 @@ class StudentPrintQuery
             };
         }
 
-        if (! empty($config['hasClasseConfig'])) {
+        if (isset($config['hasClasseConfig'])) {
             match ($config['hasClasseConfig']) {
                 'onlyHasClasse'   => $query->whereHas('classes', fn ($q) => $q->where('school_year_id', $schoolYearId)->where('is_active', true)),
                 'onlyHasntClasse' => $query->whereDoesntHave('classes', fn ($q) => $q->where('school_year_id', $schoolYearId)),
@@ -35,25 +40,25 @@ class StudentPrintQuery
             };
         }
 
-        if (! empty($config['city'])) {
+        if (isset($config['city'])) {
             $query->where('city', $config['city']);
         }
 
-        if (! empty($config['gender'])) {
+        if (isset($config['gender'])) {
             $query->whereIn('gender', [$config['gender'], Str::lower($config['gender']), Str::upper($config['gender'])]);
         }
 
-        if (! empty($config['department'])) {
+        if (isset($config['department'])) {
             $query->where('department', $config['department']);
         }
 
-        if (! empty($config['classe_id'])) {
+        if (isset($config['classe_id'])) {
             $query->whereHas('classes', fn ($q) =>
                 $q->where('is_active', true)->where('classe_id', $config['classe_id'])->where('school_year_id', $schoolYearId)
             );
         }
 
-        if (! empty($config['promotion_id'])) {
+        if (isset($config['promotion_id'])) {
             $query->whereHas('classes', fn ($q) =>
                 $q->where('is_active', true)->where('school_year_id', $schoolYearId)
                   ->whereHas('classe', fn ($qr) =>
@@ -62,7 +67,7 @@ class StudentPrintQuery
             );
         }
 
-        if (! empty($config['promotionInGroups'])) {
+        if (isset($config['promotionInGroups'])) {
             $query->whereHas('classes', fn ($q) =>
                 $q->where('is_active', true)->where('school_year_id', $schoolYearId)
                   ->whereHas('classe', fn ($qr0) =>
@@ -73,7 +78,7 @@ class StudentPrintQuery
             );
         }
 
-        if (! empty($config['filiar_id'])) {
+        if (isset($config['filiar_id'])) {
             $query->whereHas('classes', fn ($q) =>
                 $q->where('is_active', true)->where('school_year_id', $schoolYearId)
                   ->whereHas('classe', fn ($qr) =>
@@ -82,7 +87,7 @@ class StudentPrintQuery
             );
         }
 
-        if (! empty($config['serial_id'])) {
+        if (isset($config['serial_id'])) {
             $query->whereHas('classes', fn ($q) =>
                 $q->where('is_active', true)->where('school_year_id', $schoolYearId)
                   ->whereHas('classe', fn ($qr) =>
@@ -94,13 +99,86 @@ class StudentPrintQuery
         return $query->orderBy('name')->orderBy('prenames');
     }
 
+
+    
+
+    public static function resolveDocTitle(array $config, ?int $school_year_id = null) : string
+    {
+        $doc_title = 'Liste des apprenants ';
+
+        if(!$config) return $doc_title;
+
+        if (isset($config['trashedConfig'])) {
+
+            match ($config['trashedConfig']) {
+                'onlyTrashed'  => $doc_title .= ' de la corbeille ',
+                'withoutTrashed' => $doc_title .= '',
+                default       => $doc_title .= '',
+            };
+
+        }
+
+        if (isset($config['leavesConfig'])) {
+            match ($config['leavesConfig']) {
+                'onlyLeaves'  => $doc_title .= ' ayant abandonnés ',
+                'onlyActives' => '',
+                default       => null,
+            };
+        }
+
+        if (isset($config['hasClasseConfig'])) {
+            match ($config['hasClasseConfig']) {
+                'onlyHasClasse'   => $doc_title .= '',
+                'onlyHasntClasse' => $doc_title .= " sans classe ",
+                default           => null,
+            };
+        }
+
+        if (isset($config['city'])) $doc_title .= ' de ' . $config['city'];
+
+        if (isset($config['gender'])) $doc_title .= ' de sexe ' . $config['gender'];
+            
+        if (isset($config['department'])) $doc_title .= ' de ' . $config['department'];
+
+        if (isset($config['classe_id'])) {
+
+            $classe = Classe::firstWhere($config['classe_id']);
+
+            if($classe) $doc_title .= ' de la ' . $classe->code ? $classe->code : $classe->name;
+        }
+
+        if (isset($config['promotion_id'])) {
+
+            $promo = Promotion::firstWhere($config['promotion_id']);
+
+            if($promo) $doc_title .= ' de la ' . $promo->code ? $promo->code : $promo->name;
+            
+        }
+
+        if (isset($config['promotionInGroups'])) $doc_title .= ' de la promotion ' . $config['promotionInGroups'];
+
+        if (isset($config['filiar_id'])) {
+
+            $filiar = Filiar::firstWhere($config['filiar_id']);
+
+            if($filiar) $doc_title .= ' de la ' . $filiar->code ? $filiar->code : $filiar->name;
+            
+        }
+
+        if (isset($config['serial_id'])) {
+
+            $serial = Serial::firstWhere($config['serial_id']);
+
+            if($serial) $doc_title .= ' de la série ' . $serial->code ? $serial->code : $serial->name;
+            
+        }
+        return $doc_title;
+    }
+
     public static function get(array $config, int $schoolYearId): Collection
     {
         return self::build($config, $schoolYearId)->get();
     }
-
-
-
 
     public static function classeLabelsMap(int $schoolYearId): array
     {
@@ -130,6 +208,7 @@ class StudentPrintQuery
                 'index'     => count($rows) + 1,
                 'matricule' => $student->matricule,
                 'email'     => $student->email,
+                'is_active' => $student->is_active,
                 'cells'     => collect($tableColumns)
                     ->mapWithKeys(fn (array $col) => [
                         $col['key'] => StudentsPrintableListComponent::getData(
@@ -164,7 +243,7 @@ class StudentPrintQuery
             'contacts'          => 'contacts',
             'birth_date'        => 'birth_date',
             'status'            => 'status',
-            // 'observations'      => 'observations',
+            'is_active'         => 'is_active',
         ];
 
         $needed = collect($tableColumns)

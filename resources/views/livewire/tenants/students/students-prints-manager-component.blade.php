@@ -1,19 +1,14 @@
 <div>
-    <div class="mb-20 p-2 relative ">
-        <div wire:loading wire:target='resetFilters, restoreSelects, promotionInGroups, initPrintProcess'
-            class="absolute inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-sm"
-            style="z-index: 200 !important;">
-
-            <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col">
-                <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                        stroke-width="4" />
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                <span class="text-xl font-mono ls-1">Chargement en cours...</span>
-            </div>
-        </div>
-        <div class="flex justify-end p-3">
+    <div class="mb-20 p-2 relative " wire:loading.class="opacity-20 pointer-events-none"
+        wire:target='resetFilters, restoreSelects, promotionInGroups, initPrintProcess'>
+        <div class="flex justify-end p-3 gap-2">
+            <a wire:navigate href="{{ route('tenant.students.docs') }}"
+                class="py-2.5 px-5 active:scale-95 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
+                <span class="inline-flex gap-x-3 items-center">
+                    <x-lucide-file class="w-4 h-4" />
+                    <span>Documents PDF/Excel Dispo.</span>
+                </span>
+            </a>
             <a href="{{ route('tenant.students.print.list') }}"
                 class="py-2.5 px-5 rounded-2xl bg-purple-500/60 hover:bg-purple-600 text-white hover:text-black border border-purple-400 transition-all text-sm inline-flex items-center justify-center active:scale-95">
                 <span class="flex items-center gap-2">

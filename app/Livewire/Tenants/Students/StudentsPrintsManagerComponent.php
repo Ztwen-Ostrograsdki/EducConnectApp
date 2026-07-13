@@ -75,10 +75,10 @@ class StudentsPrintsManagerComponent extends Component
         ['key' => 'full_name',        'label' => 'Nom complet',      'position' => 1, 'type' => 'text'],
         ['key' => 'gender',           'label' => 'Sexe',             'position' => 2, 'type' => 'text'],
         ['key' => 'educMaster',       'label' => 'EducMaster',       'position' => 3, 'type' => 'text'],
-        ['key' => 'birth_date',       'label' => 'Date de naissance','position' => 4, 'type' => 'date'],
+        ['key' => 'birth_date',       'label' => 'Date naiss./Age',  'position' => 4, 'type' => 'age'],
         ['key' => 'classe.name',      'label' => 'Classe',           'position' => 5, 'type' => 'text'],
-        ['key' => 'guardian.phone',   'label' => 'Tél. tuteur',      'position' => 6, 'type' => 'phone'],
-        ['key' => 'is_active',        'label' => 'Statut',           'position' => 7, 'type' => 'badge'],
+        ['key' => 'contacts',         'label' => 'Contacts',         'position' => 6, 'type' => 'phone'],
+        ['key' => 'observation',      'label' => 'OBS',              'position' => 7, 'type' => 'text'],
     ];
 
     public array $selectedColumns = [];
@@ -485,12 +485,12 @@ class StudentsPrintsManagerComponent extends Component
             return;
         }
 
-        $config = [
+        $config = array_merge([
             'tableColumns' => StudentPrintColumns::resolve($this->selectedColumns
                 ? StudentPrintColumns::build($this->selectedColumns)
                 : null
             )
-        ];
+        ], $this->currentFilterConfig());
 
         JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
             tenantId: tenant('id'),
