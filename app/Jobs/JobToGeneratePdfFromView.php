@@ -48,6 +48,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?int    $notifiableId    = null,
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
+        public readonly ?array  $docDBInfos      = null,
         
     ) {}
 
@@ -193,15 +194,37 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
         $url  = $this->resolvePublicUrl();
 
-        GeneratedDocument::create([
-            'type'                   => $this->options['document_type'] ?? 'document',
-            'filename'               => basename($this->outputPath),
-            'path'                   => $this->outputPath,
-            'url'                    => $url,
-            'user_id'                => $this->notifiableId,
-            'tenant_id'              => $this->tenantId,
-            'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
-        ]);
+        $docDBInfos = $this->docDBInfos;
+
+        if($docDBInfos){
+
+            GeneratedDocument::create([
+                'type'                   => $this->options['document_type'] ?? 'document',
+                'filename'               => basename($this->outputPath),
+                'path'                   => $this->outputPath,
+                'url'                    => $url,
+                'user_id'                => $this->notifiableId,
+                'classe_id'              => isset($docDBInfos['classe_id']) ? $docDBInfos['classe_id'] : null,
+                'filiar_id'              => isset($docDBInfos['filiar_id']) ? $docDBInfos['filiar_id'] : null,
+                'serial_id'              => isset($docDBInfos['serial_id']) ? $docDBInfos['serial_id'] : null,
+                'promotion_id'           => isset($docDBInfos['promotion_id']) ? $docDBInfos['promotion_id'] : null,
+                'promotionsGrouped'      => isset($docDBInfos['promotionsGrouped']) ? $docDBInfos['promotionsGrouped'] : null,
+                'tenant_id'              => $this->tenantId,
+                'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
+            ]);
+        }
+        else{
+
+            GeneratedDocument::create([
+                'type'                   => $this->options['document_type'] ?? 'document',
+                'filename'               => basename($this->outputPath),
+                'path'                   => $this->outputPath,
+                'url'                    => $url,
+                'user_id'                => $this->notifiableId,
+                'tenant_id'              => $this->tenantId,
+                'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
+            ]);
+        }
 
         $user?->notify(new PDFIsReady(
             title:     "PDF EST PRÊT",

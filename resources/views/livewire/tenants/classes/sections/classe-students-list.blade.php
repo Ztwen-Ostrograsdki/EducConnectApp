@@ -30,9 +30,21 @@
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                        <button
-                            class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
-                            Exporter liste PDF
+                        <button wire:click='generateNewClasseStudentsList'
+                            class="py-2.5 px-5 rounded-2xl bg-sky-500/50 hover:bg-sky-600/75 transition-all text-sm">
+                            <span wire:loading.remove wire:target='generateNewClasseStudentsList'
+                                class="inline-flex gap-x-2 items-center">
+                                <x-lucide-save class="w-4 h-4" />
+                                Exporter la liste en PDF
+                            </span>
+                            <span wire:loading wire:target='generateNewClasseStudentsList'
+                                class="inline-flex items-center gap-x-2">
+                                <span class="flex items-center gap-x-2.2">
+                                    <span>Processus en cours...</span>
+                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                </span>
+                            </span>
+
                         </button>
                     </div>
                 </div>

@@ -384,7 +384,7 @@
 
     .doc-title {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--navy);
         text-transform: uppercase;

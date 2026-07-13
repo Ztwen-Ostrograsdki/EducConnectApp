@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('generated_documents', function (Blueprint $table) {
             $table->id();
             $table->string('type');
@@ -21,9 +22,15 @@ return new class extends Migration
             $table->string('path');
             $table->string('url');
             $table->unsignedBigInteger('user_id')->nullable()->default(null);
+            $table->unsignedBigInteger('filiar_id')->nullable()->default(null);
+            $table->unsignedBigInteger('serial_id')->nullable()->default(null);
+            $table->unsignedBigInteger('classe_id')->nullable()->default(null);
+            $table->unsignedBigInteger('promotion_id')->nullable()->default(null);
+            $table->string('promotionsGrouped')->nullable()->default(null);
             $table->string('tenant_id')->nullable();
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -31,6 +38,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('generated_documents');
+        Schema::enableForeignKeyConstraints();
     }
 };

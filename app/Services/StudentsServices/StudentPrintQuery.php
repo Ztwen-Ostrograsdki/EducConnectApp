@@ -17,7 +17,6 @@ class StudentPrintQuery
 {
     public static function build(array $config, int $schoolYearId): Builder
     {
-        
         $query = Student::query()->select('students.*');
 
         if (isset($config['trashedConfig'])) {
@@ -134,42 +133,42 @@ class StudentPrintQuery
             };
         }
 
-        if (isset($config['city'])) $doc_title .= ' de ' . $config['city'];
+        if (isset($config['city'])) $doc_title .= " de {$config['city']}";
 
-        if (isset($config['gender'])) $doc_title .= ' de sexe ' . $config['gender'];
+        if (isset($config['gender'])) $doc_title .= " de sexe  {$config['gender']}";
             
-        if (isset($config['department'])) $doc_title .= ' de ' . $config['department'];
+        if (isset($config['department'])) $doc_title .= " de  {$config['department']}";
 
         if (isset($config['classe_id'])) {
 
-            $classe = Classe::firstWhere($config['classe_id']);
+            $classe = Classe::firstWhere('id', $config['classe_id']);
 
-            if($classe) $doc_title .= ' de la ' . $classe->code ? $classe->code : $classe->name;
+            if($classe) $doc_title .= " de la classe {$classe->name} ";
         }
 
         if (isset($config['promotion_id'])) {
 
-            $promo = Promotion::firstWhere($config['promotion_id']);
+            $promo = Promotion::firstWhere('id', $config['promotion_id']);
 
-            if($promo) $doc_title .= ' de la ' . $promo->code ? $promo->code : $promo->name;
+            if($promo) $doc_title .= "de la promotion {$promo->name}";
             
         }
 
-        if (isset($config['promotionInGroups'])) $doc_title .= ' de la promotion ' . $config['promotionInGroups'];
+        if (isset($config['promotionInGroups'])) $doc_title .= " de la promotion {$config['promotionInGroups']}";
 
         if (isset($config['filiar_id'])) {
 
-            $filiar = Filiar::firstWhere($config['filiar_id']);
+            $filiar = Filiar::firstWhere('id', $config['filiar_id']);
 
-            if($filiar) $doc_title .= ' de la ' . $filiar->code ? $filiar->code : $filiar->name;
+            if($filiar) $doc_title .= " de la filière {$filiar->name}";
             
         }
 
         if (isset($config['serial_id'])) {
 
-            $serial = Serial::firstWhere($config['serial_id']);
+            $serial = Serial::firstWhere('id', $config['serial_id']);
 
-            if($serial) $doc_title .= ' de la série ' . $serial->code ? $serial->code : $serial->name;
+            if($serial) $doc_title .=  " de la série {$serial->name}";
             
         }
         return $doc_title;

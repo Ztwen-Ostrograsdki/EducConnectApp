@@ -194,7 +194,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
 
         $printed_at = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
-        $pdf_title = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
+        $pdf_title = StudentPrintQuery::resolveDocTitle($this->config ? $this->config :  StudentPrintSessionConfig::filterConfig());
 
         $viewData = [
             'rows'            => $rows,
@@ -216,6 +216,18 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             documentType:    'student_list',
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
+            docDBInfos:      [
+                'classe_id'                 => isset($this->config['classe_id']) ? 
+                                               $this->config['classe_id'] : null, 
+                'filiar_id'                 => isset($this->config['filiar_id']) ? 
+                                               $this->config['filiar_id'] : null,
+                'promotion_id'              => isset($this->config['promotion_id']) ? 
+                                               $this->config['promotion_id'] : null,
+                'serial_id'                 => isset($this->config['serial_id']) ? 
+                                               $this->config['serial_id'] : null,
+                'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
+                                               $this->config['promotionInGroups'] : null,
+            ],
         );
     }
 }

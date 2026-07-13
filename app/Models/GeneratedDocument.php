@@ -21,6 +21,11 @@ class GeneratedDocument extends Model
         'path',
         'url',
         'user_id',
+        'classe_id',
+        'filiar_id',
+        'serial_id',
+        'promotion_id',
+        'promotionsGrouped',
         'tenant_id',
     ];
 
