@@ -3,6 +3,8 @@
 namespace App\Livewire\Tenants\Classes;
 
 use App\Models\Classe;
+use App\Services\ClassesServices\ClasseEffectifsService;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -49,6 +51,14 @@ class ClasseProfil extends Component
     public function reloaddata()
     {
         $this->counter++;
+    }
+
+    #[Computed]
+    public function effectifs()
+    {
+        $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
+
+        return $effectifs;
     }
 
     public function setSection(string $section)

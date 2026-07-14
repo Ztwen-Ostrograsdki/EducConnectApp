@@ -6,13 +6,26 @@ use App\Models\Classe;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\User;
+use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class YearlyClasseStudentsLeave extends Model
 {
-    use InvalidatesDashboardCounters;
+    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache;
+
+
+    protected $connection = 'tenant'; 
+
+    public const STATUS_PENDING   = 'pending';
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_RETURNED  = 'returned';
+
+    public const ACTIVE_LEAVE_STATUSES = [
+        self::STATUS_CONFIRMED,
+    ];
     
     protected $table = 'yearly_classe_students_leaves';
 

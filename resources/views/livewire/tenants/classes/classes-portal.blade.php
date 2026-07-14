@@ -181,14 +181,6 @@
                             @endforeach
                         </select>
 
-                        <select wire:model.live="level"
-                            class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm focus:border-indigo-500 focus:outline-none transition">
-                            <option value="">Tous niveaux</option>
-                            <option value="primaire">Primaire</option>
-                            <option value="secondaire">Secondaire</option>
-                            <option value="superieur">Supérieur</option>
-                        </select>
-
                         <button wire:click="resetFilters"
                             class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm whitespace-nowrap">
                             Réinitialiser
@@ -211,7 +203,7 @@
                 Chargement...
             </div>
 
-            @if ($classes->isEmpty())
+            @if ($this->classes->isEmpty())
                 <div class="rounded-3xl border border-slate-800 bg-slate-900 p-16 text-center">
                     <div class="text-4xl mb-4">🏫</div>
                     <p class="text-slate-400 text-sm">Aucune classe trouvée pour ces filtres.</p>
@@ -223,7 +215,7 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-4 sm:gap-6"
                     wire:loading.class="opacity-50">
-                    @foreach ($classes as $classe)
+                    @foreach ($this->classes as $classe)
                         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:-translate-y-0.5"
                             wire:key="classe-{{ $classe->id }}">
 
@@ -409,20 +401,17 @@
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- PAGINATION --}}
-        {{-- ===================================================== --}}
-        @if ($classes->hasPages())
+        @if ($this->classes->hasPages())
             <section class="px-4 sm:px-6 lg:px-8 pb-10">
                 <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div class="text-sm text-slate-400">
-                            Affichage {{ $classes->firstItem() }} à {{ $classes->lastItem() }} sur
-                            {{ $classes->total() }} classes
+                            Affichage {{ $this->classes->firstItem() }} à {{ $this->classes->lastItem() }} sur
+                            {{ $this->classes->total() }} classes
                         </div>
                         <div class="flex items-center gap-2 flex-wrap">
                             {{-- Précédent --}}
-                            @if ($classes->onFirstPage())
+                            @if ($this->classes->onFirstPage())
                                 <span
                                     class="h-10 px-4 rounded-xl bg-slate-800/50 text-slate-600 text-sm flex items-center">Précédent</span>
                             @else
@@ -431,15 +420,15 @@
                             @endif
 
                             {{-- Pages --}}
-                            @foreach ($classes->getUrlRange(1, $classes->lastPage()) as $page => $url)
+                            @foreach ($this->classes->getUrlRange(1, $this->classes->lastPage()) as $page => $url)
                                 <button wire:click="gotoPage({{ $page }})"
-                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $classes->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->classes->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
                                     {{ $page }}
                                 </button>
                             @endforeach
 
                             {{-- Suivant --}}
-                            @if ($classes->hasMorePages())
+                            @if ($this->classes->hasMorePages())
                                 <button wire:click="nextPage"
                                     class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm">Suivant</button>
                             @else

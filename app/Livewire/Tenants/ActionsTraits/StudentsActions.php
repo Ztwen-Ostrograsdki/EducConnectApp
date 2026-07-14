@@ -15,7 +15,7 @@ trait StudentsActions{
 
 	use WithPagination, WireUiActions;
 
-    public ?Classe $classe;
+    // public ?Classe $classe;
     
     public function markStudentAsLeaved(int $studentId): void
     {
@@ -392,25 +392,31 @@ trait StudentsActions{
     }
 
     #[On('ConfirmRemoveFromClasse')]
-    public function onConfirmRemoveFromClasse(?int $studentId = null): void
+    public function onConfirmRemoveFromClasse(?int $studentId = null)
     {
-        $link = YearlyClasseStudent::where('student_id', $studentId)
-            ->where('classe_id', $this->classe->id)
-            ->where('school_year_id', $this->classe->school_year_id)
-            ->firstOrFail();
+        $student = Student::find($studentId);
 
-        $link->update([
+        if(!$student) return $this->notification()->warning(
+            title: 'ECHEC DU RETRAIT : Apprenant non trouvé',
+        );
+
+        $currentClasse = $student->currentClasse();
+
+        if(!$currentClasse || !$currentClasse->classe) return $this->notification()->warning(
+            title: "ECHEC DU RETRAIT",
+            description: "L'Apprenant {$student->getFullName()} n'a pas de classe",
+        );
+
+        $currentClasse->update([
             'is_active' => false,
             'ended_at'  => now(),
         ]);
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 
-        $student = Student::find($studentId);
-
         $this->notification()->warning(
             title: 'Apprenant retiré',
-            description: "{$student?->name} {$student?->prenames} a été retiré de la classe.",
+            description: "{$student->getFullName()} a été retiré de la classe.",
         );
     }
 

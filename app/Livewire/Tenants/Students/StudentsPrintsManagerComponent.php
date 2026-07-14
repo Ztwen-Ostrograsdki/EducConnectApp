@@ -24,6 +24,11 @@ use WireUi\Traits\WireUiActions;
 class StudentsPrintsManagerComponent extends Component
 {
     use WireUiActions;
+
+    public ?string $classe_slug = null;
+    public ?string $filiar_slug = null;
+    public ?string $serial_slug = null;
+    public ?string $promotion_slug = null;
     
     public string $studentTypesActivesOrNotTargeted = 'onlyActives';
 
@@ -83,7 +88,7 @@ class StudentsPrintsManagerComponent extends Component
 
     public array $selectedColumns = [];
 
-    public function mount(): void
+    public function mount(?string $classe_slug = null)
     {
         $this->selectedColumns = session()->get($this->sessionKey, []);
 
@@ -91,6 +96,17 @@ class StudentsPrintsManagerComponent extends Component
             $this->selectedColumns,
             fn (string $key) => array_key_exists($key, $this->availableColumns)
         ));
+
+        if($classe_slug){
+
+            $classe = Classe::firstWhere('slug', $classe_slug);
+
+            if(!$classe) return abort(404);
+
+            $this->classe_id = $classe->id;
+
+            $this->updatedClasseId($classe->id);
+        }
 
         if (session()->has('print_students_trashed_status')) {
             $this->trashedStatus = session('print_students_trashed_status');
@@ -311,7 +327,7 @@ class StudentsPrintsManagerComponent extends Component
     {
         if($value) {
 
-            $this->reset(['serial_id', 'filiar_id', 'promotion_id', 'promotionInGroups']);
+            $this->reset(['serial_id', 'filiar_id', 'promotion_id', 'promotionInGroups', 'studentsTypesWithOrWithoutClasses']);
 
             session()->forget(
                 [
@@ -324,6 +340,8 @@ class StudentsPrintsManagerComponent extends Component
 
         }
         session()->put('print_students_classe_selected', $value);
+        
+        session()->put('print_students_has_classe_status', $this->studentsTypesWithOrWithoutClasses);
     }
 
 

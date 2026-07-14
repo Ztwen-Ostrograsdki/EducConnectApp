@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
@@ -77,13 +78,16 @@ class Student extends Model
             }
 
             if($model->gender){
-                if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
 
-                    $model->update(['gender' => 'MASCULIN']);
+                $gend = Str::lower($model->gender);
+
+                if(in_array($gend, ['masculin', 'm']) || Str::initials($gend) === 'm'){
+
+                    $model->update(['gender' => 'M']);
                 }
-                elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
+                elseif(in_array($gend, ['feminin', 'f', 'féminin']) || Str::initials($gend) === 'f'){
 
-                    $model->update(['gender' => 'FEMININ']);
+                    $model->update(['gender' => 'F']);
                 }
             }
 
@@ -95,6 +99,34 @@ class Student extends Model
             ]);
             
         });
+    }
+
+    protected static function booted()
+    {
+        static::updated(function (Student $student) {
+            if ($student->wasChanged('gender')) {
+                static::flushEffectifsForActiveClasses($student);
+            }
+        });
+    }
+
+    /**
+     * Invalide le cache "apprenants_par_sexe" de toutes les classes
+     * où cet élève est actuellement actif (peu importe l'année scolaire active,
+     * au cas où plusieurs années seraient consultables en simultané).
+     */
+    protected static function flushEffectifsForActiveClasses(Student $student): void
+    {
+        $classeIds = YearlyClasseStudent::query()
+            ->where('student_id', $student->id)
+            ->where('is_active', true)
+            ->whereNull('ended_at')
+            ->pluck('classe_id')
+            ->unique();
+
+        foreach ($classeIds as $classeId) {
+            Cache::tags(["classe:{$classeId}", 'effectifs'])->flush();
+        }
     }
 
 

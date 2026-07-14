@@ -47,6 +47,7 @@ trait ClassesActions{
         $this->resetPage();
     }
 
+
     #[On('DataUpdatedEventLiveEvent')]
     public function reloadData(): void
     {

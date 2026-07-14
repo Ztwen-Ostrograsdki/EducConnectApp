@@ -4,6 +4,8 @@ namespace App\Livewire\Tenants\Classes;
 
 use App\Livewire\Tenants\ActionsTraits\ClassesActions;
 use App\Models\Classe;
+use App\Services\ClassesServices\ClasseEffectifsService;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -14,14 +16,37 @@ class ClassesPortal extends Component
 {
 
     use ClassesActions;
-    
-    // ─── Render ───────────────────────────────────────────────────────
 
-    public function render()
+
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPromotion()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFiliar()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSerial()
+    {
+        $this->resetPage();
+    }
+
+
+
+    #[Computed]
+    public function classes()
     {
         $yearId = $this->activeYear?->id;
 
-        $classes = Classe::query()
+        return Classe::query()
             ->where('school_year_id', $yearId)
             ->with(['promotion', 'filiar', 'serial', 'principal', 'students'])
             ->withCount('students')
@@ -34,10 +59,14 @@ class ClassesPortal extends Component
             ->when($this->promotion, fn($q) => $q->where('promotion_id', $this->promotion))
             ->when($this->filiar,    fn($q) => $q->where('filiar_id', $this->filiar))
             ->when($this->serial,    fn($q) => $q->where('serial_id', $this->serial))
-            ->when($this->level,     fn($q) => $q->where('level', $this->level))
-            ->orderBy('name')
+            ->orderBy('updated_at')
             ->paginate($this->perPage);
+    }
 
-        return view('livewire.tenants.classes.classes-portal', compact('classes'));
+
+    // ─── Render ───────────────────────────────────────────────────────
+    public function render()
+    {
+        return view('livewire.tenants.classes.classes-portal');
     }
 }

@@ -2,16 +2,46 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-xl md:text-2xl font-bold text-white">Documents générés — Liste des apprenants</h1>
+            <h1 class="text-lg md:text-xl font-bold text-slate-300">{{ $pageTitle }}</h1>
             <p class="text-sm text-slate-400 mt-1 inline-flex flex-col my-3 gap-y-3">
-                <span> Retrouvez, téléchargez ou supprimez vos documents PDF générés.</span>
-                <span
-                    class="rounded-2xl py-1.5 px-3 bg-green-600/30 text-green-500 inline-flex uppercase text-center items-center justify-center font-mono">
-                    {{ $this->documents->total() }} documents disponibles
+                <span class="inline-flex gap-3 justify-between items-center">
+                    @if ($targeted)
+                        <span
+                            class="rounded-2xl py-1.5 px-3 bg-orange-600/30 text-orange-500 inline-flex uppercase text-center w-full items-center justify-center font-mono">
+                            {{ $targeted }}
+                        </span>
+                    @endif
+                </span>
+
+                <span class="inline-flex gap-3 justify-between">
+                    <span>
+                        Retrouvez, téléchargez ou supprimez vos documents PDF générés.
+                    </span>
                 </span>
             </p>
         </div>
 
+    </div>
+    <div class="flex items-center justify-end gap-3 font-mono">
+        @if ($classe_slug)
+            <a wire:navigate href="{{ route('tenant.students.print.configuration', ['classe_slug' => $classe_slug]) }}"
+                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-slate-300 hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-printer class="w-4 h-4" />
+                <span>Page de génaration personnalisée</span>
+            </a>
+
+            <a wire:navigate href="{{ route('tenant.classe.profil', ['classe_slug' => $classe_slug]) }}"
+                class="py-2 px-2 bg-slate-700/40 border hover:bg-slate-900 border-slate-700/40 hover:border-slate-700  text-slate-300 hover:text-white flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-school class="w-4 h-4" />
+                <span>Profil {{ $classe->name }}</span>
+            </a>
+        @else
+            <a wire:navigate href="{{ route('tenant.students.print.configuration') }}"
+                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-slate-300 hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-printer class="w-4 h-4" />
+                <span>Page de génaration personnalisée</span>
+            </a>
+        @endif
     </div>
     <div class="relative w-full my-3">
         <x-lucide-search class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
@@ -31,6 +61,12 @@
                 <p class="text-slate-600 text-sm mt-1">Les listes que vous générez apparaîtront ici.</p>
             </div>
         @else
+            <div class="my-3 flex justify-end items-center">
+                <span
+                    class="rounded-2xl py-1.5 px-6 bg-green-600/30 text-green-500 inline-flex uppercase text-center items-center justify-center font-mono animate-pulse">
+                    {{ $this->documents->total() }} document(s) disponible(s)
+                </span>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($this->documents as $doc)
                     <div wire:key="doc-{{ $doc->id }}"
@@ -46,7 +82,7 @@
                                 <span
                                     class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold uppercase tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                     <x-lucide-check class="w-3 h-3" />
-                                    Téléchargé
+                                    Déjà téléchargé
                                 </span>
                             @else
                                 <span
@@ -56,17 +92,17 @@
                             @endif
                         </div>
 
-                        <h3 class="text-sm font-semibold text-white truncate mb-1" title="{{ $doc->filename }}">
-                            {{ str_replace('.pdf', '', str_replace('_', ' ', $doc->filename)) }}
+                        <h3 class="text-sm font-semibold text-white break-all mb-1" title="{{ $doc->filename }}">
+                            {{ str()->before(ucfirst(str_replace(['.pdf', '-'], ' ', $doc->filename)), '_') }}
                         </h3>
 
                         <div class="flex items-center gap-3 text-xs text-slate-500 font-mono mb-4">
                             <span class="inline-flex items-center gap-1">
                                 <x-lucide-calendar class="w-3.5 h-3.5" />
-                                <span class="text-2xs">Généré le :
+                                <span class="text-2xs">Généré le
                                     {{ ucwords($doc->created_at->isoFormat('dddd D MMMM YYYY [à] HH:mm')) }}</span>
                             </span>
-                            <span class="inline-flex items-center gap-1">
+                            <span class="inline-flex items-center gap-1 text-yellow-500">
                                 <x-lucide-download class="w-3.5 h-3.5" />
                                 {{ $doc->downloaded_count }}
                             </span>

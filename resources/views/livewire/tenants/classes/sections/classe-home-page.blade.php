@@ -75,59 +75,6 @@
         </section>
 
         <section class="w-full max-w-full my-3 overflow-hidden">
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
-
-                <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-5">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="min-w-0">
-                            <p class="text-sm text-slate-400 truncate">Élèves</p>
-                            <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                                {{ __zero($classe->effectif()) }}
-                            </h2>
-                        </div>
-                        <div class="shrink-0 w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
-                            👨‍🎓
-                        </div>
-                    </div>
-                    <div class="mt-4 text-sm  truncate">
-                        <span class="flex justify-between font-mono text-xs items-center text-indigo-600">
-                            <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                {{ __zero($classe->getStudentsCountOnGender('Féminin')) }}
-                                filles</span>
-                            <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                {{ __zero($classe->getStudentsCountOnGender('Masculin')) }}
-                                Garçons</span>
-                            <span class="rounded-2xl p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
-                                {{ __zero($classe->getClasseStudentsLeavesCount()) }} Abandon</span>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-                    <p class="text-sm text-slate-400 truncate">Enseignants</p>
-                    <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                        {{ __zero($classe->teachersCount()) }}
-                    </h2>
-                </div>
-
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-                    <p class="text-sm text-slate-400 truncate">Présence</p>
-                    <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate text-slate-600">
-                        En cours...
-                    </h2>
-                </div>
-
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-                    <p class="text-sm text-slate-400 truncate">Moyenne</p>
-                    <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate text-slate-700">
-                        En cours...
-                    </h2>
-                </div>
-
-            </div>
-        </section>
-
-        <section class="w-full max-w-full my-3 overflow-hidden">
             <div class="grid grid-cols-1 2xl:grid-cols-3 gap-4 sm:gap-6">
 
                 <div class="2xl:col-span-2 min-w-0 space-y-6">

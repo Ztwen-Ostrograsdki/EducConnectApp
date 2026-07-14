@@ -220,9 +220,9 @@ Route::middleware([
 
             Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
 
-            Route::get('/apprenants/documents/imprimable', StudentsPrintableDocumentsPage::class)->name('students.docs');
+            Route::get('/apprenants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', StudentsPrintableDocumentsPage::class)->name('students.docs');
 
-            Route::get('/apprenants/gestion-impression/configuration', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
+            Route::get('/apprenants/gestion-impression/configuration/{classe_slug?}', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
 
             Route::get('/apprenant/gestion-de-classe-actuelle/{student_uuid}', ManageStudentClassroomComponent::class)->name('student.manage.classe');
 

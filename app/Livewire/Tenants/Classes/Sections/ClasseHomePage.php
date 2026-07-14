@@ -4,6 +4,8 @@ namespace App\Livewire\Tenants\Classes\Sections;
 
 use App\Events\DataUpdatedEvent;
 use App\Models\Classe;
+use App\Services\ClassesServices\ClasseEffectifsService;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
@@ -23,6 +25,14 @@ class ClasseHomePage extends Component
     public function reloaddata()
     {
         $this->counter++;
+    }
+
+    #[Computed]
+    public function effectifs()
+    {
+        $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
+
+        return $effectifs;
     }
 
 

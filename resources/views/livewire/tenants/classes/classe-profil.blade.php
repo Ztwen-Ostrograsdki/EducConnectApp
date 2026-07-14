@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full px-3 overflow-x-hidden">
-    <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
-        <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
+    <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 ">
+        <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
             <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
                 <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
@@ -41,59 +41,77 @@
                                     Verrouillée
                                 </span>
                             @endif
+
+                            <span class="float-right">
+                                📅 {{ $classe->schoolYear->slug }}
+                            </span>
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
-                            @if ($classe->filiar_id)
-                                Filière|Spécialité :
-                            @elseif($classe->serial_id)
-                                Série :
-                            @else
-                            @endif
-                            {{ $classe->specialityModel()?->name }}
+                            <span>
+                                🔗
+                                @if ($classe->filiar_id)
+                                    Filière | Spécialité :
+                                @elseif($classe->serial_id)
+                                    Série :
+                                @else
+                                @endif
+                                {{ $classe->specialityModel()?->name }}
+                            </span>
+
+                            <span>
+                                📍 {{ $classe->localization ?? 'Non précisée' }}
+                            </span>
                         </p>
 
                         {{-- META --}}
-                        <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
+                        <div class="mt-4 flex flex-col sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                             <div class="break-words">👨‍🏫
                                 {{ $classe->principal ? 'PP : ' . $classe->principal?->getFullName() : 'Non précisée' }}
                             </div>
-                            <div class="break-words">📍 {{ $classe->localization ?? 'Non précisée' }}</div>
-                            <div class="break-words">📅 {{ $classe->schoolYear->slug }}</div>
-                            <span class="flex font-mono text-xs items-center text-indigo-600 gap-x-2">
+
+                            <span class="flex font-mono text-xs items-center text-green-300 gap-x-2">
+                                <span class="rounded-2xl p-1.5 bg-green-800/50 border border-green-700">
+                                    {{ $this->effectifs['apprenants'] }}
+                                    Apprenant(s)</span>
                                 <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                    {{ __zero($classe->getStudentsCountOnGender('Féminin')) }}
-                                    filles</span>
+                                    {{ $this->effectifs['apprenants_par_sexe']['F'] }}
+                                    fille(s)</span>
                                 <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                    {{ __zero($classe->getStudentsCountOnGender('Masculin')) }}
-                                    Garçons</span>
+                                    {{ $this->effectifs['apprenants_par_sexe']['M'] }}
+                                    Garçon(s)</span>
                                 <span
                                     class="rounded-2xl p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
-                                    {{ __zero($classe->getClasseStudentsLeavesCount()) }} Abandon</span>
+                                    {{ $this->effectifs['abandons'] }} Abandon(s)</span>
+                                <span class="rounded-2xl p-1.5 bg-sky-800/50 border border-sky-700 text-sky-400">
+                                    {{ $this->effectifs['profs'] }} Prof(s)</span>
                             </span>
                         </div>
                     </div>
 
                 </div>
 
-                {{-- ACTIONS --}}
-                <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
-                    <a wire:navigate
-                        href="{{ route('tenant.classe.manage.subjects.teacher', ['classe_slug' => $classe->slug]) }}"
-                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-green-500/30 hover:bg-green-800/30 transition-all duration-300 text-sm sm:text-base">
-                        Gestion prof par matière
-                    </a>
-                    <a wire:navigate
-                        href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"
-                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
-                        Ajouter Élève
-                    </a>
-                    <a wire:navigate href="{{ route('tenant.classe.edit', ['classe_slug' => $classe->slug]) }}"
-                        class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
-                        Modifier Classe
-                    </a>
-                </div>
-
             </div>
+            <div class="flex flex-col md:flex-row gap-3 w-full xl:w-auto justify-end">
+                <a wire:navigate
+                    href="{{ route('tenant.classe.manage.subjects.teacher', ['classe_slug' => $classe->slug]) }}"
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-green-500/30 hover:bg-green-800/30 transition-all duration-300 text-sm sm:text-base">
+                    Gestion prof par matière
+                </a>
+                <a wire:navigate href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
+                    Ajouter Élève
+                </a>
+                <a wire:navigate href="{{ route('tenant.classe.edit', ['classe_slug' => $classe->slug]) }}"
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
+                    Modifier Classe
+                </a>
+                <a wire:navigate href="{{ route('tenant.students.docs', ['classe_slug' => $classe->slug]) }}"
+                    class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                    <x-lucide-printer class="w-4 h-4" />
+                    <span>Les docs disponibles à imprimer</span>
+                </a>
+            </div>
+
         </div>
     </section>
     <section class="px-1 pt-6">

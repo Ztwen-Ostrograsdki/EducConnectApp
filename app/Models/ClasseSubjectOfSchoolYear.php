@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClasseSubjectOfSchoolYear extends Model
 {
-    use InvalidatesDashboardCounters;
+    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache;
     
     protected $table = 'classe_subject_of_school_years';
 

@@ -9,7 +9,9 @@ use App\Models\Classe;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\YearlyClasseStudent;
+use App\Models\YearlyClasseStudentsLeave;
 use App\Services\StudentsServices\StudentPrintColumns;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -82,6 +84,8 @@ class ClasseStudentsList extends Component
     public function reloaddata(): void
     {
         $this->counterh++;
+        unset($this->students);
+        unset($this->leave_students);
         $this->resetPage();
     }
 
@@ -113,28 +117,41 @@ class ClasseStudentsList extends Component
     #[Computed]
     public function leave_students()
     {
-        return Student::whereHas('yearlyClasseStudents', fn($q) =>
-            $q->where('classe_id', $this->classe->id)
-              ->where('school_year_id', $this->classe->school_year_id)
-              ->where('is_active', true)
-        )
-        ->when($this->search, fn($q) =>
-            $q->where(fn($q) =>
-                $q->where('name', 'like', '%'.$this->search.'%')
-                  ->orWhere('prenames', 'like', '%'.$this->search.'%')
-                  ->orWhere('matricule', 'like', '%'.$this->search.'%')
+        $classeId = $this->classe->id;
+        $schoolYearId = $this->classe->school_year_id;
+
+        return Student::query()
+            ->whereHas('yearlyClasseStudents', fn ($q) =>
+                $q->where('classe_id', $classeId)
+                ->where('school_year_id', $schoolYearId)
+                ->where('is_active', true)
             )
-        )
-        ->when($this->gender, fn($q) => $q->where('gender', $this->gender))
-        ->whereHas('yearlyStudentsLeaves', fn($req) => 
-            $req->where('school_year_id', $this->classe->school_year_id)
-                ->orWhere('classe_id', $this->classe->id)
+            ->whereHas('yearlyStudentsLeaves', fn ($q) =>
+                $q->where('classe_id', $classeId)
+                ->where('school_year_id', $schoolYearId)
+                ->whereIn('status', YearlyClasseStudentsLeave::ACTIVE_LEAVE_STATUSES)
                 ->whereNull('ended_at')
-        )
-        ->with(['yearlyStudentsLeaves'])
-        ->orderBy('name')
-        ->orderBy('prenames')
-        ->get();
+            )
+            ->when($this->search, fn ($q) =>
+                $q->where(fn ($q) =>
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('prenames', 'like', '%'.$this->search.'%')
+                    ->orWhere('matricule', 'like', '%'.$this->search.'%')
+                )
+            )
+            ->when($this->gender, fn ($q) =>
+                $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender)])
+            )
+            // eager load contraint : uniquement l'abandon pertinent pour cette classe/année
+            ->with(['yearlyStudentsLeaves' => fn ($q) =>
+                $q->where('classe_id', $classeId)
+                ->where('school_year_id', $schoolYearId)
+                ->whereIn('status', YearlyClasseStudentsLeave::ACTIVE_LEAVE_STATUSES)
+                ->whereNull('ended_at')
+            ])
+            ->orderBy('name')
+            ->orderBy('prenames')
+            ->get(); // adapte selon ton UI ; évite le ->get() en liste
     }
 
 

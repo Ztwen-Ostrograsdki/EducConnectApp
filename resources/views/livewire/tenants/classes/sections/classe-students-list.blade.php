@@ -3,7 +3,7 @@
         class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
         style="z-index: 200 !important;">
 
-        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+        <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
             <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
@@ -12,17 +12,17 @@
         </div>
     </div>
     <div class="w-full max-w-[100vw] overflow-x-hidden">
-        <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl">
+        <section class="border-b rounded-3xl border-slate-800 bg-slate-900/80 backdrop-blur-xl">
             <div class="px-2 sm:px-3 lg:px-5 py-5">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-3">
-                            <h1 class="text-xl sm:text-2xl font-bold break-words">
+                            <h1 class="text-lg sm:text-xl text-slate-300 font-bold break-words">
                                 Liste des apprenants
                             </h1>
                             <span
-                                class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0">
-                                {{ $this->students->total() }} élève{{ $this->students->total() > 1 ? 's' : '' }}
+                                class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0 font-mono uppercase">
+                                {{ $this->students->total() }} Apprenant{{ $this->students->total() > 1 ? 's' : '' }}
                                 @if ($gender || $search)
                                     filtrés
                                 @endif
@@ -46,6 +46,12 @@
                             </span>
 
                         </button>
+                        <a wire:navigate
+                            href="{{ route('tenant.students.print.configuration', ['classe_slug' => $classe->slug]) }}"
+                            class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                            <x-lucide-printer class="w-4 h-4" />
+                            <span>Génaration personnalisée de la liste en PDF</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -77,8 +83,8 @@
                         <select wire:model.live="gender"
                             class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm focus:border-indigo-500 focus:outline-none transition">
                             <option value="">Tous les genres</option>
-                            <option value="Masculin">Masculin</option>
-                            <option value="Féminin">Féminin</option>
+                            <option value="M">Masculin</option>
+                            <option value="F">Féminin</option>
                         </select>
 
                         <button wire:click="resetFilters"
@@ -159,7 +165,8 @@
                                         <td class="px-6 py-5 text-sm text-slate-300 font-mono">
                                             <div class="flex flex-col gap-y-2">
                                                 <p>{{ ucwords(__formatDate($student->birth_date)) }}</p>
-                                                <p class="text-slate-500 text-left ">{{ getAge($student->birth_date) }}
+                                                <p class="text-slate-500 text-left ">
+                                                    {{ getAge($student->birth_date) }}
                                                     ans
                                                 </p>
                                             </div>

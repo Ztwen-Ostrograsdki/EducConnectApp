@@ -28,8 +28,8 @@
                 <div class="grid grid-cols-3 items-center gap-3 w-full">
 
                     @if (!$filiar_id && !$serial_id && !$promotion_id && !$promotionInGroups)
-                        <select wire:model.live='classe_id'
-                            class="h-12  rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                        <select @disabled($classe_slug && $classe_id) wire:model.live='classe_id'
+                            class="h-12  rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono disabled:opacity-50 disabled:text-slate-500">
                             <option value="">Toutes les classes</option>
                             @foreach ($this->classes as $cl)
                                 <option value="{{ $cl->id }}">
@@ -137,12 +137,14 @@
                         @endforeach
                     </select>
 
-                    <select wire:model.live='studentsTypesWithOrWithoutClasses'
-                        class="py-3 px-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
-                        @foreach ($studentsWithOrWithoutClasses as $sck => $scn)
-                            <option value="{{ $sck }}">{{ $scn }}</option>
-                        @endforeach
-                    </select>
+                    @if (!$classe_id)
+                        <select wire:model.live='studentsTypesWithOrWithoutClasses'
+                            class="py-3 px-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                            @foreach ($studentsWithOrWithoutClasses as $sck => $scn)
+                                <option value="{{ $sck }}">{{ $scn }}</option>
+                            @endforeach
+                        </select>
+                    @endif
 
                     <select wire:model.live='trashedStatus'
                         class="py-3 px-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm">

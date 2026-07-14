@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Models\Student;
 use App\Notifications\RealTimeNotification;
+use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Traits\InvalidatesDashboardCounters;
 use Countable;
 use Illuminate\Database\Eloquent\Builder;
@@ -189,11 +190,6 @@ class Classe extends Model
     }
 
 
-    // Total enseignants intervenant dans cette classe
-    public function teachersCount(): int
-    {
-        return $this->teachers()?->where('classe_subject_of_school_years.is_active', true)->whereNull('classe_subject_of_school_years.ended_at')->count();
-    }
 
     // Élèves inscrits dans cette classe
     public function students(): HasMany
@@ -263,27 +259,8 @@ class Classe extends Model
     }
 
 
-    public function getStudentsOnGender(?string $gender = null) : Countable
-    {
-        $school_year_id = $this->school_year_id;
 
-        $query = Student::whereHas('yearlyClasseStudents', fn($q) =>
-                            $q->where('school_year_id', $school_year_id)
-                            ->where('classe_id', $this->id)
-                            ->where('created_at', '>=', now()->subMonths(2))
-                        );
-
-        if($gender){
-
-            $query->whereIn('gender', [$gender, Str::lower($gender), Str::upper($gender)]);
-
-
-        }
-
-        return $query->get();
-    }
-
-     public function ensureThatClasseDoesntHaveActivesTeachersOrStudentsThisSchoolYear(?int $school_year_id = null) : bool
+    public function ensureThatClasseDoesntHaveActivesTeachersOrStudentsThisSchoolYear(?int $school_year_id = null) : bool
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
@@ -304,10 +281,6 @@ class Classe extends Model
     }
 
 
-    public function getStudentsCountOnGender(?string $gender = null) : int
-    {
-        return count($this->getStudentsOnGender($gender));
-    }
 
 
     public function getClasseStudentsLeaves(?string $gender = null) : Countable
@@ -331,10 +304,53 @@ class Classe extends Model
         ->get();
     }
 
-    public function getClasseStudentsLeavesCount(?string $gender = null) : int
+
+    public function getStudentsByGender(string $gender = 'M')
     {
-        return count($this->getClasseStudentsLeaves($gender));
+        $schoolYearId = $this->school_year_id;
+
+        $genderCode = strtoupper(substr(trim($gender), 0, 1));
+
+        return Student::query()
+                ->whereHas('yearlyClasseStudents', fn ($q) =>
+                    $q->where('classe_id', $this->id)
+                    ->where('school_year_id', $schoolYearId)
+                    ->where('is_active', true)
+                    ->whereNull('ended_at')
+                )
+                ->whereRaw('UPPER(LEFT(gender, 1)) = ?', [$genderCode])
+                ->orderBy('name')
+                ->orderBy('prenames');
+        
+
     }
+
+
+    public function teachersCount(): int
+    {
+        return app(ClasseEffectifsService::class)
+            ->countActiveTeachers($this->id, $this->school_year_id);
+    }
+
+    public function effectif(): int
+    {
+        return app(ClasseEffectifsService::class)
+            ->countActiveStudents($this->id, $this->school_year_id);
+    }
+
+    public function getStudentsCountByGender(): array
+    {
+        return app(ClasseEffectifsService::class)
+            ->countStudentsByGender($this->id, $this->school_year_id);
+    }
+
+    public function getClasseStudentsLeavesCount(): int
+    {
+        return app(ClasseEffectifsService::class)
+            ->countAbandons($this->id, $this->school_year_id);
+    }
+
+
 
     /**
      * Historique complet des enseignants d'une matière
@@ -402,13 +418,6 @@ class Classe extends Model
         return in_array($teacherId, $locked);
     }
 
-    // Nombre d'élèves actifs
-    public function effectif(): int
-    {
-        return $this->activesStudents()->count();
-    }
-
-    // Vérifie si la classe est pleine
     public function isFull(): bool
     {
         return $this->effectif() >= $this->effectif_max;
