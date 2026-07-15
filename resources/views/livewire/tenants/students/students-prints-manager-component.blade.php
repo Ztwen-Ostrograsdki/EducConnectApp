@@ -1,6 +1,6 @@
 <div>
     <div class="mb-20 p-2 relative " wire:loading.class="opacity-20 pointer-events-none"
-        wire:target='resetFilters, restoreSelects, promotionInGroups, initPrintProcess'>
+        wire:target='resetFilters, restoreSelects, promotionInGroups'>
         <div class="flex justify-end p-3 gap-2">
             <a wire:navigate href="{{ route('tenant.students.docs') }}"
                 class="py-2.5 px-5 active:scale-95 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
@@ -282,6 +282,15 @@
                 <span class="text-center my-5 font-mono text-slate-700 animate-pulse text-xl">En attente des
                     sélections....</span>
             @endif
+        </section>
+
+        <section class="my-3 flex justify-start text-orange-500">
+            <h5 class="flex gap-2 font-mono text-lg">
+                <span class="text-slate-500">Nom du document qui sera généré : </span>
+                <span>
+                    {{ $this->currentDocTitle }}
+                </span>
+            </h5>
         </section>
 
         <button title="Lancer la procédure d'inmpression" wire:click="initPrintProcess" wire:loading.attr="disabled"

@@ -91,24 +91,29 @@
                 </div>
 
             </div>
-            <div class="flex flex-col md:flex-row gap-3 w-full xl:w-auto justify-end">
+            <div class="flex flex-col md:flex-row gap-3 w-full xl:w-auto justify-end text-xs ls-1 font-thin font-mono">
                 <a wire:navigate
                     href="{{ route('tenant.classe.manage.subjects.teacher', ['classe_slug' => $classe->slug]) }}"
-                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-green-500/30 hover:bg-green-800/30 transition-all duration-300 text-sm sm:text-base">
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-green-500/30 hover:bg-green-800/30 transition-all duration-300">
                     Gestion prof par matière
                 </a>
                 <a wire:navigate href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"
-                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300 text-sm sm:text-base">
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all duration-300">
                     Ajouter Élève
                 </a>
                 <a wire:navigate href="{{ route('tenant.classe.edit', ['classe_slug' => $classe->slug]) }}"
-                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300">
                     Modifier Classe
                 </a>
                 <a wire:navigate href="{{ route('tenant.students.docs', ['classe_slug' => $classe->slug]) }}"
                     class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
                     <x-lucide-printer class="w-4 h-4" />
-                    <span>Les docs disponibles à imprimer</span>
+                    <span>Docs apprenants disponibles à imprimer</span>
+                </a>
+                <a wire:navigate href="{{ route('tenant.teachers.docs', ['classe_slug' => $classe->slug]) }}"
+                    class="py-2 px-2 bg-purple-700/40 hover:bg-purple-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                    <x-lucide-printer class="w-4 h-4" />
+                    <span>Docs Enseignants disponibles à imprimer</span>
                 </a>
             </div>
 

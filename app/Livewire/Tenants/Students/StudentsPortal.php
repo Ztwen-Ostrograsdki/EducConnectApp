@@ -14,6 +14,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Services\PDFFactory;
 use App\Services\StudentsServices\StudentPrintColumns;
+use App\Services\StudentsServices\StudentPrintQuery;
 use App\Services\StudentsServices\StudentPrintSessionConfig;
 use App\Tools\BeninData;
 use Illuminate\Database\Eloquent\Builder;
@@ -316,10 +317,12 @@ class StudentsPortal extends Component
             'tableColumns' => StudentPrintSessionConfig::tableColumns(),
         ];
 
+        $docTitle = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
+
         JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
             tenantId:       tenant('id'),
             notifiableId:   auth('tenant')->user()->id,
-            docTitle:       'liste apprenants',
+            docTitle:       $docTitle,
             school_year_id: $this->activeYear->id,
             config:         $config,
         );
@@ -370,7 +373,7 @@ class StudentsPortal extends Component
     #[Computed]
     public function allStudentsCounter()
     {
-        return  Student::all()->count();
+        return  $this->students->total();
     }
 
 

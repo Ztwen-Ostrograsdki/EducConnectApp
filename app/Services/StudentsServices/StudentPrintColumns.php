@@ -14,13 +14,13 @@ class StudentPrintColumns
         'contacts'         => ['label' => 'Contact',          'type' => 'phone'],
         'birth_date'       => ['label' => 'Naissance / Âge',  'type' => 'age'],
         'status'           => ['label' => 'Statut',           'type' => 'badge'],
-        'observations'     => ['label' => 'Obs.',             'type' => 'text'],
+        'observations'     => ['label' => 'Obs.',             'type' => 'blank'],
+        'emargement'       => ['label' => 'Emargement',       'type' => 'blank'],
     ];
 
     public static array $defaultOrder = [
-        'educMaster', 'full_name', 'gender', 'father_full_name',
-        'mother_full_name', 'classe.name', 'contacts', 'birth_date',
-        'status', 'observations',
+        'educMaster', 'full_name', 'gender', 'classe.name', 'contacts', 'birth_date',
+        'observations',
     ];
 
     protected static string $sessionKey = 'student-list-selected-columns';

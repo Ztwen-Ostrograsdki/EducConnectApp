@@ -137,8 +137,7 @@
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Toutes les promotions
-                                    <span
-                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->promotionsCount()) }})</span>
+                                    <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
                             @foreach (tenancy()->tenant?->promotions(4) as $promotion)
@@ -173,8 +172,7 @@
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Toutes les filières
-                                    <span
-                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->filiarsCount()) }})</span>
+                                    <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
                             @foreach (tenancy()->tenant?->filiars(4) as $filiar)
@@ -209,8 +207,7 @@
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Toutes les séries
-                                    <span
-                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->serialsCount()) }})</span>
+                                    <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
                             @foreach (tenancy()->tenant?->serials(4) as $serial)
@@ -245,8 +242,7 @@
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Toutes les matières
-                                    <span
-                                        class="ml-3 text-sky-600">({{ __zero(tenancy()->tenant?->subjectsCount()) }})</span>
+                                    <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
                             @foreach (tenancy()->tenant?->subjects(4) as $subject)
@@ -294,8 +290,7 @@
                         </div>
                         <div class="s-acc-content">
                             <a wire:navigate href="{{ route('tenant.students.portal') }}" class="s-link">
-                                <div class="s-icon">👥</div><span class="s-label">Dashboard</span><span
-                                    class="s-badge badge-green">42</span>
+                                <div class="s-icon">👥</div><span class="s-label">Dashboard</span>
                             </a>
                             <a wire:navigate href="{{ route('tenant.students.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -306,6 +301,17 @@
                                 <div class="s-icon">
                                     <x-lucide-octagon-alert class="w-3 h-3" />
                                 </div><span class="s-label">Status des ajouts</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.students.print.configuration') }}"
+                                class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-file class="w-3 h-3" />
+                                </div><span class="s-label">Impression personalisée</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.students.docs') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-printer class="w-3 h-3" />
+                                </div><span class="s-label">Fichiers imprimables</span>
                             </a>
 
                         </div>
@@ -318,8 +324,7 @@
                         </div>
                         <div class="s-acc-content">
                             <a wire:navigate href="{{ route('tenant.teachers.portal') }}" class="s-link">
-                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span><span
-                                    class="s-badge badge-green">42</span>
+                                <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span>
                             </a>
                             <a wire:navigate href="{{ route('tenant.teachers.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -343,8 +348,7 @@
                         </div>
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.parents.portal') }}" class="s-link">
-                                <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Dashboard</span><span
-                                    class="s-badge badge-green">42</span>
+                                <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Dashboard</span>
                             </a>
                             <a wire:navigate href="{{ route('tenant.parents.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -365,16 +369,14 @@
                 <div class="s-section">
                     <div class="s-section-label">Statistiques</div>
                     <a wire:navigate href="{{ route('tenant.stats.general') }}" class="s-link">
-                        <div class="s-icon">📝</div><span class="s-label">Générale</span><span
-                            class="s-badge badge-red">3</span>
+                        <div class="s-icon">📝</div><span class="s-label">Générale</span>
                     </a>
                 </div>
 
                 <div class="s-section">
                     <div class="s-section-label">Évaluation</div>
                     <a href="#" class="s-link">
-                        <div class="s-icon">📝</div><span class="s-label">Notes</span><span
-                            class="s-badge badge-red">3</span>
+                        <div class="s-icon">📝</div><span class="s-label">Notes</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">✅</div><span class="s-label">Présences</span>

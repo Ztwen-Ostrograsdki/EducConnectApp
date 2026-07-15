@@ -1,7 +1,8 @@
-<div class="w-full overflow-x-hidden p-2">
+<div class="w-full overflow-x-hidden p-2 mb-20">
     <div class="mx-auto w-full max-w-[1850px] px-3 sm:px-3 lg:px-6 xl:px-8">
         <section class="mb-6">
-            <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
+            <div
+                class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 border border-slate-800 rounded-2xl p-3">
                 <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-3">
 
@@ -10,7 +11,7 @@
                         </h1>
                         <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
 
-                            {{ __zero($allTeachersCounter) }} Enseignants
+                            {{ $this->teachers->total() }} Enseignants
 
                         </span>
 
@@ -76,39 +77,6 @@
 
         </section>
         <section class="mb-6">
-            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-
-                @foreach ([['Total', __zero($allTeachersCounter), 'text-indigo-400'], ['Actifs', __zero($activesTeachersCounter), 'text-emerald-400'], ['Taux Présence', '96%', 'text-amber-400'], ['Sans accès', __zero(count(tenancy()->tenant?->getTeachersWithoutYearlyAccesses()))]] as $kpi)
-                    <div
-                        class="rounded-3xl
-                            border border-slate-800
-                            bg-slate-900
-                            p-4 sm:p-5">
-
-                        <p class="text-xs sm:text-sm text-slate-400">
-                            {{ $kpi[0] }}
-                        </p>
-
-                        <h2
-                            class="mt-3
-                               text-2xl sm:text-3xl xl:text-4xl
-                               font-bold {{ $kpi[2] ?? 'text-sky-600' }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- FILTER BAR --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
 
             <div class="rounded-3xl border border-slate-800  bg-slate-900 p-4 sm:p-5">
                 <div class="flex flex-col gap-4">
@@ -152,6 +120,17 @@
                             @endforeach
                         </select>
 
+                        <select wire:model.live='promotionInGroups'
+                            class="h-12  rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                            <option value="">Toutes les promotions groupées</option>
+                            @foreach ($this->promotionsGrouped as $kp => $n)
+                                <option value="{{ $n }}">
+                                    Promotion
+                                    {{ $n }}
+                                </option>
+                            @endforeach
+                        </select>
+
                         <select wire:model.live='classe_id'
                             class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
                             <option value="">Toutes les classes</option>
@@ -174,7 +153,7 @@
 
                         <select wire:model.live='promotion_id'
                             class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
-                            <option value="">Toutes les promotions</option>
+                            <option value="">Toutes les promotions spécifiques</option>
                             @foreach ($this->promotions as $promo)
                                 <option value="{{ $promo->id }}">
                                     Promotion
@@ -202,7 +181,7 @@
                         <select wire:model.live='gender'
                             class="h-11 px-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
                             <option value="">Sexe</option>
-                            @foreach (config('app.genders') as $gk => $gdr)
+                            @foreach ($this->genders as $gk => $gdr)
                                 <option value="{{ $gk }}">{{ $gdr }}</option>
                             @endforeach
                         </select>
@@ -230,6 +209,28 @@
 
             </div>
 
+        </section>
+
+        <section class="my-3 flex justify-end gap-3 rounded-2xl border border-slate-700 p-3">
+            <a wire:navigate href="{{ route('tenant.teachers.docs') }}"
+                class="py-2.5 px-5 active:scale-95 rounded-2xl bg-sky-500 hover:bg-sky-600 transition-all text-sm">
+                <span class="inline-flex gap-x-3 items-center">
+                    <x-lucide-file class="w-4 h-4" />
+                    <span>Documents PDF/Excel Dispo.</span>
+                </span>
+            </a>
+            <a href="{{ route('tenant.teachers.print.list') }}"
+                class="py-2.5 px-5 rounded-2xl bg-gray-500/40 hover:bg-gray-600 hover:text-black transition-all text-sm">
+                <span class="inline-flex items-center gap-2">
+                    <x-lucide-eye class="w-4 h-4" />
+                    <span>Aperçue du document</span>
+                </span>
+            </a>
+            <a href="{{ route('tenant.teachers.print.configuration') }}"
+                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-printer class="w-4 h-4" />
+                <span>Page de génération de documents en PDF dynamique</span>
+            </a>
         </section>
 
         <section>
@@ -361,12 +362,12 @@
 
                     <div class="overflow-x-auto">
                         <div wire:loading
-                            wire:target='gender,status,department,city,restoreTeachers,unlockTeachers,giveAccessesToTeachersForThisSchoolYear,lockTeachers,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,search,previousPage,nextPage,gotoPage'
+                            wire:target='gender,status,promotionInGroups, department,city,restoreTeachers,unlockTeachers,giveAccessesToTeachersForThisSchoolYear,lockTeachers,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,search,previousPage,nextPage,gotoPage'
                             class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
                             style="z-index: 200 !important;">
 
                             <div
-                                class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+                                class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
                                 <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4" />
@@ -375,7 +376,7 @@
                                 <span class="text-xl font-mono ls-1">Chargement en cours...</span>
                             </div>
                         </div>
-                        @if (count($teachers))
+                        @if (!$this->teachers->isEmpty())
                             <table class="z-table-border w-full">
 
                                 <thead class="bg-slate-950 border-b border-slate-800">
@@ -411,12 +412,12 @@
 
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach ($teachers as $teacher)
+                                    @foreach ($this->teachers as $teacher)
                                         <tr wire:key='liste-enseignants-du-portail-'{{ $teacher->id }}
                                             class="hover:bg-slate-800/40 transition-all">
                                             <td class="px-3 py-5 text-center whitespace-nowrap">
 
-                                                {{ __zero($teachers->firstItem() + $loop->iteration - 1) }}
+                                                {{ __zero($this->teachers->firstItem() + $loop->iteration - 1) }}
 
                                             </td>
 
@@ -690,16 +691,17 @@
                     </div>
 
                     {{-- PAGINATION --}}
-                    @if ($teachers->hasPages())
+                    @if ($this->teachers->hasPages())
                         <section class="py-6 p-2">
                             <div class="flex justify-center bg-slate-900 p-4">
                                 <div class="flex flex-col items-center gap-4">
                                     <div class="text-sm text-slate-400">
-                                        Affichage {{ $teachers->firstItem() }} à {{ $teachers->lastItem() }} sur
-                                        {{ $teachers->total() }} enseignants
+                                        Affichage {{ $this->teachers->firstItem() }} à
+                                        {{ $this->teachers->lastItem() }} sur
+                                        {{ $this->teachers->total() }} enseignants
                                     </div>
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        @if (!$teachers->onFirstPage())
+                                        @if (!$this->teachers->onFirstPage())
                                             <button wire:click="previousPage" wire:loading.attr="disabled"
                                                 wire:target="previousPage"
                                                 class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
@@ -707,15 +709,15 @@
                                             </button>
                                         @endif
 
-                                        @foreach ($teachers->getUrlRange(1, $teachers->lastPage()) as $page => $url)
-                                            <button @disabled($page === $teachers->currentPage())
+                                        @foreach ($this->teachers->getUrlRange(1, $this->teachers->lastPage()) as $page => $url)
+                                            <button @disabled($page === $this->teachers->currentPage())
                                                 wire:click="gotoPage({{ $page }})"
-                                                class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $teachers->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->teachers->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
                                                 {{ $page }}
                                             </button>
                                         @endforeach
 
-                                        @if ($teachers->hasMorePages())
+                                        @if ($this->teachers->hasMorePages())
                                             <button wire:click="nextPage" wire:loading.attr="disabled"
                                                 wire:target="nextPage"
                                                 class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
@@ -732,123 +734,6 @@
 
             </div>
 
-        </section>
-        <section class="my-4">
-            <div class="space-y-6">
-
-                {{-- QUICK STATS --}}
-                <div
-                    class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                    <h2 class="text-lg font-semibold">
-
-                        Répartition Matières
-
-                    </h2>
-
-                    <div class="mt-5 space-y-5">
-
-                        @foreach ([['Mathématiques', '82%', 'bg-indigo-500'], ['Physique', '70%', 'bg-emerald-500'], ['Informatique', '65%', 'bg-amber-500'], ['Français', '58%', 'bg-sky-500']] as $item)
-                            <div>
-
-                                <div class="flex items-center justify-between">
-
-                                    <span class="text-sm text-slate-300">
-                                        {{ $item[0] }}
-                                    </span>
-
-                                    <span class="text-sm font-semibold">
-                                        {{ $item[1] }}
-                                    </span>
-
-                                </div>
-
-                                <div
-                                    class="mt-2 h-2 rounded-full
-                                            bg-slate-800 overflow-hidden">
-
-                                    <div class="h-full rounded-full {{ $item[2] }}"
-                                        style="width: {{ $item[1] }}">
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                </div>
-
-                {{-- RECENT ACTIVITY --}}
-                <div
-                    class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                    <h2 class="text-lg font-semibold">
-
-                        Activités Récentes
-
-                    </h2>
-
-                    <div class="mt-5 space-y-4">
-
-                        @foreach (range(1, 5) as $activity)
-                            <div
-                                class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                                <div class="flex items-start gap-3">
-
-                                    <div
-                                        class="w-11 h-11 rounded-2xl
-                                                bg-indigo-500/10
-                                                shrink-0
-                                                flex items-center justify-center
-                                                text-indigo-400">
-
-                                        ✓
-
-                                    </div>
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-medium text-sm">
-
-                                            Notes publiées
-
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-400">
-
-                                            M. Jean Kouassi a publié les notes de Terminale F2-1
-
-                                        </p>
-
-                                        <p class="mt-2 text-xs text-slate-500">
-
-                                            Il y a 2 heures
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                </div>
-
-            </div>
         </section>
 
     </div>

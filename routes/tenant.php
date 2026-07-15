@@ -58,10 +58,12 @@ use App\Livewire\Tenants\Subjects\SubjectsPortal;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
 use App\Livewire\Tenants\Teachers\ManageTeacherSubjectsComponent;
 use App\Livewire\Tenants\Teachers\ManageTeacherYearlyClassesAssignmentComponent;
-use App\Livewire\Tenants\Teachers\PrintableListComponent;
 use App\Livewire\Tenants\Teachers\TeacherProfilPage;
 use App\Livewire\Tenants\Teachers\TeachersCreationMonitorComponent;
 use App\Livewire\Tenants\Teachers\TeachersPortal;
+use App\Livewire\Tenants\Teachers\TeachersPrintableDocumentsPage;
+use App\Livewire\Tenants\Teachers\TeachersPrintableListComponent;
+use App\Livewire\Tenants\Teachers\TeachersPrintsManagerComponent;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\NotificationsPage;
@@ -202,11 +204,17 @@ Route::middleware([
 
             Route::get('/enseignants/status-des-ajouts', TeachersCreationMonitorComponent::class)->name('teachers.crud.tasks');
 
-            Route::get('/enseignants/impression', PrintableListComponent::class)->name('teachers.print.list');
+            Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('teacher.profil');
+
+            Route::get('/enseignants/impression', TeachersPrintableListComponent::class)->name('teachers.print.list');
             
             Route::get('/enseignants/gestion-des-matieres/{teacher_uuid?}', ManageTeacherSubjectsComponent::class)->name('teacher.manage.subjects');
 
             Route::get('/enseignants/{teacher_uuid}/gestion-classes', ManageTeacherYearlyClassesAssignmentComponent::class)->name('teacher.manage.classes');
+
+            Route::get('/enseignants/gestion-impression/configuration/{classe_slug?}', TeachersPrintsManagerComponent::class)->name('teachers.print.configuration');
+
+            Route::get('/enseignants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
 
 
 
@@ -244,16 +252,11 @@ Route::middleware([
 
             Route::get('/parents-tuteurs/editions-des-relations-parents-apprenants/{parent_uuid}', ManageParentsStudentsRelationComponent::class)->name('parents.manage.relations');
 
-
-
-            
             Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
 
             Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('parent.profil');
 
             Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('student.marks');
-
-            Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('teacher.profil');
 
 
             Route::get('/mise-a-jour-photo-de-profil-utilisateur/{target}/{modelUuid}', ProfilPhotoManagerByDirectorComponent::class)->name('director.manage.profil.photo');

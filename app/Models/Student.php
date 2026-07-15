@@ -7,6 +7,7 @@ use App\Exceptions\CouldNotMigrateStudentFromClasseToNewWhenHasMarksInSubjectsTh
 use App\Helpers\Support\TenantStorage;
 use App\Models\SchoolYear;
 use App\Models\User;
+use App\ModelsTraits\StudentsRoutesTraits;
 use App\Notifications\RealTimeNotification;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Student extends Model
 {
-    use SoftDeletes, HasRoles, InvalidatesDashboardCounters;
+    use SoftDeletes, HasRoles, InvalidatesDashboardCounters, StudentsRoutesTraits;
 
     protected $connection = 'tenant'; 
 

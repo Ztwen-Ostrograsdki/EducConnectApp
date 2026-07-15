@@ -75,6 +75,8 @@ class StudentsPrintableListComponent extends Component
             'classe.name' => $context['classeLabel'] ?? static::resolveClasseLabel($student),
             'birth_date'  => $student->birth_date,
             'is_active'   => $student->is_active,
+            'observations'   => null, 
+            'emargement'   => null, 
             default       => data_get($student, $key),
         };
     }
@@ -104,6 +106,7 @@ class StudentsPrintableListComponent extends Component
                 : '',
 
             'badge' => static::badgeMarkup($value),
+            'blank' => '&nbsp;',
 
             'phone' => $value ? e($value) : '',
 
@@ -165,8 +168,6 @@ class StudentsPrintableListComponent extends Component
         $schoolYearId = SchoolYear::current()->first()?->id;
 
         $columns = $this->tableColumns ?: $this->defaultColumns;
-
-        $doc_title = StudentPrintQuery::resolveDocTitle(StudentPrintSessionConfig::filterConfig());
 
         $rows = $schoolYearId
             ? StudentPrintQuery::getFormattedRows(StudentPrintSessionConfig::filterConfig(), $schoolYearId, $columns)

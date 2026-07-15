@@ -44,6 +44,8 @@ class TeachersPortal extends Component
 
     public ?int $promotion_id = null;
 
+    public ?string $promotionInGroups = null;
+
     public ?int $classe_id = null;
 
     public int $counterh = 10;
@@ -100,6 +102,10 @@ class TeachersPortal extends Component
 
             $this->serial_id = session('teachers_serial_selected');
         }
+        if(session()->has('teachers_promotion_selected')){
+
+            $this->promotionInGroups = session('teachers_promotion_selected');
+        }
 
 
     }
@@ -112,6 +118,7 @@ class TeachersPortal extends Component
                 'teachers_department_selected', 
                 'teachers_gender_selected', 
                 'teachers_promotion_selected', 
+                'teachers_promotion_selected', 
                 'teachers_classe_selected',
                 'teachers_filiar_selected',
                 'teachers_serial_selected', 
@@ -121,7 +128,7 @@ class TeachersPortal extends Component
         );
 
 
-        $this->reset('search', 'gender', 'city', 'gender', 'department', 'classe_id', 'subject_id', 'promotion_id', 'filiar_id', 'serial_id', 'status');
+        $this->reset('search', 'gender', 'city', 'gender', 'department', 'classe_id', 'subject_id', 'promotion_id', 'filiar_id', 'serial_id', 'status', 'promotionInGroups');
     }
 
     #[Computed]
@@ -172,6 +179,18 @@ class TeachersPortal extends Component
     {
         return Promotion::where('is_active', true)->orderBy('name', 'desc')->get();
     }
+    
+    #[Computed]
+    public function genders()
+    {
+        return config('app.genders');
+    }
+
+    #[Computed]
+    public function promotionsGrouped()
+    {
+        return array_unique(Promotion::where('is_active', true)->orderBy('name', 'asc')->pluck('name')->toArray());
+    }
 
     public function onReloadDashboard()
     {
@@ -214,6 +233,10 @@ class TeachersPortal extends Component
     }
 
     public function updatingStatus(): void
+    {
+        $this->resetPage();
+    }
+    public function updatingPromotionInGroup(): void
     {
         $this->resetPage();
     }
@@ -335,7 +358,8 @@ class TeachersPortal extends Component
     }
 
 
-    public function getTeachersData()
+    #[Computed]
+    public function teachers()
     {
         return Teacher::query()
         ->select('teachers.*')
@@ -416,6 +440,20 @@ class TeachersPortal extends Component
                      )
             )
         )
+        ->when($this->promotionInGroups, fn($qcl1) => 
+            $qcl1->whereHas('classeSubjects', fn($qcl2) => 
+                $qcl2->where('is_active', true)
+                     ->where('school_year_id', $this->activeYear->id)
+                     ->whereNull('ended_at')
+                     ->whereHas('classe', fn($q0) => 
+                        $q0->whereHas('promotion', fn($q) =>
+                            $q->where('name', $this->promotionInGroups)
+                            ->where('is_active', true)
+                            ->where('school_year_id', $this->activeYear->id)
+                        )
+                     )
+            )
+        )
         ->when($this->subject_id, fn($qcl1) => 
             $qcl1->whereHas('yearlySubjects', fn($qcl2) => 
                 $qcl2->where('subject_id', $this->subject_id)->where('is_active', true)->where('school_year_id', $this->activeYear->id)
@@ -423,14 +461,16 @@ class TeachersPortal extends Component
         )
         
         ->orderBy('users.name')
-        ->orderBy('users.prenames');
-        
+        ->orderBy('users.prenames')
+        ->paginate(30);
     }
+
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
         $this->counterh++;
+        unset($this->teachers);
     }
 
 
@@ -438,15 +478,7 @@ class TeachersPortal extends Component
 
     public function render()
     {
-        $allTeachersCounter = Teacher::all()->count();
-
-        $genders = config('app.genders');
-
-        $activesTeachersCounter = Teacher::whereStatus('active')->count();
-
-        $teachers = $this->getTeachersData()->paginate($this->perPage);
-
-        return view('livewire.tenants.teachers.teachers-portal', compact('teachers', 'allTeachersCounter', 'activesTeachersCounter', 'genders'));
+        return view('livewire.tenants.teachers.teachers-portal');
     }
 
 

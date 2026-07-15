@@ -21,7 +21,7 @@
 
                 <div class="flex flex-wrap items-center gap-3">
 
-                    <h1 class="text-2xl sm:text-3xl font-bold break-words">
+                    <h1 class="text-lg sm:text-xl font-bold break-words text-slate-300">
                         Enseignants de la Classe
                     </h1>
 
@@ -31,7 +31,7 @@
                                  border border-indigo-500/20
                                  text-indigo-400 text-xs shrink-0 ls-1">
 
-                        {{ __zero($classe->teachersCount()) }} enseignants
+                        {{ __zero($this->teachers->total()) }} enseignants
 
                     </span>
 
@@ -39,65 +39,13 @@
 
                 <p class="mt-2 text-slate-400 text-sm sm:text-base">
 
-                    Gestion des professeurs, matières et statistiques pédagogiques.
+                    Gestion des professeurs.
 
                 </p>
 
             </div>
 
         </div>
-    </section>
-    <section class="mb-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-
-                <p class="text-sm text-slate-400 truncate">
-                    Enseignants
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    {{ __zero($classe->teachersCount()) }}
-                </h2>
-            </div>
-
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-
-                <p class="text-sm text-slate-400 truncate">
-                    Présence Moyenne
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    94%
-                </h2>
-
-            </div>
-
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-
-                <p class="text-sm text-slate-400 truncate">
-                    Notes Publiées
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    1,240
-                </h2>
-
-            </div>
-
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5 overflow-hidden">
-
-                <p class="text-sm text-slate-400 truncate">
-                    Matières
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold truncate">
-                    {{ __zero($classe->activesSubjects()->count()) }}
-                </h2>
-
-            </div>
-
-        </div>
-
     </section>
 
     <section class="mb-6">
@@ -165,16 +113,11 @@
                 Verrouiller notes
             </button>
 
-            <button class="px-3 py-2 rounded-2xl bg-blue-500 hover:bg-blue-600">
-                Imprimer PDF
-            </button>
-            <button class="px-3 py-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600">
-                Emprimer Excel
-            </button>
+            <a wire:navigate href="{{ route('tenant.teachers.print.configuration', ['classe_slug' => $classe->slug]) }}"
+                class="px-3 py-2 rounded-2xl bg-blue-500 hover:bg-blue-600">
+                Page de génération de la liste en PDF
+            </a>
 
-            <button class="px-3 py-2 rounded-2xl bg-amber-500 hover:bg-amber-600">
-                Imprimer Excel et PDF
-            </button>
         </div>
 
         <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 mb-28">

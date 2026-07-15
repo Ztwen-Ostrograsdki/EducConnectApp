@@ -83,7 +83,7 @@ class StudentsPrintsManagerComponent extends Component
         ['key' => 'birth_date',       'label' => 'Date naiss./Age',  'position' => 4, 'type' => 'age'],
         ['key' => 'classe.name',      'label' => 'Classe',           'position' => 5, 'type' => 'text'],
         ['key' => 'contacts',         'label' => 'Contacts',         'position' => 6, 'type' => 'phone'],
-        ['key' => 'observation',      'label' => 'OBS',              'position' => 7, 'type' => 'text'],
+        ['key' => 'observation',      'label' => 'OBS',              'position' => 7, 'type' => 'blank'],
     ];
 
     public array $selectedColumns = [];
@@ -100,6 +100,8 @@ class StudentsPrintsManagerComponent extends Component
         if($classe_slug){
 
             $classe = Classe::firstWhere('slug', $classe_slug);
+
+            $this->classe_slug = $classe_slug;
 
             if(!$classe) return abort(404);
 
@@ -493,6 +495,14 @@ class StudentsPrintsManagerComponent extends Component
         ];
     }
 
+    #[Computed]
+    public function currentDocTitle(): string
+    {
+        return StudentPrintQuery::resolveDocTitle(
+            $this->currentFilterConfig(),
+        );
+    }
+
     public function initPrintProcess()
     {
         if (! $this->allStudentsCounter) {
@@ -513,7 +523,7 @@ class StudentsPrintsManagerComponent extends Component
         JobToGeneratePrintableStudentsDataForThePrintViewComponent::dispatch(
             tenantId: tenant('id'),
             notifiableId: auth('tenant')->user()->id,
-            docTitle: 'liste apprenants',
+            docTitle: $this->currentDocTitle,
             school_year_id: $this->activeYear->id,
             config: $config,
         );

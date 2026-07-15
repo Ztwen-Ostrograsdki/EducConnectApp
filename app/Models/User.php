@@ -88,13 +88,16 @@ class User extends Authenticatable
         static::created(function ($model) {
 
             if($model->gender){
-                if(in_array(Str::lower($model->gender), ['masculin', 'm'])){
 
-                    $model->update(['gender' => 'MASCULIN']);
+                $gend = Str::lower($model->gender);
+
+                if(in_array($gend, ['masculin', 'm']) || Str::initials($gend) === 'm'){
+
+                    $model->update(['gender' => 'M']);
                 }
-                elseif(in_array(Str::lower($model->gender), ['feminin', 'f', 'féminin'])){
+                elseif(in_array($gend, ['feminin', 'f', 'féminin']) || Str::initials($gend) === 'f'){
 
-                    $model->update(['gender' => 'FEMININ']);
+                    $model->update(['gender' => 'F']);
                 }
             }
 

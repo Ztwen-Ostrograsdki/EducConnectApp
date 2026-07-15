@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Models\Student;
+use App\ModelsTraits\ClassesRoutesTraits;
 use App\Notifications\RealTimeNotification;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Traits\InvalidatesDashboardCounters;
@@ -18,7 +19,7 @@ use Illuminate\Support\Str;
 
 class Classe extends Model
 {
-    use InvalidatesDashboardCounters, SoftDeletes;
+    use InvalidatesDashboardCounters, SoftDeletes, ClassesRoutesTraits;
 
     protected $table = 'classes';
 

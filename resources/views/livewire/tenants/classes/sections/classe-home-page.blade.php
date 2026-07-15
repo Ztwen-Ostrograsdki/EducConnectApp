@@ -139,26 +139,28 @@
 
                         </h3>
                         @if ($classe->principal)
-                            <div class="mt-5 flex items-center gap-4 min-w-0">
-                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                            <a wire:navigate
+                                href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $classe->principal?->uuid]) }}"
+                                class="mt-5 flex items-center gap-4 min-w-0 group">
+                                <div
+                                    class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-600">
                                     <img src="{{ $classe->principal?->user->profil_photo_url }}"
-                                        class="w-full h-full object-cover rounded-full">
+                                        class="w-full h-full object-cover rounded-full ">
                                 </div>
-                                <a wire:navigate
-                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $classe->principal?->uuid]) }}"
-                                    class="min-w-0 flex-1 hover:text-sky-500 underline-offset-4 hover:underline">
-                                    <h4 class="font-semibold truncate">
+                                <div class="min-w-0 flex-1 hover:text-sky-500">
+                                    <h4 class="font-semibold truncate group-hover:underline underline-offset-4">
                                         {{ $classe->principal ? $classe->principal?->getFullName() : 'Non encore défini' }}
                                     </h4>
                                     @if ($classe->principal?->getSubjectsForThisClasse($classe->id))
-                                        <p class="text-xs font-mono text-slate-400 truncate flex flex-wrap gap-2">
+                                        <p class="text-2xs font-mono text-slate-400 truncate flex flex-wrap gap-2 ">
                                             @foreach ($classe->principal?->getSubjectsForThisClasse($classe->id) as $classeSubject)
-                                                <span>{{ $classeSubject->subject?->name }}</span>
+                                                <span
+                                                    class="rounded-2xl group-hover:border-sky-500 group-hover:bg-sky-600/40 p-1 group-hover:text-sky-500 border border-orange-600 bg-orange-600/40 text-orange-500">{{ $classeSubject->subject?->name }}</span>
                                             @endforeach
                                         </p>
                                     @endif
-                                </a>
-                            </div>
+                                </div>
+                            </a>
                         @endif
                     </div>
 
