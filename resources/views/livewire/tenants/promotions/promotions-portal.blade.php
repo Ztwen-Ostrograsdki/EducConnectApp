@@ -36,7 +36,7 @@
 
                                 <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
 
-                                    {{ __zero(tenancy()->tenant?->promotionsCount()) }} Promotions
+                                    {{ __zero($this->promotions->total()) }} Promotions
 
                                 </div>
 
@@ -64,25 +64,6 @@
 
         </section>
 
-        <section class="mb-6">
-
-            <div class="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-
-                @foreach ([['Promotions', __zero(tenancy()->tenant?->promotionsCount()), 'text-indigo-400'], ['Classes', __zero($this->classes), 'text-sky-400'], ['Apprenants', __zero($this->students), 'text-emerald-400'], ['Séries', __zero(count($this->serials)), 'text-amber-400'], ['Filières', __zero(count($this->filiars)), 'text-rose-400']] as $kpi)
-                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
-                        <p class="text-sm text-slate-400">
-                            {{ $kpi[0] }}
-                        </p>
-                        <h2 class="mt-3 text-2xl font-bold {{ $kpi[1] ? $kpi[2] : '' }}">
-                            {{ $kpi[1] }}
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
         <section class="my-5">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="text-sm text-slate-400">
@@ -186,7 +167,7 @@
                 <div class="w-full flex gap-x-1 justify-start items-center">
                     <div wire:loading
                         wire:target='search,serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
-                        class="fixed inset-0 flex items-center justify-center bg-indigo-800/40"
+                        class="fixed inset-0 flex items-center justify-center bg-slate-800/30 backdrop-blur-xs"
                         style="z-index: 200 !important;">
 
                         <div
@@ -206,7 +187,7 @@
                     wire:target='search,serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
                     class="overflow-x-auto mb-10">
 
-                    @if (count($promotions))
+                    @if (count($this->promotions))
                         <table class="z-table-border w-full">
 
                             <thead class="bg-slate-950 border-b border-slate-800 text-center">
@@ -234,6 +215,13 @@
                                         </span>
                                     </th>
 
+                                    <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                        <span class="flex flex-col">
+                                            <span>Effectif</span>
+                                            <span>Enseignants</span>
+                                        </span>
+                                    </th>
+
                                     <th class="px-6 py-4  text-sm text-slate-400">
                                         Meilleur Élève
                                     </th>
@@ -253,11 +241,16 @@
                             {{-- BODY --}}
                             <tbody class="divide-y divide-slate-800 text-slate-400">
 
-                                @foreach ($promotions as $promo)
+                                @foreach ($this->promotions as $promo)
+                                    @php
+                                        $details = app(
+                                            \App\Services\PromotionsServices\PromotionDetailsCacheService::class,
+                                        )->get($promo->id);
+                                    @endphp
                                     <tr class="hover:bg-slate-800/40 transition-colors duration-200">
 
                                         <td class="px-6 py-5 truncate">
-                                            {{ __zero($promotions->firstItem() + $loop->iteration - 1) }}
+                                            {{ __zero($this->promotions->firstItem() + $loop->iteration - 1) }}
                                         </td>
 
                                         <td class="px-6 py-5">
@@ -272,7 +265,7 @@
 
                                                 </h3>
 
-                                                <p class="mt-1 text-sm text-slate-400">
+                                                <p class="mt-1 text-sm text-slate-500 uppercase font-mono">
                                                     @if ($promo->code)
                                                         {{ $promo->code }}
                                                     @else
@@ -285,32 +278,31 @@
                                         </td>
                                         <td class="px-4 py-5 text-center">
                                             <span class="font-semibold">
-                                                {{ __zero($promo->getPromotionClassesOfSchoolYearCount()) }}
+                                                {{ __zero($details['classes_count']) }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-5 text-center">
                                             <span class="text-indigo-400">
-                                                {{ __zero($promo->getPromotionStudentsOfSchoolYearCount()) }}
+                                                {{ __zero($details['students_count']) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-5 text-center">
+                                            <span class="text-indigo-400">
+                                                {{ __zero($details['teachers_count']) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-5">
                                             <div>
-                                                <h3 class="font-medium">
+                                                <h3 class="text-xs">
                                                     En cours..
                                                 </h3>
-                                                <p class="text-sm text-emerald-400">
-                                                    ....
-                                                </p>
                                             </div>
                                         </td>
                                         <td class="px-6 py-5">
                                             <div>
-                                                <h3 class="font-medium">
+                                                <h3 class="text-xs">
                                                     En cours...
                                                 </h3>
-                                                <p class="text-sm text-rose-400">
-                                                    ....
-                                                </p>
                                             </div>
 
                                         </td>
@@ -399,17 +391,18 @@
                             </tbody>
 
                         </table>
-                        @if ($promotions->hasPages())
-                            <section class="py-6">
-                                <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4">
-                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        @if ($this->promotions->hasPages())
+                            <section class="py-6 flex justify-center">
+                                <div class="rounded-3xl bg-slate-900 p-4">
+                                    <div class="flex flex-col items-center sm:justify-between gap-4">
                                         <div class="text-sm text-slate-400">
-                                            Affichage {{ $promotions->firstItem() }} à {{ $promotions->lastItem() }}
+                                            Affichage {{ $this->promotions->firstItem() }} à
+                                            {{ $this->promotions->lastItem() }}
                                             sur
-                                            {{ $promotions->total() }} promotions
+                                            {{ $this->promotions->total() }} promotions
                                         </div>
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            @if (!$promotions->onFirstPage())
+                                            @if (!$this->promotions->onFirstPage())
                                                 <button wire:click="previousPage" wire:loading.attr="disabled"
                                                     wire:target="previousPage"
                                                     class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
@@ -417,15 +410,15 @@
                                                 </button>
                                             @endif
 
-                                            @foreach ($promotions->getUrlRange(1, $promotions->lastPage()) as $page => $url)
-                                                <button @disabled($page === $promotions->currentPage())
+                                            @foreach ($this->promotions->getUrlRange(1, $this->promotions->lastPage()) as $page => $url)
+                                                <button @disabled($page === $this->promotions->currentPage())
                                                     wire:click="gotoPage({{ $page }})"
-                                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $promotions->currentPage() ? 'bg-indigo-500 text-white ' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->promotions->currentPage() ? 'bg-indigo-500 text-white ' : 'bg-slate-800 hover:bg-slate-700' }}">
                                                     {{ $page }}
                                                 </button>
                                             @endforeach
 
-                                            @if ($promotions->hasMorePages())
+                                            @if ($this->promotions->hasMorePages())
                                                 <button wire:click="nextPage" wire:loading.attr="disabled"
                                                     wire:target="nextPage"
                                                     class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">

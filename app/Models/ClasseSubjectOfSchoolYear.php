@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use App\Traits\InvalidatesFiliarDetailsCache;
+use App\Traits\InvalidatesPromotionDetailsCache;
 use App\Traits\InvalidatesSubjectDetailsCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,8 @@ class ClasseSubjectOfSchoolYear extends Model
     use InvalidatesDashboardCounters, 
     InvalidatesClasseEffectifsCache, 
     InvalidatesSubjectDetailsCache,
-    InvalidatesFiliarDetailsCache;
+    InvalidatesFiliarDetailsCache,
+    InvalidatesPromotionDetailsCache;
     
     protected $table = 'classe_subject_of_school_years';
 

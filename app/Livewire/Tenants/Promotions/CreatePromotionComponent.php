@@ -78,11 +78,11 @@ class CreatePromotionComponent extends Component
 
     public function save(): void
     {
+        $this->resetErrorBag();
+        
         try {
 
             $this->validate();
-
-            $slug = Str::slug($this->name);
 
             $this->validate([
                 'name' => [
@@ -120,6 +120,25 @@ class CreatePromotionComponent extends Component
 
                 return;
             }
+
+            $suffix = '';
+
+            if($this->filiar_id){
+
+                $filiar = Filiar::find($this->filiar_id);
+
+                $suffix = $filiar->code;
+
+            }
+            elseif($this->serial_id){
+
+                $serial = Serial::find($this->serial_id);
+
+                $suffix = $serial->code;
+
+            }
+
+            $slug = Str::slug($this->name . ' ' . $suffix);
 
             $promotion = Promotion::create([
                 'uuid'      => (string) Str::uuid(),

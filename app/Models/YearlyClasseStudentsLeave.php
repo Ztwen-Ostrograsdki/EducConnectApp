@@ -8,12 +8,17 @@ use App\Models\Student;
 use App\Models\User;
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
+use App\Traits\InvalidatesFiliarDetailsCache;
+use App\Traits\InvalidatesPromotionDetailsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class YearlyClasseStudentsLeave extends Model
 {
-    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache;
+    use InvalidatesDashboardCounters, 
+    InvalidatesClasseEffectifsCache, 
+    InvalidatesFiliarDetailsCache, 
+    InvalidatesPromotionDetailsCache;
 
 
     protected $connection = 'tenant'; 

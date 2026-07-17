@@ -117,9 +117,10 @@ class ManagePromotionComponent extends Component
 
     public function save()
     {
-        try {
-            $slug = Str::slug($this->name);
+        $this->resetErrorBag();
 
+
+        try {
             $this->validate([
                 'name'           => "required|string|max:100",
                 'code'           => 'nullable|string|max:20',
@@ -151,6 +152,25 @@ class ManagePromotionComponent extends Component
 
                 return;
             }
+
+            $suffix = '';
+
+            if($this->filiar_id){
+
+                $filiar = Filiar::find($this->filiar_id);
+
+                $suffix = $filiar->code;
+
+            }
+            elseif($this->serial_id){
+
+                $serial = Serial::find($this->serial_id);
+
+                $suffix = $serial->code;
+
+            }
+
+            $slug = Str::slug($this->name . ' ' . $suffix);
 
             $this->promotion->update([
                 'slug'      => $slug,

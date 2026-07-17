@@ -20,6 +20,7 @@ use App\Notifications\RealTimeNotification;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Traits\InvalidatesDashboardCounters;
 use App\Traits\InvalidatesFiliarDetailsCache;
+use App\Traits\InvalidatesPromotionDetailsCache;
 use Countable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +32,11 @@ use Illuminate\Support\Str;
 
 class Classe extends Model
 {
-    use InvalidatesDashboardCounters, SoftDeletes, ClassesRoutesTraits, InvalidatesFiliarDetailsCache;
+    use InvalidatesDashboardCounters, 
+    SoftDeletes, 
+    ClassesRoutesTraits, 
+    InvalidatesFiliarDetailsCache, 
+    InvalidatesPromotionDetailsCache;
 
     protected $table = 'classes';
 

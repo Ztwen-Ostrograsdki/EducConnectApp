@@ -53,7 +53,7 @@
             <section class="mb-6">
                 <div wire:loading
                     wire:target='classe_id,gender,promotion_id,filiar_id,search,previousPage,nextPage,resetFilters,gotoPage'
-                    class="fixed inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-sm"
+                    class="fixed inset-0 flex items-center justify-center bg-slate-800/30 backdrop-blur-xs"
                     style="z-index: 200 !important;">
 
                     <div
@@ -235,29 +235,19 @@
                                                     </span>
 
                                                 </p>
-                                                <p
-                                                    class="mt-1 text-sm text-slate-400 font-mono flex items-center gap-x-1.5">
-
-                                                    <x-lucide-phone class="w-3.5 h-3.5" />
-                                                    <span>
-                                                        {{ $teacher->user->contacts }}
-                                                    </span>
-
-                                                </p>
 
                                             </div>
 
                                         </a>
-                                        <span
-                                            class="px-3 rounded-full @if ($teacher->hasValidAccessForYear()) bg-emerald-500/10 text-emerald-400 @else  bg-red-500/10 text-red-400 animate-pulse @endif border border-slate-600 w-full flex text-xs py-1 mt-2 text-center items-center justify-center gap-x-1">
-                                            <span>Accès
-                                                {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}</span>
-                                            @if ($teacher->hasValidAccessForYear())
-                                                <span> accordé</span>
-                                            @else
+                                        @if (!$teacher->hasValidAccessForYear())
+                                            <span
+                                                class="px-3 rounded-full bg-red-500/10 text-red-400 animate-pulse border border-slate-600 w-full flex text-xs py-1 mt-2 text-center items-center justify-center gap-x-1">
+                                                <span>Accès
+                                                    {{ tenancy()->tenant?->getActiveSchoolYear()?->slug }}</span>
+
                                                 <span> non accordé</span>
-                                            @endif
-                                        </span>
+                                            </span>
+                                        @endif
 
                                     </td>
 
@@ -317,35 +307,6 @@
                                                     <span>Matières</span>
                                                 </a>
                                             @endif
-
-                                            {{-- Envoyer credentials --}}
-                                            <button
-                                                title="{{ $teacher->blocked ? 'Débloquer' : 'Bloquer' }} {{ $teacher->getFullName() }}"
-                                                wire:click="{{ $teacher->blocked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
-                                                wire:loading.attr="disabled"
-                                                wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
-                                                class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $teacher->blocked ? 'bg-green-600/30 hover:bg-green-800/80 text-black' : 'bg-red-600/30 hover:bg-red-700/80 text-red-200' }}">
-                                                <span wire:loading.remove
-                                                    wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
-                                                    class="inline-flex items-center gap-1.5">
-                                                    @if ($teacher->blocked)
-                                                        <x-lucide-lock-keyhole-open class="w-3.5 h-3.5 shrink-0" />
-                                                        <span>Débloquer</span>
-                                                    @else
-                                                        <x-lucide-ban class="w-3.5 h-3.5 shrink-0" />
-                                                        <span>Bloquer</span>
-                                                    @endif
-                                                </span>
-                                                <span wire:loading
-                                                    wire:target="lockTeacher({{ $teacher->id }}), unlockTeacher({{ $teacher->id }})"
-                                                    class="inline-flex items-center gap-1.5">
-                                                    <span class="inline-flex items-center gap-1.5">
-                                                        <x-lucide-refresh-ccw
-                                                            class="w-3.5 h-3.5 animate-spin shrink-0" />
-                                                        <span>En cours...</span>
-                                                    </span>
-                                                </span>
-                                            </button>
 
                                             <button
                                                 title="Retirer à {{ $teacher->getFullName() }} la matière {{ $subject->name }}"

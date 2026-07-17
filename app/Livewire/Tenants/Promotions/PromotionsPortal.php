@@ -30,6 +30,14 @@ class PromotionsPortal extends Component
 
     public int $perPage = 10;
 
+    public int $counterh = 0;
+
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counterh++;
+    }
 
     #[Computed]
     public function serials()
@@ -50,6 +58,24 @@ class PromotionsPortal extends Component
     }
     
     #[Computed]
+    public function promotions()
+    {
+        return Promotion::whereNotNull('name')
+                                ->when($this->search, fn($q) =>
+                                    $q->where('name', 'like', '%'.$this->search.'%')
+                                    ->orWhere('code', 'like', '%'.$this->search.'%')
+                                    ->orWhere('slug', 'like', '%'.$this->search.'%')
+                                )
+                                ->when($this->filiar_id, fn($qf) =>
+                                    $qf->where('filiar_id', $this->filiar_id)
+                                )
+                                ->when($this->serial_id, fn($qs) =>
+                                    $qs->where('serial_id', $this->serial_id)
+                                )
+                                ->orderBy('name')->paginate($this->perPage);
+    }
+    
+    #[Computed]
     public function students()
     {
         return Student::where('is_active', true)->whereHas('yearlyClasseStudents', fn($q) => 
@@ -63,20 +89,6 @@ class PromotionsPortal extends Component
 
     public function render()
     {
-        $promotions = Promotion::whereNotNull('name')
-                                ->when($this->search, fn($q) =>
-                                    $q->where('name', 'like', '%'.$this->search.'%')
-                                    ->orWhere('code', 'like', '%'.$this->search.'%')
-                                    ->orWhere('slug', 'like', '%'.$this->search.'%')
-                                )
-                                ->when($this->filiar_id, fn($qf) =>
-                                    $qf->where('filiar_id', $this->filiar_id)
-                                )
-                                ->when($this->serial_id, fn($qs) =>
-                                    $qs->where('serial_id', $this->serial_id)
-                                )
-                                ->orderBy('name')->paginate($this->perPage);
-
-        return view('livewire.tenants.promotions.promotions-portal', compact('promotions'));
+        return view('livewire.tenants.promotions.promotions-portal');
     }
 }

@@ -222,7 +222,7 @@
     <div class="overflow-x-auto mb-40">
         <div wire:loading
             wire:target='clearFilters,is_active,type,activateSubject,activateUnactivesSubjects,restoreTrashedsSubjects,desactivateSubject,deleteSubject,forceDeleteSubject,search,previousPage,nextPage,gotoPage'
-            class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
+            class="fixed inset-0 flex items-center justify-center bg-slate-800/30 backdrop-blur-xs"
             style="z-index: 200 !important;">
             <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-row">
                 <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
