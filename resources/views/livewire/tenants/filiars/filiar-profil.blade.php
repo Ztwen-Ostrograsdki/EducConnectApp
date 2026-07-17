@@ -31,8 +31,17 @@
                             {{-- ICON --}}
                             <div class="flex justify-center lg:block">
                                 <div
-                                    class="w-32 h-32 sm:w-36 sm:h-36 rounded-[30px] bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-5xl shrink-0">
-                                    {{ $filiar->code }}
+                                    class="w-32 h-32 sm:w-36 sm:h-36
+                                            rounded-[30px]
+                                            bg-indigo-500/10
+                                            border border-indigo-500/20
+                                            flex items-center justify-center
+                                            text-2xl uppercase text-center">
+
+                                    <span>
+                                        {{ str()->replace('-', ' ', $filiar->code) }}
+                                    </span>
+
                                 </div>
                             </div>
 
@@ -49,11 +58,11 @@
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
                                     <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
-                                        {{ __zero($this->filiar->getFiliarTeachersOfSchoolYearCount()) }}
+                                        {{ __zero($details['teachers_count']) }}
                                         Enseignants
                                     </div>
                                     <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
-                                        {{ __zero($filiar->getFiliarClassesOfSchoolYearCount()) }} Classes
+                                        {{ __zero($details['classes_count']) }} Classes
                                     </div>
                                     @if ($filiar->deleted_at)
                                         <div
@@ -71,27 +80,20 @@
                 </div>
             </div>
         </section>
+        @php
+            $principalCA = $filiar->currentPrincipalCA();
 
-        {{-- KPI --}}
-        <section class="mb-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 {{ $grid_cols }} gap-4">
-                @foreach ($this->kpis as $kpi)
-                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
-                        <p class="text-sm text-slate-400">{{ $kpi[0] }}</p>
-                        <h2 class="mt-3 text-xl font-bold {{ $kpi[2] }}">{{ $kpi[1] }}</h2>
-                    </div>
-                @endforeach
-            </div>
-        </section>
+            $adjointCA = $filiar->currentAjointCA();
+        @endphp
 
-        @if ($filiar->currentPrincipalCA() || $filiar->currentAjointCA())
+        @if ($principalCA || $adjointCA)
             <section class="my-5 border rounded-2xl p-4 border-slate-700 flex flex-col gap-3">
                 <h5 class="border-b border-slate-500 py-2 uppercase text-slate-400 font-mono text-lg">
                     Les Chefs d'Atelier (CA) <span class="text-orange-600">{{ $this->activeYear?->slug }}</span>
                 </h5>
 
                 <div class=" grid md:grid-cols-2 grid-cols-1 gap-2 p-2">
-                    @if ($filiar->currentPrincipalCA())
+                    @if ($principalCA)
                         <div
                             class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-green-700">
                             <h5 class="rounded-2xl p-2 text-center bg-green-600/40 text-green-400">
@@ -99,17 +101,17 @@
                             </h5>
                             <div class="flex gap-4 items-center justify-start">
                                 <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                    <img src="{{ $filiar->currentPrincipalCA()?->user->profil_photo_url }}"
+                                    <img src="{{ $principalCA?->user->profil_photo_url }}"
                                         class="w-full h-full object-cover rounded-full">
                                 </div>
                                 <a wire:navigate
-                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $filiar->currentPrincipalCA()?->uuid]) }}"
+                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $principalCA?->uuid]) }}"
                                     class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
                                     <h4 class="font-semibold truncate">
-                                        {{ $filiar->currentPrincipalCA()?->getFullName() ?? 'Non encore défini' }}
+                                        {{ $principalCA?->getFullName() ?? 'Non encore défini' }}
                                     </h4>
                                     <h4 class="font-semibold text-sm text-slate-600">
-                                        {{ $filiar->currentPrincipalCA()?->email }}
+                                        {{ $principalCA?->email }}
                                     </h4>
                                 </a>
 
@@ -120,9 +122,7 @@
                                 </h6>
                                 <div class="flex gap-2 p-2">
                                     @php
-                                        $teacher_classes1 = $filiar
-                                            ->currentPrincipalCA()
-                                            ->getTeacherClassesForThisSchoolYear([]);
+                                        $teacher_classes1 = $principalCA->getTeacherClassesForThisSchoolYear([]);
 
                                     @endphp
                                     @if (count($teacher_classes1))
@@ -144,7 +144,7 @@
                         </div>
                     @endif
 
-                    @if ($filiar->currentAjointCA())
+                    @if ($adjointCA)
                         <div
                             class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-purple-700">
                             <h5 class="rounded-2xl p-2 text-center bg-purple-600/40 text-purple-400">
@@ -152,17 +152,17 @@
                             </h5>
                             <div class="flex gap-4 items-center justify-start">
                                 <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                    <img src="{{ $filiar->currentAjointCA()?->user->profil_photo_url }}"
+                                    <img src="{{ $adjointCA?->user->profil_photo_url }}"
                                         class="w-full h-full object-cover rounded-full">
                                 </div>
                                 <a wire:navigate
-                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $filiar->currentAjointCA()?->uuid]) }}"
+                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $adjointCA?->uuid]) }}"
                                     class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
                                     <h4 class="font-semibold truncate">
-                                        {{ $filiar->currentAjointCA()?->getFullName() ?? 'Non encore défini' }}
+                                        {{ $adjointCA?->getFullName() ?? 'Non encore défini' }}
                                     </h4>
                                     <h4 class="font-semibold text-sm text-slate-600">
-                                        {{ $filiar->currentAjointCA()?->email }}
+                                        {{ $adjointCA?->email }}
                                     </h4>
                                 </a>
 
@@ -173,10 +173,7 @@
                                 </h6>
                                 <div class="flex gap-2 p-2">
                                     @php
-                                        $teacher_classes2 = $filiar
-                                            ->currentAjointCA()
-                                            ->getTeacherClassesForThisSchoolYear([]);
-
+                                        $teacher_classes2 = $adjointCA->getTeacherClassesForThisSchoolYear([]);
                                     @endphp
                                     @if (count($teacher_classes2))
                                         @foreach ($teacher_classes2 as $cl)
@@ -204,25 +201,25 @@
         <section class="my-4 mb-5 flex justify-end border-y border-y-slate-800 py-4">
             <div class="flex gap-3">
                 <a wire:navigate href="{{ route('tenant.filiar.edit.ca', ['filiar_slug' => $filiar->slug]) }}"
-                    class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600">
+                    class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600 hover:text-black">
                     Editer les postes CA
                 </a>
                 <a wire:navigate href="{{ route('tenant.classes.create') }}"
-                    class="py-3 px-5 rounded-2xl bg-blue-500 hover:bg-blue-800">
+                    class="py-3 px-5 rounded-2xl bg-blue-500/30 hover:bg-blue-500 hover:text-black">
                     Créer une classe
                 </a>
-                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600">
+                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 hover:text-black">
                     Export PDF
                 </button>
                 <a wire:navigate href="{{ route('tenant.filiar.edit', ['filiar_slug' => $filiar->slug]) }}"
-                    class="py-3 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600">
+                    class="py-3 px-5 rounded-2xl bg-indigo-500/40 hover:bg-indigo-400 hover:text-black">
                     Editer cette filière
                 </a>
                 <button
                     title="{{ $filiar->deleted_at ? 'Restaurer cette filière de la corbeille ' : 'Mettre cette filière dans la corbeille ' }} "
                     wire:click="{{ $filiar->deleted_at ? 'restoreFiliar(' . $filiar->id . ')' : 'deleteFiliar(' . $filiar->id . ')' }}"
                     wire:loading.attr="disabled" wire:target="deleteFiliar, restoreFiliar"
-                    class="relative py-3 px-4 rounded-xl text-white {{ $filiar->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-yellow-400">
+                    class="relative py-2 px-4 rounded-2xl text-white {{ $filiar->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-2xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
                     <span wire:loading.remove wire:target="deleteFiliar, restoreFiliar"
                         class="inline-flex items-center justify-center gap-3">
                         <span class="inline-flex items-center justify-center gap-3">

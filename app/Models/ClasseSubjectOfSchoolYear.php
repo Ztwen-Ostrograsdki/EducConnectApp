@@ -4,13 +4,18 @@ namespace App\Models;
 
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
+use App\Traits\InvalidatesFiliarDetailsCache;
+use App\Traits\InvalidatesSubjectDetailsCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClasseSubjectOfSchoolYear extends Model
 {
-    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache;
+    use InvalidatesDashboardCounters, 
+    InvalidatesClasseEffectifsCache, 
+    InvalidatesSubjectDetailsCache,
+    InvalidatesFiliarDetailsCache;
     
     protected $table = 'classe_subject_of_school_years';
 

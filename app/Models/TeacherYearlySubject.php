@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Models\SchoolYear;
 use App\Traits\InvalidatesDashboardCounters;
+use App\Traits\InvalidatesSubjectDetailsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TeacherYearlySubject extends Model
 {
-    use InvalidatesDashboardCounters;
+    use InvalidatesDashboardCounters, InvalidatesSubjectDetailsCache;
     
     protected $table = 'teacher_yearly_subjects';
 

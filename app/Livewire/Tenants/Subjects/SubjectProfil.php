@@ -5,6 +5,7 @@ namespace App\Livewire\Tenants\Subjects;
 use App\Livewire\Tenants\ActionsTraits\SubjectsActions;
 use App\Models\SchoolYear;
 use App\Models\Subject;
+use App\Services\SubjectsServices\SubjectDetailsCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -22,6 +23,10 @@ class SubjectProfil extends Component
 
     public string $subject_slug;
 
+    public ?array $details = [] ;
+
+    public $counterh = 0;
+
     public ?string $school_year_selected;
 
     public function mount(string $subject_slug)
@@ -29,13 +34,15 @@ class SubjectProfil extends Component
 
         if(!$subject_slug) return abort(404);
 
-        $this->subject_slug  = $subject_slug;
+        $this->subject_slug = $subject_slug;
 
         $subject = Subject::withTrashed()->whereSlug($subject_slug)?->first();
 
         if(!$subject) return abort(404);
 
-        $this->subject     = $subject;
+        $this->subject = $subject;
+
+        $this->details = app(SubjectDetailsCacheService::class)->get($this->subject->id);
 
     }
 
@@ -49,6 +56,12 @@ class SubjectProfil extends Component
     public function activeYear(): ?SchoolYear
     {
         return SchoolYear::current()->first();
+    }
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counterh++;
     }
 
     public function render()

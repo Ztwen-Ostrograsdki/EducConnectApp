@@ -15,12 +15,6 @@ trait SubjectsActions{
 
 	public $counter = 0;
 
-    #[On('DataUpdatedEventLiveEvent')]
-    public function reloaddata()
-    {
-        $this->counter++;
-    }
-
 	#[Computed]
     public function unActivesSubjects() : int
     {

@@ -11,13 +11,13 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Models\YearlySubjectChief;
 use App\Notifications\RealTimeNotification;
+use App\Services\SubjectsServices\SubjectDetailsCacheService;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-
 
 class Subject extends Model
 {
@@ -53,7 +53,18 @@ class Subject extends Model
         });
 
         static::created(function ($model) {
+
             
+        });
+
+        static::deleted(function ($model) {
+
+            app(SubjectDetailsCacheService::class)->forget($model->id);
+        });
+
+        static::restored(function ($model) {
+
+            app(SubjectDetailsCacheService::class)->forget($model->id);
         });
 
 

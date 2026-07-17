@@ -6,6 +6,7 @@ use App\Events\DataUpdatedEvent;
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
+use App\Services\FiliarsServices\FiliarDetailsCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -22,13 +23,13 @@ class FiliarProfil extends Component
 
     public string $filiar_slug;
 
+    public array $details = [];
+
     public string $filiar_name = 'filiar Nom';
 
     public ?string $school_year_selected;
 
     public $counter = 0;
-
-    public string $grid_cols = '2xl:grid-cols-7';
 
 
     public function mount(string $filiar_slug)
@@ -43,7 +44,10 @@ class FiliarProfil extends Component
         if(!$filiar) return abort(404);
 
         $this->filiar       = $filiar;
+
         $this->filiar_name       = $filiar->name;
+
+        $this->details = app(FiliarDetailsCacheService::class)->get($this->filiar->id);
 
     }
 
@@ -53,22 +57,6 @@ class FiliarProfil extends Component
         return SchoolYear::current()->first();
     }
 
-    #[Computed]
-    public function kpis()
-    {
-        $data = [
-            ['Promotions', __zero($this->filiar->promotions->count()), 'text-amber-400'], 
-            ['Classes', __zero($this->filiar->getFiliarClassesOfSchoolYearCount()), 'text-amber-400'], 
-            ['Enseignants', __zero($this->filiar->getFiliarTeachersOfSchoolYearCount()), 'text-violet-400'],
-            ['Apprenants', __zero($this->filiar->getFiliarStudentsOfSchoolYearCount()), 'text-indigo-400'], 
-            ['Meilleure classe', '-', 'text-emerald-400'], 
-            ['Faible classe', '-', 'text-rose-400'], 
-            ['Meilleur élève', '-', 'text-sky-400'], 
-            ['Meilleur moyenne', '-', 'text-sky-400'],  
-        ];
-
-        return $data;
-    }
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()

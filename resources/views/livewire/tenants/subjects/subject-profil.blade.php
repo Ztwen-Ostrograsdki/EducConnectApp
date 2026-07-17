@@ -44,10 +44,11 @@
                                             bg-indigo-500/10
                                             border border-indigo-500/20
                                             flex items-center justify-center
-                                            text-5xl
-                                            shrink-0 uppercase">
+                                            text-2xl uppercase text-center">
 
-                                    {{ $subject->code }}
+                                    <span>
+                                        {{ str()->replace('-', ' ', $subject->code) }}
+                                    </span>
 
                                 </div>
 
@@ -104,7 +105,7 @@
                                         class="px-4 py-2 rounded-2xl
                                                 bg-slate-800 border border-slate-700">
 
-                                        {{ __zero($subject->getSubjectTeachersOfSchoolYearCount()) }} Enseignant(s)
+                                        {{ __zero($details['teachers_count'] ?? 0) }} Enseignant(s)
 
                                     </div>
 
@@ -112,7 +113,7 @@
                                         class="px-4 py-2 rounded-2xl
                                                 bg-slate-800 border border-slate-700">
 
-                                        {{ __zero($subject->getSubjectClassesOfSchoolYearCount()) }} Classe(s)
+                                        {{ __zero($details['classes_count'] ?? 0) }} Classe(s)
 
                                     </div>
 
@@ -138,80 +139,58 @@
 
         </section>
 
-        <section class="mb-6">
+        @php
+            $principalAE = $subject->currentPrincipalAE();
 
-            <div
-                class="grid
-                        grid-cols-2
-                        lg:grid-cols-4
-                        2xl:grid-cols-4
-                        gap-4">
+            $adjointAE = $subject->currentAdjointAE();
 
-                @foreach ([['Moyenne Générale', '11.84', 'text-indigo-400'], ['Meilleure Note', '19.75', 'text-emerald-400'], ['Plus Faible', '02.15', 'text-rose-400'], ['Taux Réussite', '72%', 'text-sky-400']] as $kpi)
-                    <div
-                        class="rounded-3xl
-                            bg-slate-900
-                            border border-slate-800
-                            p-5">
+        @endphp
 
-                        <p class="text-sm text-slate-400">
-
-                            {{ $kpi[0] }}
-
-                        </p>
-
-                        <h2 class="mt-3 text-2xl font-bold {{ $kpi[2] }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
-
-        @if ($subject->currentPrincipalAE() || $subject->currentAdjointAE())
-            <section class="my-5 border rounded-2xl p-4 border-slate-700 flex flex-col gap-3">
-                <h5 class="border-b border-slate-500 py-2 uppercase text-slate-400 font-mono text-lg">
-                    Les Chefs d'Atelier (CA) <span class="text-orange-600">{{ $this->activeYear?->slug }}</span>
-                </h5>
+        @if ($principalAE || $adjointAE)
+            <section class="my-5 border rounded-2xl p-4 border-slate-700 flex flex-col gap-3 text-sm">
+                <div class="flex justify-between border-b border-slate-500 py-2 items-center">
+                    <h5 class=" uppercase text-slate-400 font-mono text-sm">
+                        Les Animateurs d'Etablissement (AE) <span
+                            class="text-orange-600">{{ $this->activeYear?->slug }}</span>
+                    </h5>
+                    <a wire:navigate href="{{ route('tenant.subject.edit.ae', ['subject_slug' => $subject->slug]) }}"
+                        class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600 hover:text-black">
+                        Editer les postes AE
+                    </a>
+                </div>
 
                 <div class=" grid md:grid-cols-2 grid-cols-1 gap-2 p-2">
-                    @if ($subject->currentPrincipalAE())
+                    @if ($principalAE)
+
                         <div
                             class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-green-700">
                             <h5 class="rounded-2xl p-2 text-center bg-green-600/40 text-green-400">
                                 POSTE PRINCIPALE
                             </h5>
-                            <div class="flex gap-4 items-center justify-start">
-                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                    <img src="{{ $subject->currentPrincipalAE()?->user->profil_photo_url }}"
+                            <a wire:navigate
+                                href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $principalAE?->uuid]) }}"
+                                class="flex gap-4 items-center justify-start hover:underline underline-offset-4 hover:text-sky-500">
+                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group">
+                                    <img src="{{ $principalAE?->user->profil_photo_url }}"
                                         class="w-full h-full object-cover rounded-full">
                                 </div>
-                                <a wire:navigate
-                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $subject->currentPrincipalAE()?->uuid]) }}"
-                                    class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
+                                <div class="min-w-0 flex-1 flex-col hover:text-sky-500 group-hover:text-sky-400">
                                     <h4 class="font-semibold truncate">
-                                        {{ $subject->currentPrincipalAE()?->getFullName() ?? 'Non encore défini' }}
+                                        {{ $principalAE?->getFullName() ?? 'Non encore défini' }}
                                     </h4>
                                     <h4 class="font-semibold text-sm text-slate-600">
-                                        {{ $subject->currentPrincipalAE()?->email }}
+                                        {{ $principalAE?->email }}
                                     </h4>
-                                </a>
+                                </div>
 
-                            </div>
+                            </a>
                             <div class="flex flex-col gap-2 border rounded-3xl border-slate-700 p-2">
                                 <h6 class="p-2 border-b border-slate-700 text-center uppercase text-slate-500">Classes
                                     tenues
                                 </h6>
                                 <div class="flex gap-2 p-2">
                                     @php
-                                        $teacher_classes1 = $subject
-                                            ->currentPrincipalAE()
-                                            ->getTeacherClassesForThisSchoolYear([]);
+                                        $teacher_classes1 = $principalAE->getTeacherClassesForThisSchoolYear([]);
 
                                     @endphp
                                     @if (count($teacher_classes1))
@@ -233,7 +212,8 @@
                         </div>
                     @endif
 
-                    @if ($subject->currentAdjointAE())
+                    @if ($adjointAE)
+
                         <div
                             class="mt-5 flex flex-col p-2 gap-4 min-w-0 justify-start border rounded-2xl border-purple-700">
                             <h5 class="rounded-2xl p-2 text-center bg-purple-600/40 text-purple-400">
@@ -241,17 +221,17 @@
                             </h5>
                             <div class="flex gap-4 items-center justify-start">
                                 <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                    <img src="{{ $subject->currentAdjointAE()?->user->profil_photo_url }}"
+                                    <img src="{{ $adjointAE?->user->profil_photo_url }}"
                                         class="w-full h-full object-cover rounded-full">
                                 </div>
                                 <a wire:navigate
-                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $subject->currentAdjointAE()?->uuid]) }}"
+                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $adjointAE?->uuid]) }}"
                                     class="min-w-0 flex-1 flex-col hover:text-sky-500 underline-offset-4 hover:underline">
                                     <h4 class="font-semibold truncate">
-                                        {{ $subject->currentAdjointAE()?->getFullName() ?? 'Non encore défini' }}
+                                        {{ $adjointAE?->getFullName() ?? 'Non encore défini' }}
                                     </h4>
                                     <h4 class="font-semibold text-sm text-slate-600">
-                                        {{ $subject->currentAdjointAE()?->email }}
+                                        {{ $adjointAE?->email }}
                                     </h4>
                                 </a>
 
@@ -262,9 +242,7 @@
                                 </h6>
                                 <div class="flex gap-2 p-2">
                                     @php
-                                        $teacher_classes2 = $subject
-                                            ->currentAdjointAE()
-                                            ->getTeacherClassesForThisSchoolYear([]);
+                                        $teacher_classes2 = $adjointAE->getTeacherClassesForThisSchoolYear([]);
 
                                     @endphp
                                     @if (count($teacher_classes2))
@@ -293,11 +271,11 @@
         <section class="border-y border-y-slate-800 my-3 py-4">
             <div class="flex gap-2 truncate justify-end">
                 <a wire:navigate href="{{ route('tenant.subject.edit.ae', ['subject_slug' => $subject->slug]) }}"
-                    class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600">
+                    class="py-3 px-5 rounded-2xl bg-yellow-500/30 hover:bg-yellow-600 hover:text-black">
                     Editer les postes AE
                 </a>
                 <a wire:navigate href="{{ route('tenant.subject.create') }}"
-                    class="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400  hover:bg-indigo-500/60 hover:text-black transition-all text-sm inline-block text-center">
+                    class="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400  hover:bg-indigo-500/60 hover:text-black transition-all text-sm flex items-center text-center">
                     <span class="flex items-center justify-center gap-x-2">
                         <span class="flex items-center justify-center gap-x-2">
                             <x-lucide-plus class="w-4 h-4" />
@@ -306,7 +284,7 @@
                     </span>
                 </a>
                 <a wire:navigate href="{{ route('tenant.teacher.manage.subjects') }}"
-                    class="p-2.5 rounded-2xl bg-purple-500/20 text-purple-400  hover:bg-purple-500/60 hover:text-black transition-all text-sm inline-block text-center">
+                    class="p-2.5 rounded-2xl bg-purple-500/20 text-purple-400  hover:bg-purple-500/60 hover:text-black transition-all text-sm flex items-centertext-center">
                     <span class="flex items-center justify-center gap-x-2">
                         <span class="flex items-center justify-center gap-x-2">
                             <x-lucide-user-plus class="w-4 h-4" />
@@ -315,7 +293,7 @@
                     </span>
                 </a>
                 <a wire:navigate href="{{ route('tenant.subject.edit', ['subject_slug' => $subject->slug]) }}"
-                    class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/60 hover:text-black transition-all text-sm inline-block text-center">
+                    class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/60 hover:text-black transition-all text-sm flex items-centertext-center">
                     <span class="flex items-center justify-center gap-x-2">
                         <span class="flex items-center justify-center gap-x-2">
                             <x-lucide-edit class="w-4 h-4" />
@@ -327,7 +305,7 @@
                 <button title="{{ $subject->is_active ? 'Fermer ' : 'Activer ' }} cette matière "
                     wire:click="{{ $subject->is_active ? 'desactivateSubject(' . $subject->id . ')' : 'activateSubject(' . $subject->id . ')' }}"
                     wire:loading.attr="disabled" wire:target="activateSubject, desactivateSubject"
-                    class="relative py-3 px-4 rounded-xl text-white {{ !$subject->is_active ? 'bg-lime-600/60 hover:bg-lime-500 hover:text-black' : 'bg-orange-500/60 hover:bg-orange-600/90' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
+                    class="relative py-2 px-4 rounded-2xl text-white {{ !$subject->is_active ? 'bg-lime-600/60 hover:bg-lime-500 hover:text-black' : 'bg-orange-500/60 hover:bg-orange-600/90' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-2xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
                     <span wire:loading.remove wire:target="activateSubject, desactivateSubject"
                         class="inline-flex items-center justify-center gap-3">
                         <span class="inline-flex items-center justify-center gap-3">
@@ -355,7 +333,7 @@
                     title="{{ $subject->deleted_at ? 'Restaurer cette matière de la corbeille ' : 'Mettre cette matière dans la corbeille ' }} "
                     wire:click="{{ $subject->deleted_at ? 'restoreSubject(' . $subject->id . ')' : 'deleteSubject(' . $subject->id . ')' }}"
                     wire:loading.attr="disabled" wire:target="deleteSubject, restoreSubject"
-                    class="relative py-3 px-4 rounded-xl text-white {{ $subject->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
+                    class="relative py-2 px-4 rounded-2xl text-white {{ $subject->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-2xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
                     <span wire:loading.remove wire:target="deleteSubject, restoreSubject"
                         class="inline-flex items-center justify-center gap-3">
                         <span class="inline-flex items-center justify-center gap-3">

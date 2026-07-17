@@ -6,6 +6,7 @@ use App\Livewire\Tenants\ActionsTraits\FiliarsActions;
 use App\Models\Filiar;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -21,23 +22,9 @@ class FiliarsPortal extends Component
 
     public ?string $search = null;
 
-    public int $perPage = 3;
+    public int $perPage = 15;
 
-    #[Computed]
-    public function kpis()
-    {
-        $tenant = tenancy()->tenant;
-
-        $data = [
-            ['Promotions', __zero($tenant->promotionsCount()), 'text-amber-400'], 
-            ['Meilleure classe', '-', 'text-emerald-400'], 
-            ['Faible classe', '-', 'text-rose-400'], 
-            ['Meilleur élève', '-', 'text-sky-400'], 
-            ['Meilleur moyenne', '-', 'text-sky-400'],  
-        ];
-
-        return $data;
-    }
+    public int $counterh = 0;
 
     public function mount()
     {
@@ -46,6 +33,14 @@ class FiliarsPortal extends Component
             $this->is_active = session('filiars_is_active_selected');
         }
     }
+
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counterh++;
+    }
+
 
     public function updatingSearch()
     {

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\SchoolYearActivatedEvent;
+use App\Services\SubjectsServices\SubjectDetailsCacheService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,6 +42,20 @@ class SchoolYear extends Model
         'is_closed' => 'boolean',
         'periods' => 'array',
     ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($model) {
+
+            if ($model->wasChanged('is_active') && $model->is_active) {
+
+                event(new SchoolYearActivatedEvent($model->id));
+            }
+        });
+    }
 
     // ─── Relations ────────────────────────────────────────────────────
 

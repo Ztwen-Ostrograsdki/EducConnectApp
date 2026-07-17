@@ -3,6 +3,7 @@
 namespace App\Services\ClassesServices;
 
 
+use App\Contracts\RefreshableSchoolYearCache;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
@@ -10,7 +11,7 @@ use App\Models\YearlyClasseStudent;
 use App\Models\YearlyClasseStudentsLeave;
 use Illuminate\Support\Facades\Cache;
 
-class ClasseEffectifsService
+class ClasseEffectifsService implements RefreshableSchoolYearCache
 {
     protected int $cacheTtl = 3600;
 
@@ -20,16 +21,27 @@ class ClasseEffectifsService
 
         return Cache::tags(["classe:{$classeId}", 'effectifs'])
             ->remember(
-                "classe:{$classeId}:sy:{$schoolYearId}:effectifs",
+                $this->cacheKey($classeId, $schoolYearId),
                 $this->cacheTtl,
-                fn () => [
-                    'profs'               => $this->countActiveTeachers($classeId, $schoolYearId),
-                    'apprenants'          => $this->countActiveStudents($classeId, $schoolYearId),
-                    'apprenants_par_sexe' => $this->countStudentsByGender($classeId, $schoolYearId),
-                    'abandons'            => $this->countAbandons($classeId, $schoolYearId),
-                    'abandons_par_statut' => $this->countAbandonsByStatus($classeId, $schoolYearId),
-                ]
+                fn () => $this->computeEffectifs($classeId, $schoolYearId)
             );
+    }
+
+
+    protected function computeEffectifs(int $classeId, int $schoolYearId): array
+    {
+        return [
+            'profs'               => $this->countActiveTeachers($classeId, $schoolYearId),
+            'apprenants'          => $this->countActiveStudents($classeId, $schoolYearId),
+            'apprenants_par_sexe' => $this->countStudentsByGender($classeId, $schoolYearId),
+            'abandons'            => $this->countAbandons($classeId, $schoolYearId),
+            'abandons_par_statut' => $this->countAbandonsByStatus($classeId, $schoolYearId),
+        ];
+    }
+
+    protected function cacheKey(int $classeId, int $schoolYearId): string
+    {
+        return "classe:{$classeId}:sy:{$schoolYearId}:effectifs";
     }
 
     // ─── Profs ────────────────────────────────────────────────
@@ -94,5 +106,27 @@ class ClasseEffectifsService
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
+    }
+
+
+    /**
+     * Recharge le cache des effectifs pour toutes les classes actives de l'année donnée.
+     */
+    public function refreshForSchoolYear(int $schoolYearId): void
+    {
+        $classeIds = Classe::query()
+            ->where('school_year_id', $schoolYearId)
+            ->where('is_active', true)
+            ->pluck('id');
+
+        foreach ($classeIds as $classeId) {
+
+            Cache::tags(["classe:{$classeId}", 'effectifs'])
+                ->put(
+                    $this->cacheKey($classeId, $schoolYearId),
+                    $this->computeEffectifs($classeId, $schoolYearId),
+                    $this->cacheTtl
+                );
+        }
     }
 }

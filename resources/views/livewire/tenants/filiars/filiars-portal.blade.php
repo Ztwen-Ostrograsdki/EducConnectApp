@@ -46,7 +46,7 @@
                                 </h1>
 
                                 <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
-                                    Gestion Académique {{ session('school_year_selected') }}
+                                    Gestion Académique {{ $this->activeYear?->slug }}
                                 </span>
 
                             </div>
@@ -67,16 +67,7 @@
                                     class="px-4 py-2 rounded-2xl
                                             bg-slate-800 border border-slate-700">
 
-                                    {{ __zero(tenancy()->tenant?->filiarsCount()) }} Filières
-
-                                </div>
-
-                                <div
-                                    class="px-4 py-2 rounded-2xl
-                                            bg-slate-800 border border-slate-700">
-
-                                    {{ __zero(count(tenancy()->tenant?->getClassesOfSchoolYear(null, true, true))) }}
-                                    Classes
+                                    {{ __zero($this->filiars->total()) }} Filières
 
                                 </div>
 
@@ -299,6 +290,11 @@
                             <tbody class="divide-y divide-slate-800 text-slate-400 font-mono">
 
                                 @foreach ($this->filiars as $filiar)
+                                    @php
+                                        $details = app(
+                                            \App\Services\FiliarsServices\FiliarDetailsCacheService::class,
+                                        )->get($filiar->id);
+                                    @endphp
                                     <tr
                                         class="hover:bg-slate-800/40
                                        transition-colors duration-200 @if ($filiar->deleted_at) trashed-tr trashed-text @endif">
@@ -327,11 +323,11 @@
 
                                             <span class="flex flex-col gap-y-1 text-xs font-thin">
                                                 <span class="text-yellow-500">
-                                                    {{ __zero($filiar->getFiliarClassesOfSchoolYearCount()) }}
+                                                    {{ __zero($details['classes_count']) }}
                                                     classe(s)
                                                 </span>
                                                 <span class="text-purple-300">
-                                                    {{ __zero($filiar->getFiliarStudentsOfSchoolYearCount()) }}
+                                                    {{ __zero($details['students_count']) }}
                                                     apprenant(s)
                                                 </span>
                                             </span>

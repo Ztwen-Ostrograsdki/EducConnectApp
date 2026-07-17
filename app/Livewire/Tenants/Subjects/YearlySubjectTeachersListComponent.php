@@ -33,6 +33,8 @@ class YearlySubjectTeachersListComponent extends Component
 
     public int $perPage = 10;
 
+    public int $counter = 0;
+
     public ?Subject $subject;
 
 

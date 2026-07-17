@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
+use App\Traits\InvalidatesFiliarDetailsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class YearlyClasseStudent extends Model
 {
-    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache;
+    use InvalidatesDashboardCounters, InvalidatesClasseEffectifsCache, InvalidatesFiliarDetailsCache;
     protected $table = 'yearly_classe_students';
 
     protected $connection = 'tenant';

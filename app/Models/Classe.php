@@ -3,11 +3,23 @@
 namespace App\Models;
 
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
+use App\Models\ClasseSubjectOfSchoolYear;
+use App\Models\Filiar;
+use App\Models\Mark;
+use App\Models\Payment;
+use App\Models\Presence;
+use App\Models\Promotion;
+use App\Models\SchoolYear;
+use App\Models\Serial;
 use App\Models\Student;
+use App\Models\Teacher;
+use App\Models\User;
+use App\Models\YearlyClasseStudent;
 use App\ModelsTraits\ClassesRoutesTraits;
 use App\Notifications\RealTimeNotification;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Traits\InvalidatesDashboardCounters;
+use App\Traits\InvalidatesFiliarDetailsCache;
 use Countable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +31,7 @@ use Illuminate\Support\Str;
 
 class Classe extends Model
 {
-    use InvalidatesDashboardCounters, SoftDeletes, ClassesRoutesTraits;
+    use InvalidatesDashboardCounters, SoftDeletes, ClassesRoutesTraits, InvalidatesFiliarDetailsCache;
 
     protected $table = 'classes';
 

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Tenants\Subjects;
 
-use App\Events\DataUpdatedEvent;
 use App\Livewire\Tenants\ActionsTraits\SubjectsActions;
 use App\Models\SchoolYear;
 use App\Models\Subject;
@@ -58,6 +57,7 @@ class SubjectsPortal extends Component
     public function reloaddata()
     {
         $this->counter++;
+        unset($this->subjects);
     }
 
     #[Computed]
@@ -124,7 +124,6 @@ class SubjectsPortal extends Component
     }
 
 
-    
 
 
     public function render()

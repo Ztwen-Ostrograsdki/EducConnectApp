@@ -28,7 +28,7 @@
                                      text-indigo-400
                                      text-xs">
 
-                        {{ __zero(count($this->subjects)) }} Matières
+                        {{ __zero($this->subjects->total()) }} Matières
 
                     </span>
 
@@ -236,7 +236,7 @@
 
         @if (count($this->subjects))
 
-            <table class=" w-full">
+            <table class=" w-full z-table-border">
 
                 <thead class="bg-slate-950 border-b border-slate-800">
                     <tr>
@@ -264,10 +264,6 @@
                         </th>
 
                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                            Réussite
-                        </th>
-
-                        <th class="px-4 py-4 text-center text-sm text-slate-400">
                             Volume Horaire
                         </th>
 
@@ -282,6 +278,12 @@
                 <tbody class="divide-y divide-slate-800">
 
                     @foreach ($this->subjects as $subject)
+                        @php
+                            $details = app(\App\Services\SubjectsServices\SubjectDetailsCacheService::class)->get(
+                                $subject->id,
+                            );
+
+                        @endphp
                         <tr class="hover:bg-slate-800/40 truncate">
 
                             <td class="px-6 py-5 font-medium">
@@ -291,11 +293,11 @@
                             </td>
                             <td class="px-6 py-5 font-medium">
 
-                                <a class="hover:underline underline-offset-2 text-slate-300 font-semibold font-mono"
+                                <a class="hover:underline underline-offset-2 hover:text-orange-600 text-slate-300 font-semibold font-mono group"
                                     wire:navigate
                                     href="{{ route('tenant.subject.profil', ['subject_slug' => $subject->slug]) }}">
                                     {{ $subject->name }}
-                                    <p class="text-slate-500 font-mono text-sm">
+                                    <p class="text-slate-500 font-mono text-sm uppercase group-hover:text-orange-500">
                                         {{ $subject->code }}
                                     </p>
                                 </a>
@@ -304,30 +306,74 @@
 
                             <td class="px-4 py-5 text-center">
 
-                                -
+                                @if ($details['chief'])
+                                    <div class=" flex flex-col gap-2">
+                                        @foreach ($details['chief'] as $ck => $chief)
+                                            @if ($ck === 'principal')
+                                                <span
+                                                    class="flex items-center justify-between gap-2 border border-green-800 p-2 rounded-2xl">
+                                                    <span class="text-green-600 text-xs">
+                                                        Principal :
+                                                    </span>
+                                                    @if ($chief)
+                                                        <span class="flex items-center gap-3 p-1 text-green-700">
+
+                                                            {{ $chief['full_name'] ?? '' }}
+
+                                                        </span>
+                                                    @else
+                                                        <span class="text-orange-600 animate-pulse text-xs">
+                                                            Non renseingé
+                                                        </span>
+                                                    @endif
+                                                </span>
+                                            @elseif($ck === 'adjoint')
+                                                <span
+                                                    class="flex items-center justify-between gap-2 border border-sky-900 p-2 rounded-2xl">
+                                                    <span class="text-sky-600 text-xs">
+                                                        Adjoint :
+                                                    </span>
+                                                    @if ($chief)
+                                                        <span class="flex items-center gap-3 p-1 text-sky-700">
+
+                                                            {{ $chief['full_name'] ?? '' }}
+
+                                                        </span>
+                                                    @else
+                                                        <span class="text-orange-600 animate-pulse text-xs">
+                                                            Non renseingé
+                                                        </span>
+                                                    @endif
+                                                </span>
+                                            @endif
+                                        @endforeach
+
+                                    </div>
+                                @else
+                                    <small class="animate-pulse text-slate-600 text-center">Echec chargement...</small>
+                                @endif
 
                             </td>
 
                             <td class="px-4 py-5 text-center">
-                                {{ __zero($subject->getSubjectTeachersOfSchoolYearCount()) }}
+                                {{ __zero($details['teachers_count']) }}
                             </td>
 
                             <td class="px-4 py-5 text-center">
-                                {{ __zero($subject->getSubjectClassesOfSchoolYearCount()) }}
+                                {{ __zero($details['classes_count']) }}
                             </td>
 
-                            <td class="px-4 py-5 text-center">
-                                13.48
-                            </td>
-                            <td class="px-4 py-5 text-center">
-                                <span class="text-emerald-400">
-                                    84%
-                                </span>
+                            <td class="px-4 py-5 text-center text-slate-600">
+                                <small>
+                                    {{ $details['best_classe'] ?? 'pas encore' }}
+                                </small>
                             </td>
 
-                            <td class="px-4 py-5 text-center">
+                            <td class="px-4 py-5 text-center text-slate-600">
 
-                                18h
+                                <small>
+                                    {{ 'indisponible' }}
+                                </small>
 
                             </td>
 
@@ -335,12 +381,12 @@
 
                                 <div class="flex gap-2 truncate">
                                     <a wire:navigate
-                                        href="{{ route('tenant.subject.profil', ['subject_slug' => $subject->slug]) }}"
+                                        href="{{ route('tenant.subject.edit', ['subject_slug' => $subject->slug]) }}"
                                         class="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400  hover:bg-indigo-500/60 hover:text-black transition-all text-sm inline-block text-center">
                                         <span class="flex items-center justify-center gap-x-2">
                                             <span class="flex items-center justify-center gap-x-2">
                                                 <x-lucide-pen class="w-4 h-4" />
-                                                <span>Voir détails</span>
+                                                <span>Editer</span>
                                             </span>
                                         </span>
                                     </a>

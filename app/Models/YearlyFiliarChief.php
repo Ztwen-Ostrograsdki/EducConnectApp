@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesFiliarDetailsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class YearlyFiliarChief extends Model
 {
+    use InvalidatesFiliarDetailsCache;
+    
     protected $table = 'yearly_filiar_chiefs';
 
     protected $connection = 'tenant';

@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Models\SchoolYear;
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Traits\InvalidatesSubjectDetailsCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class YearlySubjectChief extends Model
 {
+    use InvalidatesSubjectDetailsCache;
 
     protected $table = 'yearly_subject_chiefs';
 
