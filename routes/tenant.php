@@ -114,10 +114,9 @@ Route::middleware([
         Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
         // ── Directeur ─────────────────────────────────────────────────
-        Route::middleware('role:directeur')->prefix('administration')->name('tenant.')->group(function () {
-            Route::get('/', TenantDashboard::class)->name('dashboard');
 
-
+        Route::middleware(['role:directeur'])->prefix('administration')->name('tenant.')->group(function () {
+            
             // ANNEES SCOLAIRES
             Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
 
@@ -127,9 +126,12 @@ Route::middleware([
 
             Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
 
+        });
 
-
-
+        Route::middleware(['role:directeur', 'tenant.has.active.schoolYear'])->prefix('administration')->name('tenant.')->group(function () {
+            
+            // TABLEAU DE BORD DIRECTEUR
+            Route::get('/', TenantDashboard::class)->name('dashboard');
 
             // PROMOTIONS
             Route::get('/promotions', PromotionsPortal::class)->name('promotions.portal');

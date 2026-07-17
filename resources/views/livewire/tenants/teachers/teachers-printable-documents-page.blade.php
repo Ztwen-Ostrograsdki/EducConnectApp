@@ -35,6 +35,15 @@
                 <x-lucide-school class="w-4 h-4" />
                 <span>Profil {{ $classe->name }}</span>
             </a>
+
+            <div class="flex flex-col gap-1 justify-end items-center text-slate-500 font-mono ">
+                <select wire:model.live='targetRoute'
+                    class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono transition-colors focus:border-indigo-500 disabled:opacity-55">
+                    @foreach ($targetRoutes as $r => $t)
+                        <option value="{{ $r }}">{{ $t }}</option>
+                    @endforeach
+                </select>
+            </div>
         @else
             <a wire:navigate href="{{ route('tenant.teachers.print.configuration') }}"
                 class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-slate-300 hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">

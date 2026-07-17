@@ -28,8 +28,15 @@ class TeachersPrintableDocumentsPage extends Component
     public string $search = '';
 
     public ?string $targeted = null;
+
+    public string $targetRoute = 'tenant.teachers.docs';
     
-    public string $pageTitle = 'Documents générés - Liste enseignants/Classes/Enseignants/...';
+    public string $pageTitle = 'Documents générés - Liste enseignants';
+
+    public $targetRoutes = [
+        'tenant.students.docs' => 'Liste des apprenants',
+        'tenant.teachers.docs' => 'Liste des enseignants',
+    ];
 
 
 
@@ -68,6 +75,17 @@ class TeachersPrintableDocumentsPage extends Component
     public function reloaddata()
     {
         $this->counter++;
+    }
+
+
+    public function updatedTargetRoute(string $targetRoute)
+    {
+        if($targetRoute){
+
+            $url = route($targetRoute, ['classe_slug' => $this->classe_slug]);
+
+            return $this->redirect($url, navigate:true);
+        }
     }
 
     #[Computed]

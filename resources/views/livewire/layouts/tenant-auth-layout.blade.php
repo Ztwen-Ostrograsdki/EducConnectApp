@@ -110,7 +110,7 @@
                                 <div class="s-icon" style="font-size:.72rem;">📋</div>
                                 <span class="s-label">Portail</span>
                             </a>
-                            @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 4) as $classe)
+                            @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 3) as $classe)
                                 <a wire:navigate
                                     href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">
@@ -140,7 +140,7 @@
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
-                            @foreach (tenancy()->tenant?->promotions(4) as $promotion)
+                            @foreach (tenancy()->tenant?->promotions(3) as $promotion)
                                 <a wire:navigate
                                     href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promotion->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">
@@ -175,7 +175,7 @@
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
-                            @foreach (tenancy()->tenant?->filiars(4) as $filiar)
+                            @foreach (tenancy()->tenant?->filiars(3) as $filiar)
                                 <a wire:navigate
                                     href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">
@@ -210,7 +210,7 @@
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
-                            @foreach (tenancy()->tenant?->serials(4) as $serial)
+                            @foreach (tenancy()->tenant?->serials(3) as $serial)
                                 <a wire:navigate
                                     href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
                                     class="s-link" style="font-size:.78rem;">
@@ -245,20 +245,6 @@
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
-                            @foreach (tenancy()->tenant?->subjects(4) as $subject)
-                                <a wire:navigate
-                                    href="{{ route('tenant.subject.profil', ['subject_slug' => $subject->slug]) }}"
-                                    class="s-link" style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label uppercase">
-                                        @if ($subject->code)
-                                            {{ $subject->code }}
-                                        @else
-                                            {{ $subject->name }}
-                                        @endif
-                                    </span>
-                                </a>
-                            @endforeach
                             <a wire:navigate href="{{ route('tenant.subject.create') }}" class="s-link"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
@@ -335,6 +321,17 @@
                                 <div class="s-icon">
                                     <x-lucide-octagon-alert class="w-3 h-3" />
                                 </div><span class="s-label">Status des ajouts</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.teachers.print.configuration') }}"
+                                class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-file class="w-3 h-3" />
+                                </div><span class="s-label">Impression personalisée</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.teachers.docs') }}" class="s-link">
+                                <div class="s-icon">
+                                    <x-lucide-printer class="w-3 h-3" />
+                                </div><span class="s-label">Fichiers imprimables</span>
                             </a>
 
                         </div>

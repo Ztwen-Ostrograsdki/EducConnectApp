@@ -280,7 +280,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     
     public function promotions(?int $limit = null)
     {
-        $query = Promotion::where('is_active', true)?->orderByDesc('name');
+        $query = Promotion::where('is_active', true)?->orderByDesc('updated_at');
 
         if($limit) $query->take($limit);
 
@@ -294,7 +294,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     public function filiars(?int $limit = null)
     {
-        $query = Filiar::where('is_active', true)?->orderByDesc('name');
+        $query = Filiar::where('is_active', true)?->orderByDesc('updated_at');
 
         if($limit) $query->take($limit);
 
@@ -308,7 +308,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     public function serials(?int $limit = null)
     {
-        $query = Serial::where('is_active', true)?->orderByDesc('name');
+        $query = Serial::where('is_active', true)?->orderByDesc('updated_at');
 
         if($limit) $query->take($limit);
 
@@ -323,7 +323,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     public function subjects(?int $limit = null)
     {
-        $query = Subject::where('is_active', true)?->orderByDesc('name');
+        $query = Subject::where('is_active', true)?->orderByDesc('updated_at');
 
         if($limit) $query->take($limit);
 
@@ -346,7 +346,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
             if($limit) $query->take($limit);
 
-            return $query->orderByDesc('name')->get();
+            return $query->orderByDesc('updated_at')->get();
 
         }
 

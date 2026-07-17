@@ -2,13 +2,30 @@
     <div class="mb-20 p-2 relative " wire:loading.class="opacity-20 pointer-events-none"
         wire:target='resetFilters, restoreSelects, promotionInGroups'>
         <div class="flex justify-end p-3 gap-2">
-            <a wire:navigate href="{{ route('tenant.students.docs') }}"
-                class="py-2.5 px-5 active:scale-95 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
-                <span class="inline-flex gap-x-3 items-center">
-                    <x-lucide-file class="w-4 h-4" />
-                    <span>Documents PDF/Excel Dispo.</span>
-                </span>
-            </a>
+            @if ($classe_slug)
+                <a wire:navigate href="{{ route('tenant.students.docs', ['classe_slug' => $classe_slug]) }}"
+                    class="py-2.5 px-5 active:scale-95 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm hover:text-black">
+                    <span class="inline-flex gap-x-3 items-center">
+                        <x-lucide-file class="w-4 h-4" />
+                        <span>Documents PDF/Excel Dispo.</span>
+                    </span>
+                </a>
+                <a wire:navigate href="{{ route('tenant.classe.profil', ['classe_slug' => $classe_slug]) }}"
+                    class="py-2.5 px-5 rounded-2xl bg-primary-500/60 hover:bg-primary-600 text-white hover:text-black border border-primary-400 transition-all text-sm inline-flex items-center justify-center active:scale-95">
+                    <span class="flex items-center gap-2">
+                        <x-lucide-school class="h4 w-4" />
+                        <span>Profil classe</span>
+                    </span>
+                </a>
+            @else
+                <a wire:navigate href="{{ route('tenant.students.docs') }}"
+                    class="py-2.5 px-5 active:scale-95 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm hover:text-black">
+                    <span class="inline-flex gap-x-3 items-center">
+                        <x-lucide-file class="w-4 h-4" />
+                        <span>Documents PDF/Excel Dispo.</span>
+                    </span>
+                </a>
+            @endif
             <a href="{{ route('tenant.students.print.list') }}"
                 class="py-2.5 px-5 rounded-2xl bg-purple-500/60 hover:bg-purple-600 text-white hover:text-black border border-purple-400 transition-all text-sm inline-flex items-center justify-center active:scale-95">
                 <span class="flex items-center gap-2">

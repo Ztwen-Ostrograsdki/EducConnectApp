@@ -29,7 +29,15 @@ class StudentsPrintableDocumentsPage extends Component
 
     public ?string $targeted = null;
     
-    public string $pageTitle = 'Documents générés - Liste Apprenants/Classes/Enseignants/...';
+    public string $targetRoute = 'tenant.students.docs';
+    
+    public string $pageTitle = 'Documents générés - Liste apprenants';
+
+    public $targetRoutes = [
+        'tenant.students.docs' => 'Liste des apprenants',
+        'tenant.teachers.docs' => 'Liste des enseignants',
+    ];
+
 
 
 
@@ -57,6 +65,16 @@ class StudentsPrintableDocumentsPage extends Component
     public function mount(?string $classe_slug = null, ?string $filiar_slug = null, ?string $promotion_slug = null, ?string $promotionsGrouped = null, ?string $serial_slug = null)
     {
         self::initiator($classe_slug, $filiar_slug, $promotion_slug, $promotionsGrouped, $serial_slug);
+    }
+
+    public function updatedTargetRoute(string $targetRoute)
+    {
+        if($targetRoute){
+
+            $url = route($targetRoute, ['classe_slug' => $this->classe_slug]);
+
+            return $this->redirect($url, navigate:true);
+        }
     }
 
     public function updatedSearch(): void
