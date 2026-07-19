@@ -1,6 +1,6 @@
-<div class="w-full overflow-x-hidden p-2">
+<div class="w-full overflow-x-hidden">
     <div wire:loading
-        wire:target='gender,status,department,city,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,search,previousPage,nextPage,gotoPage'
+        wire:target='gender,status,department,city,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,previousPage,nextPage,gotoPage'
         class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
         style="z-index: 200 !important;">
 
@@ -12,25 +12,18 @@
             <span class="text-xl font-mono ls-1">Chargement en cours...</span>
         </div>
     </div>
-    <div class="mx-auto w-full max-w-462.5 px-3 sm:px-3 lg:px-6 xl:px-8">
+    <div class="mx-auto w-full max-w-462.5 p-3 lg:px-6 xl:px-8 border border-slate-800 rounded-2xl bg-slate-950 pb-32">
         <section class="mb-6">
             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
-                <div class="min-w-0">
+                <div class="min-w-0 flex-col gap-2">
 
                     <div class="flex flex-wrap items-center gap-3">
 
-                        <h1 class="text-2xl sm:text-3xl font-bold">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-400">
 
-                            Apprenants
+                            Portail des apprenants
 
                         </h1>
-
-                        <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
-
-                            {{ __zero($this->allStudentsCounter) }} Apprenants
-
-                        </span>
-
                     </div>
 
                     <p class="mt-2 text-slate-400 text-sm sm:text-base">
@@ -38,40 +31,32 @@
                         Vue globale des apprenants de l’établissement
 
                     </p>
+                    <div class="flex items-center gap-2 my-2 py-3 font-mono text-sm">
+                        <span class="p-3 px-4 rounded-4xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/40">
+                            {{ $this->stats['students'] }} Apprenants
+                        </span>
+
+                        <span class="p-3 px-4 rounded-4xl bg-green-500/10 text-green-400 border border-green-500/40">
+                            {{ $this->stats['students_in_classe'] }} Apprenants ayant de classe
+                        </span>
+                        @if ($this->stats['students'] - $this->stats['students_in_classe'])
+                            <span
+                                class="p-3 px-4 rounded-4xl bg-red-500/10 text-red-400 border border-red-500/30 animate-pulse">
+                                {{ $this->stats['students'] - $this->stats['students_in_classe'] }} Apprenants sont
+                                encore sans
+                            </span>
+                        @endif
+                    </div>
 
                 </div>
 
-                {{-- ACTIONS --}}
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-
-                @foreach ([['Total', __zero($this->allStudentsCounter), 'text-indigo-400'], ['Actifs', __zero($this->activesStudentsCounter), 'text-emerald-400'], ['Taux Présence', '96%', 'text-amber-400']] as $kpi)
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
-                        <p class="text-xs sm:text-sm text-slate-400">
-                            {{ $kpi[0] }}
-                        </p>
-                        <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold {{ $kpi[2] }}">
-                            {{ $kpi[1] }}
-                        </h2>
-                    </div>
-                @endforeach
-
             </div>
 
         </section>
 
         <section class="mb-6">
 
-            <div class="rounded-3xl border border-slate-800  bg-slate-900 p-4 sm:p-5">
+            <div class="rounded-3xl border border-slate-800  bg-slate-950 p-4 sm:p-5">
                 <div class="flex flex-col gap-4">
                     <div class="grid grid-cols-7 gap-x-3">
                         <div class="relative col-span-5">
@@ -172,7 +157,16 @@
                             <option value="desactives">
                                 <span>Désactivés</span>
                             </option>
-                            <option class="text-orange-600" value="de la corbeille">
+                            <option value="ayant de classe">
+                                <span>Ayant de classe</span>
+                            </option>
+                            <option value="ayant abandonés">
+                                <span>Déclarés abandons</span>
+                            </option>
+                            <option class="text-orange-500" value="sans classe">
+                                <span>Sans classes</span>
+                            </option>
+                            <option class="text-red-600" value="de la corbeille">
                                 <span>La corbeille</span>
                             </option>
                         </select>
@@ -265,8 +259,8 @@
 
         <section>
 
-            <div class="space-y-6 min-w-0">
-                <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
+            <div class="space-y-6 min-w-0" wire:loading.class="opacity-20" wire:target='search'>
+                <div class="rounded-3xl border border-slate-800 bg-slate-950 overflow-hidden">
 
                     <div class="border-b border-slate-800 p-4 sm:p-6">
                         <div class="flex flex-col gap-y-3">
@@ -389,13 +383,14 @@
 
                                                 <a title="Charger le profil de l'apprenant {{ $student->getFullName() }}"
                                                     href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                    class="flex items-center gap-4 hover:underline">
+                                                    class="flex items-center gap-4 group">
 
                                                     <img src="{{ $student->profil_photo_url() }}" alt=""
-                                                        class="w-14 h-14 rounded-full object-cover border-4 border-slate-700">
+                                                        class="w-14 h-14 rounded-full object-cover border-4 border-slate-800  group-hover:border-sky-500">
                                                     <div class="min-w-0">
 
-                                                        <h3 class="font-medium truncate">
+                                                        <h3
+                                                            class="font-medium truncate group-hover:text-sky-400 group-hover:underline underline-offset-4">
 
                                                             {{ $student->getFullName() }}
 
@@ -403,7 +398,7 @@
 
                                                         @if ($student->email)
                                                             <p
-                                                                class="mt-1 text-sm text-slate-400 truncate flex items-center gap-x-1.5">
+                                                                class="mt-1 text-sm text-slate-400 truncate flex items-center gap-x-1.5 group-hover:text-sky-700">
                                                                 <x-lucide-mail class="w-3.5 h-3.5" />
                                                                 <span>
                                                                     {{ $student->email }}
@@ -412,7 +407,7 @@
                                                         @endif
                                                         @if ($student->contacts)
                                                             <p
-                                                                class="mt-1 text-sm text-slate-400 truncate font-mono flex items-center gap-x-1.5">
+                                                                class="mt-1 text-sm text-slate-400 truncate font-mono flex items-center gap-x-1.5 group-hover:text-sky-700">
 
                                                                 <x-lucide-phone class="w-3.5 h-3.5" />
                                                                 <span>
@@ -575,9 +570,9 @@
                             <div class="w-full justify-center p-3">
                                 <div class="p-5 flex justify-center w-full text-center">
                                     <div class="flex flex-col items-center gap-3">
-                                        <p class="text-slate-500 text-sm">Aucune promotion trouvée.</p>
-                                        @if ($search || $gender || $serial_id)
-                                            <button wire:click="resetFilters"
+                                        <p class="text-slate-500 text-sm">Aucune donnée trouvée.</p>
+                                        @if ($search || $gender || $serial_id || $status || $classe_id || $promotion_id || $filiar_id)
+                                            <button wire:click="clearFilters"
                                                 class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
                                                 Réinitialiser les filtres
                                             </button>

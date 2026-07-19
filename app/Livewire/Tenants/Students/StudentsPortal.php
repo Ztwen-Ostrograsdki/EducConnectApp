@@ -12,6 +12,7 @@ use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Services\DashboardCounterService;
 use App\Services\PDFFactory;
 use App\Services\StudentsServices\StudentPrintColumns;
 use App\Services\StudentsServices\StudentPrintQuery;
@@ -295,6 +296,24 @@ class StudentsPortal extends Component
     }
 
 
+    #[Computed]
+    public function stats(): array
+    {
+        return app(DashboardCounterService::class)->getMany([
+            'students',
+            'students_in_classe',
+            'teachers_in_classes',
+            'teachers',
+            'classes_actives',
+            'classes_closeds',
+            'classes_unactives',
+            'promotions_actives',
+            'serials_actives',
+            'filiars_actives',
+        ]);
+    }
+
+
 
     #[Computed]
     public function hasPrintSessionConfig(): bool
@@ -485,6 +504,33 @@ class StudentsPortal extends Component
                 $qst->whereNotNull('deleted_at');
 
             }
+            elseif($this->status === 'ayant de classe'){
+
+                $qst->whereHas('classes', fn($q) => 
+                    $q->where('is_active', true)
+                    ->where('school_year_id', $this->activeYear->id)
+                    ->whereNull('ended_at')
+                    
+                );
+
+            }
+            elseif($this->status === 'sans classe'){
+
+                $qst->whereDoesntHave('classes', fn($q) => 
+                    $q->where('school_year_id', $this->activeYear->id)
+                );
+
+            }
+            elseif($this->status === 'ayant abandonés'){
+
+                $qst->whereHas('yearlyStudentsLeaves', fn($q) => 
+                    $q->where('school_year_id', $this->activeYear->id)
+                    
+                );
+
+            }
+            
+            
 
 
         })

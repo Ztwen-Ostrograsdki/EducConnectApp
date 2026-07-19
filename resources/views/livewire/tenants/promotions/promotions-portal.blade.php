@@ -165,8 +165,7 @@
 
                 </div>
                 <div class="w-full flex gap-x-1 justify-start items-center">
-                    <div wire:loading
-                        wire:target='search,serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
+                    <div wire:loading wire:target='serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage'
                         class="fixed inset-0 flex items-center justify-center bg-slate-800/30 backdrop-blur-xs"
                         style="z-index: 200 !important;">
 
