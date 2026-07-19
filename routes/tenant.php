@@ -8,6 +8,8 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
+use App\Livewire\Tenants\Classes\ClassesPrintableDocumentsComponent;
+use App\Livewire\Tenants\Classes\ClassesPrintableDocumentsPage;
 use App\Livewire\Tenants\Classes\ClassesPrintableListComponent;
 use App\Livewire\Tenants\Classes\ClassesPrintsManagerComponent;
 use App\Livewire\Tenants\Classes\CreateClasseComponent;
@@ -192,7 +194,7 @@ Route::middleware([
 
             Route::get('/classes/gestion-impression/configuration', ClassesPrintsManagerComponent::class)->name('classes.print.configuration');
 
-            // Route::get('/enseignants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
+            Route::get('/classes/documents/imprimable/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
 
 
 

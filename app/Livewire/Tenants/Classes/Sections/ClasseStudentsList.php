@@ -102,7 +102,9 @@ class ClasseStudentsList extends Component
               ->orWhere('prenames', 'like', '%'.$this->search.'%')
               ->orWhere('matricule', 'like', '%'.$this->search.'%')
         )
-        ->when($this->gender, fn($q) => $q->where('gender', $this->gender))
+        ->when($this->gender, fn ($q) =>
+            $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender), str::initials(Str::upper($this->gender), true)])
+        )
         ->whereDoesntHave('yearlyStudentsLeaves')
         ->orWhereHas('yearlyStudentsLeaves', fn($req) => 
             $req->where('school_year_id', '<>', $this->classe->school_year_id)
@@ -129,24 +131,12 @@ class ClasseStudentsList extends Component
             ->whereHas('yearlyStudentsLeaves', fn ($q) =>
                 $q->where('classe_id', $classeId)
                 ->where('school_year_id', $schoolYearId)
-                ->whereIn('status', YearlyClasseStudentsLeave::ACTIVE_LEAVE_STATUSES)
                 ->whereNull('ended_at')
-            )
-            ->when($this->search, fn ($q) =>
-                $q->where(fn ($q) =>
-                    $q->where('name', 'like', '%'.$this->search.'%')
-                    ->orWhere('prenames', 'like', '%'.$this->search.'%')
-                    ->orWhere('matricule', 'like', '%'.$this->search.'%')
-                )
-            )
-            ->when($this->gender, fn ($q) =>
-                $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender)])
             )
             // eager load contraint : uniquement l'abandon pertinent pour cette classe/année
             ->with(['yearlyStudentsLeaves' => fn ($q) =>
                 $q->where('classe_id', $classeId)
                 ->where('school_year_id', $schoolYearId)
-                ->whereIn('status', YearlyClasseStudentsLeave::ACTIVE_LEAVE_STATUSES)
                 ->whereNull('ended_at')
             ])
             ->orderBy('name')

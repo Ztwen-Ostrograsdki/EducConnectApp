@@ -138,8 +138,8 @@ return [
     ]
     
     ,'genders' => [
-        'MASCULIN' => 'MASCULIN',
-        'FEMININ' => 'FEMININ',
+        'M' => 'MASCULIN',
+        'F' => 'FEMININ',
     ],
     
     'devoirs_types' => [

@@ -1,67 +1,11 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full overflow-x-hidden">
-    <div wire:loading wire:target='gender,resetFilters,search,previousPage,nextPage,gotoPage'
-        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
-        style="z-index: 200 !important;">
+<div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full overflow-x-hidden pb-32">
 
-        <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
-            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
-        </div>
-    </div>
     <div class="w-full max-w-[100vw] overflow-x-hidden">
-        <section class="border-b rounded-3xl border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-            <div class="px-2 sm:px-3 lg:px-5 py-5">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                    <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <h1 class="text-lg sm:text-xl text-slate-300 font-bold break-words">
-                                Liste des apprenants
-                            </h1>
-                            <span
-                                class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0 font-mono uppercase">
-                                {{ $this->students->total() }} Apprenant{{ $this->students->total() > 1 ? 's' : '' }}
-                                @if ($gender || $search)
-                                    filtrés
-                                @endif
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                        <button wire:click='generateNewClasseStudentsList'
-                            class="py-2.5 px-5 rounded-2xl bg-sky-500/50 hover:bg-sky-600/75 transition-all text-sm">
-                            <span wire:loading.remove wire:target='generateNewClasseStudentsList'
-                                class="inline-flex gap-x-2 items-center">
-                                <x-lucide-save class="w-4 h-4" />
-                                Exporter la liste en PDF
-                            </span>
-                            <span wire:loading wire:target='generateNewClasseStudentsList'
-                                class="inline-flex items-center gap-x-2">
-                                <span class="flex items-center gap-x-2.2">
-                                    <span>Processus en cours...</span>
-                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
-                                </span>
-                            </span>
 
-                        </button>
-                        <a wire:navigate
-                            href="{{ route('tenant.students.print.configuration', ['classe_slug' => $classe->slug]) }}"
-                            class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
-                            <x-lucide-printer class="w-4 h-4" />
-                            <span>Génaration personnalisée de la liste en PDF</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-4">
+        <section class="my-2">
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
                 <div class="flex flex-col xl:flex-row gap-4">
 
-                    {{-- Search --}}
                     <div class="flex-1 min-w-0">
                         <div class="relative">
                             <input type="text" wire:model.live.debounce.300ms="search"
@@ -80,11 +24,12 @@
 
                     {{-- Filtres --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:flex gap-3">
-                        <select wire:model.live="gender"
-                            class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm focus:border-indigo-500 focus:outline-none transition">
-                            <option value="">Tous les genres</option>
-                            <option value="M">Masculin</option>
-                            <option value="F">Féminin</option>
+                        <select wire:model.live='gender'
+                            class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
+                            <option>Tout genre</option>
+                            @foreach (config('app.genders') as $g => $gend)
+                                <option value="{{ $gend }}">{{ $gend }}</option>
+                            @endforeach
                         </select>
 
                         <button wire:click="resetFilters"
@@ -104,7 +49,66 @@
             </div>
         </section>
 
-        <section class="w-full my-4">
+        <section class="w-full my-4 relative">
+            <section class="border-b rounded-3xl border-slate-800 bg-slate-900/80 backdrop-blur-xl my-3">
+                <div class="px-2 sm:px-3 lg:px-5 py-5">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <h1 class="text-lg sm:text-xl text-slate-300 font-bold break-words">
+                                    Liste des apprenants
+                                </h1>
+                                <span
+                                    class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs shrink-0 font-mono uppercase">
+                                    {{ $this->students->total() }}
+                                    Apprenant{{ $this->students->total() > 1 ? 's' : '' }}
+                                    @if ($gender || $search)
+                                        filtrés
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                            <button wire:click='generateNewClasseStudentsList'
+                                class="py-2.5 px-5 rounded-2xl bg-sky-500/50 hover:bg-sky-600/75 transition-all text-sm">
+                                <span wire:loading.remove wire:target='generateNewClasseStudentsList'
+                                    class="inline-flex gap-x-2 items-center">
+                                    <x-lucide-save class="w-4 h-4" />
+                                    Exporter la liste en PDF
+                                </span>
+                                <span wire:loading wire:target='generateNewClasseStudentsList'
+                                    class="inline-flex items-center gap-x-2">
+                                    <span class="flex items-center gap-x-2.2">
+                                        <span>Processus en cours...</span>
+                                        <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                    </span>
+                                </span>
+
+                            </button>
+                            <a wire:navigate
+                                href="{{ route('tenant.students.print.configuration', ['classe_slug' => $classe->slug]) }}"
+                                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                                <x-lucide-printer class="w-4 h-4" />
+                                <span>Génaration personnalisée de la liste en PDF</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div wire:loading wire:target='gender,resetFilters,search,previousPage,nextPage,gotoPage'
+                class="absolute inset-0 flex items-center justify-center bg-slate-800/5 backdrop-blur-xs"
+                style="z-index: 200 !important;">
+
+                <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+                    <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    <span class="text-xl font-mono ls-1">Chargement en cours...</span>
+                </div>
+            </div>
             @if (count($this->students))
                 <div class="border border-slate-800 bg-slate-900 overflow-hidden">
                     <div class="overflow-x-auto">
@@ -130,35 +134,40 @@
                                         wire:key="student-{{ $student->id }}">
 
                                         {{-- Apprenant --}}
-                                        <td class="px-6 py-5 truncate">
+                                        <td class="px-6 py-5 truncate font-mono text-slate-400">
                                             {{ __zero($this->students->firstItem() + $loop->iteration - 1) }}
                                         </td>
                                         <td class="px-6 py-5 truncate">
                                             <a href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                class="flex items-center gap-4 min-w-0 hover:underline hover:underline-offset-4 hover:text-amber-500">
-                                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                                class="flex items-center gap-4 min-w-0 group">
+                                                <div
+                                                    class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-400">
                                                     <img src="{{ $student->profil_photo_url }}"
                                                         class="w-full h-full object-cover rounded-full">
                                                 </div>
-                                                <div class="flex flex-col">
-                                                    <div class="font-medium  transition block">
-                                                        {{ $student->getFullName() }}
+                                                <div class="flex flex-col w-full">
+                                                    <div class="font-medium w-full transition flex justify-between">
+                                                        <span
+                                                            class="group-hover:underline underline-offset-4 group-hover:text-sky-500 font-mono text-slate-300">{{ $student->getFullName() }}</span>
+                                                        @if ($student->gender)
+                                                            <span
+                                                                class="uppercase float-right text-slate-500 font-mono py-1 px-2 bg-slate-950 shadow-sm shadow-sky-700 group-hover:shadow-orange-500">{{ str()->initials($student->gender) }}</span>
+                                                        @endif
                                                     </div>
+                                                    <p class="text-xs text-slate-500 flex-col mt-0.5 flex gap-x-1">
+
+                                                        @if ($student->educMaster)
+                                                            <span class="font-mono">{{ $student->educMaster }}</span>
+                                                        @endif
+                                                        @if ($student->matricule)
+                                                            <span class="font-mono">{{ $student->matricule }}</span>
+                                                        @endif
+                                                    </p>
 
                                                 </div>
 
                                             </a>
-                                            <p class="text-xs text-slate-500 mt-0.5 flex gap-x-1">
-                                                <span>{{ $student->gender ?? '—' }}</span>
-                                                @if ($student->educMaster)
-                                                    · EducMaster : <span
-                                                        class="font-mono">{{ $student->educMaster }}</span>
-                                                @endif
-                                                @if ($student->matricule)
-                                                    · Matricule : <span
-                                                        class="font-mono">{{ $student->matricule }}</span>
-                                                @endif
-                                            </p>
+
                                         </td>
 
                                         {{-- Matricule --}}
@@ -397,30 +406,36 @@
                                         {{-- Apprenant --}}
                                         <td class="px-6 py-5 truncate">
                                             <a href="{{ route('tenant.student.profil', ['student_uuid' => $leave_student->uuid]) }}"
-                                                class="flex items-center gap-4 min-w-0 hover:underline hover:underline-offset-4 hover:text-amber-500">
-                                                <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                                class="flex items-center gap-4 min-w-0 group">
+                                                <div
+                                                    class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-400">
                                                     <img src="{{ $leave_student->profil_photo_url }}"
                                                         class="w-full h-full object-cover rounded-full">
                                                 </div>
-                                                <div class="flex flex-col">
-                                                    <div class="font-medium  transition block">
-                                                        {{ $leave_student->getFullName() }}
+                                                <div class="flex flex-col w-full">
+                                                    <div class="font-medium w-full transition flex justify-between">
+                                                        <span
+                                                            class="group-hover:underline underline-offset-4 group-hover:text-sky-500 font-mono text-slate-300">{{ $leave_student->getFullName() }}</span>
+                                                        @if ($leave_student->gender)
+                                                            <span
+                                                                class="uppercase float-right text-slate-500 font-mono py-1 px-2 bg-slate-950 shadow-sm shadow-sky-700 group-hover:shadow-orange-500">{{ str()->initials($leave_student->gender) }}</span>
+                                                        @endif
                                                     </div>
+                                                    <p class="text-xs text-slate-500 flex-col mt-0.5 flex gap-x-1">
+
+                                                        @if ($leave_student->educMaster)
+                                                            <span
+                                                                class="font-mono">{{ $leave_student->educMaster }}</span>
+                                                        @endif
+                                                        @if ($leave_student->matricule)
+                                                            <span
+                                                                class="font-mono">{{ $leave_student->matricule }}</span>
+                                                        @endif
+                                                    </p>
 
                                                 </div>
 
                                             </a>
-                                            <p class="text-xs text-slate-500 mt-0.5 flex gap-x-1">
-                                                <span>{{ $leave_student->gender ?? '—' }}</span>
-                                                @if ($leave_student->educMaster)
-                                                    · EducMaster : <span
-                                                        class="font-mono">{{ $leave_student->educMaster }}</span>
-                                                @endif
-                                                @if ($leave_student->matricule)
-                                                    · Matricule : <span
-                                                        class="font-mono">{{ $leave_student->matricule }}</span>
-                                                @endif
-                                            </p>
                                         </td>
 
                                         {{-- Matricule --}}

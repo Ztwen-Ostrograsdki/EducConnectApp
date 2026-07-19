@@ -112,7 +112,7 @@
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Portail</span>
                                 </a>
-                                @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 3) as $classe)
+                                @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 1) as $classe)
                                     <a wire:navigate
                                         href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                         class="s-link" style="font-size:.78rem;">
@@ -120,7 +120,17 @@
                                         <span class="s-label">Classe de {{ $classe->code ?? $classe->name }}</span>
                                     </a>
                                 @endforeach
-
+                                <a wire:navigate href="{{ route('tenant.classes.print.configuration') }}"
+                                    class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="w-3 h-3" />
+                                    </div><span class="s-label">Impression personalisée</span>
+                                </a>
+                                <a wire:navigate href="{{ route('tenant.classes.docs') }}" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-printer class="w-3 h-3" />
+                                    </div><span class="s-label">Fichiers imprimables</span>
+                                </a>
                                 <a wire:navigate href="{{ route('tenant.classes.create') }}" class="s-link"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
@@ -142,7 +152,7 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->promotions(3) as $promotion)
+                                @foreach (tenancy()->tenant?->promotions(2) as $promotion)
                                     <a wire:navigate
                                         href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promotion->slug]) }}"
                                         class="s-link" style="font-size:.78rem;">
@@ -178,7 +188,7 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->filiars(3) as $filiar)
+                                @foreach (tenancy()->tenant?->filiars(2) as $filiar)
                                     <a wire:navigate
                                         href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
                                         class="s-link" style="font-size:.78rem;">
@@ -214,7 +224,7 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->serials(3) as $serial)
+                                @foreach (tenancy()->tenant?->serials(2) as $serial)
                                     <a wire:navigate
                                         href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
                                         class="s-link" style="font-size:.78rem;">

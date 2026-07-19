@@ -1,17 +1,4 @@
 <div class="w-full max-w-full overflow-x-hidden">
-    <div wire:loading wire:target='gender,subjectType,resetFilters,search,previousPage,nextPage,gotoPage'
-        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
-        style="z-index: 200 !important;">
-
-        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
-            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
-        </div>
-    </div>
-
     <section class="mb-6">
 
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -58,9 +45,9 @@
 
                     <div class="relative">
 
-                        <input wire:model.live.debounce.400ms='search' type="text"
+                        <input wire:model.live.debounce.600ms='search' type="text"
                             placeholder="Rechercher un enseignant..."
-                            class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm outline-none focus:border-indigo-500transition-all">
+                            class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm outline-none focus:border-indigo-500transition-all font-mono">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
                             🔍
                         </div>
@@ -120,7 +107,21 @@
 
         </div>
 
-        <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 mb-28">
+        <div class="border border-slate-800 bg-slate-900 overflow-hidden text-slate-300 mb-28 relative">
+            <div wire:loading wire:target='search,gender,subjectType,resetFilters,previousPage,nextPage,gotoPage'
+                class="absolute inset-0 flex items-center justify-center bg-slate-800/5 backdrop-blur-xs"
+                style="z-index: 200 !important;">
+
+                <div
+                    class="items-center gap-1 text-slate-400 relative top-1/6 mx-auto flex justify-center flex-col gap-3">
+                    <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    <span class="text-xl font-mono ls-1">Rechargement en cours...</span>
+                </div>
+            </div>
 
             <div class="overflow-x-auto">
 
@@ -181,35 +182,32 @@
                                     </td>
                                     <td class="px-6 py-5 truncate">
                                         <a href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $teacher->uuid]) }}"
-                                            class="flex items-center gap-4 underline-offset-4 hover:underline hover:text-amber-600">
-                                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
+                                            class="flex items-center gap-4 group font-mono">
+                                            <div
+                                                class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-600">
                                                 <img src="{{ $teacher->user->profil_photo_url }}"
-                                                    class="w-full h-full object-cover rounded-full">
+                                                    class="w-full h-full object-cover rounded-full ">
                                             </div>
                                             <div class="text-left">
                                                 <span class="flex flex-col">
-                                                    <h3 class="font-semibold truncate">
+                                                    <h3
+                                                        class="truncate text-slate-200 group-hover:underline underline-offset-4 group-hover:text-sky-600">
                                                         {{ $teacher->getFullName() }}
                                                     </h3>
-                                                    <span class="text-slate-400 font-mono text-xs">
+                                                    <span class="text-slate-500 font-mono text-xs">
                                                         ID: {{ $teacher->identifiant }}
                                                     </span>
                                                     <span
-                                                        class="text-slate-400 font-mono text-xs flex gap-x-2 items-center">
+                                                        class="text-slate-500 font-mono text-xs flex gap-x-2 items-center">
                                                         <x-lucide-phone class="w-3 h-3" />
                                                         <span class="ls-1">{{ $teacher->user?->contacts }}</span>
-                                                    </span>
-                                                    <span
-                                                        class="text-slate-400 font-mono text-xs flex gap-x-2 items-center">
-                                                        <x-lucide-mail class="w-3 h-3" />
-                                                        <span>{{ $teacher->user?->email }}</span>
                                                     </span>
                                                 </span>
                                             </div>
 
                                         </a>
-                                        <small class="font-mono text-xs flex justify-center w-full text-yellow-500">
-                                            Tient la classe depuis
+                                        <small class="font-mono text-2xs flex justify-end w-full text-yellow-500">
+                                            Inséré dans la classe
                                             {{ __formatDate($teacher->classeSubjects->first()->started_at) }}
                                         </small>
                                         @if ($teacher->cannotAccessIntoClasse($classe->id))
@@ -225,7 +223,7 @@
                                         <span class="flex gap-x-2 items-center justify-center">
                                             @foreach ($teacher->getSubjectsForThisClasse($classe->id) as $subjectRelation)
                                                 <span
-                                                    class="px-3 py-1 border rounded-full bg-indigo-500/10 text-indigo-400 text-sm">
+                                                    class="px-3 py-1 border rounded-full bg-indigo-500/10 text-indigo-400 text-sm uppercase">
                                                     {{ $subjectRelation->subject->code }}
                                                 </span>
                                             @endforeach

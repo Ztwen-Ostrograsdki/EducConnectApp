@@ -101,7 +101,6 @@ class ClasseEffectifsService implements RefreshableSchoolYearCache
         return YearlyClasseStudentsLeave::query()
             ->where('classe_id', $classeId)
             ->where('school_year_id', $schoolYearId)
-            ->whereIn('status', YearlyClasseStudentsLeave::ACTIVE_LEAVE_STATUSES)
             ->whereNull('ended_at')
             ->count();
     }

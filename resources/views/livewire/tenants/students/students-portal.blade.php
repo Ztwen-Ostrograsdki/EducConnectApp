@@ -220,7 +220,7 @@
                         <span>Aperçue du document</span>
                     </span>
                 </a>
-                <a href="{{ route('tenant.students.print.configuration') }}"
+                <a wire:navigate href="{{ route('tenant.students.print.configuration') }}"
                     class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
                     <x-lucide-printer class="w-4 h-4" />
                     <span>Page de génération de documents en PDF dynamique</span>

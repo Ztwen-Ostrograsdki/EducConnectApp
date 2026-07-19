@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use App\Services\ClassesServices\ClassePrintColumns;
 use App\Services\ClassesServices\ClassePrintQuery;
+use App\Services\ClassesServices\ClassePrintSessionConfig;
 use App\Services\PDFFactory;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -96,13 +97,15 @@ class JobToGeneratePrintableClassesDataForThePrintViewComponent implements Shoul
 
         $rows = ClassePrintQuery::getFormattedRows($this->config, $this->school_year_id, $tableColumns);
 
+        $pdf_title = ClassePrintQuery::resolveDocTitle($this->config ? $this->config :  ClassePrintSessionConfig::filterConfig());
+
         $printed_at = now()->isoFormat('dddd D MMMM YYYY [à] HH:mm');
 
         $viewData = [
             'rows'            => $rows,
             'printed_at'      => $printed_at,
             'allClasses'      => $totalCount,
-            'pdf_title'       => $this->docTitle,
+            'pdf_title'       => $pdf_title,
             'target'          => 'classes',
             'eventName'       => 'ClassesPDFCompletedSuccessfullyLiveEvent',
             'tableColumns'    => $tableColumns,
@@ -117,6 +120,17 @@ class JobToGeneratePrintableClassesDataForThePrintViewComponent implements Shoul
             documentType:    'classe_list',
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
+            docDBInfos:      [
+                'classe_id'                 =>  null, 
+                'filiar_id'                 => isset($this->config['filiar_id']) ? 
+                                               $this->config['filiar_id'] : null,
+                'promotion_id'              => isset($this->config['promotion_id']) ? 
+                                               $this->config['promotion_id'] : null,
+                'serial_id'                 => isset($this->config['serial_id']) ? 
+                                               $this->config['serial_id'] : null,
+                'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
+                                               $this->config['promotionInGroups'] : null,
+            ],
         );
     }
 }

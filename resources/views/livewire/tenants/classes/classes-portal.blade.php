@@ -162,10 +162,15 @@
                         <span>Aperçue du document</span>
                     </span>
                 </a>
-                <a href="{{ route('tenant.classes.print.configuration') }}"
+                <a wire:navigate href="{{ route('tenant.classes.print.configuration') }}"
                     class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
                     <x-lucide-printer class="w-4 h-4" />
                     <span>Génération de documents en PDF</span>
+                </a>
+                <a wire:navigate href="{{ route('tenant.classes.docs') }}"
+                    class="py-2 px-2 bg-yellow-500/70 hover:bg-yellow-400 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                    <x-lucide-file class="w-4 h-4" />
+                    <span>Page des fichiers disponibles</span>
                 </a>
             </div>
         </section>

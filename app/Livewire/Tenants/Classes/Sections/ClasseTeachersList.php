@@ -10,6 +10,7 @@ use App\Models\SchoolYear;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -30,7 +31,7 @@ class ClasseTeachersList extends Component
     public ?string $classe_slug;
     public ?string $search = '';
     public ?string $gender = null;
-    public ?string $subjectType;
+    public ?string $subjectType = null;
     public ?int $school_year_id;
     public ?string $school_year;
 
@@ -67,6 +68,11 @@ class ClasseTeachersList extends Component
               ->where('classe_id', $this->classe->id)
               ->where('is_active', true)
               ->whereNull('ended_at')
+              ->when($this->subjectType, function (Builder $qq) {
+                $qq->whereHas('subject', function ($qq) {
+                    $qq->where('type', $this->subjectType);
+                });
+            })
         )
         ->when($this->search, function (Builder $query) {
             $query->where(function (Builder $q) {
@@ -88,11 +94,13 @@ class ClasseTeachersList extends Component
                 ->orWhere('identifiant', 'like', "%{$this->search}%");
             });
         })
+        
         ->when($this->gender, function (Builder $qq) {
-            $qq->whereHas('user', function ($qq) {
-                $qq->where('gender', $this->gender);
+            $qq->whereHas('user', function ($q) {
+                $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender), str::initials(Str::upper($this->gender), true)]);
             });
         })
+       
         ->orderBy('users.name')
         ->orderBy('users.prenames')
         ->paginate($this->perPage);

@@ -58,6 +58,9 @@
                 <h4 class="doc-title">{{ $pdf_title }}</h4>
             </div>
         @endif
+        <div class="doc-counter">
+            <h4 class="">Total: {{ __zero($allClasses) }} Classe(s)</h4>
+        </div>
     </header>
 
     {{-- ═══ TABLEAU PRINCIPAL ═══ --}}
@@ -176,6 +179,7 @@
         background: var(--white);
     }
 
+    /* ══ BANDEAU OFFICIEL ══ */
     .official-banner {
         width: 100%;
         margin: 0 auto 1rem;
@@ -229,6 +233,7 @@
         background: #DC2626;
     }
 
+    /* ══ ENTÊTE ══ */
     .header-band {
         display: flex;
         align-items: flex-start;
@@ -359,18 +364,31 @@
     .doc-title-block {
         padding-bottom: 1.25rem;
         border-bottom: 2px solid var(--navy);
-        text-align: center;
+        text-align: left;
+    }
+
+    .doc-counter h4 {
+        text-align: right;
+        padding: 7px 10px;
+        font-size: 1.5em;
+        font-family: monospace;
+        border: thin solid gray;
+        display: inline-flex;
+        float: right;
+        margin: 5px 0 5px 0;
+        border-radius: 10px;
     }
 
     .doc-title {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--navy);
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
 
+    /* ══ TABLEAU ══ */
     .doc-body {
         margin-top: 1.25rem;
     }
@@ -390,7 +408,7 @@
         padding: 9px 4px;
         color: var(--white);
         font-weight: 600;
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         border: 1px solid var(--navy-mid);
@@ -400,6 +418,10 @@
         word-break: break-word;
         overflow-wrap: break-word;
         line-height: 1.25;
+    }
+
+    .students-table thead tr:hover {
+        background: #09001bfd !important;
     }
 
     .students-table tbody tr.row-odd {
@@ -419,13 +441,13 @@
         word-break: break-word;
         overflow-wrap: break-word;
         white-space: normal;
-        text-align: center;
     }
 
     .td-center {
         text-align: center;
     }
 
+    /* Nom de classe : aligné à gauche */
     .cell-name {
         text-align: left;
     }
@@ -434,12 +456,13 @@
         font-weight: 600;
         color: var(--text);
         font-size: 0.82rem;
+        text-align: left !important;
     }
 
     /* Colonnes numériques (effectifs, nb. profs, nb. abandons) — mise en avant discrète */
     .cell-numeric {
         font-family: var(--font-mono);
-        font-weight: 700;
+        font-weight: 400;
         font-size: 0.82rem;
         color: var(--navy);
     }
@@ -481,3 +504,4 @@
         }
     }
 </style>
+

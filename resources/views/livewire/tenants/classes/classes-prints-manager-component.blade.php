@@ -14,13 +14,32 @@
             </div>
         </div>
 
-        {{-- ═══ CIBLAGE DES CLASSES ═══ --}}
+        <section class="rounded-2xl p-3 bg-indigo-900/10 border border-indigo-900 justify-end flex gap-3 mb-3">
+            <a wire:navigate href="{{ route('tenant.classes.portal') }}"
+                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-school class="w-4 h-4" />
+                <span>Portail des classes</span>
+            </a>
+            <a wire:navigate href="{{ route('tenant.classes.print.list') }}"
+                class="py-2.5 px-5 rounded-2xl bg-gray-500/40 hover:bg-gray-600 hover:text-black transition-all text-sm">
+                <span class="inline-flex items-center gap-2">
+                    <x-lucide-eye class="w-4 h-4" />
+                    <span>Aperçue du document</span>
+                </span>
+            </a>
+            <a wire:navigate href="{{ route('tenant.classes.docs') }}"
+                class="py-2 px-2 bg-yellow-500/70 hover:bg-yellow-400 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                <x-lucide-file class="w-4 h-4" />
+                <span>Page des fichiers disponibles</span>
+            </a>
+        </section>
+
         <section
             class="rounded-2xl p-3 bg-indigo-900/10 border border-indigo-900 overflow-hidden flex flex-col gap-3 mb-3"
             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-2"
             x-transition:enter-end="opacity-100 translate-y-0">
 
-            <h4 class="text-lg font-bold ls-1 border-b border-b-slate-600 py-2 text-indigo-700">
+            <h4 class="text-lg font-bold ls-1 border-b border-b-slate-600 py-2 text-slate-400">
                 Cibler les classes à imprimer
             </h4>
 
@@ -74,7 +93,7 @@
         {{-- ═══ STATUTS SPÉCIFIQUES CLASSES ═══ --}}
         <section
             class="rounded-2xl p-3 bg-indigo-900/10 border border-indigo-900 overflow-hidden flex flex-col gap-3 mb-3">
-            <h4 class="text-lg font-bold ls-1 border-b border-b-slate-600 py-2 text-indigo-700">
+            <h4 class="text-lg font-bold ls-1 border-b border-b-slate-600 py-2 text-slate-400">
                 Cibler le statut des classes à imprimer
             </h4>
 
@@ -275,7 +294,7 @@
 
         <button title="Lancer la procédure d'impression" wire:click="initPrintProcess" wire:loading.attr="disabled"
             wire:target="initPrintProcess"
-            class="flex items-center w-full justify-center gap-1.5 py-4 px-3 rounded-xl bg-sky-800/80 hover:bg-sky-600/90 hover:text-black text-sky-400 transition-all whitespace-nowrap disabled:opacity-50 active:scale-95 text-sm border border-sky-300">
+            class="flex items-center w-full justify-center gap-1.5 py-4 px-3 rounded-xl bg-sky-800/80 hover:bg-sky-600/90 hover:text-black text-sky-400 transition-all whitespace-nowrap disabled:opacity-50 active:scale-95 text-sm">
             <span wire:loading.remove wire:target="initPrintProcess"
                 class="inline-flex items-center gap-1.5 font-semibold">
                 <x-lucide-send class="w-4 h-4" />
