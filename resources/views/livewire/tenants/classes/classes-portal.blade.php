@@ -114,7 +114,6 @@
                     </div>
                 </div>
 
-                {{-- Promotions (inchangée) --}}
                 <div
                     class="rounded-3xl border border-slate-800 bg-slate-900 p-5 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer opacity-80 hover:opacity-100">
                     <div class="flex flex-col items-start justify-between gap-4">
@@ -138,6 +137,36 @@
                     </div>
                 </div>
 
+            </div>
+        </section>
+        <section class="px-4 sm:px-6 lg:px-8 my-1">
+            <div class="flex items-center justify-end gap-2 py-2">
+                <button wire:click='printStudentsList'
+                    class="py-2.5 px-5 rounded-2xl bg-sky-500/50 hover:bg-sky-600/75 transition-all text-sm">
+                    <span wire:loading.remove wire:target='printStudentsList' class="inline-flex gap-x-2 items-center">
+                        <x-lucide-save class="w-4 h-4" />
+                        Exporter les classes en PDF
+                    </span>
+                    <span wire:loading wire:target='printStudentsList' class="inline-flex items-center gap-x-2">
+                        <span class="flex items-center gap-x-2.2">
+                            <span>Document en cours...</span>
+                            <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                        </span>
+                    </span>
+
+                </button>
+                <a href="{{ route('tenant.classes.print.list') }}"
+                    class="py-2.5 px-5 rounded-2xl bg-gray-500/40 hover:bg-gray-600 hover:text-black transition-all text-sm">
+                    <span class="inline-flex items-center gap-2">
+                        <x-lucide-eye class="w-4 h-4" />
+                        <span>Aperçue du document</span>
+                    </span>
+                </a>
+                <a href="{{ route('tenant.classes.print.configuration') }}"
+                    class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-white hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
+                    <x-lucide-printer class="w-4 h-4" />
+                    <span>Génération de documents en PDF</span>
+                </a>
             </div>
         </section>
         <section class="px-4 sm:px-6 lg:px-8">

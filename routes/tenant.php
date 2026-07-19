@@ -8,6 +8,8 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
+use App\Livewire\Tenants\Classes\ClassesPrintableListComponent;
+use App\Livewire\Tenants\Classes\ClassesPrintsManagerComponent;
 use App\Livewire\Tenants\Classes\CreateClasseComponent;
 use App\Livewire\Tenants\Classes\EditClasseComponent;
 use App\Livewire\Tenants\Classes\ManageClasseYearlyResponsiblesComponent;
@@ -142,10 +144,6 @@ Route::middleware([
 
             Route::get('/promotions/nouvelle-promotion', CreatePromotionComponent::class)->name('promotion.create');
 
-
-
-
-
             // LES MATIERES
             Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
@@ -154,7 +152,6 @@ Route::middleware([
             Route::get('/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');
             Route::get('/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
             Route::get('/matieres/{subject_slug}/AE/edition', ManageSubjectChiefsComponent::class)->name('subject.edit.ae');
-
 
             // FILIRES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
@@ -165,8 +162,6 @@ Route::middleware([
             Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
             Route::get('/filieres/{filiar_slug}/AE/edition', ManageFiliarChiefsComponent::class)->name('filiar.edit.ca');
             
-
-
             // SERIES
             Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
 
@@ -175,8 +170,6 @@ Route::middleware([
             Route::get('/series/nouvelle-serie', CreateSerialComponent::class)->name('serial.create');
 
             Route::get('/series/{serial_slug}/edition', ManageSerialComponent::class)->name('serial.edit');
-
-
 
 
 
@@ -195,6 +188,11 @@ Route::middleware([
 
             Route::get('/classes/{classe_slug}/gestion-enseignant-par-matiere', ManageYearlyClasseSubjectsTeacherComponent::class)->name('classe.manage.subjects.teacher');
 
+            Route::get('/classes/impression', ClassesPrintableListComponent::class)->name('classes.print.list');
+
+            Route::get('/classes/gestion-impression/configuration', ClassesPrintsManagerComponent::class)->name('classes.print.configuration');
+
+            // Route::get('/enseignants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
 
 
 

@@ -194,34 +194,6 @@
                     </span>
                 </a>
 
-                @if ($doc = \App\Models\GeneratedDocument::ofType('student_list')->forUser(auth('tenant')->id())->latest()->first())
-
-                    <div class="flex items-center gap-3">
-                        <button wire:click="trackDownload({{ $doc->id }})"
-                            class="bg-green-600 hover:bg-green-800 text-white rounded-2xl py-2.5 px-5 transition-all text-sm">
-                            <span wire:loading.remove wire:target='trackDownload({{ $doc->id }})'
-                                class="inline-flex gap-x-2 items-center">
-                                <x-lucide-download class="w-4 h-4" />
-                                Télécharger dernière liste
-                                @if ($doc->downloaded_count > 0)
-                                    <span class="text-xs opacity-60">({{ $doc->downloaded_count }}x)</span>
-                                @endif
-                            </span>
-                            <span wire:loading wire:target='trackDownload({{ $doc->id }})'
-                                class="inline-flex items-center gap-x-2">
-                                <span class="flex items-center gap-x-2.2">
-                                    <span>Document en cours...</span>
-                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
-                                </span>
-                            </span>
-                        </button>
-                        @if (!$doc->downloaded)
-                            <span wire:loading.remove wire:target='trackDownload({{ $doc->id }})'
-                                class="text-xs border border-green-600 text-green-600 bg-gray-900 p-0.5 rounded-xl relative right-16 -top-5 px-1.5 animate-pulse">Nouveau</span>
-                        @endif
-                    </div>
-                @endif
-
             </div>
             <div class="flex items-center justify-end gap-2">
                 @if ($this->hasPrintSessionConfig)
