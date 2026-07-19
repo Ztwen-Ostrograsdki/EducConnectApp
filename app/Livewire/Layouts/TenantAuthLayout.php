@@ -28,6 +28,9 @@ class TenantAuthLayout extends Component
         $this->counter++;
     }
 
+
+    
+
     public function render()
     {
 

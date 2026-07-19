@@ -30,7 +30,7 @@ class ListenToMigrateStudentMarksToNewClasseDuringSameSchoolYearAfterClasseChang
                 userEmail: $director?->email,
                 tenantId: $event->tenantId,
                 title:             "Une erreure est survenue lors de la migration des notes",
-                message:           "Details : " . cutter($e->getMessage(), 200),
+                message:           "Details : " . cutter($e->getMessage(), 2000),
                 type:              'error',
             ));
         })

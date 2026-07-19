@@ -1,16 +1,10 @@
 <div class="min-h-screen bg-slate-950 text-slate-100 w-full max-w-full px-3 overflow-x-hidden">
-
-    {{-- ================================================= --}}
-    {{-- HEADER --}}
-    {{-- ================================================= --}}
     <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5">
         <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
-                {{-- LEFT --}}
                 <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1">
 
-                    {{-- ICON --}}
                     <div class="shrink-0 self-start">
                         <div
                             class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -18,7 +12,6 @@
                         </div>
                     </div>
 
-                    {{-- CONTENT --}}
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight break-words">
@@ -29,12 +22,23 @@
                                 class="shrink-0 px-3 py-1 rounded-full text-xs bg-emerald-500/10 border border-emerald-500/20 {{ $school_year_model->is_active ? 'text-emerald-400' : 'text-red-400' }} text-xs shrink-0">
                                 {{ $school_year_model->is_active ? 'Active' : 'Non active' }}
                             </span>
+                            @if ($school_year_model->is_closed)
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-orange-500/10 border border-orange-500/20 text-orange-400">
+                                    Clôturée
+                                </span>
+                            @endif
+                            @if ($school_year_model->trashed())
+                                <span
+                                    class="shrink-0 px-3 py-1 rounded-full text-xs bg-red-500/10 border border-red-500/20 text-red-400">
+                                    À la corbeille
+                                </span>
+                            @endif
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
                             Les détails génraux de l'année scolaire {{ $school_year_model->slug }}
                         </p>
 
-                        {{-- META --}}
                         <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                             <div class="break-words">📑 Périodes en {{ $school_year_model->periode_type }}</div>
                             <div class="break-words">Durée : 🕒 {{ $school_year_model->getDuration() }}</div>
@@ -43,66 +47,121 @@
 
                 </div>
 
-                {{-- ACTIONS --}}
-
             </div>
-            <div class="flex flex-wrap gap-3 items-center justify-end w-full xl:w-auto">
+            <div class="mt-5 flex flex-wrap gap-3 items-center justify-end w-full xl:w-auto"
+                wire:loading.class="opacity-60 pointer-events-none"
+                wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}'),closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}'),deleteSchoolYear('{{ $school_year_model->slug }}'),restoreSchoolYear('{{ $school_year_model->slug }}')">
 
-                @if (!$school_year_model->is_closed)
-                    <button type="button" wire:loading.attr="disabled" wire:click="{{ 'closed' }}"
-                        class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-amber-600 hover:bg-amber-800">
-                        <span class="flex items-center gap-1.5" wire:target='closed' wire:loading.remove>
-                            <span>Fermer cette année</span>
-                            <x-lucide-check class="w-5 h-5" />
-                        </span>
-                        <span wire:target='closed' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                @else
-                    <button type="button" wire:loading.attr="disabled" wire:click="{{ 'reOpen' }}"
-                        class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-lime-600 hover:bg-lime-800">
-                        <span class="flex items-center gap-1.5" wire:target='reOpen' wire:loading.remove>
-                            <span>Réouvrir</span>
-                            <x-lucide-check class="w-5 h-5" />
-                        </span>
-                        <span wire:target='reOpen' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                @endif
-
-                @if (!$school_year_model->is_active)
-                    <button type="button" wire:loading.attr="disabled" wire:click="{{ 'activateSchoolYear' }}"
-                        class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800">
-                        <span class="flex items-center gap-1.5" wire:target='activateSchoolYear' wire:loading.remove>
-                            <span>Définir comme année active</span>
-                            <x-lucide-check class="w-5 h-5" />
-                        </span>
-                        <span wire:target='activateSchoolYear' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                @else
-                    <button type="button" wire:loading.attr="disabled" wire:click="{{ 'desactivateSchoolYear' }}"
-                        class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-red-600 hover:bg-red-800">
-                        <span class="flex items-center gap-1.5" wire:target='desactivateSchoolYear' wire:loading.remove>
-                            <span>Désactiver</span>
-                            <x-lucide-check class="w-5 h-5" />
-                        </span>
-                        <span wire:target='desactivateSchoolYear' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                @endif
                 <a href="{{ route('tenant.schoolYears.edit', ['school_year' => $school_year_model->slug]) }}"
-                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base">
+                    class="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-sm sm:text-base text-center">
                     Editer cette année scolaire
                 </a>
+
+                <button
+                    title="{{ $school_year_model->is_active ? 'Désactiver' : 'Activer' }} l'année scolaire {{ $school_year_model->slug }}"
+                    wire:click="{{ $school_year_model->is_active ? "deactivateSchoolYear('{$school_year_model->slug}')" : "activateSchoolYear('{$school_year_model->slug}')" }}"
+                    wire:loading.attr="disabled"
+                    wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}')"
+                    class="relative w-full sm:w-auto px-4 py-3 rounded-2xl text-white text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50 {{ $school_year_model->is_active ? 'bg-emerald-600/30 hover:bg-red-600/40' : 'bg-indigo-600/40 hover:bg-indigo-500' }}">
+                    <span wire:loading.remove
+                        wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}')"
+                        class="inline-flex items-center gap-2">
+                        @if ($school_year_model->is_active)
+                            <x-lucide-star-off class="w-4 h-4" />
+                            <span>Désactiver</span>
+                        @else
+                            <x-lucide-star class="w-4 h-4" />
+                            <span>Activer</span>
+                        @endif
+                    </span>
+                    <span wire:loading
+                        wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}')"
+                        class="inline-flex items-center gap-2">
+                        <span class="inline-flex items-center gap-2">
+                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                            </svg>
+                            <span>Patientez...</span>
+                        </span>
+                    </span>
+                </button>
+
+                <button
+                    title="{{ $school_year_model->is_closed ? 'Réouvrir' : 'Clôturer' }} l'année scolaire {{ $school_year_model->slug }}"
+                    wire:click="{{ $school_year_model->is_closed ? "reopenSchoolYear('{$school_year_model->slug}')" : "closeSchoolYear('{$school_year_model->slug}')" }}"
+                    wire:loading.attr="disabled"
+                    wire:target="closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}')"
+                    class="relative w-full sm:w-auto px-4 py-3 rounded-2xl text-white text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50 {{ $school_year_model->is_closed ? 'bg-lime-600/60 hover:bg-lime-500 hover:text-black' : 'bg-orange-500/20 hover:bg-orange-600/60' }}">
+                    <span wire:loading.remove
+                        wire:target="closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}')"
+                        class="inline-flex items-center gap-2">
+                        @if ($school_year_model->is_closed)
+                            <x-lucide-unlock class="w-4 h-4" />
+                            <span>Réouvrir</span>
+                        @else
+                            <x-lucide-lock class="w-4 h-4" />
+                            <span>Clôturer</span>
+                        @endif
+                    </span>
+                    <span wire:loading
+                        wire:target="closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}')"
+                        class="inline-flex items-center gap-2">
+                        <span class="inline-flex items-center gap-3">
+                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                            </svg>
+                            <span>Patientez...</span>
+                        </span>
+                    </span>
+                </button>
+
+                @if ($school_year_model->trashed())
+                    <button title="Restaurer l'année scolaire {{ $school_year_model->slug }}"
+                        wire:click="restoreSchoolYear('{{ $school_year_model->slug }}')" wire:loading.attr="disabled"
+                        wire:target="restoreSchoolYear('{{ $school_year_model->slug }}')"
+                        class="relative w-full sm:w-auto px-4 py-3 rounded-2xl bg-emerald-600/30 hover:bg-emerald-600/60 text-white text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50">
+                        <span wire:loading.remove wire:target="restoreSchoolYear('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <x-lucide-rotate-ccw class="w-4 h-4" />
+                            <span>Restaurer</span>
+                        </span>
+                        <span wire:loading wire:target="restoreSchoolYear('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                            </svg>
+                            <span>Patientez...</span>
+                        </span>
+                    </button>
+                @else
+                    <button title="Mettre l'année scolaire {{ $school_year_model->slug }} à la corbeille"
+                        wire:click="deleteSchoolYear('{{ $school_year_model->slug }}')" wire:loading.attr="disabled"
+                        wire:target="deleteSchoolYear('{{ $school_year_model->slug }}')"
+                        class="relative w-full sm:w-auto px-4 py-3 rounded-2xl bg-red-500/10 hover:bg-red-600/40 text-red-300 hover:text-white text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50">
+                        <span wire:loading.remove wire:target="deleteSchoolYear('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <x-lucide-trash-2 class="w-4 h-4" />
+                            <span>Supprimer</span>
+                        </span>
+                        <span wire:loading wire:target="deleteSchoolYear('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <span class="inline-flex items-center gap-3">
+                                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4" />
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                </svg>
+                                <span>Patientez...</span>
+                            </span>
+                        </span>
+                    </button>
+                @endif
             </div>
         </div>
     </section>
@@ -114,7 +173,7 @@
                     $end = \Carbon\Carbon::parse($period['end']);
                     $today = now()->startOfDay();
 
-                    $totalDays = $start->diffInDays($end) + 1; // inclusif
+                    $totalDays = $start->diffInDays($end) + 1;
                     $weeks = intdiv($totalDays, 7);
                     $remDays = $totalDays % 7;
 
@@ -128,7 +187,6 @@
                 <div wire:key='period-of-school-year-{{ $loop->iteration }}'
                     class="w-full rounded-2xl border {{ $status === 'passe' ? 'border-slate-800 bg-slate-900/40' : 'border-slate-700 bg-slate-900/80' }} backdrop-blur-xl p-5 transition-all opacity-50 hover:opacity-100">
 
-                    {{-- Header --}}
                     <div class="flex items-center justify-between mb-5 border-b border-b-gray-600 py-2">
                         <h3
                             class=" font-mono uppercase text-base font-semibold {{ $status === 'passe' ? 'text-amber-700' : 'text-green-600' }}">
@@ -159,7 +217,6 @@
                         @endif
                     </div>
 
-                    {{-- Stats --}}
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div>
                             <p class="text-[11px] uppercase tracking-wide text-slate-500 mb-1">Début</p>
@@ -185,7 +242,6 @@
                         </div>
                     </div>
 
-                    {{-- Timeline signature --}}
                     <div>
                         <div class="relative h-1.5 rounded-full bg-slate-800 overflow-hidden">
                             <div class="absolute inset-y-0 left-0 rounded-full transition-all duration-500 {{ $status === 'passe' ? 'bg-slate-600' : 'bg-indigo-500' }}"

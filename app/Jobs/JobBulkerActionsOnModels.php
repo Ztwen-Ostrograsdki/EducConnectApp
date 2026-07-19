@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Attributes\Timeout;
@@ -74,21 +75,44 @@ class JobBulkerActionsOnModels implements ShouldQueue
 
             if(!$this->withTrashedDeleted){
 
-                $query = $this->model::whereIn('id', $this->ids);
+                $this->model::withoutTrashed()->where(function ($query) {
+
+                    $query->whereIn('id', $this->ids);
+
+                })->chunkById(200, function (Collection $collections) {
+
+                    if(empty($this->options)){
+
+                        $collections->each->{$this->method}();
+
+                    }
+                    else{
+
+                        $collections->each->{$this->method}($this->options);
+                    }
+                    
+                }, column: 'id');
             }
             else{
 
-                $query = $this->model::withTrashed()->whereIn('id', $this->ids);
-            }
+                $this->model::withTrashed()->where(function ($query) {
 
-            if(empty($this->options)){
+                    $query->whereIn('id', $this->ids);
 
-                $query->{$this->method}();
+                })->chunkById(200, function (Collection $collections) {
 
-            }
-            else{
+                    if(empty($this->options)){
 
-                $query->{$this->method}($this->options);
+                        $collections->each->{$this->method}();
+
+                    }
+                    else{
+
+                        $collections->each->{$this->method}($this->options);
+                    }
+                    
+                }, column: 'id');
+
             }
 
             broadcast(new DataUpdatedEvent($this->tenantId));

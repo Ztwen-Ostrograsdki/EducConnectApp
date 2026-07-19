@@ -20,6 +20,7 @@ class NewSchoolYearActivatedEvent implements ShouldBroadcast
     public function __construct(
         public ?string $tenantId,
         public string $school_year_slug,
+        public ?int $schoolYearId = null,
     )
     {
         //

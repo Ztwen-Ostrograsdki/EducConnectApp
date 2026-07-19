@@ -347,11 +347,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             if($limit) $query->take($limit);
 
             return $query->orderByDesc('updated_at')->get();
-
         }
 
         return [];
-
 
     }
 
@@ -466,10 +464,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return Str::initials($first_name, true);
     }
 
-
-
-
-
+    public function hasActiveSchoolYear()
+    {
+     
+        return SchoolYear::current()->exists();
+    
+    }
 
 
 }

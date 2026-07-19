@@ -48,7 +48,7 @@ class JobToMigrateStudentMarksToHisNewClasseAfterMigrationToNewClasseDuringTheSa
 
             if(!$director){
 
-                $this->fail("COMPTE DIRECTEUR INEXISTANT : IMPOSSIBLE DE CREER UN UTILISATEUR AVANT LE COMPTE DIRECTEUR");
+                $this->fail("COMPTE DIRECTEUR INEXISTANT : IMPOSSIBLE DE FAIRE UNE QUELCONQUE ACTION AVANT LE COMPTE DIRECTEUR");
 
                 return;
 
@@ -160,7 +160,7 @@ class JobToMigrateStudentMarksToHisNewClasseAfterMigrationToNewClasseDuringTheSa
 
             $title = "ECHEC DE MIGRATION DES NOTES APPRENANT SA NOUVELLE CLASSE ";
 
-            $error_message = cutter($th->getMessage(), 150);
+            $error_message = cutter($th->getMessage(), 2000);
 
             $this->failer($director, $title, $error_message);
         }

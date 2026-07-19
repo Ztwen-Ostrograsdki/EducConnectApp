@@ -34,7 +34,7 @@ class RedirectIfHasntCurrentActiveSchoolYearMiddleware
 
         if(!$currentActiveSchoolYear){
 
-            return redirect('tenant.schoolyears.portal');
+            return to_route('tenant.schoolyears.portal');
         }
 
         return $next($request);

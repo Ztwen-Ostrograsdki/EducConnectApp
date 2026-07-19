@@ -39,7 +39,7 @@ class JobToMigrateStudentsToClasses implements ShouldQueue
 
             if(!$director){
 
-                $this->fail("COMPTE DIRECTEUR INEXISTANT : IMPOSSIBLE DE CREER UN UTILISATEUR AVANT LE COMPTE DIRECTEUR");
+                $this->fail("COMPTE DIRECTEUR INEXISTANT : IMPOSSIBLE DE FAIRE UNE QUELCONQUE ACTION AVANT LE COMPTE DIRECTEUR");
 
                 return;
 
@@ -115,7 +115,7 @@ class JobToMigrateStudentsToClasses implements ShouldQueue
                 userEmail: $director->email,
                 tenantId:  $this->tenantId,
                 title:     "ECHEC DE MIGRATION DES APPRENANTS VERS LA CLASSE " . $classe?->name,
-                message:   cutter($th->getMessage(), 150),
+                message:   cutter($th->getMessage(), 2000),
                 type:      'error',
             ));
         }

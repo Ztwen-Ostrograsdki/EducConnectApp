@@ -3,6 +3,8 @@
 namespace App\Livewire\Tenants\Classes;
 
 use App\Models\Classe;
+use App\Models\SchoolYear;
+use App\Models\YearlyClasseStudent;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -51,6 +53,12 @@ class ClasseProfil extends Component
     public function reloaddata()
     {
         $this->counter++;
+    }
+
+    #[Computed]
+    public function activeYear(): ?SchoolYear
+    {
+        return SchoolYear::current()->first();
     }
 
     #[Computed]

@@ -73,7 +73,7 @@ class ClasseEffectifsService implements RefreshableSchoolYearCache
     // Aucune hydratation de Student : la BDD renvoie juste 2-3 lignes agrégées.
     public function countStudentsByGender(int $classeId, int $schoolYearId): array
     {
-        return YearlyClasseStudent::query()
+        $query = YearlyClasseStudent::query()
 			->join('students', 'students.id', '=', 'yearly_classe_students.student_id')
 			->where('yearly_classe_students.classe_id', $classeId)
 			->where('yearly_classe_students.school_year_id', $schoolYearId)
@@ -83,6 +83,15 @@ class ClasseEffectifsService implements RefreshableSchoolYearCache
 			->groupBy('gender_code')
 			->pluck('total', 'gender_code')
 			->toArray();
+
+        if($query == []){
+            return [
+                'F' => 0,    
+                'M' => 0,    
+            ];
+        }
+        
+        return $query;
     }
 
     // ─── Abandons ─────────────────────────────────────────────

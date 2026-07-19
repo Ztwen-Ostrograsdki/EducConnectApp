@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use App\Events\SchoolYearActivatedEvent;
-use App\Services\SubjectsServices\SubjectDetailsCacheService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-
 
 class SchoolYear extends Model
 {
@@ -52,13 +50,14 @@ class SchoolYear extends Model
 
             if ($model->wasChanged('is_active') && $model->is_active) {
 
-                event(new SchoolYearActivatedEvent($model->id));
+                session()->put('activeSchoolYear', $model->slug);
+
             }
+
         });
     }
 
     // ─── Relations ────────────────────────────────────────────────────
-
     /**
      * Get all classes for this school year.
      */
@@ -138,7 +137,7 @@ class SchoolYear extends Model
      */
     public function scopeCurrent(Builder $query): Builder
     {
-        return $query->where('is_active', true)->where('is_closed', false);
+        return $query->where('is_active', true);
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────

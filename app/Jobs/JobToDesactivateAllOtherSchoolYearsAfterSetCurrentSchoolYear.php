@@ -2,30 +2,24 @@
 
 namespace App\Jobs;
 
-use App\Contracts\RefreshableSchoolYearCache;
 use App\Events\DataUpdatedEvent;
 use App\Models\SchoolYear;
 use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
 
-class JobToPutOrUpdateCacheData implements ShouldQueue
+class JobToDesactivateAllOtherSchoolYearsAfterSetCurrentSchoolYear implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * @param  class-string<RefreshableSchoolYearCache>  $serviceClass
-     */
-    public function __construct(
+   public function __construct(
         public string $tenantId,
-        public readonly string $serviceClass,
-        public readonly int $schoolYearId,
+        public readonly string $schoolYearSlug,
     ) {}
 
     public function handle(): void
@@ -48,24 +42,21 @@ class JobToPutOrUpdateCacheData implements ShouldQueue
 
             }
 
-            $schoolYear = SchoolYear::find($this->schoolYearId);
+            $schoolYear = SchoolYear::firstWhere('slug', $this->schoolYearSlug);
 
             if($schoolYear && $schoolYear->is_active){
 
-                /** @var RefreshableSchoolYearCache $service */
-                $service = app($this->serviceClass);
-
-                $service->refreshForSchoolYear($this->schoolYearId);
-
+                SchoolYear::where('slug', '<>', $this->schoolYearSlug)->where('is_active', true)->update(['is_active' => false]);
+                
             }
             else{
 
-                $error_message = "L'année scolaire introuvable  ou non active!";
+                $error_message = "L'année scolaire {$this->schoolYearSlug} introuvable ou non active!";
 
                 $director?->notify(new RealTimeNotification(
                     userEmail: $director?->email,
                     tenantId: $this->tenantId,
-                    title:             "Erreur de chargement des données ",
+                    title:             "Erreur de mise à jour des données actives ",
                     message:           $error_message,
                     type:              'error',
                 ));
@@ -78,8 +69,8 @@ class JobToPutOrUpdateCacheData implements ShouldQueue
             $director?->notify(new RealTimeNotification(
                 userEmail: $director->email,
                 tenantId:  $this->tenantId,
-                title:     "Erreur de chargement des données  ",
-                message:   cutter($th->getMessage(), 2000),
+                title:     "Erreur de mise à jour des données actives  ",
+                message:   cutter($th->getMessage(), 1500),
                 type:      'error',
             ));
         }
@@ -91,5 +82,4 @@ class JobToPutOrUpdateCacheData implements ShouldQueue
         }
     }
 
-    
 }

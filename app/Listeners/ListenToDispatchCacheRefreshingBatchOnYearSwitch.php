@@ -2,7 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\SchoolYearActivatedEvent;
+use App\Events\NewSchoolYearActivatedEvent;
+use App\Jobs\JobToDesactivateAllOtherSchoolYearsAfterSetCurrentSchoolYear;
 use App\Jobs\JobToPutOrUpdateCacheData;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Services\DashboardCounterService;
@@ -12,7 +13,7 @@ use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
 
-class DispatchCacheRefreshBatchOnYearSwitch
+class ListenToDispatchCacheRefreshingBatchOnYearSwitch
 {
     protected const CACHE_SERVICES = [
         SubjectDetailsCacheService::class,
@@ -21,12 +22,13 @@ class DispatchCacheRefreshBatchOnYearSwitch
         FiliarDetailsCacheService::class,
     ];
 
-    public function handle(SchoolYearActivatedEvent $event): void
+    public function handle(NewSchoolYearActivatedEvent $event): void
     {
         $jobs = collect(self::CACHE_SERVICES)
             ->map(fn (string $serviceClass) => new JobToPutOrUpdateCacheData(
-                $serviceClass,
-                $event->schoolYearId
+                tenantId:     $event->tenantId,
+                serviceClass: $serviceClass,
+                schoolYearId: $event->schoolYearId
             ))
             ->all();
 
@@ -38,6 +40,12 @@ class DispatchCacheRefreshBatchOnYearSwitch
             })
             ->catch(function (Batch $batch, Throwable $e) {
                 report($e);
+            })
+            ->finally(function(Batch $batch) use ($event){
+
+                JobToDesactivateAllOtherSchoolYearsAfterSetCurrentSchoolYear::dispatch(
+                    tenantId:       $event->tenantId, 
+                    schoolYearSlug: $event->school_year_slug);
             })
             ->dispatch();
     }
