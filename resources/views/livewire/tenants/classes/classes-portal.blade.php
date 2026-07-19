@@ -142,7 +142,7 @@
         </section>
         <section class="px-4 sm:px-6 lg:px-8">
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
-                <div class="flex flex-col xl:flex-row gap-4">
+                <div class="flex flex-col gap-4">
 
                     {{-- Search --}}
                     <div class="flex-1 min-w-0">
@@ -155,13 +155,13 @@
                     </div>
 
                     {{-- Selects --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:flex gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 xl:flex gap-3">
 
                         <select wire:model.live="promotion"
                             class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm focus:border-indigo-500 focus:outline-none transition">
                             <option value="">Toutes promotions</option>
                             @foreach ($this->promotions as $p)
-                                <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                <option value="{{ $p }}">{{ $p }}</option>
                             @endforeach
                         </select>
 
@@ -179,6 +179,19 @@
                             @foreach ($this->serials as $s)
                                 <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
+                        </select>
+
+                        <select wire:model.live="status"
+                            class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm focus:border-indigo-500 focus:outline-none transition">
+                            <option value="">Les classes actives</option>
+                            <option value="closed">Fermées</option>
+                            <option value="open">Ouvertes</option>
+                            <option value="active">Actives</option>
+                            <option value="with_students">Ayant des apprenants</option>
+                            <option value="with_leaves_students">Ayant des apprenants abandons</option>
+                            <option value="without_students">Sans apprenants</option>
+                            <option value="with_teachers">Ayant des enseignants</option>
+                            <option value="without_teachers">Sans enseignants</option>
                         </select>
 
                         <button wire:click="resetFilters"
@@ -225,9 +238,11 @@
                                     href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                     class="flex items-start justify-between gap-4 group">
                                     <div class="min-w-0 flex-1">
-                                        <div
-                                            class="flex flex-wrap items-center gap-2 group-hover:underline underline-offset-4 group-hover:text-sky-600 ">
-                                            <h2 class="text-xl font-bold truncate">{{ $classe->name }}</h2>
+                                        <div class="flex flex-wrap items-center gap-2 ">
+                                            <h2
+                                                class="text-xl truncate font-mono group-hover:underline underline-offset-4 group-hover:text-sky-600 ">
+                                                {{ str()->replace(['-', '_'], ' ', $classe->name) }}
+                                            </h2>
                                             <span class="">
                                                 @if ($classe->is_active)
                                                     <span
@@ -259,7 +274,7 @@
                                         </div>
                                     </div>
                                     <div
-                                        class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-2xl group-hover:border-4 group-hover:border-sky-600">
+                                        class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-2xl group-hover:border-4 group-hover:border-sky-600 group-hover:animate-bounce ">
                                         🏫
                                     </div>
                                 </a>
@@ -281,22 +296,41 @@
                                         </div>
                                     </div>
                                     <div class="rounded-2xl bg-slate-950 p-4">
-                                        <p class="text-xs text-slate-500">Niveau</p>
-                                        <h3 class="mt-1.5 text-sm font-semibold capitalize">{{ $classe->level }}</h3>
-                                        @if ($classe->code)
-                                            <p class="mt-1 text-xs text-slate-500 font-mono">{{ $classe->code }}</p>
-                                        @endif
+                                        <p class="text-xs text-slate-500">Enseignants</p>
+                                        <h3 class="mt-1.5 text-sm font-semibold capitalize"></h3>
+                                        <p class="mt-1 text-xl text-slate-200 ">
+                                            {{ __zero($classe->teachers_count) }}</p>
                                     </div>
                                 </div>
 
                                 {{-- META --}}
-                                <div class="mt-5 space-y-2.5 text-sm text-slate-400">
+                                <div class="mt-5 space-y-2.5 text-sm text-slate-400 font-mono">
                                     <div class="flex items-center justify-between gap-3">
-                                        <span class="truncate text-xs">Prof principal</span>
+                                        <span class="truncate text-xs uppercase">Prof principal</span>
                                         <span class="truncate text-slate-300 text-xs font-medium">
-                                            {{ $classe->principal?->name ?? '—' }}
+                                            @if ($classe->principal)
+                                                {{ $classe->principal?->getFullName() }}
+                                            @else
+                                                <span class="truncate text-slate-500 text-xs ">
+                                                    {{ 'Non encore défini' }}
+                                                </span>
+                                            @endif
                                         </span>
                                     </div>
+                                    @foreach ($classe->responsables() as $key => $respo)
+                                        <div class="flex items-center justify-between gap-3 ">
+                                            <span class="truncate text-xs uppercase">{{ $key }}</span>
+                                            @if ($respo)
+                                                <span class="truncate text-slate-300 text-xs ">
+                                                    {{ $respo->getFullName() }}
+                                                </span>
+                                            @else
+                                                <span class="truncate text-slate-500 text-xs ">
+                                                    {{ 'Non encore défini' }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 

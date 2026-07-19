@@ -8,13 +8,11 @@ use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
-use App\Models\TeacherYearlyAccess;
 use App\Services\DashboardCounterService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
-
 
 trait ClassesActions{
 
@@ -27,6 +25,8 @@ trait ClassesActions{
     public string $serial      = '';
     public string $level       = '';
     public int    $perPage     = 10;
+    public $status             = 'actives';
+
 
 
     public ?string $targetedClasseUuid = null;
@@ -42,8 +42,33 @@ trait ClassesActions{
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'promotion', 'filiar', 'serial', 'level']);
+        $this->reset(['search', 'promotion', 'filiar', 'serial', 'level', 'status']);
 
+        $this->resetPage();
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+    
+    public function updatingStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPromotion()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFiliar()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSerial()
+    {
         $this->resetPage();
     }
 
@@ -65,7 +90,7 @@ trait ClassesActions{
     #[Computed]
     public function promotions()
     {
-        return Promotion::where('is_active', true)->orderBy('order')->get(['id', 'name']);
+        return array_unique(Promotion::where('is_active', true)->orderBy('name')->pluck('name')->toArray());
     }
 
     #[Computed]

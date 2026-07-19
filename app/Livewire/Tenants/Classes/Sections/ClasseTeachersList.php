@@ -58,41 +58,46 @@ class ClasseTeachersList extends Component
     #[Computed]
     public function teachers()
     {
+        
         return Teacher::query()
         ->select('teachers.*')
         ->join('users', 'users.id', '=', 'teachers.user_id')
-        ->whereHas('classeSubjects', fn($q) => 
-              $q->where('school_year_id', $this->school_year_id)
+        ->whereHas('classeSubjects', fn ($q) =>
+            $q->where('school_year_id', $this->school_year_id)
               ->where('classe_id', $this->classe->id)
               ->where('is_active', true)
               ->whereNull('ended_at')
         )
         ->when($this->search, function (Builder $query) {
-            $query->whereHas('user', function ($query) {
-                $query->where('email', 'like', "%{$this->search}%");
-                $query->orwhere('name', 'like', "%{$this->search}%");
-                $query->orwhere('prenames', 'like', "%{$this->search}%");
-                $query->orwhere('contacts', 'like', "%{$this->search}%");
-                $query->orwhere('adresse', 'like', "%{$this->search}%");
-                $query->orwhere('city', 'like', "%{$this->search}%");
-                $query->orwhere('department', 'like', "%{$this->search}%");
-                $query->orwhere('country', 'like', "%{$this->search}%");
-                $query->orwhere('gender', 'like', "%{$this->search}%");
-                $query->orwhere('birth_date', 'like', "%{$this->search}%");
-                $query->orwhere('birth_place', 'like', "%{$this->search}%");
-                $query->orwhere('job_name', 'like', "%{$this->search}%");
-                $query->orwhere('status', 'like', "%{$this->search}%");
-            })
-            ->orwhere('identifiant', 'like', "%{$this->search}%");
+            $query->where(function (Builder $q) {
+                $q->whereHas('user', function ($q2) {
+                    $q2->where('email', 'like', "%{$this->search}%")
+                        ->orWhere('name', 'like', "%{$this->search}%")
+                        ->orWhere('prenames', 'like', "%{$this->search}%")
+                        ->orWhere('contacts', 'like', "%{$this->search}%")
+                        ->orWhere('adresse', 'like', "%{$this->search}%")
+                        ->orWhere('city', 'like', "%{$this->search}%")
+                        ->orWhere('department', 'like', "%{$this->search}%")
+                        ->orWhere('country', 'like', "%{$this->search}%")
+                        ->orWhere('gender', 'like', "%{$this->search}%")
+                        ->orWhere('birth_date', 'like', "%{$this->search}%")
+                        ->orWhere('birth_place', 'like', "%{$this->search}%")
+                        ->orWhere('job_name', 'like', "%{$this->search}%")
+                        ->orWhere('status', 'like', "%{$this->search}%");
+                })
+                ->orWhere('identifiant', 'like', "%{$this->search}%");
+            });
         })
-        
         ->when($this->gender, function (Builder $qq) {
             $qq->whereHas('user', function ($qq) {
                 $qq->where('gender', $this->gender);
             });
         })
         ->orderBy('users.name')
-        ->orderBy('users.prenames')->paginate($this->perPage);
+        ->orderBy('users.prenames')
+        ->paginate($this->perPage);
+
+
         
     }
 

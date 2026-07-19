@@ -15,6 +15,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Models\YearlyClasseStudent;
+use App\Models\YearlyClasseStudentsLeave;
 use App\ModelsTraits\ClassesRoutesTraits;
 use App\Notifications\RealTimeNotification;
 use App\Services\ClassesServices\ClasseEffectifsService;
@@ -219,6 +220,12 @@ class Classe extends Model
     public function activesStudents(): HasMany
     {
         return $this->students()->where('is_active', true);
+    }
+    
+    // Élèves abandons uniquement
+    public function leavesStudents(): HasMany
+    {
+        return $this->hasMany(YearlyClasseStudentsLeave::class, 'classe_id');
     }
 
     // Matières de la classe (via pivot)
