@@ -2,12 +2,14 @@
                 w-full
                 max-w-[1900px]
                  flex flex-col gap-2.5">
-    <section class="relative overflow-hidden
+    <section
+        class="relative overflow-hidden
            rounded-3xl
            border border-slate-800
            bg-slate-900/80">
 
-        <div class="absolute inset-0
+        <div
+            class="absolute inset-0
                bg-gradient-to-r
                from-indigo-500/10
                via-sky-500/5
@@ -16,7 +18,8 @@
 
         <div class="relative p-8">
 
-            <div class="flex flex-col
+            <div
+                class="flex flex-col
                    xl:flex-row
                    xl:items-center
                    gap-8">
@@ -50,7 +53,8 @@
                 {{-- INFOS --}}
                 <div class="flex-1">
 
-                    <div class="inline-flex items-center gap-2
+                    <div
+                        class="inline-flex items-center gap-2
                            px-3 py-1 rounded-full
                            bg-emerald-500/10
                            text-emerald-400">
@@ -80,7 +84,8 @@
                         @endforeach
                     </p>
 
-                    <div class="mt-6
+                    <div
+                        class="mt-6
                            grid md:grid-cols-2
                            xl:grid-cols-4 gap-4">
 
@@ -141,52 +146,7 @@
         </div>
 
     </section>
-    <section class="grid
-           sm:grid-cols-2
-           xl:grid-cols-4
-           gap-5">
 
-        @foreach ([['Rôles', __zero(count($user->roles)), 'shield'], ['Permissions', __zero(count($user->getAllPermissions())), 'key-round'], ['Connexions', __zero($user->logged_count), 'activity'], ['Notifications', 0, 'bell']] as $card)
-            <div class="rounded-3xl
-                   border border-slate-800
-                   bg-slate-900/80
-                   p-5">
-
-                <div class="flex items-center
-                       justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-slate-500">
-                            {{ $card[0] }}
-                        </p>
-
-                        <h3 class="mt-2
-                               text-3xl
-                               font-black">
-
-                            {{ $card[1] }}
-
-                        </h3>
-
-                    </div>
-
-                    <div class="w-14 h-14
-                           rounded-2xl
-                           bg-indigo-500/10
-                           flex items-center
-                           justify-center">
-
-                        <x-lucide-shield class="w-7 h-7 text-indigo-400" />
-
-                    </div>
-
-                </div>
-
-            </div>
-        @endforeach
-
-    </section>
     <section class="rounded-3xl
            border border-slate-800
            bg-slate-900/80">
@@ -337,7 +297,8 @@
         <div class="mt-6
                flex flex-wrap gap-4">
 
-            <button class="h-12 px-5 rounded-2xl
+            <button
+                class="h-12 px-5 rounded-2xl
                    bg-indigo-500
                    text-white
                    flex items-center gap-2 hover:bg-indigo-900">
@@ -345,20 +306,24 @@
                 Modifier le profil
             </button>
 
-            <a href="{{ route('tenant.update.profil.photo') }}" class="h-12 px-5 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center gap-2 hover:bg-sky-800">
+            <a href="{{ route('tenant.update.profil.photo') }}"
+                class="h-12 px-5 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center gap-2 hover:bg-sky-800">
                 <x-lucide-camera class="w-5 h-5" />
                 Modifier la photo
             </a>
 
-            <a href="{{ route('tenant.update.password') }}" class="h-12 px-5 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center gap-2 hover:bg-amber-800 hover:text-white">
+            <a href="{{ route('tenant.update.password') }}"
+                class="h-12 px-5 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center gap-2 hover:bg-amber-800 hover:text-white">
                 <x-lucide-key-round class="w-5 h-5" />
                 Changer le mot de passe
             </a>
+            <button type="button" wire:loading.attr="disabled"
+                class="h-12 px-5 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center gap-2 hover:bg-orange-800 hover:text-white">
 
-            <button type="button" wire:loading.attr="disabled" class="h-12 px-5 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center gap-2 hover:bg-orange-800 hover:text-white">
-
-                <svg wire:loading wire:target="removePhoto" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25" />
+                <svg wire:loading wire:target="removePhoto" class="w-5 h-5 animate-spin" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                        class="opacity-25" />
                     <path fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                 </svg>
 
@@ -370,7 +335,8 @@
                     En cours...
                 </span>
             </button>
-            <button class="h-12 px-5 rounded-2xl bg-rose-500/10 hover:bg-rose-700 text-rose-400 flex items-center gap-2">
+            <button
+                class="h-12 px-5 rounded-2xl bg-rose-500/10 hover:bg-rose-700 text-rose-400 flex items-center gap-2">
                 <x-lucide-log-out class="w-5 h-5" />
                 Déconnexion
             </button>

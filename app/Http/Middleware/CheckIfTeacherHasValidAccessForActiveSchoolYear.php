@@ -15,7 +15,7 @@ class CheckIfTeacherHasValidAccessForActiveSchoolYear
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('tenant')->user()?->teacher?->hasValidAccessForYear()) {
+        if (!auth('tenant')->user()?->teacher?->hasValidAccessForYear()) {
 
             abort(403);
         }

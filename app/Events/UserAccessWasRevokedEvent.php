@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TeacherWasBlockedEvent implements ShouldBroadcast
+class UserAccessWasRevokedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,8 +18,9 @@ class TeacherWasBlockedEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public string $tenantId, 
-        public int $userId, 
+        public string $tenantId,
+        public int $userId,
+        public ?string $role = null
     )
     {
         //
@@ -33,7 +34,7 @@ class TeacherWasBlockedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('tenant.' . $this->tenantId . '.enseignant.' . $this->userId),
+            new PrivateChannel('tenant.' . $this->tenantId . '.user.' . $this->userId),
 
         ];
     }

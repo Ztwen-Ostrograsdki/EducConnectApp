@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace
+class EnsureThatUserAccountNotBlockedMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,7 +21,7 @@ class EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace
             /**@var \App\Models\User */
             $user = auth('tenant')->user();
 
-            if($user && $user->hasRole('enseignant') && !$user->teacher->blocked){
+            if($user && !$user->blocked){
 
                 return $next($request);
             }
@@ -29,7 +29,5 @@ class EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace
             return abort('403');
         }
         return redirect()->route('login');
-        
-        
     }
 }

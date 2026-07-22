@@ -41,7 +41,8 @@
                                    overflow-hidden
                                    shadow-2xl">
 
-                                        <img src="{{ $user->profil_photo_url }}" class="w-full h-full object-cover">
+                                        <img src="{{ $this->teacher->user->profil_photo_url }}"
+                                            class="w-full h-full object-cover">
 
                                     </div>
 
@@ -72,7 +73,7 @@
                                                        font-bold
                                                        break-words">
 
-                                                {{ $user->getFullName(true) }}
+                                                {{ $this->teacher->user->getFullName(true) }}
 
                                             </h1>
                                             <span
@@ -87,7 +88,7 @@
 
                                         <p class="mt-2 text-slate-400 text-sm">
 
-                                            ID : {{ $teacher->identifiant }}
+                                            ID : {{ $this->teacher->identifiant }}
 
                                         </p>
 
@@ -107,7 +108,7 @@
                                             </p>
 
                                             <h4 class="mt-1 font-medium truncate">
-                                                {{ $user->contacts }}
+                                                {{ $this->teacher->user->contacts }}
                                             </h4>
 
                                         </div>
@@ -143,75 +144,6 @@
                             </div>
 
                         </div>
-
-                        {{-- ACTIONS --}}
-                        <div
-                            class="grid
-                                    grid-cols-2
-                                    sm:grid-cols-4
-                                    xl:grid-cols-2
-                                    gap-3
-                                    xl:w-[260px]
-                                    shrink-0">
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-indigo-500
-                                           hover:bg-indigo-600
-                                           transition-all
-                                           text-sm">
-
-                                Editer
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-slate-700
-                                           transition-all
-                                           text-sm">
-
-                                Emploi du temps
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-slate-700
-                                           transition-all
-                                           text-sm">
-
-                                Notes
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-rose-500/20
-                                           text-rose-400
-                                           hover:bg-rose-500/30
-                                           transition-all
-                                           text-sm">
-
-                                Désactiver
-
-                            </button>
-                            <a wire:navigate
-                                href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $teacher->uuid]) }}"
-                                class="flex justify-center gap-x-3 items-center w-full rounded-2xl py-3 px-2  bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-all col-span-2 text-sm"
-                                style="">
-                                <span class="" style="">
-                                    ⚙️
-                                </span>
-                                <span class="text-center">
-                                    Gérer les matières
-                                </span>
-                            </a>
-
-                        </div>
-
                     </div>
 
                 </div>
@@ -222,7 +154,7 @@
                     </p>
 
                     <h4 class="mt-1 font-medium flex flex-wrap gap-2 text-sm">
-                        @forelse ($teacher->getYearlySubjects() as $yearly_subject)
+                        @forelse ($this->teacher->getYearlySubjects() as $yearly_subject)
                             <span
                                 class="rounded-2xl p-2 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->name }}</span>
                         @empty
@@ -237,11 +169,186 @@
 
         </section>
 
+        <section class="my-3 flex justify-end border-y border-y-slate-800 py-3">
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+
+                {{-- Matières --}}
+                @if ($this->teacher->hasValidAccessForYear())
+                    <a title="Définir les matières de {{ $this->teacher->getFullName() }}" wire:navigate
+                        href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $this->teacher->uuid]) }}"
+                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-indigo-800/40 hover:bg-indigo-500/80 text-indigo-400 transition-all whitespace-nowrap hover:text-black">
+                        <span>⚙️</span>
+                        <span>Gérer les matières</span>
+                    </a>
+                @endif
+
+                {{-- Envoyer credentials --}}
+                @if (!$this->teacher->user->blocked)
+                    <button title="Envoyer les données de connexion à {{ $this->teacher->getFullName() }}"
+                        wire:click="sendCredentialsToTeacher('{{ $this->teacher->user->uuid }}')"
+                        wire:loading.attr="disabled"
+                        wire:target="sendCredentialsToTeacher('{{ $this->teacher->user->uuid }}')"
+                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-sky-800/50 hover:bg-sky-500/80 text-sky-400 transition-all whitespace-nowrap hover:text-black disabled:opacity-50">
+                        <span wire:loading.remove
+                            wire:target="sendCredentialsToTeacher('{{ $this->teacher->user->uuid }}')"
+                            class="inline-flex items-center gap-1.5">
+                            <x-lucide-send class="w-3.5 h-3.5 shrink-0" />
+                            <span>Envoyer</span>
+                        </span>
+                        <span wire:loading wire:target="sendCredentialsToTeacher('{{ $this->teacher->user->uuid }}')"
+                            class="inline-flex items-center gap-1.5">
+                            <span class="flex items-center gap-2">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                <span>En cours...</span>
+                            </span>
+                        </span>
+                    </button>
+                @endif
+
+                {{-- Bloquer / Débloquer --}}
+                <button
+                    title="{{ $this->teacher->blocked ? 'Débloquer' : 'Bloquer' }} {{ $this->teacher->getFullName() }}"
+                    wire:click="{{ $this->teacher->blocked ? 'unlockTeacher(' . $this->teacher->id . ')' : 'lockTeacher(' . $this->teacher->id . ')' }}"
+                    wire:loading.attr="disabled"
+                    wire:target="lockTeacher({{ $this->teacher->id }}), unlockTeacher({{ $this->teacher->id }})"
+                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap hover:text-black disabled:opacity-50 {{ $this->teacher->blocked ? 'bg-lime-600/40 hover:bg-lime-500/80 text-lime-400' : 'bg-amber-800/50 hover:bg-amber-500/80 text-amber-400' }}">
+                    <span wire:loading.remove
+                        wire:target="lockTeacher({{ $this->teacher->id }}), unlockTeacher({{ $this->teacher->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        @if ($this->teacher->blocked)
+                            <x-lucide-lock-keyhole-open class="w-3.5 h-3.5 shrink-0" />
+                            <span>Débloquer prof</span>
+                        @else
+                            <x-lucide-ban class="w-3.5 h-3.5 shrink-0" />
+                            <span>Bloquer prof</span>
+                        @endif
+                    </span>
+                    <span wire:loading
+                        wire:target="lockTeacher({{ $this->teacher->id }}), unlockTeacher({{ $this->teacher->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        <span class="flex items-center gap-2">
+                            <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                            <span>En cours...</span>
+                        </span>
+                    </span>
+                </button>
+
+                <button
+                    title="{{ $this->teacher->user->blocked ? 'Débloquer compte utilisateur de ' : 'Bloquer compte utilisateur de ' }} {{ $this->teacher->user->getFullName() }}"
+                    wire:click="{{ $this->teacher->user->blocked ? 'unlockUser(' . $this->teacher->user->id . ')' : 'lockUser(' . $this->teacher->user->id . ')' }}"
+                    wire:loading.attr="disabled"
+                    wire:target="lockUser({{ $this->teacher->user->id }}), unlockUser({{ $this->teacher->user->id }})"
+                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap hover:text-black disabled:opacity-50 {{ $this->teacher->user->blocked ? 'bg-indigo-800/50 hover:bg-indigo-500/80 text-indigo-400' : 'bg-red-800/50 hover:bg-red-500/80 text-red-400' }}">
+                    <span wire:loading.remove
+                        wire:target="lockUser({{ $this->teacher->user->id }}), unlockUser({{ $this->teacher->user->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        @if ($this->teacher->user->blocked)
+                            <x-lucide-unlock class="w-3.5 h-3.5 shrink-0" />
+                            <span>Débloquer compte</span>
+                        @else
+                            <x-lucide-user-lock class="w-3.5 h-3.5 shrink-0" />
+                            <span>Bloquer compte</span>
+                        @endif
+                    </span>
+                    <span wire:loading
+                        wire:target="lockUser({{ $this->teacher->user->id }}), unlockUser({{ $this->teacher->user->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        <span class="flex items-center gap-2">
+                            <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                            <span>En cours...</span>
+                        </span>
+                    </span>
+                </button>
+
+                {{-- Accorder / Retirer accès année --}}
+                @if (!$this->teacher->deleted_at)
+                    <button
+                        title="{{ $this->teacher->hasValidAccessForYear() ? 'Retirer' : 'Accorder' }} l'accès à {{ $this->teacher->getFullName() }}"
+                        wire:click="{{ $this->teacher->hasValidAccessForYear() ? 'removeAccessForThisSchoolYear(' . $this->teacher->id . ')' : 'giveAccessForThisSchoolYear(' . $this->teacher->id . ')' }}"
+                        wire:loading.attr="disabled"
+                        wire:target="giveAccessForThisSchoolYear({{ $this->teacher->id }}), removeAccessForThisSchoolYear({{ $this->teacher->id }})"
+                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap hover:text-black disabled:opacity-50 {{ $this->teacher->hasValidAccessForYear() ? 'bg-orange-800/50 hover:bg-orange-500/80 text-orange-400' : 'bg-emerald-800/50 hover:bg-emerald-500/80 text-emerald-400' }}">
+                        <span wire:loading.remove
+                            wire:target="giveAccessForThisSchoolYear({{ $this->teacher->id }}), removeAccessForThisSchoolYear({{ $this->teacher->id }})"
+                            class="inline-flex items-center gap-1.5">
+                            @if ($this->teacher->hasValidAccessForYear())
+                                <x-lucide-user-key class="w-3.5 h-3.5 shrink-0" />
+                                <span>Retirer accès</span>
+                            @else
+                                <x-lucide-key class="w-3.5 h-3.5 shrink-0" />
+                                <span>Accorder accès</span>
+                            @endif
+                        </span>
+                        <span wire:loading
+                            wire:target="giveAccessForThisSchoolYear({{ $this->teacher->id }}), removeAccessForThisSchoolYear({{ $this->teacher->id }})"
+                            class="inline-flex items-center gap-1.5">
+                            <span class="flex items-center gap-x-2">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                <span>En cours...</span>
+                            </span>
+                        </span>
+                    </button>
+                @endif
+
+                {{-- Corbeille / Restaurer --}}
+                <button
+                    title="{{ $this->teacher->deleted_at ? 'Restaurer' : 'Mettre en corbeille' }} {{ $this->teacher->getFullName() }}"
+                    wire:click="{{ $this->teacher->deleted_at ? 'restoreTeacher(' . $this->teacher->id . ')' : 'deleteTeacher(' . $this->teacher->id . ')' }}"
+                    wire:loading.attr="disabled"
+                    wire:target="deleteTeacher({{ $this->teacher->id }}), restoreTeacher({{ $this->teacher->id }})"
+                    class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap hover:text-black disabled:opacity-50 {{ $this->teacher->deleted_at ? 'bg-violet-800/50 hover:bg-violet-500/80 text-violet-400' : 'bg-rose-800/50 hover:bg-rose-500/80 text-rose-400' }}">
+                    <span wire:loading.remove
+                        wire:target="deleteTeacher({{ $this->teacher->id }}), restoreTeacher({{ $this->teacher->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        @if ($this->teacher->deleted_at)
+                            <x-lucide-recycle class="w-3.5 h-3.5 shrink-0" />
+                            <span>Restaurer</span>
+                        @else
+                            <x-lucide-trash class="w-3.5 h-3.5 shrink-0" />
+                            <span>Corbeille</span>
+                        @endif
+                    </span>
+                    <span wire:loading
+                        wire:target="deleteTeacher({{ $this->teacher->id }}), restoreTeacher({{ $this->teacher->id }})"
+                        class="inline-flex items-center gap-1.5">
+                        <span class="flex items-center gap-2">
+                            <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                            <span>En cours...</span>
+                        </span>
+                    </span>
+                </button>
+
+                {{-- Supprimer définitivement --}}
+                @if ($this->teacher->deleted_at)
+                    <button title="Supprimer définitivement {{ $this->teacher->getFullName() }}"
+                        wire:click="forceDeleteTeacher({{ $this->teacher->id }})" wire:loading.attr="disabled"
+                        wire:target="forceDeleteTeacher({{ $this->teacher->id }})"
+                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-red-800/50 hover:bg-red-600/80 text-red-400 transition-all whitespace-nowrap hover:text-black disabled:opacity-50">
+                        <span wire:loading.remove wire:target="forceDeleteTeacher({{ $this->teacher->id }})"
+                            class="inline-flex items-center gap-1.5">
+                            <span class="flex items-center gap-x-2">
+                                <x-lucide-trash-2 class="w-3.5 h-3.5 shrink-0" />
+                                <span>Suppr. déf.</span>
+                            </span>
+                        </span>
+                        <span wire:loading wire:target="forceDeleteTeacher({{ $this->teacher->id }})"
+                            class="inline-flex items-center gap-1.5">
+                            <span class="flex items-center gap-x-2">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                <span>En cours...</span>
+                            </span>
+                        </span>
+                    </button>
+                @endif
+
+            </div>
+        </section>
+
         <section class="mb-6">
 
             <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
 
-                @foreach ([['Classes', __zero($teacher?->getTeacherClassesCountForThisSchoolYear()), 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
+                @foreach ([['Classes', __zero($this->teacher?->getTeacherClassesCountForThisSchoolYear()), 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
                     <div
                         class="rounded-3xl
                             border border-slate-800
@@ -285,7 +392,7 @@
 
                                 </div>
 
-                                <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $teacher->uuid]) }}"
+                                <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $this->teacher->uuid]) }}"
                                     class="py-3 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600 transition-all text-sm">
                                     Gérer classes
                                 </a>
@@ -296,7 +403,7 @@
 
                         <div class="overflow-x-auto p-2">
                             @php
-                                $classes = $teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
+                                $classes = $this->teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
                             @endphp
 
                             @if (count($classes))
@@ -381,17 +488,17 @@
                                                     <div class="flex items-center justify-end gap-2">
 
                                                         <button
-                                                            title="{{ $teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} cet enseigant "
-                                                            wire:click="{{ $teacher->is_locked ? 'unlockTeacher(' . $teacher->id . ')' : 'lockTeacher(' . $teacher->id . ')' }}"
+                                                            title="{{ $this->teacher->is_locked ? 'Débloquer ' : 'Bloquer ' }} cet enseigant "
+                                                            wire:click="{{ $this->teacher->is_locked ? 'unlockTeacher(' . $this->teacher->id . ')' : 'lockTeacher(' . $this->teacher->id . ')' }}"
                                                             wire:loading.attr="disabled"
                                                             wire:target="lockTeacher, unlockTeacher"
-                                                            class="relative py-3 px-4 rounded-xl {{ !$teacher->is_locked ? 'bg-amber-600 hover:bg-amber-800' : 'bg-purple-500/20 hover:bg-purple-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
+                                                            class="relative py-3 px-4 rounded-xl {{ !$this->teacher->is_locked ? 'bg-amber-600 hover:bg-amber-800' : 'bg-purple-500/20 hover:bg-purple-600/60' }} text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
                                                             <span wire:loading.remove
                                                                 wire:target="lockTeacher, unlockTeacher"
                                                                 class="inline-flex items-center justify-center">
                                                                 <span
                                                                     class="inline-flex items-center justify-center gap-2">
-                                                                    @if ($teacher->is_locked)
+                                                                    @if ($this->teacher->is_locked)
                                                                         <x-lucide-unlock class="w-4 h-4" />
                                                                         <span>Débloquer</span>
                                                                     @else
@@ -415,19 +522,19 @@
                                                         </button>
 
                                                         <button
-                                                            title="{{ $teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'Déverouiller' : 'Vérouiller ' }} l'accès du prof à la classe"
-                                                            wire:click="{{ $teacher->cannotAccessIntoClasse($kls->classe?->id)
-                                                                ? 'unLockAccessToClasse(' . $teacher->id . ',' . $kls->classe?->id . ')'
-                                                                : 'lockAccessToClasse(' . $teacher->id . ',' . $kls->classe?->id . ')' }}"
+                                                            title="{{ $this->teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'Déverouiller' : 'Vérouiller ' }} l'accès du prof à la classe"
+                                                            wire:click="{{ $this->teacher->cannotAccessIntoClasse($kls->classe?->id)
+                                                                ? 'unLockAccessToClasse(' . $this->teacher->id . ',' . $kls->classe?->id . ')'
+                                                                : 'lockAccessToClasse(' . $this->teacher->id . ',' . $kls->classe?->id . ')' }}"
                                                             wire:loading.attr="disabled"
                                                             wire:target="lockAccessToClasse, unLockAccessToClasse"
-                                                            class="relative py-3 px-4 rounded-xl {{ !$teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }}  text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
+                                                            class="relative py-3 px-4 rounded-xl {{ !$this->teacher->cannotAccessIntoClasse($kls->classe?->id) ? 'bg-red-600/50 hover:bg-red-500/80' : 'bg-green-500/20 hover:bg-green-600/60' }}  text-xs font-medium inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 text-black">
                                                             <span wire:loading.remove
                                                                 wire:target="lockAccessToClasse, unLockAccessToClasse"
                                                                 class="inline-flex items-center justify-center">
                                                                 <span
                                                                     class="inline-flex items-center justify-center gap-2">
-                                                                    @if ($teacher->cannotAccessIntoClasse($kls->classe?->id))
+                                                                    @if ($this->teacher->cannotAccessIntoClasse($kls->classe?->id))
                                                                         <x-lucide-check class="w-4 h-4" />
                                                                         <span>Déverouiller accès</span>
                                                                     @else
@@ -467,7 +574,7 @@
                                         <div class="flex flex-col items-center gap-3">
                                             <x-lucide-school class="w-10 h-10 text-orange-600" />
                                             <p class="text-slate-500 text-lg animate-pulse">Aucune classe assignée</p>
-                                            <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $teacher->uuid]) }}"
+                                            <a href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $this->teacher->uuid]) }}"
                                                 class="mt-2 px-4 w-full py-2 rounded-xl bg-slate-800 hover:bg-orange-700/25 text-sm transition hover:underline underline-offset-4 hover:text-orange-500">
                                                 Attribuer des classes
                                             </a>
@@ -585,7 +692,7 @@
                         <div class="mt-5 space-y-5">
 
                             @php
-                                $pp_classes = $teacher?->getClassesWhereIsPrincipal();
+                                $pp_classes = $this->teacher?->getClassesWhereIsPrincipal();
                             @endphp
 
                             <div class="flex flex-col gap-2 text-slate-500 text-sm">
@@ -599,7 +706,7 @@
                                     @endforeach
                                 @else
                                     <span class="text-yellow-600/80 italic ls-1 font-mono py-4">Aucune
-                                        responsabilités accordées à {{ $teacher->getFullName() }} cette année
+                                        responsabilités accordées à {{ $this->teacher->getFullName() }} cette année
                                         scolaire</span>
                                 @endif
                             </div>
@@ -616,7 +723,7 @@
 
                         <div class="mt-5 space-y-4">
 
-                            @foreach ([['Email', $teacher->user?->email], ['Diplôme', 'Non renseigné'], ['Adresse', $teacher->user?->adresse], ['Recrutement', __formatDate($teacher->affiliated_at)]] as $info)
+                            @foreach ([['Email', $this->teacher->user?->email], ['Diplôme', 'Non renseigné'], ['Adresse', $this->teacher->user?->adresse], ['Recrutement', __formatDate($this->teacher->affiliated_at)]] as $info)
                                 <div class="rounded-2xl bg-slate-950 p-4">
 
                                     <p class="text-xs text-slate-500">
@@ -646,8 +753,8 @@
 
                         <div class="mt-6 flex justify-center items-center">
 
-                            <img class="w-52 h-52" src="{{ $teacher->qr_code }}"
-                                alt="QR Code de {{ $teacher->user->getFullName() }}">
+                            <img class="w-52 h-52" src="{{ $this->teacher->qr_code }}"
+                                alt="QR Code de {{ $this->teacher->user->getFullName() }}">
 
                         </div>
 

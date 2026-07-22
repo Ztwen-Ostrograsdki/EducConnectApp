@@ -2,14 +2,13 @@
 
 namespace App\Livewire\Tenants;
 
+use App\Events\DataUpdatedEvent;
 use App\Events\StudentDataUpdatedEvent;
 use App\Helpers\Support\TenantStorage;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Tutor;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -105,6 +104,8 @@ class ProfilPhotoManagerByDirectorComponent extends Component
 
             $this->reset('photo');
 
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
         }else{
 
             $this->notification()->send([
@@ -149,7 +150,11 @@ class ProfilPhotoManagerByDirectorComponent extends Component
 
             $this->reset('photo');
 
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
             $domain = request()->getSchemeAndHttpHost();
+
+
 
             StudentDataUpdatedEvent::dispatch(
                 tenantId: tenant('id'),

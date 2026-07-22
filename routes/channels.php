@@ -34,6 +34,14 @@ Broadcast::channel('tenant.{tenantId}.enseignant', function (User $user, string 
         && $user->hasRole('enseignant');
 });
 
+
+Broadcast::channel('tenant.{tenantId}.enseignant.{userId}', function (User $user, string $tenantId, int $userId) {
+    return tenant() !== null
+        && tenant('id') === $tenantId
+        && $user->hasRole('enseignant')
+        && $user->id === $userId;
+});
+
 // ── Channel personnel (un user spécifique) ────────────────
 // ex: notification de blocage individuel
 Broadcast::channel('tenant.{tenantId}.user.{userId}', function (User $user, string $tenantId, int $userId) {

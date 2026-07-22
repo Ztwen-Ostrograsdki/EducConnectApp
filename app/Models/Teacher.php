@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\UserAccessWasRevokedEvent;
 use App\Exceptions\ModelCouldNotBeDeleteBecauseHasActivesAssignmentsException;
 use App\Jobs\JobToCreateYearlyAccessForTeacher;
 use App\Models\YearlySubjectChief;
@@ -472,16 +473,20 @@ class Teacher extends Model
     }
     
     
-    public function removeTeacherAccessForThisSchoolYear(?int $school_year_id)
+    public function removeTeacherAccessForThisSchoolYear(string $tenantId, ?int $school_year_id = null, ?string $domain = null)
     {
         if($this->hasValidAccessForYear($school_year_id)){
 
             if(!$school_year_id) $school_year_id = SchoolYear::where('is_active', true)->where('is_closed', false)->first()?->id;
 
-                return $this->yearlyAccesses()
-                    ->where('school_year_id', $school_year_id)
-                    ->where('status', 'active')
-                    ?->delete();
+                $deleted = $this->yearlyAccesses()
+                    ->where('school_year_id', $school_year_id)?->delete();
+
+                if($deleted){
+
+                    broadcast(new UserAccessWasRevokedEvent($tenantId, $this->user->id, 'enseignant'));
+
+                }
         }
 
         else{

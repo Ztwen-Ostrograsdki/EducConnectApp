@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants;
 
 
+use App\Events\DataUpdatedEvent;
 use App\Helpers\Support\TenantStorage;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
@@ -53,6 +54,8 @@ class UpdateProfilePhoto extends Component
 
             $this->reset('photo');
 
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
             $this->redirectRoute('tenant.my.profil');
         }else{
 
@@ -75,7 +78,8 @@ class UpdateProfilePhoto extends Component
 
     public function removePhoto(): void
     {
-        $user = auth()->guard('tenant')->user();
+        /**@var \App\Models\User */
+        $user = auth('tenant')->user();
 
         TenantStorage::delete(
             $user->profile_photo
@@ -95,6 +99,8 @@ class UpdateProfilePhoto extends Component
 
             $this->reset('photo');
 
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
             $this->redirectRoute('tenant.my.profil');
         }else{
 
@@ -110,6 +116,9 @@ class UpdateProfilePhoto extends Component
 
     public function render()
     {
-        return view('livewire.tenants.update-profile-photo')->layout(auth('tenant')->user()->getDashboardLayout());
+        /**@var \App\Models\User */
+        $user = auth('tenant')->user();
+
+        return view('livewire.tenants.update-profile-photo')->layout($user->getDashboardLayout());
     }
 }

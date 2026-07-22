@@ -11,6 +11,7 @@ use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\EnsureTenantNotDeletedAt;
 use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
+use App\Http\Middleware\EnsureThatUserAccountNotBlockedMiddleware;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\LogoutUserWhenInactivityIsTakeLongTimeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -67,6 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
             'tenant.domain.not.deleted.at' => EnsureTenantNotDeletedAt::class,
             'tenant.has.active.schoolYear' => RedirectIfHasntCurrentActiveSchoolYearMiddleware::class,
+            'user.not.blocked' => EnsureThatUserAccountNotBlockedMiddleware::class,
             'teacher.not.blocked' => EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,

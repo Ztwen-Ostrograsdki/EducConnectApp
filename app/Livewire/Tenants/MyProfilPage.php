@@ -3,8 +3,7 @@
 namespace App\Livewire\Tenants;
 
 use App\Helpers\Support\TenantStorage;
-use App\Models\User;
-use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
@@ -13,6 +12,8 @@ use WireUi\Traits\WireUiActions;
 class MyProfilPage extends Component
 {
     use WireUiActions;
+
+    public $counter = 0;
 
     public function mount()
     {
@@ -56,10 +57,18 @@ class MyProfilPage extends Component
 
     }
 
+    
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+    
     public function render()
     {
         /** @var \App\Models\User $user */
-        $user = auth()->guard('tenant')->user();
+        $user = auth('tenant')->user();
+        
         return view('livewire.tenants.my-profil-page', compact('user'))->layout($user->getDashboardLayout());
     }
 }

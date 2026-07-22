@@ -63,7 +63,7 @@ trait TeachersActions{
 
         $teacher->update(['blocked' => true]);
 
-        broadcast(new TeacherWasBlockedEvent(tenant('id'), $teacher->id));
+        broadcast(new TeacherWasBlockedEvent(tenant('id'), $teacher->user->id));
 
         $this->notification()->success(
             title: 'Enseignant bloqué',

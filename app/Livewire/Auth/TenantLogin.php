@@ -30,6 +30,7 @@ class TenantLogin extends Component
      */
     public function login()
     {
+        $this->resetErrorBag();
 
         $this->validate();
 
@@ -61,7 +62,7 @@ class TenantLogin extends Component
         if (Auth::guard('tenant')->user()) {
 
             $tenant = tenant();
-            
+
             if($tenant->domain_blocked){
 
                 $this->errorMessage = "L'accès à votre espace est temporairement bloqué! Veuillez contacter l'administrateur!";
@@ -69,6 +70,10 @@ class TenantLogin extends Component
                 session('abort-error', "Compte inacessible");
 
                 Auth::guard('tenant')->logout();
+
+                session()->invalidate();
+
+                session()->regenerate();
 
                 return;
 
@@ -78,8 +83,24 @@ class TenantLogin extends Component
 
             session()->regenerate();
 
-             /** @var \App\Models\User $user */
+            /** @var \App\Models\User $user */
             $user = auth('tenant')->user();
+
+            if($user->blocked){
+
+                $this->errorMessage = "Votre compte est temporairement bloqué par l'administrateur! Veuillez contacter l'administrateur!";
+
+                session('abort-error', "Compte bloqué");
+
+                Auth::guard('tenant')->logout();
+
+                session()->invalidate();
+
+                session()->regenerate();
+
+                return;
+
+            }
 
             $logged_count = $user->logged_count;
 
@@ -91,17 +112,13 @@ class TenantLogin extends Component
 
                     Auth::guard('tenant')->logout();
 
+                    session()->invalidate();
+
+                    session()->regenerate();
+
                     return;
                 }
-
-
-                //Ajouter pour les comptes parents ici
-
-
-
-                //Ajouter pour les comptes élèves ici
             }
-
 
             if($logged_count < 1){
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Auth\LogoutComponent;
 use App\Livewire\Auth\PasswordForgotPage;
 use App\Livewire\Auth\PasswordUpdatePage;
 use App\Livewire\Auth\ResetPasswordPage;
@@ -102,6 +103,11 @@ Route::middleware([
     Route::get('/password-reset/{token?}/{email?}', ResetPasswordPage::class)->middleware('guest:tenant')->name('tenant.password.reset');
 
     Route::get('/', HomePage::class)->name('tenants.home');
+
+
+    Route::get('/deconnexion-force', LogoutComponent::class)->name('tenant.logout.force')->middleware('web');
+
+
 
     Route::post('/logout', function () {
 
@@ -273,30 +279,27 @@ Route::middleware([
 
 
         // ESPACE PARENT
-        Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
+        Route::middleware(['tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function(){
 
-        Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
+            Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
 
-        Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
+            Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
-        Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
+            Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
 
-        //ESPACE ENSEIGNANT
-        Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.my.teacher.')->group(function () {
-            Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('space');
-            Route::get('/mon-espace-enseignant/les-notes', TeacherClasseMarksViewer::class)->name('space.marks');
-            Route::get('/mon-espace-enseignant/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('space.marks.manager');
-            Route::get('/mon-espace-enseignant/liste-apprenants', TeacherClasseStudentsViewer::class)->name('space.students');
-            
-        });
-        
+            Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
+
+            //ESPACE ENSEIGNANT
+            Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.my.teacher.')->group(function () {
+                
+                Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('space');
+                Route::get('/mon-espace-enseignant/les-notes', TeacherClasseMarksViewer::class)->name('space.marks');
+                Route::get('/mon-espace-enseignant/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('space.marks.manager');
+                Route::get('/mon-espace-enseignant/liste-apprenants', TeacherClasseStudentsViewer::class)->name('space.students');
+                
+            });
 
 
-
-       
-
-        
-        Route::middleware('tenant.domain.open.for.others.too')->group(function () {
             // ── Enseignant ────────────────────────────────────────────────
             Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {
                 // sera rempli au fur et à mesure
@@ -312,7 +315,16 @@ Route::middleware([
                 // sera rempli au fur et à mesure
             }); 
 
+
+
         });
+        
+
+
+
+       
+
+        
     });
 
 });

@@ -16,21 +16,6 @@ export function registerDirectorListeners(tenantId) {
         })
 
         // ANY EVENTS
-        .listen("DataUpdatedEvent", (e) => {
-            if (e.message) {
-                $wireui.notify({
-                    title: "Nouvelle année scolaire créée",
-                    timeout: 0,
-                    description:
-                        "L'année scolaire " +
-                        e.school_year +
-                        " a été créée avec succès!",
-                    icon: "info",
-                });
-            }
-
-            Livewire.dispatch("DataUpdatedEventLiveEvent");
-        })
 
         // SCHOOL YEAR EVENTS
         .listen("NewSchoolYearCreated", (e) => {

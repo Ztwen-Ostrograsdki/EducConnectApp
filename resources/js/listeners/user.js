@@ -8,6 +8,32 @@ export function registerUserListeners(tenantId, userId) {
                 icon: mapTypeToIcon(notification.type ?? "info"),
             });
         })
+        .listen("DataUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        })
+        .listen("UserAccountWasBlockedEvent", (e) => {
+            Livewire.dispatch("UserAccountWasBlockedLiveEvent");
+
+            $wireui.notify({
+                title: "COMPTE UTILISATEUR BLOQUE",
+                timeout: 0,
+                description: "Votre compte a été bloqué",
+                icon: mapTypeToIcon("error"),
+            });
+
+            window.location.href = "/deconnexion-force";
+        })
+        .listen("UserAccessWasRevokedEvent", (e) => {
+            $wireui.notify({
+                title: "ACCES UTILISATEUR REVOQUE",
+                timeout: 0,
+                description:
+                    "Votre accès de cette année scolaire a été revoqué",
+                icon: mapTypeToIcon("error"),
+            });
+
+            window.location.href = "/deconnexion-force";
+        })
         .listen("UserTaskAssigned", (e) => {
             window.dispatchEvent(
                 new CustomEvent("user:task-assigned", {

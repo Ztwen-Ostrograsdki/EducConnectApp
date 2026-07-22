@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\Teachers;
 
 use App\Livewire\Tenants\ActionsTraits\TeachersActions;
+use App\Livewire\Tenants\ActionsTraits\UsersActions;
 use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\GeneratedDocument;
@@ -24,7 +25,7 @@ use Livewire\Component;
 #[Title('Portails des enseignants')]
 class TeachersPortal extends Component
 {
-    use TeachersActions;
+    use TeachersActions, UsersActions;
 
     public string $search = '';
 
