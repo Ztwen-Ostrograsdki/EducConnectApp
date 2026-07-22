@@ -36,14 +36,12 @@
                                border-4
                                border-slate-700">
 
-                        <a href="{{ route('tenant.update.profil.photo') }}"
+                        <a title="Editer ma photo de profil" href="{{ route('tenant.update.profil.photo') }}"
                             class="absolute bottom-2 right-2
                                w-12 h-12 rounded-full
-                               bg-indigo-500
+                               bg-indigo-800/75 hover:bg-indigo-500 hover:text-black
                                flex items-center justify-center">
-
                             <x-lucide-camera class="w-5 h-5" />
-
                         </a>
 
                     </div>
@@ -51,13 +49,13 @@
                 </div>
 
                 {{-- INFOS --}}
-                <div class="flex-1">
+                <div class="flex-1 font-mono">
 
                     <div
                         class="inline-flex items-center gap-2
-                           px-3 py-1 rounded-full
-                           bg-emerald-500/10
-                           text-emerald-400">
+                           px-3 py-1 rounded-full @if (!$user->blocked) bg-emerald-500/10
+                           text-emerald-400 @else  bg-red-500/10
+                           text-red-400 @endif">
 
                         <x-lucide-circle-check class="w-4 h-4" />
 
@@ -149,7 +147,7 @@
 
     <section class="rounded-3xl
            border border-slate-800
-           bg-slate-900/80">
+           bg-slate-900/80 font-mono">
 
         <div class="p-6 border-b border-slate-800">
 
@@ -179,7 +177,11 @@
                 </label>
 
                 <p class="mt-2">
-                    ---
+                <p>{{ ucwords(__formatDate($user->birth_date)) }}</p>
+                <p class="text-slate-500 text-left ">
+                    {{ getAge($user->birth_date) }}
+                    ans
+                </p>
                 </p>
             </div>
 
@@ -226,66 +228,7 @@
         </div>
 
     </section>
-    <section class="grid xl:grid-cols-2 gap-6">
 
-        <div class="rounded-3xl
-               border border-slate-800
-               bg-slate-900/80 p-6">
-
-            <h2 class="text-xl font-bold">
-                Rôles
-            </h2>
-
-            <div class="mt-5 flex flex-wrap gap-3">
-
-                @foreach ($user->roles as $rl)
-                    <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                        {{ $rl->name }}
-                    </span>
-                @endforeach
-
-                @if ($user->hasRole('directeur'))
-                    <span class="badge p-2 bg-purple-400 text-purple-950 rounded-2xl">
-                        {{ 'Administrateur du domaine' }}
-                    </span>
-                @endif
-
-            </div>
-
-        </div>
-
-        <div class="rounded-3xl
-               border border-slate-800
-               bg-slate-900/80 p-6">
-
-            <h2 class="text-xl font-bold">
-                Permissions
-            </h2>
-
-            <div class="mt-5 gap-2 flex items-center
-                           flex-wrap">
-                @if ($user->hasRole('directeur'))
-                    <span class="flex w-full justify-center items-center p-2 bg-green-400 text-green-950 rounded-2xl">
-                        <span>
-                            Toutes les Permissions
-                        </span>
-                    </span>
-                @else
-                    @foreach ($user->getAllPermissions() as $p)
-                        <span class="flex justify-center items-center p-2 bg-green-400 text-green-950 rounded-2xl">
-                            <span>
-                                {{ $p->name }}
-                            </span>
-                        </span>
-                    @endforeach
-
-                @endif
-
-            </div>
-
-        </div>
-
-    </section>
     <section class="rounded-3xl
            border border-slate-800
            bg-slate-900/80 p-6 mb-32">

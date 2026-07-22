@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
     {{-- <script>
         window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
     </script> --}}
@@ -72,11 +74,13 @@
                         <div class="s-section-label">Général</div>
 
                         @if (auth('tenant')->user()?->hasRole('directeur'))
-                            <a data-sidebar-item href="{{ route('tenant.dashboard') }}" class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
+                            <a data-sidebar-item href="{{ route('tenant.dashboard') }}"
+                                class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                                 <div class="s-icon">📊</div><span class="s-label">Administration</span>
                             </a>
                         @endif
-                        <a data-sidebar-item href="{{ route('tenant.my.profil') }}" class="s-link {{ request()->routeIs('tenant.my.profil') ? 'active' : '' }}">
+                        <a data-sidebar-item href="{{ route('tenant.my.profil') }}"
+                            class="s-link {{ request()->routeIs('tenant.my.profil') ? 'active' : '' }}">
                             <div class="s-icon">
                                 <x-lucide-user class="h-3 w-3" />
                             </div><span class="s-label">Mon profil</span>
@@ -92,21 +96,10 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a href="{{ route('tenant.my.teacher.space') }}" class="s-link" style="font-size:.78rem;">
+                                <a href="{{ route('tenant.teacher.my.dashboard') }}" class="s-link"
+                                    style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Dashboard</span>
-                                </a>
-                                <a href="{{ route('tenant.my.teacher.space.marks') }}" class="s-link" style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Les notes</span>
-                                </a>
-                                <a href="{{ route('tenant.my.teacher.space.marks.manager') }}" class="s-link" style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Insertion notes</span>
-                                </a>
-                                <a href="{{ route('tenant.my.teacher.space.students') }}" class="s-link" style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Liste apprenant</span>
                                 </a>
                             </div>
                         </div>
@@ -128,7 +121,8 @@
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Dashboard</span>
                                 </a>
-                                <a href="{{ route('tenant.my.parent.space.marks') }}" class="s-link" style="font-size:.78rem;">
+                                <a href="{{ route('tenant.my.parent.space.marks') }}" class="s-link"
+                                    style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Les notes</span>
                                 </a>
@@ -140,7 +134,8 @@
                     <div class="s-user">
                         <div class="s-avatar">
                             @if (auth()->guard('tenant')->user()->profil_photo)
-                                <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                                <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}"
+                                    class="h-10 w-10 rounded-full object-cover">
                             @else
                                 {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                             @endif
@@ -205,7 +200,8 @@
                             <div class="user-trigger" onclick="toggleDD('user-menu')">
                                 <div class="ut-avatar">
                                     @if (auth()->guard('tenant')->user()->profil_photo)
-                                        <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}" class="h-10 w-10 rounded-full object-cover">
+                                        <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}"
+                                            class="h-10 w-10 rounded-full object-cover">
                                     @else
                                         {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                                     @endif
@@ -238,7 +234,7 @@
             </header>
             <main class="flex-1 min-w-0 w-full max-w-full overflow-x-hidden p-3" id="content">
                 <div class="mx-auto w-full max-w-[1900px]">
-                    <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
+                    <div class="flex flex-wrap items-center gap-3 p-3 bg-slate-950 rounded-lg my-1.5">
                         <h1 class="text-lg font-bold">
                             Mon epace
                         </h1>

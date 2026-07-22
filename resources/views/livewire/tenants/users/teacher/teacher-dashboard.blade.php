@@ -6,14 +6,15 @@
     <div class="mx-auto
                 w-full
                 max-w-[1850px]
-                ">
+                mb-28">
 
         {{-- ===================================================== --}}
         {{-- HEADER --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
 
-            <div class="rounded-3xl
+            <div
+                class="rounded-3xl
                         border border-slate-800
                         bg-slate-900
                         overflow-hidden">
@@ -26,12 +27,22 @@
                         <div class="flex flex-col sm:flex-row gap-5 flex-1 min-w-0">
 
                             {{-- AVATAR --}}
-                            <div class="flex justify-center sm:block shrink-0">
+                            <div class="flex justify-center sm:block shrink-0 relative">
 
-                                <div class="w-28 h-28 sm:w-32 sm:h-32
-                                            rounded-3xl
-                                            bg-slate-800">
-                                </div>
+                                <img src="{{ $this->user->profil_photo_url }}" alt=""
+                                    class="w-40 h-40
+                               rounded-full
+                               object-cover
+                               border-4
+                               border-slate-700">
+
+                                <a title="Editer ma photo de profil" href="{{ route('tenant.update.profil.photo') }}"
+                                    class="absolute bottom-2 right-2
+                               w-12 h-12 rounded-full
+                               bg-indigo-800/75 hover:bg-indigo-500 hover:text-black
+                               flex items-center justify-center">
+                                    <x-lucide-camera class="w-5 h-5" />
+                                </a>
 
                             </div>
 
@@ -45,11 +56,12 @@
 
                                         <div class="flex flex-wrap items-center gap-2">
 
-                                            <h1 class="text-2xl sm:text-3xl
+                                            <h1
+                                                class="text-2xl sm:text-3xl
                                                        font-bold
                                                        break-words">
 
-                                                M. Jean Kouassi
+                                                {{ $this->teacher->getFullName(true) }}
 
                                             </h1>
 
@@ -59,7 +71,7 @@
                                                          text-indigo-400
                                                          text-xs shrink-0">
 
-                                                Enseignant Permanent
+                                                Enseignant
 
                                             </span>
 
@@ -67,29 +79,18 @@
 
                                         <p class="mt-2 text-slate-400 text-sm">
 
-                                            ID : ENS-2026-0048
+                                            ID : {{ $this->teacher->identifiant }}
 
                                         </p>
 
                                     </div>
 
                                     {{-- GRID INFOS --}}
-                                    <div class="grid
+                                    <div
+                                        class="grid
                                                 grid-cols-2
-                                                lg:grid-cols-4
+                                                lg:grid-cols-3
                                                 gap-3">
-
-                                        <div class="rounded-2xl bg-slate-950 p-3">
-
-                                            <p class="text-xs text-slate-500">
-                                                Matière
-                                            </p>
-
-                                            <h4 class="mt-1 font-medium truncate">
-                                                Mathématiques
-                                            </h4>
-
-                                        </div>
 
                                         <div class="rounded-2xl bg-slate-950 p-3">
 
@@ -98,7 +99,7 @@
                                             </p>
 
                                             <h4 class="mt-1 font-medium truncate">
-                                                +229 01 00 00 00
+                                                {{ $this->user->contacts }}
                                             </h4>
 
                                         </div>
@@ -106,11 +107,11 @@
                                         <div class="rounded-2xl bg-slate-950 p-3">
 
                                             <p class="text-xs text-slate-500">
-                                                Expérience
+                                                Email
                                             </p>
 
                                             <h4 class="mt-1 font-medium">
-                                                12 ans
+                                                {{ $this->user->email }}
                                             </h4>
 
                                         </div>
@@ -121,8 +122,19 @@
                                                 Statut
                                             </p>
 
-                                            <h4 class="mt-1 font-medium text-emerald-400">
-                                                Actif
+                                            <h4 class="mt-1 font-medium text-emerald-400 text-sm">
+                                                <div
+                                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full @if (!$this->teacher->blocked) text-emerald-400 @else  text-red-400 @endif">
+
+                                                    <x-lucide-circle-check class="w-4 h-4" />
+
+                                                    @if (!$this->teacher->blocked)
+                                                        Compte actif
+                                                    @else
+                                                        Compte bloqué
+                                                    @endif
+
+                                                </div>
                                             </h4>
 
                                         </div>
@@ -134,124 +146,44 @@
                             </div>
 
                         </div>
-
-                        {{-- ACTIONS --}}
-                        <div
-                            class="grid
-                                    grid-cols-2
-                                    sm:grid-cols-4
-                                    xl:grid-cols-2
-                                    gap-3
-                                    xl:w-[260px]
-                                    shrink-0">
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-indigo-500
-                                           hover:bg-indigo-600
-                                           transition-all
-                                           text-sm">
-
-                                Modifier
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-slate-700
-                                           transition-all
-                                           text-sm">
-
-                                Emploi du temps
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-slate-800
-                                           hover:bg-slate-700
-                                           transition-all
-                                           text-sm">
-
-                                Notes
-
-                            </button>
-
-                            <button
-                                class="h-12 rounded-2xl
-                                           bg-rose-500/20
-                                           text-rose-400
-                                           hover:bg-rose-500/30
-                                           transition-all
-                                           text-sm">
-
-                                Désactiver
-
-                            </button>
-
-                        </div>
-
                     </div>
 
                 </div>
 
             </div>
+            <div class="rounded-2xl bg-slate-950 p-3 text-xs my-2">
 
-        </section>
+                <p class="text-lg text-slate-500 border-b border-b-slate-600">
+                    Matière(s) | Spécialité(s)
+                </p>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="grid
-                        grid-cols-2
-                        xl:grid-cols-4
-                        gap-4">
-
-                @foreach ([['Classes', '8', 'text-indigo-400'], ['Heures/Sem.', '26h', 'text-emerald-400'], ['Notes Publiées', '482', 'text-amber-400'], ['Présence', '98%', 'text-sky-400']] as $kpi)
-                    <div class="rounded-3xl
-                            border border-slate-800
-                            bg-slate-900
-                            p-4 sm:p-5">
-
-                        <p class="text-xs sm:text-sm text-slate-400 truncate">
-                            {{ $kpi[0] }}
-                        </p>
-
-                        <h2 class="mt-3
-                               text-2xl sm:text-3xl xl:text-4xl
-                               font-bold {{ $kpi[2] }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
+                <h4 class="mt-1 font-medium flex flex-wrap gap-2 ">
+                    @forelse ($this->teacher->getYearlySubjects() as $yearly_subject)
+                        <span
+                            class="rounded-2xl p-2 font-mono bg-indigo-900/40 text-slate-400 cursor-pointer hover:scale-105 transition-transform">{{ $yearly_subject->subject->name }}</span>
+                    @empty
+                        <span class="text-orange-600/50 italic ls-1 font-mono py-4">Matières
+                            et spacialités non
+                            spécifiées</span>
+                    @endforelse
+                </h4>
 
             </div>
 
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- MAIN --}}
-        {{-- ===================================================== --}}
         <section>
 
-            <div class="grid
+            <div
+                class="grid
                         grid-cols-1
-                        2xl:grid-cols-[minmax(0,1fr)_400px]
+                        
                         gap-6">
 
-                {{-- ===================================================== --}}
-                {{-- LEFT --}}
-                {{-- ===================================================== --}}
                 <div class="space-y-6 min-w-0">
 
-                    {{-- CLASSES --}}
-                    <div class="rounded-3xl
+                    <div
+                        class="rounded-3xl
                                 border border-slate-800
                                 bg-slate-900
                                 overflow-hidden">
@@ -260,7 +192,8 @@
                         <div class="border-b border-slate-800
                                     p-4 sm:p-6">
 
-                            <div class="flex flex-col lg:flex-row
+                            <div
+                                class="flex flex-col lg:flex-row
                                         lg:items-center
                                         lg:justify-between
                                         gap-4">
@@ -268,387 +201,149 @@
                                 <div>
 
                                     <h2 class="text-lg sm:text-xl font-semibold">
-                                        Classes Enseignées
+                                        Mes classes
                                     </h2>
 
                                     <p class="mt-1 text-sm text-slate-400">
-                                        Gestion des performances par classe
+                                        Classes qui me sont assignées en <span
+                                            class="text-orange-600">{{ $this->activeYear->slug }}</span>
                                     </p>
 
                                 </div>
-
-                                <button
-                                    class="h-11 px-5 rounded-2xl
-                                               bg-indigo-500
-                                               hover:bg-indigo-600
-                                               transition-all
-                                               text-sm">
-
-                                    Ajouter Classe
-
-                                </button>
 
                             </div>
 
                         </div>
 
                         {{-- TABLE --}}
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto p-2">
+                            @php
+                                $classes = $this->teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
+                            @endphp
 
-                            <table class="min-w-[950px] w-full">
+                            @if (count($classes))
+                                <table class="w-full z-table-border text-slate-400 text-sm">
 
-                                <thead class="bg-slate-950 border-b border-slate-800">
+                                    <thead class="bg-slate-950 border-b border-slate-800">
 
-                                    <tr>
+                                        <tr>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Classe
-                                        </th>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                Classe
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Matière
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Matière
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Élèves
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Notes faites
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Notes faites
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Heures/Sem
+                                            </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Aller à
+                                            </th>
+                                        </tr>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Heures/Sem
-                                        </th>
+                                    </thead>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne classe
-                                        </th>
+                                    <tbody class="divide-y divide-slate-800">
 
-                                        <th class="px-6 py-4 text-right text-sm text-slate-400">
-                                            Actions
-                                        </th>
+                                        @foreach ($classes as $kls)
+                                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    </tr>
+                                                <td class="px-6 py-5">
 
-                                </thead>
+                                                    <div class="flex items-center gap-3">
 
-                                <tbody class="divide-y divide-slate-800">
+                                                        <a href="#"
+                                                            class="hover:underline underline-offset-4 hover:text-lime-500">
 
-                                    @foreach (range(1, 4) as $i)
-                                        <tr class="hover:bg-slate-800/40 transition-all">
+                                                            <h3 class="font-medium">
+                                                                {{ $kls->classe?->name }}
+                                                            </h3>
 
-                                            <td class="px-6 py-5">
+                                                            <p class="text-xs text-amber-700">
+                                                                {{ $kls->classe?->speciality() }}
+                                                            </p>
 
-                                                <div class="flex items-center gap-3">
-
-                                                    <div
-                                                        class="w-11 h-11 rounded-2xl
-                                                            bg-indigo-500/10
-                                                            flex items-center justify-center
-                                                            text-indigo-400 font-semibold">
-
-                                                        F2
-
-                                                    </div>
-
-                                                    <div>
-
-                                                        <h3 class="font-medium">
-                                                            Terminale F2-{{ $i }}
-                                                        </h3>
-
-                                                        <p class="text-sm text-slate-400">
-                                                            Série Technique
-                                                        </p>
+                                                        </a>
 
                                                     </div>
 
-                                                </div>
+                                                </td>
 
-                                            </td>
+                                                <td class="px-4 py-5 text-center">
+                                                    {{ $kls->subject?->code ?? $kls->subject?->name }}
+                                                </td>
+                                                <td class="px-4 py-5 text-center">
 
-                                            <td class="px-4 py-5 text-center">
-                                                Mathématiques
-                                            </td>
-
-                                            <td class="px-4 py-5 text-center">
-                                                42
-                                            </td>
-
-                                            <td class="px-4 py-5 text-center">
-
-                                                <span
-                                                    class="px-3 py-1 rounded-full
+                                                    <span
+                                                        class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                    86
+                                                        86
 
-                                                </span>
+                                                    </span>
 
-                                            </td>
+                                                </td>
 
-                                            <td class="px-4 py-5 text-center">
-                                                4h
-                                            </td>
+                                                <td class="px-4 py-5 text-center">
+                                                    4h
+                                                </td>
+                                                <td class="px-4 py-5 text-center">
+                                                    <div class="flex flex-wrap gap-2 items-center justify-center">
+                                                        <a wire:navigate
+                                                            class="bg-sky-900 hover:bg-sky-400 hover:text-black border border-sky-600 rounded-2xl p-2"
+                                                            href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}">
+                                                            <span class="flex items-center gap-x-2">
+                                                                <x-lucide-eye class="w-4 h-4" />
+                                                                <span>Voir la classe</span>
+                                                            </span>
+                                                        </a>
 
-                                            <td class="px-4 py-5 text-center font-semibold">
-                                                13.8
-                                            </td>
+                                                        <a wire:navigate
+                                                            class="bg-green-900 hover:bg-green-400 hover:text-black border border-green-600 rounded-2xl p-2"
+                                                            href="{{ route('tenant.teacher.classe.marks', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}">
+                                                            <span class="flex items-center gap-x-2">
+                                                                <x-lucide-eye class="w-4 h-4" />
+                                                                <span>Notes de classe</span>
+                                                            </span>
+                                                        </a>
+                                                        <a wire:navigate
+                                                            class="bg-blue-900 hover:bg-blue-600 hover:text-black border border-blue-600 rounded-2xl p-2"
+                                                            href="{{ route('tenant.teacher.classe.marks.manager', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}">
+                                                            <span class="flex items-center gap-x-2">
+                                                                <x-lucide-pen class="w-4 h-4" />
+                                                                <span>Insertion de notes</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
-                                            <td class="px-6 py-5">
+                                    </tbody>
 
-                                                <div class="flex items-center justify-end gap-2">
-
-                                                    <button
-                                                        class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-indigo-500
-                                                               transition-all">
-
-                                                        👁
-
-                                                    </button>
-
-                                                    <button
-                                                        class="w-10 h-10 rounded-xl
-                                                               bg-slate-800
-                                                               hover:bg-emerald-500
-                                                               transition-all">
-
-                                                        ✏
-
-                                                    </button>
-
-                                                </div>
-
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                    {{-- EMPLOI DU TEMPS --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-4 sm:p-6">
-
-                        <div class="flex items-center justify-between gap-4">
-
-                            <div>
-
-                                <h2 class="text-lg sm:text-xl font-semibold">
-                                    Emploi du Temps
-                                </h2>
-
-                                <p class="mt-1 text-sm text-slate-400">
-                                    Planning hebdomadaire de l'enseignant
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        {{-- TIMETABLE --}}
-                        <div class="mt-6 grid
-                                    grid-cols-1
-                                    lg:grid-cols-2
-                                    xl:grid-cols-3
-                                    gap-4">
-
-                            @foreach (range(1, 6) as $course)
-                                <div class="rounded-2xl
-                                        border border-indigo-500/20
-                                        bg-indigo-500/10
-                                        p-4">
-
-                                    <div class="flex items-start justify-between gap-3">
-
-                                        <div>
-
-                                            <h3 class="font-semibold">
-                                                Terminale F2-1
-                                            </h3>
-
-                                            <p class="mt-1 text-sm text-indigo-300">
-                                                Mathématiques
-                                            </p>
-
-                                        </div>
-
-                                        <span class="px-2 py-1 rounded-xl
-                                                 bg-slate-950/40
-                                                 text-xs">
-
-                                            Lundi
-
-                                        </span>
-
-                                    </div>
-
-                                    <div class="mt-5 space-y-2">
-
-                                        <div class="flex items-center justify-between text-sm">
-
-                                            <span class="text-slate-400">
-                                                Heure
-                                            </span>
-
-                                            <span>
-                                                08h00 - 10h00
-                                            </span>
-
-                                        </div>
-
-                                        <div class="flex items-center justify-between text-sm">
-
-                                            <span class="text-slate-400">
-                                                Salle
-                                            </span>
-
-                                            <span>
-                                                B12
-                                            </span>
-
-                                        </div>
-
-                                        <div class="flex items-center justify-between text-sm">
-
-                                            <span class="text-slate-400">
-                                                Durée
-                                            </span>
-
-                                            <span>
-                                                2h
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- ===================================================== --}}
-                {{-- RIGHT --}}
-                {{-- ===================================================== --}}
-                <div class="space-y-6 min-w-0">
-
-                    {{-- STATS --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-                            Statistiques
-                        </h2>
-
-                        <div class="mt-5 space-y-5">
-
-                            @foreach ([['Mathématiques', '92%', 'bg-indigo-500'], ['Physique', '81%', 'bg-emerald-500'], ['Informatique', '95%', 'bg-amber-500'], ['Électricité', '76%', 'bg-sky-500']] as $stat)
+                                </table>
+                            @else
                                 <div>
-
-                                    <div class="flex items-center justify-between">
-
-                                        <span class="text-sm text-slate-300">
-                                            {{ $stat[0] }}
-                                        </span>
-
-                                        <span class="text-sm font-semibold">
-                                            {{ $stat[1] }}
-                                        </span>
-
-                                    </div>
-
-                                    <div class="mt-2 h-2 rounded-full bg-slate-800 overflow-hidden">
-
-                                        <div class="h-full rounded-full {{ $stat[2] }}" style="width: {{ $stat[1] }}">
+                                    <div class="p-6 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <x-lucide-school class="w-10 h-10 text-orange-600" />
+                                            <p class="text-slate-500 text-lg animate-pulse">Aucune classe assignée</p>
                                         </div>
-
                                     </div>
-
                                 </div>
-                            @endforeach
+                            @endif
 
                         </div>
 
                     </div>
-
-                    {{-- INFOS --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-                            Informations
-                        </h2>
-
-                        <div class="mt-5 space-y-4">
-
-                            @foreach ([['Email', 'enseignant@email.com'], ['Diplôme', 'Master en Mathématiques'], ['Adresse', 'Cotonou, Bénin'], ['Recrutement', '12 Septembre 2015']] as $info)
-                                <div class="rounded-2xl bg-slate-950 p-4">
-
-                                    <p class="text-xs text-slate-500">
-                                        {{ $info[0] }}
-                                    </p>
-
-                                    <h4 class="mt-2 text-sm font-medium break-words">
-                                        {{ $info[1] }}
-                                    </h4>
-
-                                </div>
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                    {{-- PERFORMANCE --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
-                                p-5">
-
-                        <h2 class="text-lg font-semibold">
-                            Performance Pédagogique
-                        </h2>
-
-                        <div class="mt-6">
-
-                            <div
-                                class="h-[220px]
-                                        rounded-3xl
-                                        border border-dashed border-slate-700
-                                        bg-slate-950
-                                        flex items-center justify-center">
-
-                                <p class="text-sm text-slate-500">
-                                    Graphique de performance
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>

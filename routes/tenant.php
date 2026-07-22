@@ -290,12 +290,15 @@ Route::middleware([
             Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
 
             //ESPACE ENSEIGNANT
-            Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.my.teacher.')->group(function () {
+            Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.teacher.')->group(function () {
                 
-                Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('space');
-                Route::get('/mon-espace-enseignant/les-notes', TeacherClasseMarksViewer::class)->name('space.marks');
-                Route::get('/mon-espace-enseignant/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('space.marks.manager');
-                Route::get('/mon-espace-enseignant/liste-apprenants', TeacherClasseStudentsViewer::class)->name('space.students');
+                Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('my.dashboard');
+                
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/les-notes', TeacherClasseMarksViewer::class)->name('classe.marks');
+                
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('classe.marks.manager');
+                
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
                 
             });
 
