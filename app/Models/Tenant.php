@@ -59,7 +59,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
             'school_devise',
-            'types_devoirs', //devoir1-devoir2 ou devoir-compo
+            'devoirs_type', //devoir1-devoir2 ou devoir-compo
             'school_type', //Privé ou public
             'domain_blocked',
             'open_only_for_tenant',
@@ -188,6 +188,45 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function nombrePeriodes(): int
     {
         return $this->usesTrimestres() ? 3 : 2;
+    }
+
+    public function getPeriodsTypes() : array
+    {
+        $periods = [];
+
+        for ($i = 1; $i <= $this->nombrePeriodes(); $i++) { 
+
+            $periods[$i] = $this->periode_type . '' . $i;
+        }
+        return $periods;
+    }
+
+
+    public function getMarksTypes(?string $type = null) : array
+    {
+        if($this->devoirs_type === 'devoir1-devoir2'){
+
+            return  [
+                'interro1',
+                'interro2',
+                'interro3',
+                'interro4',
+                'devoir1',
+                'devoir2',
+                'examen'
+            ];
+        }
+
+        return  [
+            'interro1',
+            'interro2',
+            'interro3',
+            'interro4',
+            'devoir',
+            'compo',
+            'examen'
+        ];
+
     }
 
     /** Label de la période */

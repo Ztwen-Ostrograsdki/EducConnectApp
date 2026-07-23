@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('slug')->unique();
+            $table->integer('active_period')->nullable();
             $table->integer('min_year')->unique();
             $table->integer('max_year')->unique();
             $table->enum('periode_type', ['semestre', 'trimestre'])->default('semestre');

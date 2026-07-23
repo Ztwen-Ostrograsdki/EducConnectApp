@@ -118,6 +118,17 @@ return [
     |
     */
 
+    'marks_types' => [
+        'interro1',
+        'interro2',
+        'interro3',
+        'interro4',
+        'compo',
+        'devoir1',
+        'devoir2',
+        'examen'
+    ],
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),

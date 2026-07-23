@@ -24,7 +24,24 @@ class ClasseHeaderDetails extends Component
         return $effectifs;
     }
 
-    
+    #[Computed]
+    public function principal()
+    {
+        return $this->classe ? $this->classe->principal : null;
+    }
+
+
+    #[Computed]
+    public function principalSubjects()
+    {
+        if($this->principal){
+
+            return $this->principal->getSubjectsForThisClasse($this->classe->id);
+        }
+
+        return [];
+    }
+
     public function render()
     {
         return view('livewire.tenants.components.classe-header-details');

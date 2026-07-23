@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\SchoolYearActivatedEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,6 +29,7 @@ class SchoolYear extends Model
         'is_current_school_year',
         'marks_locked_for_periods',
         'periods',
+        'active_period'
     ];
 
 
