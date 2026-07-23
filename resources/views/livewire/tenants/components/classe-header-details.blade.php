@@ -9,7 +9,7 @@
                     </span>
                 </div>
             </div>
-            <div class="min-w-0 flex-1 p-2">
+            <div class="min-w-0 flex-1 p-2 font-mono">
                 <div class="flex flex-wrap items-center gap-2">
                     <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight break-words">
                         {{ $classe->name }}
@@ -61,7 +61,7 @@
 
                 {{-- META --}}
                 <div class="mt-4 flex flex-col sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
-                    <span class="flex font-mono text-xs items-center text-green-300 gap-x-2">
+                    <span class="flex text-xs items-center text-green-300 gap-x-2">
                         <span class="rounded-lg p-1.5 bg-green-800/50 border border-green-700">
 
                             Apprenant(s) : {{ $this->effectifs['apprenants'] }}</span>
@@ -80,7 +80,7 @@
             </div>
 
         </section>
-        <section>
+        <section class="text-xs">
             <div class="flex flex-col gap-3">
                 <div class="flex">
                     @if ($this->principal)
@@ -94,7 +94,7 @@
                                     </span>
                                 </h4>
 
-                                <div class="border-l border-l-slate-700 px-2">
+                                <div class="border-l border-l-indigo-400 px-2">
                                     <div class="text-slate-400">
                                         <span>Contacts : </span>
                                         <span> {{ $this->principal->user->contacts }} </span>
@@ -102,7 +102,7 @@
                                     <div class="flex gap-x-2 items-center text-slate-400">
                                         @if ($subjects = $this->principalSubjects)
                                             <span>Matières : </span>
-                                            <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                            <div class="flex flex-wrap items-center gap-1.5">
                                                 @foreach ($subjects as $classeSubject)
                                                     <span
                                                         class="text-2xs rounded-2xl border border-sky-600 bg-sky-600/40 text-sky-500 px-2 py-0.5">
@@ -117,7 +117,7 @@
                         </div>
                     @else
                         <p
-                            class="text-sm text-slate-300 italic inline-flex px-4 py-0.5 mt-1.5  items-center gap-3   rounded-xl p-1 border border-gray-500 bg-gray-500/40">
+                            class=" text-slate-300 italic inline-flex px-4 py-0.5 mt-1.5  items-center gap-3   rounded-xl p-1 border border-gray-500 bg-gray-500/40">
                             <span>PP : </span>
                             <span>Non encore défini</span>
                         </p>
@@ -145,7 +145,7 @@
                     </div>
                 @else
                     <p
-                        class="text-sm text-slate-300 italic inline-flex px-4 py-0.5 mt-1.5  items-center gap-3   rounded-xl p-1 border border-gray-500 bg-gray-500/40">
+                        class=" text-slate-300 italic inline-flex px-4 py-0.5 mt-1.5  items-center gap-3   rounded-xl p-1 border border-gray-500 bg-gray-500/40">
                         <span>Respos : </span>
                         <span>Non encore défini</span>
                     </p>
@@ -157,6 +157,37 @@
             <span class="rounded-lg py-2 px-3 bg-yellow-800/50 border border-yellow-700 text-yellow-400 text-lg">
                 Matière : {{ $subject->name }}
             </span>
+        </section>
+        <section class="my-3">
+            <div class="flex flex-wrap gap-2 items-center justify-end">
+                <a wire:navigate
+                    class="bg-sky-900 hover:bg-sky-400 hover:text-black border border-sky-600 rounded-2xl p-2"
+                    href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}">
+                    <span class="flex items-center gap-x-2">
+                        <x-lucide-eye class="w-4 h-4" />
+                        <span>Voir la classe</span>
+                    </span>
+                </a>
+
+                <a wire:navigate
+                    class="bg-green-900 hover:bg-green-400 hover:text-black border border-green-600 rounded-2xl p-2"
+                    href="{{ route('tenant.teacher.classe.marks', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}">
+                    <span class="flex items-center gap-x-2">
+                        <x-lucide-eye class="w-4 h-4" />
+                        <span>Notes de classe</span>
+                    </span>
+                </a>
+                @if ($this->activeYear && $this->activeYear->active_period)
+                    <a wire:navigate
+                        class="bg-blue-900 hover:bg-blue-600 hover:text-black border border-blue-600 rounded-2xl p-2"
+                        href="{{ route('tenant.teacher.classe.marks.manager', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}">
+                        <span class="flex items-center gap-x-2">
+                            <x-lucide-pen class="w-4 h-4" />
+                            <span>Insertion de notes</span>
+                        </span>
+                    </a>
+                @endif
+            </div>
         </section>
     @endif
 </div>

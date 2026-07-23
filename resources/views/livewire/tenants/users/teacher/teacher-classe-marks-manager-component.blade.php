@@ -32,9 +32,12 @@
                     {{-- PERIOD --}}
                     <select wire:model.live="period"
                         class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
-                        <option value="">Sélectionner la période</option>
+                        <option disabled value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>
                         @foreach ($this->periods_types as $pv => $p)
-                            <option value="{{ $pv }}">{{ $p }}</option>
+                            @if ($this->activeYear && $this->activeYear->active_period == $p['index'])
+                                <option @disabled(!($this->activeYear && $this->activeYear->active_period == $p['index'])) value="{{ $p['index'] }}">{{ $p['label'] }}
+                                </option>
+                            @endif
                         @endforeach
                     </select>
 
@@ -50,7 +53,7 @@
                 </div>
 
                 {{-- ACTIONS --}}
-                <div x-data class="flex flex-wrap gap-2" x-show="@this.mode === 'manual'" x-cloak
+                <div x-data class="flex flex-wrap gap-2 font-mono" x-show="@this.mode === 'manual'" x-cloak
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 -translate-y-1"
                     x-transition:enter-end="opacity-100 translate-y-0"
@@ -59,7 +62,7 @@
                     x-transition:leave-end="opacity-0 -translate-y-1">
 
                     <button wire:click="validateAllMarks" wire:loading.attr="disabled" wire:target="validateAllMarks"
-                        class="relative h-10 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center min-w-[110px] overflow-hidden">
+                        class="relative h-10 px-4 rounded-xl bg-emerald-500/50 hover:bg-emerald-500 hover:text-black disabled:opacity-50 transition-all duration-200 flex items-center justify-center min-w-[110px] overflow-hidden">
                         <span wire:loading.class="opacity-0 scale-90" wire:target="validateAllMarks"
                             class="transition-all duration-200">Tout Valider</span>
                         <svg wire:loading.class="opacity-100 scale-100" wire:loading.class.remove="opacity-0 scale-75"
@@ -73,7 +76,7 @@
                     </button>
 
                     <button wire:click="resetAllInputs" wire:loading.attr="disabled" wire:target="resetAllInputs"
-                        class="relative h-10 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center min-w-[110px] overflow-hidden">
+                        class="relative h-10 px-4 rounded-xl bg-amber-500/30 hover:bg-amber-600 hover:text-black disabled:opacity-50 transition-all duration-200 flex items-center justify-center min-w-[110px] overflow-hidden">
                         <span wire:loading.class="opacity-0 scale-90" wire:target="resetAllInputs"
                             class="transition-all duration-200">Réinitialiser</span>
                         <svg wire:loading.class="opacity-100 scale-100" wire:loading.class.remove="opacity-0 scale-75"
@@ -120,11 +123,21 @@
                             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2">
 
                                 <div>
-                                    <h2 class="text-xl font-semibold">Saisie des Notes de {{ $this->subject->code }}
+                                    <h2 class="text-xl font-semibold uppercase text-slate-400 font-mono">
+                                        <span>
+                                            Saisie des Notes de
+                                        </span>
+                                        <span class="text-yellow-600 ls-1">
+                                            {{ $this->subject->code }}
+                                        </span>
+                                        du
+                                        <span class="text-sky-500 text-shadow-2xs text-shadow-black">
+                                            {{ $this->activeYear->periodLabel() . ' ' . $this->period }}
+                                        </span>
                                     </h2>
-                                    <p class="mt-1 text-slate-400 transition-all duration-200">
+                                    <p class="mt-1 text-slate-400 transition-all duration-200 font-mono">
                                         @if ($mode === 'manual')
-                                            Ajoutez rapidement les notes des apprenants.
+                                            Ajoutez rapidement les notes des apprenants par saisie.
                                         @else
                                             Chargez les notes depuis un fichier Excel.
                                         @endif
@@ -156,7 +169,8 @@
                         @unless ($this->period)
 
                             <div class="p-6 text-center text-amber-400 transition-opacity duration-300">
-                                Veuillez sélectionner une période ci-dessus pour commencer la saisie des notes.
+                                Veuillez sélectionner un {{ $this->activeYear?->periodLabel() }} ci-dessus pour commencer
+                                la saisie des notes.
                             </div>
                         @else
                             <div class="relative">
@@ -216,7 +230,7 @@
 
                                         <button wire:click="loadExcelFile" wire:loading.attr="disabled"
                                             wire:target="loadExcelFile,excelFile"
-                                            class="relative h-11 px-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center shrink-0 min-w-[160px] overflow-hidden">
+                                            class="relative h-11 px-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center shrink-0  overflow-hidden">
                                             <span wire:loading.class="opacity-0 scale-90" wire:target="loadExcelFile"
                                                 class="transition-all duration-200">Charger les notes</span>
                                             <svg wire:loading.class="opacity-100 scale-100"
@@ -251,20 +265,20 @@
                                         wire:loading.class="opacity-50" wire:target="period">
 
                                         <table class="table-fixed bg-slate-900 z-table-border mb-8"
-                                            style="width: 1400px; min-width: 1400px;">
+                                            style="width: 1200px; min-width: 1200px;">
 
                                             <colgroup>
-                                                <col style="width: 80px;">
+                                                <col style="width: 60px;">
                                                 <col style="width: 400px;">
                                                 <col style="width: 320px;">
                                                 <col style="width: 320px;">
-                                                <col style="width: 280px;">
+                                                <col style="width: 200px;">
                                             </colgroup>
 
                                             <thead class="bg-slate-950 border-b border-slate-800">
                                                 <tr>
-                                                    <th class="px-2 py-2 text-left text-slate-400">N°</th>
-                                                    <th class="px-2 py-2 text-left text-slate-400">Apprenant</th>
+                                                    <th class="px-2 py-2 text-center text-slate-400">N°</th>
+                                                    <th class="px-2 py-2 text-center text-slate-400">Apprenant</th>
                                                     <th class="px-2 py-2 text-center text-slate-400">
                                                         <span class="inline-flex flex-col gap-1">
                                                             <span>Notes Interrogations</span>

@@ -63,7 +63,15 @@ class TeacherClasseMarksManagerComponent extends Component
         $this->subject_slug  = $subject_slug;
         $this->classe_subject_id = $this->classe_subject->id;
 
-        $this->period = session()->get($this->lastPeriodSessionKey());
+        $schoolYear = SchoolYear::current()->first();
+
+        if($schoolYear && $schoolYear->is_active && $schoolYear->active_period){
+
+            $this->period = $schoolYear->active_period;
+
+        }
+
+        // $this->period = session()->get($this->lastPeriodSessionKey());
 
         if ($this->period) {
             $this->loadPendingMarksFromSession();
@@ -730,11 +738,21 @@ class TeacherClasseMarksManagerComponent extends Component
 
     public function validateAllMarks(): void
     {
+        if(!($this->activeYear && $this->activeYear->active_period)){
+
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'title'       => "Aucun {$this->activeYear?->periodLabel()} n'est actif",
+                'description' => "Veuillez demander au directeur ou aux administrateurs d'activer le {$this->activeYear?->periodLabel()}",
+            ]);
+
+            return;
+        }
         if (!$this->period) {
             $this->notification()->send([
                 'icon'        => 'warning',
-                'title'       => 'Aucune période sélectionnée',
-                'description' => 'Veuillez sélectionner une période avant de valider.',
+                'title'       => "Aucun {$this->activeYear?->periodLabel()} sélectionné",
+                'description' => "Veuillez sélectionner un {$this->activeYear?->periodLabel()} avant de valider.",
             ]);
             return;
         }
@@ -785,7 +803,7 @@ class TeacherClasseMarksManagerComponent extends Component
     #[Computed]
     public function periods_types()
     {
-        return tenancy()->tenant->getPeriodsTypes();
+        return $this->activeYear->getPeriods();
     }
 
     #[Computed]

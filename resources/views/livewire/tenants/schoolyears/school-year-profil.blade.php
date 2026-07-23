@@ -36,12 +36,23 @@
                             @endif
                         </div>
                         <p class="mt-3 text-sm sm:text-base text-slate-400 break-words">
-                            Les détails génraux de l'année scolaire {{ $school_year_model->slug }}
+                            Les détails généraux de l'année scolaire {{ $school_year_model->slug }}
                         </p>
 
-                        <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
+                        <div
+                            class="mt-4 flex items-center font-mono flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                             <div class="break-words">📑 Périodes en {{ $school_year_model->periode_type }}</div>
                             <div class="break-words">Durée : 🕒 {{ $school_year_model->getDuration() }}</div>
+
+                            @if ($school_year_model->active_period)
+                                <div class="break-words rounded-2xl p-2 bg-green-600/10 text-green-600">Période active ✅
+                                    :
+                                    {{ $this->school_year_model->periodLabel() . ' ' . $this->active_period }}</div>
+                            @else
+                                <div class="break-words rounded-2xl p-2 bg-red-600/40 text-red-300 animate-pulse">
+
+                                    Aucun {{ $this->school_year_model->periodLabel() }} n'est actif</div>
+                            @endif
                         </div>
                     </div>
 
@@ -165,7 +176,59 @@
             </div>
         </div>
     </section>
-    <section class="w-full justify-center flex items-center my-4">
+    <section class="my-3 font-mono flex flex-col gap-3">
+        <div>
+            <button
+                title="{{ $editing ? 'Fermer le formulaire ' : 'Ouvrir le formulaire' }} édition du {{ $school_year_model->periode_type }} actif de l'année scolaire {{ $school_year_model->slug }}"
+                wire:click="toggleEdition" wire:loading.attr="disabled" wire:target="toggleEdition"
+                class="relative w-full sm:w-auto px-6 py-3 rounded-2xl text-white text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50 {{ $editing ? 'bg-gray-600/30 hover:bg-gray-600/40 hover:text-orange-500' : 'bg-indigo-600/40 hover:bg-indigo-500 hover:text-black' }} ">
+                <span wire:loading.remove wire:target="toggleEdition" class="inline-flex items-center gap-2">
+                    @if ($editing)
+                        <x-lucide-x class="w-4 h-4" />
+                        <span>Annuler</span>
+                    @else
+                        <x-lucide-pen class="w-4 h-4" />
+                        <span>Définir le {{ $school_year_model->periode_type }} actif </span>
+                    @endif
+                </span>
+                <span wire:loading wire:target="toggleEdition" class="inline-flex items-center gap-2">
+                    <span class="inline-flex items-center gap-2">
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        <span>Patientez...</span>
+                    </span>
+                </span>
+            </button>
+        </div>
+
+        @if ($editing)
+            <div class="md:flex border grid-cols-1 grid justify-between border-slate-800 rounded-2xl p-2 items-center">
+                <select class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm"
+                    wire:model.live='active_period'>
+                    <option value="">Choisissez la {{ $school_year_model->periode_type }} actif</option>
+                    @foreach ($this->periods as $kp => $pv)
+                        <option class="" value="{{ $pv['index'] }}">{{ $pv['label'] }}</option>
+                    @endforeach
+                </select>
+
+                <button type="button" wire:loading.attr="disabled" wire:click="saveActivePediod"
+                    class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-500 hover:text-black">
+                    <span class="flex items-center gap-1.5" wire:target='saveActivePediod' wire:loading.remove>
+                        <span>Enregistrer</span>
+                        <x-lucide-save class="w-5 h-5" />
+                    </span>
+                    <span wire:target='saveActivePediod' wire:loading.flex class="items-center gap-1.5">
+                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                        <span>En cours...</span>
+                    </span>
+                </button>
+            </div>
+        @endif
+    </section>
+    <section class="w-full justify-center flex items-center my-4 ">
         <div class="flex flex-col gap-y-4 items-center w-full">
             @foreach ($school_year_model->periods as $position => $period)
                 @php
@@ -185,12 +248,34 @@
                     $dayCount = $today->between($start, $end) ? $start->diffInDays($today) + 1 : null;
                 @endphp
                 <div wire:key='period-of-school-year-{{ $loop->iteration }}'
-                    class="w-full rounded-2xl border {{ $status === 'passe' ? 'border-slate-800 bg-slate-900/40' : 'border-slate-700 bg-slate-900/80' }} backdrop-blur-xl p-5 transition-all opacity-50 hover:opacity-100">
+                    class="w-full rounded-2xl border {{ $status === 'passe' ? 'border-slate-800 bg-slate-900/40' : 'border-slate-700 bg-slate-900/80' }} backdrop-blur-xl p-5 transition-all opacity-50 hover:opacity-100 ">
+                    @if (str()->lower($this->school_year_model->periodLabel() . ' ' . $school_year_model->active_period) ==
+                            str()->lower($position))
+                        <span class="text-xs font-medium h-3 w-3 inline-block rounded-full bg-green-400 animate-pulse">
+                        </span>
+                        <span class="text-xs font-medium h-3 w-3 inline-block rounded-full bg-green-600 animate-pulse">
+                        </span>
+                        <span class="text-xs font-medium h-3 w-3 inline-block rounded-full bg-green-700 animate-pulse">
+                        </span>
+                    @endif
 
                     <div class="flex items-center justify-between mb-5 border-b border-b-gray-600 py-2">
                         <h3
-                            class=" font-mono uppercase text-base font-semibold {{ $status === 'passe' ? 'text-amber-700' : 'text-green-600' }}">
-                            {{ $position }}
+                            class=" font-mono uppercase flex items-center gap-2 text-base font-semibold py-2 {{ $status === 'passe' ? 'text-amber-700' : 'text-green-600' }}">
+
+                            <span
+                                class="@if (str()->lower($this->school_year_model->periodLabel() . ' ' . $school_year_model->active_period) ==
+                                        str()->lower($position)) ) border border-green-500 bg-green-600/30 text-green-400 rounded-3xl p-2 @endif">
+                                {{ $position }}
+                            </span>
+
+                            @if (str()->lower($this->school_year_model->periodLabel() . ' ' . $school_year_model->active_period) ==
+                                    str()->lower($position))
+                                <span
+                                    class="text-xs font-medium p-3 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                                    {{ $this->school_year_model->periodLabel() }} actif ✅
+                                </span>
+                            @endif
                         </h3>
 
                         @if ($status === 'en_cours')
@@ -215,6 +300,7 @@
                                 À venir
                             </span>
                         @endif
+
                     </div>
 
                     <div class="flex items-center justify-between gap-4 mb-6">

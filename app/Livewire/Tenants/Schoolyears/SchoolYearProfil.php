@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Schoolyears;
 
+use App\Events\DataUpdatedEvent;
 use App\Events\NewSchoolYearActivatedEvent;
 use App\Events\SchoolYearUpdatedEvent;
 use App\Livewire\Tenants\ActionsTraits\SchoolYearsActions;
@@ -27,8 +28,19 @@ class SchoolYearProfil extends Component
 
     public ?SchoolYear $school_year_model;
 
+    public ?int $active_period = null;
+
+    public bool $editing = false;
+
 
     public int $counter = 0;
+
+
+    #[Computed]
+    public function periods()
+    {
+        return $this->school_year_model->getPeriods();
+    }
 
     #[On("NewSchoolYearCreatedLiveEvent")]
     public function newSchoolYearCreated()
@@ -62,6 +74,8 @@ class SchoolYearProfil extends Component
         $this->school_year_slug = $schoolYear->slug;
 
         $this->school_year_uuid = $schoolYear->uuid;
+
+        $this->active_period = $schoolYear->active_period;
         
     }
 
@@ -85,7 +99,29 @@ class SchoolYearProfil extends Component
     }
 
 
-    
+    public function toggleEdition()
+    {
+        $this->editing = !$this->editing;
+
+    }
+
+    public function saveActivePediod()
+    {
+        $this->school_year_model->update(['active_period' => $this->active_period]);
+
+        if($this->active_period) $message = "La période active de l'année scolaire {$this->school_year_model->slug} est désormais " . $this->school_year_model->periodLabel() . ' ' .$this->active_period;
+
+        else $message = "L'année scolaire {$this->school_year_model->slug} n'a désormais aucun " . str()->lower($this->school_year_model->periodLabel()) . " actif ";
+
+        $this->notification()->success(
+                title: "Année scolaire {$this->school_year_model->slug} mise à jour",
+                description: $message
+            );
+
+        $this->editing = false;
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
 
     public function render()
     {

@@ -164,7 +164,7 @@ class SchoolYear extends Model
      */
     public function usesTrimestres(): bool
     {
-        return $this->period_type === 'trimestre';
+        return $this->periode_type === 'trimestre';
     }
 
     /**
@@ -186,15 +186,16 @@ class SchoolYear extends Model
     /**
      * Get all periods as an array with their number and label.
      *
-     * @return array<int, array{number: int, label: string}>
+     * @return array<int, array{index: int, label: string}>
      */
     public function getPeriods(): array
     {
         $label = $this->periodLabel();
+
         $count = $this->periodsCount();
 
         return array_map(
-            fn (int $i) => ['number' => $i, 'label' => "$label $i"],
+            fn (int $i) => ['index' => $i, 'label' => "$label $i"],
             range(1, $count)
         );
     }
