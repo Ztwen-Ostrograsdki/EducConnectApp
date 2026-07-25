@@ -13,6 +13,65 @@ trait SchoolYearsActions{
 
 	use WireUiActions;
 
+    public function closePeriods($schoolYearSlug): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Fermer tous les semestres/trimestres de l'année scolaire {$schoolYearSlug} ? ",
+            'text'               => "Aucune saisie de notes de classe ne sera plus possible au cours de  l'année scolaire {$schoolYearSlug} jusqu'a la réactivation. L'édition de notes sera également verrouillée",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, fermer les semestres/trimestres',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToCloseSchoolYearPeriods',
+            'onConfirmedParams'  => ['schoolYearSlug' => $schoolYearSlug],
+        ]);
+    }
+
+    #[On('ConfirmToCloseSchoolYearPeriods')]
+    public function OnCloseSchoolYearPeriods(string $schoolYearSlug): void
+    {
+        $schoolYear = SchoolYear::firstWhere('slug', $schoolYearSlug);
+
+        if (!$schoolYear) {
+
+            $this->notification()->error(title: "L'année scolaire {$schoolYearSlug} est introuvable en base de données");
+            return;
+        }
+
+        try {
+
+            $label = $schoolYear->periodLabel();
+            
+            $done = $schoolYear->update(['active_period' => null]);
+
+            if($done){
+
+                $this->notification()->success(
+                    title: "Les {$label}s de {$schoolYearSlug} ont été fermés",
+                    description: "L'insertion et l'édition des notes par les enseignants sont verrouillées jusqu'à la réactivation!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: "Les {$label}s de {$schoolYearSlug} n'ont pas été fermés",
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "Les périodes de l'année scolaire {$schoolYearSlug} n'ont pas été fermés",
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+        }
+        
+        
+    }
+
 	
 	public function closeSchoolYear( $schoolYearSlug): void
     {

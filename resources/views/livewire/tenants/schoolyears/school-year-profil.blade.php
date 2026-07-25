@@ -173,6 +173,30 @@
                         </span>
                     </button>
                 @endif
+                @if ($school_year_model->is_active && $school_year_model->active_period)
+                    <button
+                        title="Fermer tous les {{ $school_year_model->periodLabel() }}s de {{ $school_year_model->slug }}"
+                        wire:click="closePeriods('{{ $school_year_model->slug }}')" wire:loading.attr="disabled"
+                        wire:target="closePeriods('{{ $school_year_model->slug }}')"
+                        class="relative w-full sm:w-auto px-4 py-3 rounded-2xl bg-red-500/30 hover:bg-red-600/60 text-white hover:text-black text-sm sm:text-base font-medium inline-flex items-center justify-center gap-1.5 transition-all duration-300 whitespace-nowrap disabled:opacity-50">
+                        <span wire:loading.remove wire:target="closePeriods('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <x-lucide-x class="w-4 h-4" />
+                            <span>Fermer tous les {{ $school_year_model->periodLabel() }}s</span>
+                        </span>
+                        <span wire:loading wire:target="closePeriods('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-2">
+                            <span class="inline-flex items-center gap-3">
+                                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4" />
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                </svg>
+                                <span>Patientez...</span>
+                            </span>
+                        </span>
+                    </button>
+                @endif
             </div>
         </div>
     </section>
@@ -217,7 +241,7 @@
                 <button type="button" wire:loading.attr="disabled" wire:click="saveActivePediod"
                     class="p-3 rounded-2xl my-3.5 flex items-center justify-center cursor-pointer bg-indigo-600/50 hover:bg-indigo-500 hover:text-black">
                     <span class="flex items-center gap-1.5" wire:target='saveActivePediod' wire:loading.remove>
-                        <span>Enregistrer</span>
+                        <span>{{ $this->active_period ? "Activer {$school_year_model->periodLabel()} {$this->active_period} " : "Désactiver tous les {$school_year_model->periodLabel()}s" }}</span>
                         <x-lucide-save class="w-5 h-5" />
                     </span>
                     <span wire:target='saveActivePediod' wire:loading.flex class="items-center gap-1.5">

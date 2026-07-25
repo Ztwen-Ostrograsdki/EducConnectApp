@@ -92,13 +92,11 @@
                                     <tr class="hover:bg-slate-800/40 transition-all"
                                         wire:key="student-{{ $student->id }}">
 
-                                        {{-- N° --}}
                                         <td
                                             class="px-2 sm:px-6 py-1.5 truncate text-center font-mono text-slate-400 text-xs sm:text-sm">
                                             {{ $loop->iteration }}
                                         </td>
 
-                                        {{-- Apprenant --}}
                                         <td class="px-2 sm:px-6 py-1.5 overflow-hidden">
                                             <div class="flex items-center gap-2 min-w-0 group">
                                                 <div

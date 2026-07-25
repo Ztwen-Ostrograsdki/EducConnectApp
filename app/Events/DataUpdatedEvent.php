@@ -34,6 +34,8 @@ class DataUpdatedEvent implements ShouldBroadcast
     {
         return [
             new PrivateChannel('tenant.' . $this->tenantId . '.directeur'),
+            new PrivateChannel('tenant.' . $this->tenantId . '.enseignant'),
+            new PrivateChannel('tenant.' . $this->tenantId . '.parent'),
         ];
     }
 

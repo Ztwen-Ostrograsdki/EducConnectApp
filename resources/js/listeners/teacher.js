@@ -12,17 +12,18 @@ export function registerTeacherListeners(tenantId, userId) {
         },
     );
 
-    window.Echo.private(`tenant.${tenantId}.enseignant`).listen(
-        "SchoolYearClosed",
-        (e) => {
+    window.Echo.private(`tenant.${tenantId}.enseignant`)
+        .listen("SchoolYearClosed", (e) => {
             $wireui.notify({
                 title: "ANNE SCOLAIRE FERME ",
                 timeout: 0,
                 description: "L'année scolaire en cours a été clôturée!",
                 icon: mapTypeToIcon("info"),
             });
-        },
-    );
+        })
+        .listen("DataUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        });
 }
 
 export function unregisterTeacherListeners(tenantId, userId) {

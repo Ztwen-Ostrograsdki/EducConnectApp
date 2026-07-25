@@ -222,12 +222,24 @@
                             @endphp
 
                             @if (count($classes))
-                                <table class="w-full z-table-border text-slate-400 text-sm">
+                                <table class="w-full  z-table-border text-slate-400 text-sm mb-12"
+                                    style="width: 1300px; min-width: 1300px;">
+                                    <colgroup>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                    </colgroup>
 
                                     <thead class="bg-slate-950 border-b border-slate-800">
 
                                         <tr>
 
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                N°
+                                            </th>
                                             <th class="px-6 py-4 text-center text-sm text-slate-400">
                                                 Classe
                                             </th>
@@ -254,12 +266,16 @@
 
                                         @foreach ($classes as $kls)
                                             <tr class="hover:bg-slate-800/40 transition-all">
-
+                                                <td
+                                                    class="px-2 sm:px-6 py-1.5 truncate text-center font-mono text-slate-400 text-xs sm:text-sm">
+                                                    {{ $loop->iteration }}
+                                                </td>
                                                 <td class="px-6 py-5">
 
                                                     <div class="flex items-center gap-3">
 
-                                                        <a href="#"
+                                                        <a wire:navigate
+                                                            href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
                                                             class="hover:underline underline-offset-4 hover:text-lime-500">
 
                                                             <h3 class="font-medium">

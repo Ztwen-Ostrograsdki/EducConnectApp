@@ -107,20 +107,28 @@ class SchoolYearProfil extends Component
 
     public function saveActivePediod()
     {
-        $this->school_year_model->update(['active_period' => $this->active_period]);
+        if($this->active_period){
 
-        if($this->active_period) $message = "La période active de l'année scolaire {$this->school_year_model->slug} est désormais " . $this->school_year_model->periodLabel() . ' ' .$this->active_period;
+            $this->school_year_model->update(['active_period' => $this->active_period]);
 
-        else $message = "L'année scolaire {$this->school_year_model->slug} n'a désormais aucun " . str()->lower($this->school_year_model->periodLabel()) . " actif ";
+            $message = "La période active de l'année scolaire 
+            {$this->school_year_model->slug} est désormais " . $this->school_year_model->periodLabel() . ' ' .$this->active_period;
 
-        $this->notification()->success(
-                title: "Année scolaire {$this->school_year_model->slug} mise à jour",
-                description: $message
-            );
+            $this->notification()->success(
+                    title: "Année scolaire {$this->school_year_model->slug} mise à jour",
+                    description: $message
+                );
 
-        $this->editing = false;
+            $this->editing = false;
 
-        broadcast(new DataUpdatedEvent(tenant('id')));
+            broadcast(new DataUpdatedEvent(tenant('id')));
+        }
+        else{
+
+            $this->closePeriods($this->school_year_model->slug);
+
+            $this->editing = false;
+        }
     }
 
     public function render()

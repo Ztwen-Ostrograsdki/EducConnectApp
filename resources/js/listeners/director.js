@@ -16,6 +16,9 @@ export function registerDirectorListeners(tenantId) {
         })
 
         // ANY EVENTS
+        .listen("DataUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        })
 
         // SCHOOL YEAR EVENTS
         .listen("NewSchoolYearCreated", (e) => {

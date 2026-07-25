@@ -8,9 +8,6 @@ export function registerUserListeners(tenantId, userId) {
                 icon: mapTypeToIcon(notification.type ?? "info"),
             });
         })
-        .listen("DataUpdatedEvent", (e) => {
-            Livewire.dispatch("DataUpdatedEventLiveEvent");
-        })
         .listen("UserAccountWasBlockedEvent", (e) => {
             Livewire.dispatch("UserAccountWasBlockedLiveEvent");
 

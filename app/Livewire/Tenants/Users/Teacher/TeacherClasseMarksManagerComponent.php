@@ -63,13 +63,7 @@ class TeacherClasseMarksManagerComponent extends Component
         $this->subject_slug  = $subject_slug;
         $this->classe_subject_id = $this->classe_subject->id;
 
-        $schoolYear = SchoolYear::current()->first();
-
-        if($schoolYear && $schoolYear->is_active && $schoolYear->active_period){
-
-            $this->period = $schoolYear->active_period;
-
-        }
+        $this->loadActivePeriod();
 
         // $this->period = session()->get($this->lastPeriodSessionKey());
 
@@ -79,10 +73,129 @@ class TeacherClasseMarksManagerComponent extends Component
         }
     }
 
+
+    public function loadActivePeriod()
+    {
+        $schoolYear = SchoolYear::current()->first();
+
+        if($schoolYear && $schoolYear->is_active && $schoolYear->active_period){
+
+            $this->period = $schoolYear->active_period;
+
+        }
+    }
+
+
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
         $this->counter++;
+
+        unset($this->periods_types);
+
+        // unset($this->classe);
+
+        // unset($this->classe_subject);
+
+        unset($this->students);
+
+        // unset($this->subject);
+
+        unset($this->activeYear);
+
+        // unset($this->teacher);
+
+        $this->loadActivePeriod();
+    }
+
+     // ─── Computed existants ────────────────────────────────────────────
+
+    #[Computed]
+    public function periods_types()
+    {
+        return $this->activeYear->getPeriods();
+    }
+
+    #[Computed]
+    public function teacher()
+    {
+        return auth('tenant')->user()->teacher;
+    }
+
+    #[Computed]
+    public function classe_subject()
+    {
+        $classe_subject = ClasseSubjectOfSchoolYear::with(['teacher', 'classe', 'subject'])
+                   ->whereHas('teacher', fn($qt) =>
+                        $qt->where('id', $this->teacher->id)
+                   )
+                   ->whereHas('classe', fn($qc) =>
+                        $qc->where('slug', $this->classe_slug)
+                   )
+                   ->whereHas('subject', fn($qs) =>
+                        $qs->where('slug', $this->subject_slug)
+                )->where('school_year_id', $this->activeYear->id)->whereNull('ended_at')->where('is_active', true)->first();
+
+        if (!$classe_subject) return abort(404);
+
+        return $classe_subject;
+    }
+
+    #[Computed]
+    public function classe()
+    {
+        if (!$this->classe_slug) return abort(404);
+
+        $classe = Classe::firstWhere('slug', $this->classe_slug);
+
+        if (!$classe) return abort(404);
+
+        return $classe;
+    }
+
+    #[Computed]
+    public function effectifs()
+    {
+        $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
+
+        return $effectifs;
+    }
+
+    #[Computed]
+    public function students()
+    {
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
+            $q->where('classe_id', $this->classe->id)
+              ->where('school_year_id', $this->classe->school_year_id)
+              ->where('is_active', true)
+        )
+        ->orderBy('name')
+        ->orderBy('prenames')
+        ->get();
+    }
+
+    #[Computed]
+    public function subject()
+    {
+        if (!$this->subject_slug) return abort(404);
+
+        $subject = Subject::firstWhere('slug', $this->subject_slug);
+
+        if (!$subject) return abort(404);
+
+        return $subject;
+    }
+
+    #[Computed]
+    public function user()
+    {
+        return auth('tenant')->user();
+    }
+
+    #[Computed]
+    public function activeYear(): ?SchoolYear
+    {
+        return SchoolYear::current()->first();
     }
 
     #[On('TeacherWasBlockedLiveEvent')]
@@ -787,7 +900,7 @@ class TeacherClasseMarksManagerComponent extends Component
             'description' => count($this->finalMarksPayload) . " apprenant(s) prêt(s) pour l'enregistrement.",
         ]);
 
-        dispatch(new InitProcessToCreateStudentsMarksEvent(
+        InitProcessToCreateStudentsMarksEvent::dispatch(
             tenantId:       tenant('id'),
             teacherId:      $this->teacher->id,
             classeId:       $this->classe->id,
@@ -795,98 +908,10 @@ class TeacherClasseMarksManagerComponent extends Component
             period:         $this->period,
             data:           $this->finalMarksPayload,
             schoolYearId:   $this->activeYear->id,
-        ));
+        );
     }
 
-    // ─── Computed existants ────────────────────────────────────────────
-
-    #[Computed]
-    public function periods_types()
-    {
-        return $this->activeYear->getPeriods();
-    }
-
-    #[Computed]
-    public function teacher()
-    {
-        return auth('tenant')->user()->teacher;
-    }
-
-    #[Computed]
-    public function classe_subject()
-    {
-        $classe_subject = ClasseSubjectOfSchoolYear::with(['teacher', 'classe', 'subject'])
-                   ->whereHas('teacher', fn($qt) =>
-                        $qt->where('id', $this->teacher->id)
-                   )
-                   ->whereHas('classe', fn($qc) =>
-                        $qc->where('slug', $this->classe_slug)
-                   )
-                   ->whereHas('subject', fn($qs) =>
-                        $qs->where('slug', $this->subject_slug)
-                )->where('school_year_id', $this->activeYear->id)->whereNull('ended_at')->where('is_active', true)->first();
-
-        if (!$classe_subject) return abort(404);
-
-        return $classe_subject;
-    }
-
-    #[Computed]
-    public function classe()
-    {
-        if (!$this->classe_slug) return abort(404);
-
-        $classe = Classe::firstWhere('slug', $this->classe_slug);
-
-        if (!$classe) return abort(404);
-
-        return $classe;
-    }
-
-    #[Computed]
-    public function effectifs()
-    {
-        $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
-
-        return $effectifs;
-    }
-
-    #[Computed]
-    public function students()
-    {
-        return Student::whereHas('yearlyClasseStudents', fn($q) =>
-            $q->where('classe_id', $this->classe->id)
-              ->where('school_year_id', $this->classe->school_year_id)
-              ->where('is_active', true)
-        )
-        ->orderBy('name')
-        ->orderBy('prenames')
-        ->get();
-    }
-
-    #[Computed]
-    public function subject()
-    {
-        if (!$this->subject_slug) return abort(404);
-
-        $subject = Subject::firstWhere('slug', $this->subject_slug);
-
-        if (!$subject) return abort(404);
-
-        return $subject;
-    }
-
-    #[Computed]
-    public function user()
-    {
-        return auth('tenant')->user();
-    }
-
-    #[Computed]
-    public function activeYear(): ?SchoolYear
-    {
-        return SchoolYear::current()->first();
-    }
+   
 
     public function render()
     {
