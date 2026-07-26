@@ -58,12 +58,12 @@
 
         </section>
 
-        <section class="w-full my-2">
+        <section class="w-full my-2 mb-24">
 
             @if (count($this->students))
                 <div class="border border-slate-800 bg-slate-900 overflow-hidden p-2">
                     <div class="overflow-x-auto">
-                        <table class="w-full min-w-[560px] table-fixed z-table-border">
+                        <table class="w-full min-w-[560px] table-fixed z-table-border ">
                             <colgroup>
                                 <col class="w-[8%]">
                                 <col class="w-[52%]">

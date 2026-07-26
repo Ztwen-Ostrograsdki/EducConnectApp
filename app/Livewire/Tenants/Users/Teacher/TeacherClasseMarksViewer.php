@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Users\Teacher;
 
+use App\Events\InitProcessToUpdateStudentsMarksEvent;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
@@ -30,6 +31,12 @@ class TeacherClasseMarksViewer extends Component
 
     public ?int $period;
 
+    public ?int $editingStudentId = null;
+
+    public array $editInputs = [];
+
+    public array $pendingEdits = [];
+
     public function mount(string $classe_slug, string $subject_slug)
     {
         if(!$classe_slug && !$subject_slug) return abort(404);
@@ -41,6 +48,8 @@ class TeacherClasseMarksViewer extends Component
         $this->classe_subject_id = $this->classe_subject->id;
 
         $this->loadActivePeriod();
+
+        $this->loadPendingEditsFromSession();
     }
 
     public function loadActivePeriod()
@@ -76,15 +85,218 @@ class TeacherClasseMarksViewer extends Component
     public function updatedPeriod()
     {
         unset($this->marksData);
+
+        $this->editingStudentId = null;
+        $this->editInputs = [];
+
+        $this->loadPendingEditsFromSession();
     }
 
+    // ─── Session (modifications en attente) ──────────────────────────
+
+    private function pendingEditsSessionKey(): string
+    {
+        return "teacher_marks_edit:{$this->classe_subject_id}:pending:{$this->period}";
+    }
+
+    private function loadPendingEditsFromSession(): void
+    {
+        $this->pendingEdits = $this->period
+            ? session()->get($this->pendingEditsSessionKey(), [])
+            : [];
+    }
+
+    private function savePendingEditsToSession(): void
+    {
+        if (!$this->period) return;
+
+        session()->put($this->pendingEditsSessionKey(), $this->pendingEdits);
+    }
+
+    private function formatMarkValue(float $value): string
+    {
+        $formatted = rtrim(rtrim(number_format($value, 2, '.', ''), '0'), '.');
+
+        return str_replace('.', ',', $formatted);
+    }
+
+    // ─── Edition d'un apprenant ────────────────────────────────────────
+
     /**
-     * Placeholder pour le moment : ouvrira un modal d'édition des notes de l'apprenant.
+     * Ouvre le formulaire d'édition pour un apprenant : un champ par note
+     * actuellement non nulle (nombre de champs figé au moment de l'ouverture).
      */
     public function editStudentMark(int $student_id)
     {
-        // À implémenter : ouverture du formulaire/modal d'édition des notes.
+        if (!$this->period) return;
+
+        $student = $this->students->firstWhere('id', $student_id);
+
+        if (!$student) return;
+
+        $currentMarks = $this->marksData[$student_id] ?? [];
+
+        $existingTypes = collect($this->markColumns())
+            ->keys()
+            ->filter(fn ($type) => !is_null($currentMarks[$type]['value'] ?? null))
+            ->values()
+            ->all();
+
+        if (empty($existingTypes)) {
+            $this->notification()->send([
+                'icon'        => 'warning',
+                'title'       => 'Aucune note à modifier',
+                'description' => "{$student->getFullName()} n'a aucune note enregistrée pour cette période.",
+            ]);
+            return;
+        }
+
+        $this->editingStudentId = $student_id;
+
+        // Si une édition est déjà en attente pour cet apprenant, on repart de là où
+        // l'enseignant s'était arrêté ; sinon on part des valeurs actuelles en base.
+        $pending = $this->pendingEdits[$student_id] ?? null;
+
+        $this->editInputs = [];
+
+        foreach ($existingTypes as $type) {
+            $value = $pending
+                ? ($pending[$type] ?? null)
+                : ($currentMarks[$type]['value'] ?? null);
+
+            $this->editInputs[$type] = !is_null($value) ? $this->formatMarkValue((float) $value) : '';
+        }
     }
+
+    public function cancelEditStudentMark(): void
+    {
+        $this->editingStudentId = null;
+        $this->editInputs = [];
+    }
+
+    /**
+     * Valide et enregistre en session les modifications de l'apprenant en cours d'édition.
+     */
+    public function finishEditStudentMark(): void
+    {
+        if (!$this->editingStudentId) return;
+
+        $studentId = $this->editingStudentId;
+        $student = $this->students->firstWhere('id', $studentId);
+
+        try {
+            $values = [];
+
+            foreach ($this->editInputs as $type => $raw) {
+
+                $raw = trim((string) $raw);
+
+                if ($raw === '') {
+                    $values[$type] = null;
+                    continue;
+                }
+
+                $normalized = str_replace(',', '.', $raw);
+                $label = $this->markColumns()[$type] ?? $type;
+
+                if (!is_numeric($normalized)) {
+                    throw new \InvalidArgumentException("La valeur \"{$raw}\" n'est pas une note valide pour \"{$label}\".");
+                }
+
+                $value = round((float) $normalized, 2);
+
+                if ($value < 0 || $value > 20) {
+                    throw new \InvalidArgumentException("La note \"{$raw}\" pour \"{$label}\" doit être comprise entre 0 et 20.");
+                }
+
+                $values[$type] = $value;
+            }
+
+            $this->pendingEdits[$studentId] = $values;
+
+            $this->savePendingEditsToSession();
+
+            $this->editingStudentId = null;
+            $this->editInputs = [];
+
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Modifications enregistrées',
+                'description' => "Les modifications de {$student?->getFullName()} sont en attente de confirmation.",
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'Erreur de saisie',
+                'description' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function removePendingEdit(int $student_id): void
+    {
+        unset($this->pendingEdits[$student_id]);
+
+        $this->savePendingEditsToSession();
+    }
+
+    public function cancelAllPendingEdits(): void
+    {
+        $this->pendingEdits = [];
+
+        if ($this->period) {
+            session()->forget($this->pendingEditsSessionKey());
+        }
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => 'Toutes les modifications en attente ont été annulées',
+        ]);
+    }
+
+    /**
+     * Lance la mise à jour globale : dispatch l'event, puis vide la session.
+     */
+    public function confirmMarksUpdate(): void
+    {
+        if (empty($this->pendingEdits)) {
+            $this->notification()->send([
+                'icon'  => 'warning',
+                'title' => 'Aucune modification en attente',
+            ]);
+            return;
+        }
+
+        $payload = collect($this->pendingEdits)
+            ->map(fn ($marks, $studentId) => [
+                'student_id' => (int) $studentId,
+                'marks'      => $marks,
+            ])
+            ->values()
+            ->all();
+
+        event(new InitProcessToUpdateStudentsMarksEvent(
+            tenantId: tenancy()->tenant->id,
+            teacherId: $this->teacher->id,
+            classeId: $this->classe->id,
+            subjectId: $this->subject->id,
+            period: $this->period,
+            data: $payload,
+            schoolYearId: $this->activeYear->id,
+        ));
+
+        $this->pendingEdits = [];
+
+        session()->forget($this->pendingEditsSessionKey());
+
+        $this->notification()->send([
+            'icon'        => 'success',
+            'title'       => 'Mise à jour lancée',
+            'description' => count($payload) . " apprenant(s) en cours de traitement.",
+        ]);
+    }
+
+    // ─── Computed existants ────────────────────────────────────────────
 
     #[Computed]
     public function teacher()
@@ -174,11 +386,6 @@ class TeacherClasseMarksViewer extends Component
         return $this->activeYear->getPeriods();
     }
 
-
-    /**
-     * Notes de la classe pour cette matière/période, lues depuis le cache
-     * (App\Services\ClasseSubjectMarksCacheService), sans requête directe sur Mark.
-     */
     #[Computed]
     public function marksData(): array
     {
@@ -194,15 +401,10 @@ class TeacherClasseMarksViewer extends Component
         );
     }
 
-
-    /**
-     * Fusionne la liste des apprenants avec leurs notes en cache, et calcule
-     * moy. interro, moy., moy. coef., et rang localement (pas de requête supplémentaire).
-     */
     #[Computed]
     public function studentsRows(): array
     {
-        $columns = array_keys($this->markColumns);
+        $columns = array_keys($this->markColumns());
         $devoirColumns = array_keys($this->devoirColumns());
         $coefficient = (float) ($this->classe_subject->coefficient ?? 0);
 
@@ -216,7 +418,6 @@ class TeacherClasseMarksViewer extends Component
                 $values[$type] = $studentMarks[$type]['value'] ?? null;
             }
 
-            // Moy. Interro : moyenne des interros réellement saisies (ignore les vides).
             $interroValues = array_filter(
                 array_intersect_key($values, array_flip(self::INTERRO_TYPES)),
                 fn ($v) => !is_null($v)
@@ -226,7 +427,6 @@ class TeacherClasseMarksViewer extends Component
                 ? round(array_sum($interroValues) / count($interroValues), 2)
                 : null;
 
-            // Moy. Devoirs : moyenne des devoirs réellement saisis (1 ou 2 selon le tenant).
             $devoirValues = array_filter(
                 array_intersect_key($values, array_flip($devoirColumns)),
                 fn ($v) => !is_null($v)
@@ -236,8 +436,6 @@ class TeacherClasseMarksViewer extends Component
                 ? round(array_sum($devoirValues) / count($devoirValues), 2)
                 : null;
 
-            // Moy. générale : moyenne de moyInterro et moyDevoirs si les deux existent,
-            // sinon celle qui existe (parmi les deux), sinon null.
             if (!is_null($moyInterro) && !is_null($moyDevoirs)) {
                 $moy = round(($moyInterro + $moyDevoirs) / 2, 2);
             } elseif (!is_null($moyInterro)) {
@@ -284,21 +482,16 @@ class TeacherClasseMarksViewer extends Component
             return $row;
         });
 
-        // Réordonne selon l'ordre alphabétique d'origine pour l'affichage,
-        // le rang calculé au-dessus reste correct.
         return $ranked->sortBy(fn ($row) => $row['student']->name . $row['student']->prenames)->values()->all();
     }
 
-    /**
-     * Les colonnes "devoirs" seules (sans les interros), pour isoler leur moyenne.
-     */
     #[Computed]
     public function devoirColumns(): array
     {
         $devoirsType = tenant()->devoirs_type ?? 'devoir1-devoir2';
 
         return $devoirsType === 'devoir1-compo'
-            ? ['devoir1' => 'Devoir 1', 'compo' => 'Composition']
+            ? ['devoir1' => 'Devoir 1', 'compo' => 'Compo']
             : ['devoir1' => 'Devoir 1', 'devoir2' => 'Devoir 2'];
     }
 

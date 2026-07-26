@@ -67,7 +67,7 @@
                             wire:target="validateAllMarks"
                             class="relative h-10 px-4 rounded-xl bg-emerald-500/50 hover:bg-emerald-500 hover:text-black disabled:opacity-50 transition-all duration-200 flex items-center justify-center min-w-[110px] overflow-hidden">
                             <span wire:loading.class="opacity-0 scale-90" wire:target="validateAllMarks"
-                                class="transition-all duration-200">Tout Valider</span>
+                                class="transition-all duration-200">Valider toutes les notes saisies</span>
                             <svg wire:loading.class="opacity-100 scale-100"
                                 wire:loading.class.remove="opacity-0 scale-75" wire:target="validateAllMarks"
                                 class="animate-spin h-4 w-4 absolute opacity-0 scale-75 transition-all duration-200"
@@ -500,15 +500,17 @@
                                                     attente d'enregistrement
                                                 </div>
 
-                                                <div class="flex flex-wrap gap-3">
+                                                <div class="flex flex-wrap gap-3 font-mono">
 
-                                                    <button wire:click="resetAllPendingMarks" wire:loading.attr="disabled"
+                                                    <button
+                                                        title="Toutes les notes que vous avez saisies maintenant seront effacées"
+                                                        wire:click="resetAllPendingMarks" wire:loading.attr="disabled"
                                                         wire:target="resetAllPendingMarks"
-                                                        class="relative h-11 px-2 rounded-2xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center overflow-hidden">
+                                                        class="relative h-11 px-4 rounded-2xl bg-red-500/40 hover:text-red-300 hover:bg-red-800 disabled:opacity-50 transition-all duration-200 flex items-center justify-center overflow-hidden">
                                                         <span wire:loading.class="opacity-0 scale-90"
                                                             wire:target="resetAllPendingMarks"
-                                                            class="transition-all duration-200">Réinitialiser
-                                                            Toutes les notes en cours</span>
+                                                            class="transition-all duration-200">Effacer
+                                                            toutes les notes saisies</span>
                                                         <svg wire:loading.class="opacity-100 scale-100"
                                                             wire:loading.class.remove="opacity-0 scale-75"
                                                             wire:target="resetAllPendingMarks"
@@ -523,11 +525,11 @@
 
                                                     <button wire:click="validateAllMarks" wire:loading.attr="disabled"
                                                         wire:target="validateAllMarks"
-                                                        class="relative h-11 px-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 transition-all duration-200 flex items-center justify-center overflow-hidden">
+                                                        class="relative h-11 px-4 rounded-2xl bg-emerald-500/30 hover:text-green-200 hover:bg-emerald-700 disabled:opacity-50 transition-all duration-200 flex items-center justify-center overflow-hidden">
                                                         <span wire:loading.class="opacity-0 scale-90"
                                                             wire:target="validateAllMarks"
-                                                            class="transition-all duration-200">Valider Toutes les
-                                                            Notes</span>
+                                                            class="transition-all duration-200">Valider toutes les
+                                                            notes saisies</span>
                                                         <svg wire:loading.class="opacity-100 scale-100"
                                                             wire:loading.class.remove="opacity-0 scale-75"
                                                             wire:target="validateAllMarks"
