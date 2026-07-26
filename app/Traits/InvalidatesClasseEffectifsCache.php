@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * @method static void saved(\Closure|string $callback)
- * @method static void updated(\Closure|string $callback)
  * @method static void deleted(\Closure|string $callback)
- * @method static void created(\Closure|string $callback)
  * @method static void restored(\Closure|string $callback)
  */
 trait InvalidatesClasseEffectifsCache
@@ -24,10 +22,6 @@ trait InvalidatesClasseEffectifsCache
             static::flushClasseEffectifsCache($model);
         });
         
-        static::created(function ($model) {
-            static::flushClasseEffectifsCache($model);
-        });
-
         static::deleted(function ($model) {
             static::flushClasseEffectifsCache($model);
         });

@@ -2,7 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Classe;
 use App\Models\MarkHistory;
+use App\Models\SchoolYear;
+use App\Models\Student;
+use App\Models\Subject;
+use App\Models\Teacher;
+use App\Traits\InvalidatesClasseSubjectMarksCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mark extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvalidatesClasseSubjectMarksCache;
 
     protected $table = 'marks';
 
