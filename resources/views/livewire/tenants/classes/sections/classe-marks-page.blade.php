@@ -16,18 +16,19 @@
                         Gestion des Notes
                     </h1>
 
-                    <span class="px-3 py-1 rounded-full
+                    <span
+                        class="px-3 py-1 rounded-full
                                  bg-indigo-500/10
                                  border border-indigo-500/20
-                                 text-indigo-400 text-xs shrink-0">
+                                 text-indigo-400 text-xs shrink-0 font-mono">
 
-                        42 apprenants
+                        {{ count($this->studentsRows) }} apprenants
 
                     </span>
 
                 </div>
 
-                <p class="mt-2 text-slate-400 text-sm sm:text-base">
+                <p class="mt-2 text-slate-400 text-sm sm:text-base font-mono">
 
                     Notes, moyennes et statistiques pédagogiques de la classe.
 
@@ -73,7 +74,8 @@
     {{-- ===================================================== --}}
     <section class="mb-6">
 
-        <div class="grid
+        <div
+            class="grid
                     grid-cols-1
                     sm:grid-cols-2
                     xl:grid-cols-4
@@ -112,8 +114,14 @@
                     Matière
                 </p>
 
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    Maths
+                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold uppercase">
+                    @if ($this->subject)
+                        {{ $this->subject->code }}
+                    @else
+                        <span class="text-sm text-slate-600">
+                            Non sélectionnée
+                        </span>
+                    @endif
                 </h2>
 
             </div>
@@ -122,11 +130,21 @@
             <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
 
                 <p class="text-sm text-slate-400">
-                    Semestre
+                    @if ($this->activeYear)
+                        {{ $this->activeYear->periodLabel() }}
+                    @else
+                        <span class="text-slate-600 text-sm">Aucune année active</span>
+                    @endif
                 </p>
 
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    S1
+                <h2 class="mt-3 text-xl sm:text-xl xl:text-lg font-bold">
+                    @if ($this->period)
+                        {{ $this->activeYear->periodLabel() }} {{ $this->period }}
+                    @else
+                        <span class="text-sm text-slate-600">
+                            Non sélectionnée
+                        </span>
+                    @endif
                 </h2>
 
             </div>
@@ -171,35 +189,29 @@
                 </div>
 
                 {{-- FILTERS --}}
-                <div class="grid
+                <div
+                    class="grid
                             grid-cols-1
                             sm:grid-cols-2
                             lg:grid-cols-3
                             gap-3">
 
-                    {{-- SEMESTER --}}
-                    <select class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
-                        <option>Semestre 1</option>
-                        <option>Semestre 2</option>
-                        <option>Trimestre 1</option>
-                        <option>Trimestre 2</option>
-
+                    {{-- SUBJECT --}}
+                    <select wire:model.live="subject_slug"
+                        class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono transition-colors duration-200">
+                        <option value="">Sélectionner une matière</option>
+                        @foreach ($this->availableSubjects as $subj)
+                            <option value="{{ $subj->slug }}">{{ $subj->name }}</option>
+                        @endforeach
                     </select>
 
-                    {{-- SUBJECT --}}
-                    <select class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
-                        <option>Mathématiques</option>
-                        <option>Physique</option>
-                        <option>Électricité</option>
-
+                    {{-- PERIOD --}}
+                    <select wire:model.live="period"
+                        class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
+                        <option value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>
+                        @foreach ($this->periods_types as $pv => $p)
+                            <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
+                        @endforeach
                     </select>
 
                     {{-- RESET --}}
@@ -240,7 +252,8 @@
 
             </button>
 
-            <button class="px-3 py-2 rounded-2xl
+            <button
+                class="px-3 py-2 rounded-2xl
                                     bg-emerald-500 hover:bg-emerald-600">
 
                 Emprimer Excel
@@ -258,180 +271,245 @@
 
         <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
 
-            <div class="overflow-x-auto">
+            <section class="">
+                <div class="grid grid-cols-1 gap-6 md:text-sm text-xs mb-32">
 
-                <table class="w-full">
+                    <div class="space-y-6 min-w-0 ">
 
-                    <thead class="bg-slate-950 border-b border-slate-800 truncate">
+                        <div class="rounded-lg bg-slate-900 border border-slate-800 overflow-hidden p-1">
 
-                        <tr>
+                            {{-- HEADER --}}
+                            <div class="p-5 border-b border-slate-800">
+                                <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
 
-                            <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                Apprenants
-                            </th>
+                                    <div>
+                                        <h2 class="text-xl font-mono font-semibold">
+                                            <span>
+                                                Les notes de classe
+                                            </span>
+                                            @if ($this->subject)
+                                                <span>
+                                                    de
+                                                    <span class="text-orange-500 uppercase">
+                                                        {{ $this->subject->name }}
+                                                    </span>
+                                                </span>
+                                            @endif
+                                            @if ($this->period)
+                                                <span>
+                                                    du
+                                                    <span class="text-orange-500 uppercase">
+                                                        {{ $this->activeYear->periodLabel() . ' ' . $this->period }}
+                                                    </span>
+                                                </span>
+                                            @endif
 
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Interro 1
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Interro 2
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Interro 3
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Interro 4
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Moy Interro
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Dev 1
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Dev 2
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Moyenne
-                            </th>
-
-                            <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                Moy Coef
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Actions
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-800">
-
-                        @foreach (range(1, 15) as $i)
-                            <tr class="hover:bg-slate-800/40 transition-all">
-
-                                {{-- STUDENT --}}
-                                <td class="px-6 py-5">
-
-                                    <div class="flex items-center gap-4 min-w-0">
-
-                                        <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
-                                        </div>
-
-                                        <div class="min-w-0">
-
-                                            <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f2-' . $i]) }}">
-                                                <h3 class="font-medium truncate">
-                                                    Kouassi Vincent {{ $i }}
-                                                </h3>
-
-                                                <p class="text-sm text-slate-400 truncate">
-                                                    MAT-2025-{{ $i }}
-                                                </p>
-                                            </a>
-                                        </div>
-
+                                        </h2>
+                                        <p class="mt-1  text-slate-400 font-mono">Gestion complète des notes des
+                                            apprenants.
+                                        </p>
                                     </div>
 
-                                </td>
-
-                                {{-- NOTES --}}
-                                <td class="px-4 py-5 text-center truncate">14</td>
-                                <td class="px-4 py-5 text-center truncate">16</td>
-                                <td class="px-4 py-5 text-center truncate">15</td>
-                                <td class="px-4 py-5 text-center truncate">13</td>
-
-                                {{-- MOY INTERRO --}}
-                                <td class="px-4 py-5 text-center truncate">
-
-                                    <span class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400 text-sm">
-
-                                        14.5
-
-                                    </span>
-
-                                </td>
-
-                                {{-- DEV --}}
-                                <td class="px-4 py-5 text-center truncate">15</td>
-                                <td class="px-4 py-5 text-center truncate">17</td>
-
-                                {{-- MOY --}}
-                                <td class="px-4 py-5 text-center truncate">
-
-                                    <span class="px-3 py-1 rounded-full
-                                             bg-emerald-500/10
-                                             text-emerald-400 text-sm">
-
-                                        15.2
-
-                                    </span>
-
-                                </td>
-
-                                {{-- MOY COEF --}}
-                                <td class="px-4 py-5 text-center truncate font-semibold">
-                                    30.4
-                                </td>
-
-                                {{-- ACTIONS --}}
-                                <td class="px-6 py-5">
-
-                                    <div class="flex items-center justify-end gap-2 truncate">
-
-                                        <button
-                                            class="py-2 px-2.5 cursor-pointer rounded-xl
-                                                               bg-indigo-800
-                                                               hover:bg-indigo-500
-                                                               transition-all">
-
-                                            Profil
-
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="h-10 px-4 rounded-xl bg-sky-500 hover:bg-sky-600">
+                                            Import Excel
                                         </button>
-
-                                        <button
-                                            class="py-2 px-2.5 cursor-pointer rounded-xl
-                                                               bg-emerald-800
-                                                               hover:bg-emerald-500
-                                                               transition-all">
-
-                                            Bloquer
-
-                                        </button>
-
-                                        <button
-                                            class="py-2 px-2.5 cursor-pointer rounded-xl
-                                                               bg-red-800
-                                                               hover:bg-red-500
-                                                               transition-all">
-
-                                            Supprimer
-
-                                        </button>
-
                                     </div>
 
-                                </td>
+                                </div>
+                            </div>
 
-                            </tr>
-                        @endforeach
+                            @php
+                                // Nombre total de colonnes du tableau, utilisé pour le colspan
+                                // du récap final ainsi que de la ligne d'édition inline.
+                                $showActionsColumn =
+                                    $this->activeYear &&
+                                    $this->activeYear->is_active &&
+                                    $this->activeYear->active_period === $period;
+                                $totalColumns =
+                                    1 +
+                                    4 +
+                                    1 +
+                                    count($this->devoirColumns()) +
+                                    1 +
+                                    1 +
+                                    1 +
+                                    ($showActionsColumn ? 1 : 0);
+                            @endphp
 
-                    </tbody>
+                            <div class="overflow-x-auto font-mono p-2 mt-4 mb-8">
 
-                </table>
+                                <table class="w-full border-collapse z-table-border">
 
-            </div>
+                                    <colgroup>
+                                        <col class="w-[400px] min-w-[400px]">
+                                        <col class="w-[90px] min-w-[90px]">
+                                        <col class="w-[90px] min-w-[90px]">
+                                        <col class="w-[90px] min-w-[90px]">
+                                        <col class="w-[90px] min-w-[90px]">
+                                        <col class="w-[100px] min-w-[100px]">
+                                        @foreach ($this->devoirColumns() as $type => $label)
+                                            <col class="w-[90px] min-w-[90px]">
+                                        @endforeach
+                                        <col class="w-[100px] min-w-[100px]">
+                                        <col class="w-[110px] min-w-[110px]">
+                                        <col class="w-[80px] min-w-[80px]">
+
+                                    </colgroup>
+
+                                    <thead class="bg-slate-950 border-b border-slate-800">
+                                        <tr>
+                                            <th
+                                                class="sticky left-0 z-10 bg-slate-950 px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Apprenant
+                                            </th>
+
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Int 1</th>
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Int 2</th>
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Int 3</th>
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Int 4</th>
+
+                                            <th class="px-2 py-2 text-center  text-indigo-400 whitespace-nowrap">
+                                                Moy. Int
+                                            </th>
+
+                                            @foreach ($this->devoirColumns() as $type => $label)
+                                                <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                    {{ $label }}
+                                                </th>
+                                            @endforeach
+
+                                            <th class="px-2 py-2 text-center  text-emerald-400 whitespace-nowrap">
+                                                Moy.
+                                            </th>
+
+                                            <th class="px-2 py-2 text-center  text-emerald-400 whitespace-nowrap">
+                                                Moy. Coef.
+                                            </th>
+
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Rang
+                                            </th>
+
+                                            <th class="px-2 py-2 text-center  text-slate-400 whitespace-nowrap">
+                                                Modifier notes
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="divide-y divide-slate-800">
+
+                                        @forelse ($this->studentsRows as $row)
+                                            @php $student = $row['student']; @endphp
+
+                                            <tr wire:key="student-row-{{ $student->id }}"
+                                                class="hover:bg-slate-800/40">
+
+                                                {{-- STUDENT (sticky) --}}
+                                                <td class="sticky left-0 z-10 bg-slate-900 px-6 py-2 ">
+                                                    <a wire:navigate
+                                                        href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                                        class="flex items-center gap-4 group">
+                                                        <div class="p-3 shrink-0 rounded-2xl bg-slate-800">
+                                                            {{ $loop->iteration }}
+                                                        </div>
+                                                        <div class="flex flex-col min-w-0 w-full">
+                                                            <div
+                                                                class="font-medium w-full transition flex justify-between items-center gap-1 min-w-0">
+                                                                <span
+                                                                    class="group-hover:underline underline-offset-4 group-hover:text-sky-500 font-mono text-slate-300">{{ $student->getFullName() }}</span>
+                                                                @if ($student->gender)
+                                                                    <span
+                                                                        class="shrink-0 uppercase text-slate-500 font-mono text-xs py-1 px-2 bg-slate-950 shadow-sm shadow-sky-700 group-hover:shadow-orange-500">{{ str()->initials($student->gender) }}</span>
+                                                                @endif
+                                                            </div>
+                                                            <p class="text-xs text-slate-500 mt-0.5 truncate">
+                                                                @if ($student->educMaster)
+                                                                    <span
+                                                                        class="font-mono">{{ $student->educMaster }}</span>
+                                                                @endif
+                                                            </p>
+                                                        </div>
+                                                    </a>
+                                                </td>
+
+                                                {{-- INTERROS --}}
+                                                @foreach (['interro1', 'interro2', 'interro3', 'interro4'] as $type)
+                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
+                                                        @if (!is_null($row['marks'][$type]))
+                                                            {{ number_format($row['marks'][$type], 2) }}
+                                                        @else
+                                                            <span class="text-slate-600">—</span>
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+
+                                                {{-- MOY. INTERRO --}}
+                                                <td
+                                                    class="px-2 py-2 text-center font-medium whitespace-nowrap {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-600' }}">
+                                                    {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
+                                                </td>
+
+                                                {{-- DEVOIRS --}}
+                                                @foreach ($this->devoirColumns() as $type => $label)
+                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
+                                                        @if (!is_null($row['marks'][$type]))
+                                                            {{ number_format($row['marks'][$type], 2) }}
+                                                        @else
+                                                            <span class="text-slate-600">—</span>
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+
+                                                {{-- MOY --}}
+                                                <td
+                                                    class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-600' }}">
+                                                    {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
+                                                </td>
+
+                                                {{-- MOY. COEF --}}
+                                                <td
+                                                    class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-600' }}">
+                                                    {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
+                                                </td>
+
+                                                {{-- RANK --}}
+                                                <td class="px-2 py-2 text-center whitespace-nowrap">
+                                                    {{ $row['rank'] ? '#' . $row['rank'] : '—' }}
+                                                </td>
+
+                                                <td class="px-6 py-2">
+                                                    <div class="flex justify-center gap-2">
+
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="{{ $totalColumns }}"
+                                                    class="px-6 py-10 text-center text-slate-500">
+                                                    Aucun apprenant trouvé pour cette classe.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
 
         </div>
 
