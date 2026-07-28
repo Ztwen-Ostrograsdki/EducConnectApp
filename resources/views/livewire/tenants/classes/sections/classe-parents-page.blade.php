@@ -3,7 +3,8 @@
     {{-- ===================================================== --}}
     {{-- CONTAINER --}}
     {{-- ===================================================== --}}
-    <div class="mx-auto
+    <div
+        class="mx-auto
                 w-full
                 max-w-[1850px]
                 px-3
@@ -11,265 +12,20 @@
                 lg:px-6
                 xl:px-8">
 
-        {{-- ===================================================== --}}
-        {{-- PAGE HEADER --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
+        <section class="mb-6 relative">
+            <div wire:loading wire:target='status,clearFilters,search,previousPage,nextPage,gotoPage'
+                class="absolute inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-xs rounded-2xl"
+                style="z-index: 200 !important;">
 
-            <div class="flex flex-col
-                        xl:flex-row
-                        xl:items-center
-                        xl:justify-between
-                        gap-5">
-
-                {{-- LEFT --}}
-                <div class="min-w-0">
-
-                    <div class="flex flex-wrap items-center gap-3">
-
-                        <h1 class="text-2xl sm:text-3xl font-bold">
-
-                            Parents d'Élèves
-
-                        </h1>
-
-                        <span class="px-3 py-1 rounded-full
-                                     bg-indigo-500/10
-                                     text-indigo-400
-                                     text-xs">
-
-                            186 Parents
-
-                        </span>
-
-                    </div>
-
-                    <p class="mt-2 text-slate-400 text-sm sm:text-base">
-
-                        Gestion des parents associés à la classe Terminale F2-1
-
-                    </p>
-
+                <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+                    <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    <span class="text-xl font-mono ls-1">Chargement en cours...</span>
                 </div>
-
-                {{-- ACTIONS --}}
-                <div class="flex flex-wrap gap-3">
-
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-slate-800
-                                   hover:bg-slate-700
-                                   transition-all text-sm">
-
-                        Exporter
-
-                    </button>
-
-                    <button class="h-11 px-5 rounded-2xl
-                                   bg-indigo-500
-                                   hover:bg-indigo-600
-                                   transition-all text-sm">
-
-                        Ajouter Parent
-
-                    </button>
-
-                </div>
-
             </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="grid
-                        grid-cols-2
-                        xl:grid-cols-4
-                        gap-4">
-
-                @foreach ([['Parents Actifs', '172', 'text-emerald-400'], ['Accès Bloqués', '14', 'text-rose-400'], ['Notifications', '842', 'text-indigo-400'], ['Enfants liés', '248', 'text-amber-400']] as $kpi)
-                    <div class="rounded-3xl
-                            border border-slate-800
-                            bg-slate-900
-                            p-4 sm:p-5">
-
-                        <p class="text-xs sm:text-sm text-slate-400">
-                            {{ $kpi[0] }}
-                        </p>
-
-                        <h2 class="mt-3
-                               text-2xl sm:text-3xl xl:text-4xl
-                               font-bold {{ $kpi[2] }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- GLOBAL ACTIONS --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="rounded-3xl
-                        border border-slate-800
-                        bg-slate-900
-                        p-4 sm:p-5">
-
-                <div class="flex flex-col gap-4">
-
-                    {{-- SEARCH --}}
-                    <div class="relative">
-
-                        <input type="text" placeholder="Rechercher un parent..."
-                            class="w-full h-12 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   pl-12 pr-4
-                                   text-sm
-                                   focus:outline-none
-                                   focus:ring-2
-                                   focus:ring-indigo-500/40">
-
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-                            🔍
-                        </div>
-
-                    </div>
-
-                    {{-- FILTERS --}}
-                    <div class="grid
-                                grid-cols-1
-                                sm:grid-cols-2
-                                xl:grid-cols-6
-                                gap-3">
-
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800 text-sm">
-
-                            <option>Toutes classes</option>
-
-                        </select>
-
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800 text-sm">
-
-                            <option>Statut accès</option>
-                            <option>Actif</option>
-                            <option>Bloqué</option>
-
-                        </select>
-
-                        <select class="h-11 px-4 rounded-2xl
-                                       bg-slate-950
-                                       border border-slate-800 text-sm">
-
-                            <option>Nombre d'enfants</option>
-                            <option>1 enfant</option>
-                            <option>2 enfants et +</option>
-
-                        </select>
-
-                        <button class="h-11 rounded-2xl
-                                       bg-indigo-500
-                                       hover:bg-indigo-600
-                                       transition-all text-sm">
-
-                            Filtrer
-
-                        </button>
-
-                        <button class="h-11 rounded-2xl
-                                       bg-emerald-500
-                                       hover:bg-emerald-600
-                                       transition-all text-sm">
-
-                            Envoyer Bulletins
-
-                        </button>
-
-                        <button class="h-11 rounded-2xl
-                                       bg-sky-500
-                                       hover:bg-sky-600
-                                       transition-all text-sm">
-
-                            Envoyer Notes
-
-                        </button>
-
-                    </div>
-
-                    {{-- GLOBAL BUTTONS --}}
-                    <div class="grid
-                                grid-cols-1
-                                sm:grid-cols-2
-                                xl:grid-cols-4
-                                gap-3">
-
-                        <button class="h-12 rounded-2xl
-                                       bg-slate-800
-                                       hover:bg-slate-700
-                                       transition-all text-sm">
-
-                            Notifier Tous les Parents
-
-                        </button>
-
-                        <button
-                            class="h-12 rounded-2xl
-                                       bg-indigo-500/20
-                                       text-indigo-400
-                                       hover:bg-indigo-500/30
-                                       transition-all text-sm">
-
-                            Envoyer Mail Global
-
-                        </button>
-
-                        <button
-                            class="h-12 rounded-2xl
-                                       bg-amber-500/20
-                                       text-amber-400
-                                       hover:bg-amber-500/30
-                                       transition-all text-sm">
-
-                            Relancer Impayés
-
-                        </button>
-
-                        <button
-                            class="h-12 rounded-2xl
-                                       bg-rose-500/20
-                                       text-rose-400
-                                       hover:bg-rose-500/30
-                                       transition-all text-sm">
-
-                            Bloquer Accès Groupe
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- MAIN GRID --}}
-        {{-- ===================================================== --}}
-        <section>
 
             <div class="grid
                         grid-cols-1
@@ -278,13 +34,14 @@
                 <div class="space-y-6 min-w-0 col-span-1">
 
                     {{-- TABLE --}}
-                    <div class="rounded-3xl
-                                border border-slate-800
-                                bg-slate-900
+                    <div
+                        class="rounded-3xl
+                                
+                                bg-slate-950
                                 overflow-hidden">
 
                         {{-- HEADER --}}
-                        <div class="border-b border-slate-800
+                        <div class="
                                     p-4 sm:p-6">
 
                             <div
@@ -292,304 +49,420 @@
                                         lg:flex-row
                                         lg:items-center
                                         lg:justify-between
-                                        gap-4">
+                                        gap-4 w-full">
 
-                                <div>
+                                <div class="flex justify-between items-center w-full">
 
-                                    <h2 class="text-lg sm:text-xl font-semibold">
+                                    <div class="border-b border-slate-800 w-full py-2">
+                                        <h2 class="text-lg sm:text-xl font-semibold flex items-center gap-2">
 
-                                        Liste des Parents
+                                            <span>
+                                                Liste des Parents
+                                            </span>
+                                            <span
+                                                class=" text-indigo-500 text-xs font-mono bg-indigo-600/40 rounded-4xl p-1 md:px-4 border border-indigo-800 truncate">
+                                                {{ $this->tutors->total() }} parents
+                                            </span>
 
-                                    </h2>
+                                        </h2>
 
-                                    <p class="mt-1 text-sm text-slate-400">
+                                        <p class="mt-1 text-sm text-slate-400 font-mono">
 
-                                        Gestion des accès et suivi des représentants
+                                            Gestion des accès et suivi des représentants
 
-                                    </p>
-
-                                </div>
-
-                                <div class="flex flex-wrap gap-3">
-
-                                    <button
-                                        class="h-11 px-4 rounded-2xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                        Trier
-
-                                    </button>
-
-                                    <button
-                                        class="h-11 px-4 rounded-2xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                        Colonnes
-
-                                    </button>
+                                        </p>
+                                    </div>
 
                                 </div>
 
                             </div>
 
+                            <div class="flex flex-col gap-4 my-4">
+
+                                <section class="">
+
+                                    <div class="rounded-3xl bg-slate-950">
+                                        <div class="flex flex-col gap-4">
+                                            <div class="grid grid-cols-7 gap-x-3">
+                                                <div class="relative col-span-5">
+
+                                                    <input wire:model.live.debounce.600ms='search' type="text"
+                                                        placeholder="Trouver un parent..."
+                                                        class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                                    <div
+                                                        class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                                                        🔍
+                                                    </div>
+                                                </div>
+                                                <button wire:click='clearFilters'
+                                                    class="py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 transition-all text-sm col-span-2">
+                                                    <span wire:loading.remove wire:target='clearFilters'
+                                                        class="inline-flex gap-x-2 items-center ">
+                                                        <span class="inline-flex gap-x-2 items-center">
+                                                            <x-lucide-refresh-ccw class="w-4 h-4" />
+                                                            <span>Réinitialiser</span>
+                                                        </span>
+                                                    </span>
+                                                    <span wire:loading wire:target='clearFilters'
+                                                        class="inline-flex items-center gap-x-2">
+                                                        <span class="inline-flex items-center gap-x-2">
+                                                            <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                                            <span>Rechargement ...</span>
+                                                        </span>
+                                                    </span>
+
+                                                </button>
+                                            </div>
+
+                                            <div class="flex items-center flex-wrap gap-3">
+
+                                                <select wire:model.live='status'
+                                                    class="h-12  uppercase font-mono rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm">
+                                                    <option value="">
+                                                        <span>Tout statut </span>
+                                                    </option>
+                                                    <option class="text-green-400" value="actives">
+                                                        <span>
+                                                            <span>Actifs</span>
+                                                        </span>
+                                                    </option>
+                                                    <option value="desactives">
+                                                        <span>Bloqués</span>
+                                                    </option>
+                                                    <option class="text-orange-600" value="corbeille">
+                                                        <span>La corbeille</span>
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </section>
+
+                            </div>
+
                         </div>
 
-                        {{-- TABLE --}}
-                        <div class="overflow-x-auto">
+                        @if (count($this->tutors) > 0)
+                            <div class="overflow-x-auto my-3 font-mono text-slate-500">
 
-                            <table class="min-w-[1900px] w-full">
+                                <table class="z-table-border w-full mb-4">
 
-                                <thead class="bg-slate-950 border-b border-slate-800 truncate">
+                                    <thead class="bg-slate-950 border-b border-slate-800">
 
-                                    <tr>
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            N°
-                                        </th>
+                                        <tr>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                N°
+                                            </th>
 
-                                        <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Parent
-                                        </th>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                Parent
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Téléphone
-                                        </th>
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400">
+                                                Statut
+                                            </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Enfant(s)
-                                        </th>
+                                            <th class="px-6 py-4 text-center text-sm text-slate-400">
+                                                Actions
+                                            </th>
 
-                                        <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                            Actions
-                                        </th>
+                                        </tr>
 
-                                    </tr>
+                                    </thead>
 
-                                </thead>
+                                    <tbody class="divide-y divide-slate-800">
 
-                                <tbody class="divide-y divide-slate-800">
+                                        @foreach ($this->tutors as $parent)
+                                            <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    @foreach (range(1, 12) as $parent)
-                                        <tr class="hover:bg-slate-800/40 transition-all">
+                                                <td class="px-4 py-5 text-center">
 
-                                            <td class="px-4 py-5 text-center">
+                                                    {{ $this->tutors->firstItem() + $loop->iteration - 1 }}
 
-                                                {{ $loop->iteration }}
+                                                </td>
 
-                                            </td>
+                                                {{-- PROFILE --}}
+                                                <td class="px-6 py-5">
 
-                                            {{-- PROFILE --}}
-                                            <td class="px-6 py-5">
+                                                    <div class="w-full flex flex-col gap-2">
+                                                        <a title="Charger le profil de ce parent"
+                                                            href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent->uuid]) }}"
+                                                            class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl group">
 
-                                                <a title="Charger le profil de ce parent" href="{{ route('tenant.parent.profil', ['parent_uuid' => 'f']) }}" class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl">
+                                                            <img src="{{ $parent->profil_photo_url() }}"
+                                                                alt="Photo de profil de {{ $parent->fullName() }}"
+                                                                class="w-14 h-14 rounded-full object-cover border-4 border-slate-700 group-hover:border-sky-500">
 
-                                                    <div class="w-14 h-14 rounded-2xl
-                                                            bg-slate-800 shrink-0">
+                                                            <div class="min-w-0 group-hover:text-sky-600 flex flex-col">
+                                                                <h3 class="font-medium ">
+                                                                    {{ $parent->getFullName() }}
+                                                                </h3>
+                                                            </div>
+
+                                                        </a>
+                                                        <div class="flex flex-col gap-2">
+                                                            <p
+                                                                class="mt-1 text-sm text-sky-400  inline-flex items-center gap-2">
+                                                                <x-lucide-mail class="w-4 h-4 text-slate-200" />
+                                                                {{ $parent->user->email }}
+                                                            </p>
+                                                            <p
+                                                                class="mt-1 text-sm text-slate-400  inline-flex items-center gap-2">
+                                                                <x-lucide-briefcase-business
+                                                                    class="w-4 h-4 text-slate-200" />
+                                                                {{ $parent->user->job_name ? $parent->user->job_name : '' }}
+                                                            </p>
+
+                                                            <p
+                                                                class="mt-1 text-sm text-amber-400 inline-flex items-center gap-2">
+                                                                <x-lucide-map-pin-check
+                                                                    class="w-4 h-4 text-slate-200" />
+                                                                {{ $parent->user->adresse }}
+                                                            </p>
+                                                            <p class="inline-flex items-center gap-2">
+                                                                <x-lucide-phone class="w-4 h-4 text-slate-200" />
+                                                                {{ $parent->user->contacts }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="flex justify-end animate-pulse">
+                                                            @if (count($parent->myChildren))
+                                                                <span
+                                                                    class="text-center rounded-3xl p-1 border text-green-400 bg-green-700/40 border-green-600 px-4">
+                                                                    {{ count($parent->myChildren) . ' apprenant(s)' }}
+                                                                </span>
+                                                            @else
+                                                                <span
+                                                                    class="text-slate-500 font-mono text-center animate-pulse">Aucun
+                                                                    apprenant
+                                                                    lié</span>
+                                                            @endif
+                                                        </div>
                                                     </div>
 
-                                                    <div class="min-w-0 flex flex-col">
-                                                        <h3 class="font-medium truncate">
-                                                            Mme AGBODJI Clarisse
-                                                            <span
-                                                                class="px-3 py-1 rounded-full
+                                                </td>
+
+                                                <td class="px-4 py-5 text-center">
+                                                    @if ($parent->deleted_at)
+                                                        <span
+                                                            class="px-3 py-1 rounded-full
+                                                         bg-red-500/10
+                                                         text-red-400 text-sm">
+
+                                                            Supprimé
+
+                                                        </span>
+                                                    @elseif ($parent->is_active)
+                                                        <span
+                                                            class="px-3 py-1 rounded-full
                                                          bg-emerald-500/10
                                                          text-emerald-400 text-sm">
 
-                                                                Actif
+                                                            Actif
 
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="px-3 py-1 rounded-full
+                                                         bg-red-500/10
+                                                         text-red-400 text-sm">
+
+                                                            Bloqué
+
+                                                        </span>
+                                                    @endif
+
+                                                </td>
+
+                                                <td class="px-6 py-5 ">
+                                                    <div class="flex items-center justify-center gap-2 text-xs">
+
+                                                        @if (!$parent->user->credentials_sent)
+                                                            <button
+                                                                title="Envoyer les données de connexion à {{ $parent->getFullName() }}"
+                                                                wire:click="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
+                                                                class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-sky-600/50 hover:bg-sky-800/50 text-sky-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                                <span wire:loading.remove
+                                                                    wire:target="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
+                                                                    class="inline-flex items-center gap-1.5">
+                                                                    <span class="flex items-center gap-x-3">
+                                                                        <x-lucide-send class="w-3.5 h-3.5 shrink-0" />
+                                                                        <span>Envoyer</span>
+                                                                    </span>
+                                                                </span>
+                                                                <span wire:loading
+                                                                    wire:target="sendCredentialsToTutor('{{ $parent->user->uuid }}')"
+                                                                    class="inline-flex items-center gap-1.5">
+                                                                    <span class="flex items-center gap-x-2">
+                                                                        <span class="flex items-center gap-x-2">
+                                                                            <x-lucide-refresh-ccw
+                                                                                class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                                            <span>En cours...</span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </button>
+                                                        @endif
+
+                                                        <button
+                                                            title="{{ !$parent->is_active ? 'Débloquer' : 'Bloquer' }} {{ $parent->getFullName() }}"
+                                                            wire:click="{{ !$parent->is_active ? 'activateTutor(' . $parent->id . ')' : 'desactivateTutor(' . $parent->id . ')' }}"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="desactivateTutor({{ $parent->id }}), activateTutor({{ $parent->id }})"
+                                                            class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ !$parent->is_active ? 'bg-lime-600/50 hover:bg-lime-800/50 text-lime-400' : 'bg-amber-600/50 hover:bg-amber-800/50 text-amber-400' }}">
+                                                            <span wire:loading.remove
+                                                                wire:target="desactivateTutor({{ $parent->id }}), activateTutor({{ $parent->id }})"
+                                                                class="inline-flex items-center gap-1.5">
+                                                                @if (!$parent->is_active)
+                                                                    <x-lucide-lock-keyhole-open
+                                                                        class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>Activer</span>
+                                                                @else
+                                                                    <x-lucide-ban class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>Désactiver</span>
+                                                                @endif
                                                             </span>
-                                                        </h3>
+                                                            <span wire:loading
+                                                                wire:target="desactivateTutor({{ $parent->id }}), activateTutor({{ $parent->id }})"
+                                                                class="inline-flex items-center gap-1.5">
+                                                                <span class="flex items-center gap-x-2">
+                                                                    <span class="flex items-center gap-x-2">
+                                                                        <x-lucide-refresh-ccw
+                                                                            class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                                        <span>En cours...</span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </button>
 
-                                                        <p class="mt-1 text-sm text-sky-400 truncate">
-                                                            clarisse@email.com
-                                                        </p>
-                                                        <p class="mt-1 text-sm text-slate-400 truncate">
-                                                            Fonctionnaire
-                                                        </p>
+                                                        <button
+                                                            title="{{ $parent->deleted_at ? 'Restorer' : 'Mettre en corbeille' }} {{ $parent->getFullName() }}"
+                                                            wire:click="{{ $parent->deleted_at ? 'restoreTutor(' . $parent->id . ')' : 'deleteTutor(' . $parent->id . ')' }}"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="deleteTutor({{ $parent->id }}), restoreTutor({{ $parent->id }})"
+                                                            class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl transition-all whitespace-nowrap disabled:opacity-50 {{ $parent->deleted_at ? 'bg-violet-600/50 hover:bg-violet-800/50 text-violet-400' : 'bg-rose-600/50 hover:bg-rose-800/50 text-rose-400' }}">
+                                                            <span wire:loading.remove
+                                                                wire:target="deleteTutor({{ $parent->id }}), restoreTutor({{ $parent->id }})"
+                                                                class="inline-flex items-center gap-1.5">
+                                                                @if ($parent->deleted_at)
+                                                                    <x-lucide-recycle class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>Restaurer</span>
+                                                                @else
+                                                                    <x-lucide-trash class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>Corbeille</span>
+                                                                @endif
+                                                            </span>
+                                                            <span wire:loading
+                                                                wire:target="deleteTutor({{ $parent->id }}), restoreTutor({{ $parent->id }})"
+                                                                class="inline-flex items-center gap-1.5">
+                                                                <span class="flex items-center gap-x-2">
+                                                                    <x-lucide-refresh-ccw
+                                                                        class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                                    <span>En cours...</span>
+                                                                </span>
+                                                            </span>
+                                                        </button>
 
-                                                        <p class="mt-1 text-sm text-amber-400 truncate">
-                                                            Cotonou
-                                                        </p>
+                                                        @if ($parent->deleted_at)
+                                                            <button
+                                                                title="Supprimer définitivement {{ $parent->getFullName() }}"
+                                                                wire:click="forceDeleteTutor({{ $parent->id }})"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="forceDeleteTutor({{ $parent->id }})"
+                                                                class="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-red-600/50 hover:bg-red-800/50 text-red-400 transition-all whitespace-nowrap disabled:opacity-50">
+                                                                <span wire:loading.remove
+                                                                    wire:target="forceDeleteTutor({{ $parent->id }})"
+                                                                    class="inline-flex items-center gap-1.5">
+                                                                    <x-lucide-trash-2 class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>Suppr. déf.</span>
+                                                                </span>
+                                                                <span wire:loading
+                                                                    wire:target="forceDeleteTutor({{ $parent->id }})"
+                                                                    class="inline-flex items-center gap-1.5">
+                                                                    <span class="flex items-center gap-x-2">
+                                                                        <x-lucide-refresh-ccw
+                                                                            class="w-3.5 h-3.5 animate-spin shrink-0" />
+                                                                        <span>En cours...</span>
+                                                                    </span>
+                                                                </span>
+                                                            </button>
+                                                        @endif
+
                                                     </div>
 
-                                                </a>
+                                                </td>
 
-                                            </td>
+                                            </tr>
+                                        @endforeach
 
-                                            {{-- PHONE --}}
-                                            <td class="px-4 py-5 text-center whitespace-nowrap">
+                                    </tbody>
 
-                                                +229 01 00 00 00
-
-                                            </td>
-
-                                            {{-- CHILDREN --}}
-                                            <td class="px-4 py-5 truncate">
-
-                                                <div class="space-y-2">
-
-                                                    <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
-                                                        class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600 items-center gap-x-1">
-
-                                                        <span>KOUASSI Marc</span>
-
-                                                        <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                            2nde F2-2
-                                                        </span>
-
-                                                    </a>
-
-                                                    <a href="{{ route('tenant.student.profil', ['student_uuid' => 'f']) }}"
-                                                        class="px-3 py-2 flex rounded-xl bg-slate-950 text-sm hover:bg-gray-800 border border-slate-950 hover:border-sky-600 items-center gap-x-1">
-
-                                                        <span>AGUADO Pièrrot</span>
-
-                                                        <span class="text-xs text-amber-500 rounded-2xl bg-slate-800 p-1 text-center">
-                                                            Tle F2-2
-                                                        </span>
-
-                                                    </a>
-
-                                                </div>
-
-                                            </td>
-
-                                            {{-- ACTIONS --}}
-                                            <td class="px-6 py-5">
-
-                                                <div class="flex flex-wrap
-                                                        justify-end gap-2">
-
-                                                    <button
-                                                        class="h-10 px-4 rounded-xl
-                                                               bg-indigo-500/10
-                                                               text-indigo-400
-                                                               hover:bg-indigo-500/20
-                                                               transition-all text-sm">
-
-                                                        Bulletin
-
-                                                    </button>
-
-                                                    <button
-                                                        class="h-10 px-4 rounded-xl
-                                                               bg-sky-500/10
-                                                               text-sky-400
-                                                               hover:bg-sky-500/20
-                                                               transition-all text-sm">
-
-                                                        Env. Notes
-
-                                                    </button>
-
-                                                    <button
-                                                        class="h-10 px-4 rounded-xl
-                                                               bg-emerald-500/10
-                                                               text-emerald-400
-                                                               hover:bg-emerald-500/20
-                                                               transition-all text-sm">
-
-                                                        Notifier
-
-                                                    </button>
-
-                                                    <button
-                                                        class="h-10 px-4 rounded-xl
-                                                               bg-rose-500/10
-                                                               text-rose-400
-                                                               hover:bg-rose-500/20
-                                                               transition-all text-sm">
-
-                                                        Bloquer
-
-                                                    </button>
-
-                                                </div>
-
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                        {{-- PAGINATION --}}
-                        <div class="border-t border-slate-800
-                                    px-4 sm:px-6 py-4">
-
-                            <div class="flex flex-col sm:flex-row
-                                        sm:items-center
-                                        sm:justify-between
-                                        gap-4">
-
-                                <p class="text-sm text-slate-400">
-
-                                    Affichage de 1 à 12 sur 1248 parents
-
-                                </p>
-
-                                <div class="flex items-center gap-2 flex-wrap">
-
-                                    <button
-                                        class="h-10 px-4 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                        Précédent
-
-                                    </button>
-
-                                    <button
-                                        class="h-10 px-4 rounded-xl
-                                                   bg-indigo-500
-                                                   hover:bg-indigo-600
-                                                   transition-all text-sm">
-
-                                        1
-
-                                    </button>
-
-                                    <button
-                                        class="h-10 px-4 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                        2
-
-                                    </button>
-
-                                    <button
-                                        class="h-10 px-4 rounded-xl
-                                                   bg-slate-800
-                                                   hover:bg-slate-700
-                                                   transition-all text-sm">
-
-                                        Suivant
-
-                                    </button>
-
-                                </div>
+                                </table>
 
                             </div>
+                        @else
+                            <div class="flex w-full itecn justify-center">
+                                <div class="p-6 flex justify-center text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="text-4xl">🎯</span>
+                                        <p class="text-slate-500 text-sm">Aucun parent ou tuteur trouvé </p>
+                                        @if ($search || $status)
+                                            <button wire:click="clearFilters"
+                                                class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
+                                                Recharger les données
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
-                        </div>
+                        @if ($this->tutors->hasPages())
+                            <section class="py-6 p-2 font-mono">
+                                <div class="flex justify-center bg-transparent p-4">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <div class="text-sm text-slate-400">
+                                            Affichage {{ $this->tutors->firstItem() }} à
+                                            {{ $this->tutors->lastItem() }}
+                                            sur
+                                            {{ $this->tutors->total() }} parents/tuteurs
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            @if (!$this->tutors->onFirstPage())
+                                                <button wire:click="previousPage" wire:loading.attr="disabled"
+                                                    wire:target="previousPage"
+                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                    Précédent
+                                                </button>
+                                            @endif
 
+                                            @foreach ($this->tutors->getUrlRange(1, $this->tutors->lastPage()) as $page => $url)
+                                                <button @disabled($page === $this->tutors->currentPage())
+                                                    wire:click="gotoPage({{ $page }})"
+                                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->tutors->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
+                                                    {{ $page }}
+                                                </button>
+                                            @endforeach
+
+                                            @if ($this->tutors->hasMorePages())
+                                                <button wire:click="nextPage" wire:loading.attr="disabled"
+                                                    wire:target="nextPage"
+                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
+                                                    Suivant
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        @endif
                     </div>
 
                 </div>
-
-                {{-- ===================================================== --}}
-                {{-- RIGHT SIDEBAR --}}
-                {{-- ===================================================== --}}
 
             </div>
 

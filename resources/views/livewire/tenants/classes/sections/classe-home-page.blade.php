@@ -7,69 +7,11 @@
                     {{-- LEFT --}}
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-3">
-                            <h1 class="text-xl sm:text-2xl font-bold break-words">
-                                Détails Généraux
+                            <h1 class="text-lg md:text-base font-bold break-words py-4">
+                                Détails Généraux de la {{ $classe->code }}
                             </h1>
                         </div>
                     </div>
-
-                    {{-- ACTIONS --}}
-                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                        <button
-                            wire:click="{{ $classe->is_active ? 'closeClasse(' . $classe->id . ')' : 'activateClasse(' . $classe->id . ')' }}"
-                            wire:loading.attr="disabled" wire:target="activateClasse, closeClasse"
-                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_active ? 'bg-red-700/60 hover:bg-red-700' : 'bg-green-500/40 hover:bg-green-800/30' }}">
-
-                            <span wire:loading.remove wire:target="activateClasse, closeClasse"
-                                class="inline-flex items-center justify-center gap-3">
-                                <span class="inline-flex items-center justify-center gap-3">
-                                    @if (!$classe->is_active)
-                                        <x-lucide-check class="w-4 h-4" />
-                                        <span>Activer</span>
-                                    @else
-                                        <x-lucide-x class="w-4 h-4" />
-                                        <span>Fermer</span>
-                                    @endif
-                                </span>
-                            </span>
-
-                            <span wire:loading wire:target="closeClasse, activateClasse"
-                                class="inline-flex items-center justify-center gap-3">
-                                <span class="inline-flex items-center justify-center gap-3">
-                                    <span>En cours...</span>
-                                    <x-lucide-refresh-cw class="w-4 h-4 animate-spin" />
-                                </span>
-                            </span>
-                        </button>
-
-                        <button
-                            wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
-                            wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
-                            class="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm transition disabled:opacity-40 disabled:cursor-not-allowed justify-center  {{ $classe->is_locked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-orange-500/20 hover:bg-orange-600' }}">
-
-                            <span wire:loading.remove wire:target="lockClasse, unlockClasse"
-                                class="inline-flex items-center justify-center gap-3">
-                                <span class="inline-flex items-center justify-center gap-3">
-                                    @if ($classe->is_locked)
-                                        <x-lucide-lock-open class="w-4 h-4" />
-                                        <span>Déverrouiller</span>
-                                    @else
-                                        <x-lucide-lock class="w-4 h-4" />
-                                        <span>Verrouiller</span>
-                                    @endif
-                                </span>
-                            </span>
-
-                            <span wire:loading wire:target="lockClasse, unlockClasse"
-                                class="inline-flex items-center justify-center gap-3">
-                                <span class="inline-flex items-center justify-center gap-3">
-                                    <span>En cours...</span>
-                                    <x-lucide-refresh-cw class="w-4 h-4 animate-spin" />
-                                </span>
-                            </span>
-                        </button>
-                    </div>
-
                 </div>
             </div>
         </section>
@@ -152,10 +94,10 @@
                                         {{ $classe->principal ? $classe->principal?->getFullName() : 'Non encore défini' }}
                                     </h4>
                                     @if ($classe->principal?->getSubjectsForThisClasse($classe->id))
-                                        <p class="text-2xs font-mono text-slate-400 truncate flex flex-wrap gap-2 ">
+                                        <p class="text-xs font-mono text-slate-400 truncate flex flex-wrap gap-2 ">
                                             @foreach ($classe->principal?->getSubjectsForThisClasse($classe->id) as $classeSubject)
                                                 <span
-                                                    class="rounded-2xl group-hover:border-sky-500 group-hover:bg-sky-600/40 p-1 group-hover:text-sky-500 border border-orange-600 bg-orange-600/40 text-orange-500">{{ $classeSubject->subject?->name }}</span>
+                                                    class="rounded-xl group-hover:border-sky-500 group-hover:bg-sky-600/40 p-1 px-3 group-hover:text-sky-500 border border-green-600 bg-green-600/40 text-green-300 uppercase">{{ $classeSubject->subject?->code }}</span>
                                             @endforeach
                                         </p>
                                     @endif

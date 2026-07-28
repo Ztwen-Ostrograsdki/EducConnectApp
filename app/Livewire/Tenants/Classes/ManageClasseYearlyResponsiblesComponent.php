@@ -3,6 +3,8 @@
 namespace App\Livewire\Tenants\Classes;
 
 use App\Events\DataUpdatedEvent;
+use App\Jobs\JobToJoinSubjectConduiteToPP;
+use App\Jobs\JobToRemoveSubjectConduiteFromOldTeacher;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
@@ -143,25 +145,28 @@ class ManageClasseYearlyResponsiblesComponent extends Component
             return;
         }
 
-        $teacher = Teacher::find($this->principalId);
+        if($this->principalId){
 
-        if(!$teacher){
+            $teacher = Teacher::find($this->principalId);
 
-            $this->notification()->error(
-                title: 'Erreur',
-                description: "Enseigant introuvable!",
-            );
-            return;
-        }
+            if(!$teacher){
 
-        if($teacher->hasCurrentlyAERole() || $teacher->hasCurrentlyCARole()){
+                $this->notification()->error(
+                    title: 'Erreur',
+                    description: "Enseigant introuvable!",
+                );
+                return;
+            }
 
-            $this->notification()->error(
-                title: 'ERREUR CUMULE DE POSTE',
-                description: "L'enseignant " . $teacher->getFullName() . " a déjà un poste de CA ou de AE!",
-            );
+            if($teacher->hasCurrentlyAERole() || $teacher->hasCurrentlyCARole()){
 
-            return;
+                $this->notification()->error(
+                    title: 'ERREUR CUMULE DE POSTE',
+                    description: "L'enseignant " . $teacher->getFullName() . " a déjà un poste de CA ou de AE!",
+                );
+
+                return;
+            }
         }
 
         $this->classe->update([
@@ -169,6 +174,17 @@ class ManageClasseYearlyResponsiblesComponent extends Component
             'respo_1_id'   => $this->respo1Id,
             'respo_2_id'   => $this->respo2Id,
         ]);
+
+        if($this->principalId){
+
+            JobToJoinSubjectConduiteToPP::dispatch(tenant('id'), $this->classe->id, $this->activeYear->id);
+            
+        }
+        else{
+            
+            JobToRemoveSubjectConduiteFromOldTeacher::dispatch(tenant('id'), $this->classe->id, $this->activeYear->id);
+
+        }
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 

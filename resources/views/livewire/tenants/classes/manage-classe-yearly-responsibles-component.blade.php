@@ -160,13 +160,13 @@
                             @endif
                             @if ($teacher->hasCurrentlyAERole())
                                 <span
-                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-yellow-400 text-xs border border-yellow-300">
+                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-white text-xs font-mono border border-yellow-300">
                                     ✓ A déjà le rôle de AE
                                 </span>
                             @endif
                             @if ($teacher->hasCurrentlyCARole())
                                 <span
-                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-black text-xs border border-yellow-300">
+                                    class="shrink-0 px-2.5 py-1 rounded-full bg-red-500/80 text-white text-xs font-mono border border-yellow-300">
                                     ✓ A déjà le rôle de CA
                                 </span>
                             @endif
