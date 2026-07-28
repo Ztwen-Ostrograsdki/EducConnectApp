@@ -9,7 +9,6 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\TenantLogin;
 use App\Livewire\Tenants\Classes\ClasseProfil;
 use App\Livewire\Tenants\Classes\ClassesPortal;
-use App\Livewire\Tenants\Classes\ClassesPrintableDocumentsComponent;
 use App\Livewire\Tenants\Classes\ClassesPrintableDocumentsPage;
 use App\Livewire\Tenants\Classes\ClassesPrintableListComponent;
 use App\Livewire\Tenants\Classes\ClassesPrintsManagerComponent;
@@ -48,6 +47,9 @@ use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
 use App\Livewire\Tenants\Students\ManageStudentClassroomComponent;
 use App\Livewire\Tenants\Students\ManageStudentParentsRelationComponent;
+use App\Livewire\Tenants\Students\MarksPrintableDocumentsPage;
+use App\Livewire\Tenants\Students\MarksPrintableListComponent;
+use App\Livewire\Tenants\Students\MarksPrintsManagerComponent;
 use App\Livewire\Tenants\Students\StudentMarksComponent;
 use App\Livewire\Tenants\Students\StudentProfilPage;
 use App\Livewire\Tenants\Students\StudentsCreationMonitorComponent;
@@ -202,7 +204,12 @@ Route::middleware([
 
             Route::get('/classes/documents/imprimable/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
 
+            //NOTES
+            Route::get('/notes/gestion-impression/configuration/{classe_slug?}', MarksPrintsManagerComponent::class)->name('notes.print.configuration');
 
+            Route::get('/notes/impression/previsualisation', MarksPrintableListComponent::class)->name('notes.print.preview');
+
+            Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
 
 
             // LES ENSEIGNANTS

@@ -388,9 +388,35 @@
 
                     <div class="s-section">
                         <div class="s-section-label">Évaluation</div>
-                        <a href="#" class="s-link">
-                            <div class="s-icon">📝</div><span class="s-label">Notes</span>
-                        </a>
+                        <div class="s-acc" id="acc-notes">
+                            <div class="s-acc-trigger" onclick="toggleAcc('acc-notes')">
+                                <div class="s-icon">📝</div>
+                                <div class="s-section-label">Évaluation</div>
+                                <span class="s-acc-arrow">▶</span>
+                            </div>
+                            <div class="s-acc-content">
+                                <a wire:navigate href="#" class="s-link">
+                                    <div class="s-icon">📝</div><span class="s-label">Notes</span>
+                                </a>
+                                <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+                                    class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="w-3 h-3" />
+                                    </div><span class="s-label">Impression personalisée</span>
+                                </a>
+                                <a href="{{ route('tenant.notes.print.preview') }}" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-printer class="w-3 h-3" />
+                                    </div><span class="s-label">Prévisualisation</span>
+                                </a>
+                                <a wire:navigate href="{{ route('tenant.notes.docs') }}" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-printer class="w-3 h-3" />
+                                    </div><span class="s-label">Notes imprimables</span>
+                                </a>
+
+                            </div>
+                        </div>
                         <a href="#" class="s-link">
                             <div class="s-icon">✅</div><span class="s-label">Présences</span>
                         </a>

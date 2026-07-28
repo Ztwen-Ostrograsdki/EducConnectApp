@@ -1,10 +1,10 @@
 <div class="w-full overflow-x-hidden">
     <div wire:loading
         wire:target='gender,status,department,city,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,previousPage,nextPage,gotoPage'
-        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
+        class="fixed inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-xs"
         style="z-index: 200 !important;">
 
-        <div class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+        <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
             <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />

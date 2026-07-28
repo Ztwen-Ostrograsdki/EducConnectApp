@@ -182,7 +182,8 @@
                                     </span>
 
                                 </a>
-                                <a href="{{ route('tenant.student.marks', ['student_uuid' => $this->student_uuid]) }}"
+                                <a wire:navigate
+                                    href="{{ route('tenant.student.marks', ['student_uuid' => $this->student_uuid]) }}"
                                     class="p-3 rounded-2xl bg-green-500/20 col-span-2 text-green-400 hover:bg-green-500/30 transition-all text-sm inline-block text-center active:scale-95">
 
                                     Les notes
@@ -217,7 +218,8 @@
                                 </button>
 
                                 @if ($this->currentClasse)
-                                    <a href="{{ route('tenant.classe.profil', ['classe_slug' => $this->currentClasse->slug]) }}"
+                                    <a wire:navigate
+                                        href="{{ route('tenant.classe.profil', ['classe_slug' => $this->currentClasse->slug]) }}"
                                         class="p-3 col-span-2 rounded-2xl bg-sky-500/20 text-sky-400 hover:bg-sky-500/60 transition-all text-sm inline-block text-center hover:text-black active:scale-95">
 
                                         Voir sa classe actuelle
@@ -275,222 +277,6 @@
     </section>
 
     <section class="grid grid-cols-1 2xl:grid-cols-12 gap-6">
-
-        {{-- LEFT --}}
-        <div class="2xl:col-span-8 space-y-6 min-w-0">
-
-            {{-- NOTES PAR MATIERES --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-
-                <div class="border-b border-slate-800 px-6 py-5">
-
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
-                        <div>
-
-                            <h2 class="text-xl font-semibold">
-                                Notes par Matières
-                            </h2>
-
-                            <p class="mt-1 text-sm text-slate-400">
-                                Détails académiques de l'apprenant
-                            </p>
-
-                        </div>
-
-                        <select class="h-11 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
-
-                            <option>Semestre 1</option>
-                            <option>Semestre 2</option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="overflow-x-auto">
-
-                    <table class="w-full">
-
-                        <thead class="bg-slate-950 border-b border-slate-800">
-
-                            <tr>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Matière
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Interros
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Devoirs
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Moyenne
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Coef
-                                </th>
-
-                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                    Moy Coef
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody class="divide-y divide-slate-800">
-
-                            @foreach (['Mathématiques', 'Physique', 'Électricité', 'Informatique', 'Français'] as $subject)
-                                <tr class="hover:bg-slate-800/40 transition-all">
-
-                                    <td class="px-6 py-5 font-medium">
-                                        {{ $subject }}
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center">
-                                        14.5
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center">
-                                        15
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center">
-
-                                        <span
-                                            class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm">
-
-                                            15.2
-
-                                        </span>
-
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center">
-                                        2
-                                    </td>
-
-                                    <td class="px-4 py-5 text-center font-semibold">
-                                        30.4
-                                    </td>
-
-                                </tr>
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-            {{-- EVOLUTION CHART --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-
-                <div class="flex items-center justify-between gap-4">
-
-                    <div>
-
-                        <h2 class="text-xl font-semibold">
-                            Évolution des Notes
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-400">
-                            Progression globale de l'apprenant
-                        </p>
-
-                    </div>
-
-                    <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
-
-                        +12%
-
-                    </span>
-
-                </div>
-
-                {{-- CHART --}}
-                <div
-                    class="mt-8 h-[320px] rounded-3xl border border-dashed border-slate-700 bg-slate-950 flex items-center justify-center">
-
-                    <p class="text-slate-500">
-                        Courbe d'évolution des notes
-                    </p>
-
-                </div>
-
-            </div>
-
-            {{-- EMPLOI DU TEMPS --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-
-                <div class="flex items-center justify-between gap-4">
-
-                    <div>
-
-                        <h2 class="text-xl font-semibold">
-                            Emploi du Temps
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-400">
-                            Planning hebdomadaire
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-
-                    @foreach (range(1, 6) as $course)
-                        <div class="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4">
-
-                            <div class="flex items-center justify-between gap-3">
-
-                                <h3 class="font-semibold">
-                                    Mathématiques
-                                </h3>
-
-                                <span class="text-xs text-indigo-300">
-                                    08:00
-                                </span>
-
-                            </div>
-
-                            <p class="mt-2 text-sm text-slate-300">
-                                M. HOUNDEKINDO
-                            </p>
-
-                            <div class="mt-4 flex items-center justify-between">
-
-                                <span class="px-2 py-1 rounded-xl bg-slate-950/50 text-xs">
-
-                                    Salle B12
-
-                                </span>
-
-                                <span class="text-xs text-slate-400">
-                                    Lundi
-                                </span>
-
-                            </div>
-
-                        </div>
-                    @endforeach
-
-                </div>
-
-            </div>
-
-        </div>
 
         {{-- RIGHT --}}
         <div class="2xl:col-span-4 space-y-6 min-w-0">
