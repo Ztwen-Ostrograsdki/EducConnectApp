@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Classes\Sections;
 
+use App\Livewire\Tenants\ActionsTraits\ClassesActions;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
@@ -15,7 +16,7 @@ use WireUi\Traits\WireUiActions;
 
 class ClasseMarksPage extends Component
 {
-    use WireUiActions;
+    use WireUiActions, ClassesActions;
 
     protected const INTERRO_TYPES = ['interro1', 'interro2', 'interro3', 'interro4'];
 

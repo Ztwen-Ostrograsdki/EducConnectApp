@@ -82,10 +82,7 @@
                         </div>
                         <div class="s-acc-content">
                             <a href="{{ route('tenant.schoolyears.portal') }}" class="s-link">
-                                <div class="s-icon">📅</div><span class="s-label">Dashboard</span><span
-                                    class="s-badge badge-green">
-                                    {{ __zero(tenancy()->tenant?->schoolYearsCount()) }}
-                                </span>
+                                <div class="s-icon">📅</div><span class="s-label">Dashboard</span>
                             </a>
                             <a href="{{ route('tenant.schoolYears.create') }}" class="s-link">
                                 <div class="s-icon">
@@ -387,11 +384,11 @@
                     </div>
 
                     <div class="s-section">
-                        <div class="s-section-label">Évaluation</div>
+                        <div class="s-section-label">Fiches de notes</div>
                         <div class="s-acc" id="acc-notes">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-notes')">
                                 <div class="s-icon">📝</div>
-                                <div class="s-section-label">Évaluation</div>
+                                <div class="s-section-label">Les fiches de notes</div>
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
@@ -417,12 +414,38 @@
 
                             </div>
                         </div>
-                        <a href="#" class="s-link">
-                            <div class="s-icon">✅</div><span class="s-label">Présences</span>
-                        </a>
-                        <a href="#" class="s-link">
-                            <div class="s-icon">📄</div><span class="s-label">Bulletins PDF</span>
-                        </a>
+                    </div>
+                    <div class="s-section">
+                        <div class="s-section-label">Meilleurs/Faibles</div>
+                        <div class="s-acc" id="acc-best-weak">
+                            <div class="s-acc-trigger" onclick="toggleAcc('acc-best-weak')">
+                                <div class="s-icon">📝</div>
+                                <div class="s-section-label">Les Meilleurs/Faibles</div>
+                                <span class="s-acc-arrow">▶</span>
+                            </div>
+                            <div class="s-acc-content">
+                                <a wire:navigate href="#" class="s-link">
+                                    <div class="s-icon">📝</div><span class="s-label">Notes</span>
+                                </a>
+                                <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+                                    class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="w-3 h-3" />
+                                    </div><span class="s-label">Impression personalisée</span>
+                                </a>
+                                <a href="{{ route('tenant.notes.print.preview') }}" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-printer class="w-3 h-3" />
+                                    </div><span class="s-label">Prévisualisation</span>
+                                </a>
+                                <a wire:navigate href="{{ route('tenant.notes.docs') }}" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-printer class="w-3 h-3" />
+                                    </div><span class="s-label">Notes imprimables</span>
+                                </a>
+
+                            </div>
+                        </div>
                     </div>
 
                     <div class="s-section">

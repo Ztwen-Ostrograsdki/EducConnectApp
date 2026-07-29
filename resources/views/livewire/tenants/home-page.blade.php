@@ -44,9 +44,10 @@
                 {{-- Navigation Desktop --}}
                 <nav class="hidden lg:flex items-center gap-8 text-white font-medium">
                     <a href="/" class="hover:text-amber-400 transition">Accueil</a>
-                    <a href="{{ route('tenant.my.profil') }}" class="hover:text-amber-400 transition">Mon Profil</a>
+                    <a href="{{ auth('tenant')->user()->to_profil_route() }}"
+                        class="hover:text-amber-400 transition">Mon Profil</a>
                     @if (!auth('tenant')->user()->hasRole('directeur'))
-                        <a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
+                        <a href="{{ auth('tenant')->user()->to_space_route() }}"
                             class="hover:text-amber-400 transition">Mon espace</a>
                         <a href="#contact" class="hover:text-amber-400 transition">Contact</a>
                     @endif
@@ -80,11 +81,13 @@
                             <div x-show="open" @click.outside="open = false" x-transition
                                 class="absolute right-0 mt-3 w-72 bg-white shadow-2xl py-2 text-slate-700 z-50">
 
-                                <a href="{{ route('tenant.my.profil') }}" class="block px-6 py-3 hover:bg-slate-100">Mon
-                                    profil</a>
+                                <a href="{{ auth('tenant')->user()->to_profil_route() }}"
+                                    class="block px-6 py-3 hover:bg-slate-100">
+                                    Mon profil
+                                </a>
 
                                 @if (!auth('tenant')->user()->hasRole('directeur'))
-                                    <a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
+                                    <a href="{{ auth('tenant')->user()->to_space_route() }}"
                                         class="block px-6 py-3 hover:bg-slate-100">Mon espace</a>
                                 @endif
                                 <a href="{{ route('tenant.notifications.center') }}"
@@ -122,8 +125,7 @@
                     Accueil
                 </a>
                 @if (!auth('tenant')->user()->hasRole('directeur'))
-                    <a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
-                        @click="mobileMenu = false"
+                    <a href="{{ auth('tenant')->user()->to_space_route() }}" @click="mobileMenu = false"
                         class="block px-5 py-4 rounded-2xl text-white hover:bg-white/10 transition font-medium">
                         Mon espace
                     </a>
@@ -159,13 +161,13 @@
                             </div>
                         </div>
                         @if (!auth('tenant')->user()->hasRole('directeur'))
-                            <a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
+                            <a href="{{ auth('tenant')->user()->to_space_route() }}"
                                 class="block px-5 py-4 rounded-2xl hover:bg-white/10 text-white">Mon espace</a>
                         @else
                             <a href="{{ route('tenant.dashboard') }}"
                                 class="block px-5 py-4 rounded-2xl hover:bg-white/10 text-white">Administration</a>
                         @endif
-                        <a href="{{ route('tenant.my.profil') }}"
+                        <a href="{{ auth('tenant')->user()->to_profil_route() }}"
                             class="block px-5 py-4 rounded-2xl hover:bg-white/10 text-white">Mon profil</a>
                         <a href="{{ route('tenant.notifications.center') }}"
                             class="block px-5 py-4 rounded-2xl hover:bg-white/10 text-white">Mes notifications</a>
@@ -215,7 +217,7 @@
                                 Accéder à mon espace administrateur
                             </a>
                         @else
-                            <a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
+                            <a href="{{ auth('tenant')->user()->to_space_route() }}"
                                 class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-semibold text-white shadow-xl transition">
                                 Accéder à mon espace
                             </a>
@@ -375,45 +377,56 @@
                     <div>
                         <h4 class="font-bold mb-6">Navigation</h4>
                         <ul class="space-y-3 text-slate-400">
-                            <li><a href="/" class="hover:text-white">Accueil</a></li>
+                            <li>
+                                <a href="/" class="hover:text-white">Accueil</a>
+                            </li>
                             @if (!auth('tenant')->user()->hasRole('directeur'))
-                                <li><a href="{{ (auth('tenant')->user()->hasRole('enseignant') ? route('tenant.my.teacher.space') : auth('tenant')->user()->hasRole('tuteur')) ? route('tenant.my.parent.space') : route('tenant.my.profil') }}"
-                                        class="hover:text-white">Mon espace</a></li>
+                                <li>
+                                    <a href="{{ auth('tenant')->user()->to_space_route() }}" class="hover:text-white">Mon
+                                        espace</a>
+                                </li>
                             @else
-                                <li><a href="{{ route('tenant.dashboard') }}" class="hover:text-white">Administration</a>
+                                <li>
+                                    <a href="{{ route('tenant.dashboard') }}" class="hover:text-white">
+                                        Administration
+                                    </a>
                                 </li>
                             @endif
 
-                            <li><a href="{{ route('tenant.my.profil') }}" class="hover:text-white">Mon profil</a></li>
-                            <li><a href="{{ route('tenant.notifications.center') }}" class="hover:text-white">Mes
-                                    notifications</a></li>
+                            <li>
+                                <a href="{{ auth('tenant')->user()->to_profil_route() }}" class="hover:text-white">Mon
+                                    profil</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('tenant.notifications.center') }}" class="hover:text-white">Mes
+                                    notifications</a>
+                            </li>
                         </ul>
                     </div>
-                    @endif
+                @endauth
 
-                    <div>
-                        <h4 class="font-bold mb-6">Contact</h4>
-                        <ul class="space-y-3 text-slate-400">
-                            <li>{{ tenant()?->adresse }}</li>
-                            <li>+229 {{ tenant()?->contacts }}</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h4 class="font-bold mb-6 text-slate-300">Notre vision</h4>
-                        <p class="text-slate-600 italic font-semibold font-mono">
-                            Promouvoir l'excellence, par la concrétisation des résultats de fin d'année et contribuer à
-                            l'insertion active de nos apprenants dans la vie professionnelle pour le Développement national
-                            à long terme!
-                        </p>
-                    </div>
-
+                <div>
+                    <h4 class="font-bold mb-6">Contact</h4>
+                    <ul class="space-y-3 text-slate-400">
+                        <li>{{ tenant()?->adresse }}</li>
+                        <li>+229 {{ tenant()?->contacts }}</li>
+                    </ul>
                 </div>
 
-                <div class="border-t border-white/10 mt-16 pt-8 text-center text-slate-500 text-sm">
-                    © {{ date('Y') }} {{ tenant()?->school_name }} - Tous droits réservés
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-300">Notre vision</h4>
+                    <p class="text-slate-600 italic font-semibold font-mono">
+                        Promouvoir l'excellence, par la concrétisation des résultats de fin d'année et contribuer à
+                        l'insertion active de nos apprenants dans la vie professionnelle pour le Développement national
+                        à long terme!
+                    </p>
                 </div>
             </div>
-        </footer>
-    </div>
+
+            <div class="border-t border-white/10 mt-16 pt-8 text-center text-slate-500 text-sm">
+                © {{ date('Y') }} {{ tenant()?->school_name }} - Tous droits réservés
+            </div>
+        </div>
+    </footer>
+</div>
 

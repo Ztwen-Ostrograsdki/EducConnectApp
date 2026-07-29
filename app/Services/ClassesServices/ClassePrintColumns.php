@@ -25,7 +25,7 @@ class ClassePrintColumns
     ];
 
     public static array $defaultOrder = [
-        'name', 'filiar', 'serial', 'promotion', 'pp',
+        'name', 'pp',
         'respo1', 'respo2', 'effectif_total', 'teachers_count',
         'leaves_count', 'observations',
     ];

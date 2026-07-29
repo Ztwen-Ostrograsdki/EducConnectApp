@@ -87,48 +87,54 @@
                         </a>
                     </div>
 
-                    <div class="s-section">
-                        <div class="s-section-label">Mon espace enseignant</div>
-                        <div class="s-acc" id="acc-classes">
-                            <div class="s-acc-trigger" onclick="toggleAcc('acc-classes')">
-                                <div class="s-icon">🏫</div>
-                                <span class="s-label">Mon espace enseignant</span>
-                                <span class="s-acc-arrow">▶</span>
+                    @if (auth('tenant')->user()->hasRole('enseignant'))
+                        <div class="s-section">
+                            <div class="s-section-label">Mon espace enseignant</div>
+                            <div class="s-acc" id="acc-classes">
+                                <div class="s-acc-trigger" onclick="toggleAcc('acc-classes')">
+                                    <div class="s-icon">🏫</div>
+                                    <span class="s-label">Mon espace enseignant</span>
+                                    <span class="s-acc-arrow">▶</span>
+                                </div>
+                                <div class="s-acc-content">
+                                    <a href="{{ route('tenant.teacher.my.dashboard') }}" class="s-link"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                        <span class="s-label">Dashboard</span>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="s-acc-content">
-                                <a href="{{ route('tenant.teacher.my.dashboard') }}" class="s-link"
-                                    style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Dashboard</span>
-                                </a>
-                            </div>
-                        </div>
 
-                        <a data-sidebar-item href="#" class="s-link">
-                            <div class="s-icon">🗓️</div><span class="s-label">Mon Emploi du temps</span>
-                        </a>
-                    </div>
-                    <div class="s-section">
-                        <div class="s-section-label">Mon espace parent</div>
-                        <div class="s-acc" id="acc-parent-space">
-                            <div class="s-acc-trigger" onclick="toggleAcc('acc-parent-space')">
-                                <div class="s-icon">🏫</div>
-                                <span class="s-label">Mon espace parent</span>
-                                <span class="s-acc-arrow">▶</span>
-                            </div>
-                            <div class="s-acc-content">
-                                <a href="{{ route('tenant.my.parent.space') }}" class="s-link" style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Dashboard</span>
-                                </a>
-                                <a href="{{ route('tenant.my.parent.space.marks') }}" class="s-link"
-                                    style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                    <span class="s-label">Les notes</span>
-                                </a>
+                            <a data-sidebar-item href="#" class="s-link">
+                                <div class="s-icon">🗓️</div><span class="s-label">Mon Emploi du temps</span>
+                            </a>
+                        </div>
+                    @endif
+
+                    @if (auth('tenant')->user()->hasRole('tuteur'))
+                        <div class="s-section">
+                            <div class="s-section-label">Mon espace parent</div>
+                            <div class="s-acc" id="acc-parent-space">
+                                <div class="s-acc-trigger" onclick="toggleAcc('acc-parent-space')">
+                                    <div class="s-icon">🏫</div>
+                                    <span class="s-label">Mon espace parent</span>
+                                    <span class="s-acc-arrow">▶</span>
+                                </div>
+                                <div class="s-acc-content">
+                                    <a href="{{ route('tenant.my.parent.space') }}" class="s-link"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                        <span class="s-label">Dashboard</span>
+                                    </a>
+                                    <a href="{{ route('tenant.my.parent.space.marks') }}" class="s-link"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
+                                        <span class="s-label">Les notes</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </nav>
                 <div class="s-footer">
                     <div class="s-user">

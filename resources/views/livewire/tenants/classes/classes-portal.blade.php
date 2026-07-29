@@ -141,19 +141,19 @@
         </section>
         <section class="px-4 sm:px-6 lg:px-8 my-1">
             <div class="flex items-center justify-end gap-2 py-2">
-                <button wire:click='printStudentsList'
+                <button wire:click='generateClassesListAsPDF'
                     class="py-2.5 px-5 rounded-2xl bg-sky-500/50 hover:bg-sky-600/75 transition-all text-sm">
-                    <span wire:loading.remove wire:target='printStudentsList' class="inline-flex gap-x-2 items-center">
+                    <span wire:loading.remove wire:target='generateClassesListAsPDF'
+                        class="inline-flex gap-x-2 items-center">
                         <x-lucide-save class="w-4 h-4" />
-                        Exporter les classes en PDF
+                        Générer la liste des classes en PDF
                     </span>
-                    <span wire:loading wire:target='printStudentsList' class="inline-flex items-center gap-x-2">
+                    <span wire:loading wire:target='generateClassesListAsPDF' class="inline-flex items-center gap-x-2">
                         <span class="flex items-center gap-x-2.2">
-                            <span>Document en cours...</span>
+                            <span>Processus en cours...</span>
                             <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
                         </span>
                     </span>
-
                 </button>
                 <a href="{{ route('tenant.classes.print.list') }}"
                     class="py-2.5 px-5 rounded-2xl bg-gray-500/40 hover:bg-gray-600 hover:text-black transition-all text-sm">

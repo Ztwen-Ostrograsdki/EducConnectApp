@@ -134,20 +134,6 @@ class JobToCreateStudent implements ShouldQueue
 
             $student->update(['is_active' => true, 'status' => 'active']);
 
-            $can_sent = randomNumber(1, 10);
-
-            if(in_array($can_sent, [1, 3, 7])){
-
-                $director?->notify(new RealTimeNotification(
-                    userEmail: $director?->email,
-                    tenantId: $this->tenantId,
-                    title:             "COMPTE APPRENANT CREE AVEC SUCCES",
-                    message:           "Le compte de l'apprenant " . $student->getUserNamePrefix(true, true) . " a été créé avec succès!",
-                    type:              'success',
-                ));
-            }
-
-
         } 
         catch (\Throwable $th){
 

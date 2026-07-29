@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
+use App\Jobs\JobToGeneratePrintableClassesDataForThePrintViewComponent;
 use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\Promotion;
@@ -299,6 +300,37 @@ trait ClassesActions{
         }
         
         
+    }
+
+
+    public function generateClassesListAsPDF()
+    {
+        $config = [
+            "activeConfig"       => null,
+            "lockedConfig"       => null,
+            "ppConfig"           => null,
+            "hasStudentsConfig"  => null,
+            "hasTeachersConfig"  => null,
+            "filiar_id"          => null,
+            "serial_id"          => null,
+            "promotion_id"       => null,
+            "promotionInGroups"  => null,
+            "level"              => null,
+        ];
+
+        JobToGeneratePrintableClassesDataForThePrintViewComponent::dispatch(
+            tenantId:       tenant('id'),
+            notifiableId:   auth('tenant')->user()->id,
+            docTitle:       "Liste-des-classes-avec-PP-et-respos-effectifs",
+            school_year_id: null,
+            config: [
+                ...$config,
+                'tableColumns' => null,
+            ],
+        );
+
+        $this->notification()->success(title: 'Génération de la liste des classes en PDF est lancée');
+
     }
 
 

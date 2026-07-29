@@ -4,7 +4,6 @@ namespace App\Livewire\Tenants\Classes;
 
 use App\Livewire\Tenants\ActionsTraits\ClassesActions;
 use App\Models\Classe;
-use App\Services\ClassesServices\ClasseEffectifsService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -17,8 +16,6 @@ class ClassesPortal extends Component
 {
 
     use ClassesActions;
-
-    
 
     #[Computed]
     public function classes()

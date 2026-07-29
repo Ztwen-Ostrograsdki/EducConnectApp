@@ -38,10 +38,18 @@ export function registerUserListeners(tenantId, userId) {
                 }),
             );
         });
+
+    window.Echo.private(`tenant.${tenantId}.others`).listen(
+        "SchoolYearDesactivatedEvent",
+        (e) => {
+            window.location.href = "/deconnexion-force";
+        },
+    );
 }
 
 export function unregisterUserListeners(tenantId, userId) {
     window.Echo.leave(`tenant.${tenantId}.user.${userId}`);
+    window.Echo.leave(`tenant.${tenantId}.others`);
 }
 
 /**

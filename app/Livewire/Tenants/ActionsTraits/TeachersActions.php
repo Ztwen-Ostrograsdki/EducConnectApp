@@ -76,11 +76,11 @@ trait TeachersActions{
     public function lockAccessToClasse(int $teacherId, int $classeId): void
     {
         $this->dispatch('swal', [
-            'title'              => "Bloquer l'accès de cet enseignant à la classe?",
-            'text'               =>"L'enseignant n'aura plus accès à cette classe.",
+            'title'              => "Restreindre l'accès de cet enseignant à la classe?",
+            'text'               =>"L'enseignant ne pourra plus insérer ou éditer les notes dans cette classe!",
             'icon'               => 'question',
             'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, Bloquer son accès',
+            'confirmButtonText'  => 'Oui, restreindre son accès',
             'cancelButtonText'   => 'Annuler',
             'confirmButtonColor' => '#84cc16',
             'cancelButtonColor'  => '#475569',
@@ -118,15 +118,15 @@ trait TeachersActions{
             }
 
             $this->notification()->success(
-                title: "L'accès de l'enseignant à été bloqué",
-                description: "{$teacher->getFullName()} n'a plus accès à la classe " . $classe->name,
+                title: "L'accès de l'enseignant à été restreint",
+                description: "{$teacher->getFullName()} ne pourra plus insérer ou éditer les notes dans la classe de " . $classe->name,
             );
 
             broadcast(new DataUpdatedEvent(tenant('id')));
 
         } catch (\Throwable $th) {
             $this->notification()->error(
-                title: "L'accès de l'enseignant {$teacher?->getFullName()} à la classe {$classe->name} n'a pas pu être résolu ",
+                title: "La restriction de l'accès de l'enseignant {$teacher?->getFullName()} à la classe {$classe->name} n'a pas pu être résolu ",
                 description: "Raisons : " . cutter($th->getMessage(), 150),
             );
         }
@@ -135,8 +135,8 @@ trait TeachersActions{
     public function unLockAccessToClasse(int $teacherId, int $classeId): void
     {
         $this->dispatch('swal', [
-            'title'              => "Autoriser l'accès de cet enseignant à la classe?",
-            'text'               =>"L'enseignant aura de nouveau accès à cette classe.",
+            'title'              => "Autoriser cet enseignant à éditer ou insérer les notes dans la classe?",
+            'text'               =>"L'enseignant aura de nouveau libre accès aux notes",
             'icon'               => 'question',
             'showCancelButton'   => true,
             'confirmButtonText'  => 'Oui, Autoriser son accès',
@@ -180,7 +180,7 @@ trait TeachersActions{
 
                 $this->notification()->success(
                     title: "L'accès de l'enseignant à été autorisé",
-                    description: "L'enseignant {$teacher->getFullName()} a à présent accès à la classe " . $classe->name,
+                    description: "L'enseignant {$teacher->getFullName()} a de nouveau libre accès aux notes (édition et insertion) de la classe de " . $classe->name,
                 );
 
             }
@@ -473,11 +473,11 @@ trait TeachersActions{
     public function lockTeachers(): void
     {
         $this->dispatch('swal', [
-            'title'              => 'Bloquer tous les enseignants ?',
-            'text'               => 'Tous les enseignants actifs n\'auront plus accès.',
+            'title'              => "Bloquer l'accès aux notes (édition et insertion) à tous les enseignants ?",
+            'text'               => 'Tous les enseignants actifs n\'auront plus accès pour éditer ou insérer des notes dans leurs classes.',
             'icon'               => 'warning',
             'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, bloquer tous',
+            'confirmButtonText'  => "Oui, empêcher l'accès aux notes",
             'cancelButtonText'   => 'Annuler',
             'confirmButtonColor' => '#f97316',
             'cancelButtonColor'  => '#475569',
@@ -497,13 +497,13 @@ trait TeachersActions{
             method: 'update',
             options: ['blocked' => true],
             withTrashedDeleted: true,
-            taskTitle: "BLOCAGE EN MASSE DES ENSEIGNANTS"
+            taskTitle: "BLOCAGE EN MASSE DE L'ACCES DES ENSEIGNANTS AUX NOTES"
         );
         
         
         $this->notification()->success(
-            title: 'Enseignants bloqués',
-            description: 'Tous les enseignants ont été bloqués.',
+            title: "Accès aux notes vérrouillé!",
+            description: "Tous les enseignants n'auront plus accès aux notes pour les éditer ou pour en insérer!",
         );
 
 
@@ -513,10 +513,10 @@ trait TeachersActions{
     public function unlockTeachers(): void
     {
         $this->dispatch('swal', [
-            'title'              => 'Débloquer tous les enseignants ?',
+            'title'              => "Accorder à tous les enseignants l'accès aux notes ?",
             'icon'               => 'question',
             'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, débloquer tous',
+            'confirmButtonText'  => 'Oui, accorder accès à tous',
             'cancelButtonText'   => 'Annuler',
             'confirmButtonColor' => '#84cc16',
             'cancelButtonColor'  => '#475569',
@@ -536,12 +536,12 @@ trait TeachersActions{
             method: 'update',
             options: ['blocked' => false],
             withTrashedDeleted: false,
-            taskTitle: "DEBLOCAGE EN MASSE DES ENSEIGNANTS"
+            taskTitle: "DEVERROUILLAGE EN MASSE DES ENSEIGNANTS "
         );
 
         $this->notification()->success(
-            title: 'Enseignants débloqués',
-            description: 'Tous les enseignants ont été débloqués.',
+            title: "Accès aux notes accordé aux nnseignants",
+            description: 'Tous les enseignants ont à présent accès aux notes.',
         );
 
         broadcast(new DataUpdatedEvent(tenant('id')));

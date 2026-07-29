@@ -462,8 +462,8 @@
     /* Colonnes numériques (effectifs, nb. profs, nb. abandons) — mise en avant discrète */
     .cell-numeric {
         font-family: var(--font-mono);
-        font-weight: 400;
-        font-size: 0.82rem;
+        font-weight: 530;
+        font-size: 1rem;
         color: var(--navy);
     }
 

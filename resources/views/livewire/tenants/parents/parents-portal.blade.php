@@ -1,17 +1,5 @@
-<div class="w-full overflow-x-hidden">
-    <div wire:loading
-        wire:target='gender,status,department,city,clearFilters,classe_id,promotion_id,filiar_id,serial_id,search,previousPage,nextPage,gotoPage'
-        class="fixed inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
-        style="z-index: 200 !important;">
+<div class="w-full overflow-x-hidden bg-slate-950 p-3">
 
-        <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
-            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            <span class="text-xl font-mono ls-1">Chargement en cours...</span>
-        </div>
-    </div>
     {{-- ===================================================== --}}
     {{-- GLOBAL CONTAINER --}}
     {{-- ===================================================== --}}
@@ -53,7 +41,7 @@
                                      text-indigo-400
                                      text-xs">
 
-                            1 248 Parents
+                            {{ $this->tutors->total() }} Parents
 
                         </span>
 
@@ -78,44 +66,6 @@
         </section>
 
         {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div
-                class="grid
-                        grid-cols-2
-                        xl:grid-cols-4
-                        gap-4">
-
-                @foreach ([['Parents Actifs', '1180', 'text-emerald-400'], ['Accès Bloqués', '32', 'text-rose-400'], ['Notifications Envoyées', '8420', 'text-indigo-400'], ['Parents Connectés', '864', 'text-sky-400']] as $kpi)
-                    <div
-                        class="rounded-3xl
-                            border border-slate-800
-                            bg-slate-900
-                            p-4 sm:p-5">
-
-                        <p class="text-xs sm:text-sm text-slate-400">
-                            {{ $kpi[0] }}
-                        </p>
-
-                        <h2
-                            class="mt-3
-                               text-2xl sm:text-3xl xl:text-4xl
-                               font-bold {{ $kpi[2] }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
         {{-- FILTERS --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
@@ -123,21 +73,21 @@
             <div
                 class="rounded-3xl
                         border border-slate-800
-                        bg-slate-900
+                        bg-slate-950
                         p-4 sm:p-5">
 
                 <div class="flex flex-col gap-4">
 
                     <section class="mb-6">
 
-                        <div class="rounded-3xl border border-slate-800  bg-slate-900 p-4 sm:p-5">
+                        <div class="rounded-3xl border border-slate-800  bg-slate-950 p-4 sm:p-5">
                             <div class="flex flex-col gap-4">
                                 <div class="grid grid-cols-7 gap-x-3">
                                     <div class="relative col-span-5">
 
-                                        <input wire:model.live.debounce.400ms='search' type="text"
-                                            placeholder="Rechercher un enseignant..."
-                                            class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                        <input wire:model.live.debounce.600ms='search' type="text"
+                                            placeholder="Trouver un parent..."
+                                            class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
                                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
                                             🔍
                                         </div>
@@ -249,9 +199,23 @@
 
         </section>
 
-        <section class="rounded-2xl border p-2 border-slate-800">
+        <section class="rounded-2xl border border-slate-800 relative">
+            <div wire:loading
+                wire:target='gender,status,department,city,clearFilters,classe_id,promotion_id,filiar_id,serial_id,search,previousPage,nextPage,gotoPage'
+                class="absolute inset-0 flex items-center justify-center bg-slate-800/10 backdrop-blur-xs rounded-2xl"
+                style="z-index: 200 !important;">
 
-            <div class="flex flex-col gap-3">
+                <div class="items-center text-slate-400 relative top-1/2 mx-auto flex justify-center flex-col gap-3">
+                    <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    <span class="text-xl font-mono ls-1">Chargement en cours...</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 p-2">
 
                 <div
                     class="flex justify-end flex-wrap gap-3 border-b border-b-slate-800 text-gray-950 py-2 font-mono md:text-sm text-xs">
@@ -340,7 +304,7 @@
                         <div
                             class="rounded-3xl
                                 
-                                bg-slate-900
+                                bg-slate-950
                                 overflow-hidden">
 
                             {{-- HEADER --}}
@@ -377,7 +341,7 @@
                             @if (count($this->tutors) > 0)
                                 <div class="overflow-x-auto my-3 font-mono text-slate-500">
 
-                                    <table class="z-table-border w-full">
+                                    <table class="z-table-border w-full mb-4">
 
                                         <thead class="bg-slate-950 border-b border-slate-800">
 
@@ -391,17 +355,8 @@
                                                 </th>
 
                                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                                    Téléphone
-                                                </th>
-
-                                                <th class="px-4 py-4 text-center text-sm text-slate-400">
                                                     Enfant(s)
                                                 </th>
-
-                                                <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                                    Dernière Connexion
-                                                </th>
-
                                                 <th class="px-4 py-4 text-center text-sm text-slate-400">
                                                     Statut
                                                 </th>
@@ -428,39 +383,48 @@
                                                     {{-- PROFILE --}}
                                                     <td class="px-6 py-5">
 
-                                                        <a title="Charger le profil de ce parent"
-                                                            href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent->uuid]) }}"
-                                                            class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl">
+                                                        <div class="w-full flex flex-col gap-2">
+                                                            <a title="Charger le profil de ce parent"
+                                                                href="{{ route('tenant.parent.profil', ['parent_uuid' => $parent->uuid]) }}"
+                                                                class="flex items-center gap-4 hover:bg-slate-950 p-2 rounded-2xl group">
 
-                                                            <img src="{{ $parent->profil_photo_url() }}"
-                                                                alt="Photo de profil de {{ $parent->fullName() }}"
-                                                                class="w-14 h-14 rounded-full object-cover border-4 border-slate-700">
+                                                                <img src="{{ $parent->profil_photo_url() }}"
+                                                                    alt="Photo de profil de {{ $parent->fullName() }}"
+                                                                    class="w-14 h-14 rounded-full object-cover border-4 border-slate-700 group-hover:border-sky-500">
 
-                                                            <div class="min-w-0 flex flex-col">
-                                                                <h3 class="font-medium truncate">
-                                                                    {{ $parent->getFullName() }}
-                                                                </h3>
+                                                                <div
+                                                                    class="min-w-0 group-hover:text-sky-600 flex flex-col">
+                                                                    <h3 class="font-medium truncate">
+                                                                        {{ $parent->getFullName() }}
+                                                                    </h3>
+                                                                </div>
 
-                                                                <p class="mt-1 text-sm text-sky-400 truncate">
+                                                            </a>
+                                                            <div class="flex flex-col gap-2">
+                                                                <p
+                                                                    class="mt-1 text-sm text-sky-400 truncate inline-flex items-center gap-2">
+                                                                    <x-lucide-mail class="w-4 h-4 text-slate-200" />
                                                                     {{ $parent->user->email }}
                                                                 </p>
-                                                                <p class="mt-1 text-sm text-slate-400 truncate">
+                                                                <p
+                                                                    class="mt-1 text-sm text-slate-400 truncate inline-flex items-center gap-2">
+                                                                    <x-lucide-briefcase-business
+                                                                        class="w-4 h-4 text-slate-200" />
                                                                     {{ $parent->user->job_name ? $parent->user->job_name : '' }}
                                                                 </p>
 
-                                                                <p class="mt-1 text-sm text-amber-400 truncate">
+                                                                <p
+                                                                    class="mt-1 text-sm text-amber-400 inline-flex items-center gap-2">
+                                                                    <x-lucide-map-pin-check
+                                                                        class="w-4 h-4 text-slate-200" />
                                                                     {{ $parent->user->adresse }}
                                                                 </p>
+                                                                <p class="inline-flex items-center gap-2">
+                                                                    <x-lucide-phone class="w-4 h-4 text-slate-200" />
+                                                                    {{ $parent->user->contacts }}
+                                                                </p>
                                                             </div>
-
-                                                        </a>
-
-                                                    </td>
-
-                                                    {{-- PHONE --}}
-                                                    <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                                        {{ $parent->user->contacts }}
+                                                        </div>
 
                                                     </td>
 
@@ -513,13 +477,6 @@
                                                                     lié</span>
                                                             @endif
                                                         </div>
-
-                                                    </td>
-
-                                                    {{-- LOGIN --}}
-                                                    <td class="px-4 py-5 text-center whitespace-nowrap">
-
-                                                        Aujourd’hui 07:32
 
                                                     </td>
 
@@ -706,7 +663,7 @@
 
                             @if ($this->tutors->hasPages())
                                 <section class="py-6 p-2 font-mono">
-                                    <div class="flex justify-center bg-slate-900 p-4">
+                                    <div class="flex justify-center bg-transparent p-4">
                                         <div class="flex flex-col items-center gap-4">
                                             <div class="text-sm text-slate-400">
                                                 Affichage {{ $this->tutors->firstItem() }} à

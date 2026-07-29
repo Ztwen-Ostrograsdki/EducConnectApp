@@ -10,6 +10,7 @@ use App\Http\Middleware\CheckIfTenantDomainNotBlocked;
 use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\EnsureTenantNotDeletedAt;
+use App\Http\Middleware\EnsureThatClasseIsActiveOrNotLockedMiddleware;
 use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
 use App\Http\Middleware\EnsureThatUserAccountNotBlockedMiddleware;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
@@ -72,6 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher.not.blocked' => EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
+            'tenant.classe.is.active.and.not.locked' => EnsureThatClasseIsActiveOrNotLockedMiddleware::class,
             'has.valid.access' => CheckIfTeacherHasValidAccessForActiveSchoolYear::class,
             'logout.when.inactivity.too.long' => LogoutUserWhenInactivityIsTakeLongTimeMiddleware::class,
         ]);

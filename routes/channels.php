@@ -16,6 +16,14 @@ Broadcast::channel('tenant.{tenantId}', function (User $user, string $tenantId) 
         && tenant('id') === $tenantId;
 });
 
+// ── Channel commun à tous les users du tenant ─────────────
+// ex: maintenance, annonces globales
+Broadcast::channel('tenant.{tenantId}.others', function (User $user, string $tenantId) {
+    return tenant() !== null
+        && tenant('id') === $tenantId
+        && !$user->hasRole('directeur');
+});
+
 // ── Channel réservé au directeur ──────────────────────────
 // ex: paiements, gestion des enseignants, stats
 Broadcast::channel('tenant.{tenantId}.directeur', function (User $user, string $tenantId) {
@@ -34,13 +42,18 @@ Broadcast::channel('tenant.{tenantId}.enseignant', function (User $user, string 
         && $user->hasRole('enseignant');
 });
 
-Broadcast::channel('tenant.{tenantId}.parent', function (User $user, string $tenantId) {
+Broadcast::channel('tenant.{tenantId}.tuteur', function (User $user, string $tenantId) {
     return tenant() !== null
         && tenant('id') === $tenantId
-        && $user->hasRole('parent');
+        && $user->hasRole('tuteur');
+});
+Broadcast::channel('tenant.{tenantId}.eleve', function (User $user, string $tenantId) {
+    return tenant() !== null
+        && tenant('id') === $tenantId
+        && $user->hasRole('eleve');
 });
 
-
+// ── Channel personnel (un user enseignant spécifique) ────────────────
 Broadcast::channel('tenant.{tenantId}.enseignant.{userId}', function (User $user, string $tenantId, int $userId) {
     return tenant() !== null
         && tenant('id') === $tenantId

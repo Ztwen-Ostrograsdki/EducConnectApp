@@ -96,9 +96,6 @@
     <section class="w-full">
 
         <div class="flex justify-end flex-wrap gap-3 text-gray-950 p-2">
-            <button class="px-3 py-2 rounded-2xl bg-red-500 hover:bg-red-600">
-                Verrouiller notes
-            </button>
 
             <a wire:navigate href="{{ route('tenant.teachers.print.configuration', ['classe_slug' => $classe->slug]) }}"
                 class="px-3 py-2 rounded-2xl bg-blue-500 hover:bg-blue-600">
@@ -321,7 +318,7 @@
                                             </button>
 
                                             <button
-                                                title="{{ $teacher->cannotAccessIntoClasse($classe->id) ? 'Déverouiller' : 'Vérouiller ' }} l'accès du prof à la classe"
+                                                title="{{ $teacher->cannotAccessIntoClasse($classe->id) ? 'Déverouiller' : 'Vérouiller ' }} l'édition et l'insertion des notes du prof dans la classe"
                                                 wire:click="{{ $teacher->cannotAccessIntoClasse($classe->id)
                                                     ? 'unLockAccessToClasse(' . $teacher->id . ',' . $classe->id . ')'
                                                     : 'lockAccessToClasse(' . $teacher->id . ',' . $classe->id . ')' }}"
@@ -334,10 +331,10 @@
                                                     <span class="inline-flex items-center justify-center gap-3">
                                                         @if ($teacher->cannotAccessIntoClasse($classe->id))
                                                             <x-lucide-check class="w-4 h-4" />
-                                                            <span>Déverouiller accès</span>
+                                                            <span>Déverouiller </span>
                                                         @else
                                                             <x-lucide-user-lock class="w-4 h-4" />
-                                                            <span>Verouiller accès</span>
+                                                            <span>Verouiller </span>
                                                         @endif
                                                     </span>
                                                 </span>

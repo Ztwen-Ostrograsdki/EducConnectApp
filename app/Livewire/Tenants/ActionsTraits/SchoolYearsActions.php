@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
 use App\Events\NewSchoolYearActivatedEvent;
+use App\Events\SchoolYearDesactivatedEvent;
 use App\Models\SchoolYear;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -255,7 +256,7 @@ trait SchoolYearsActions{
     {
         $this->dispatch('swal', [
             'title'              => "Désactiver l'année scolaire {$schoolYearSlug} ? ",
-            'text'               => "L'année scolaire {$schoolYearSlug} ne sera plus l'année scolaire courante. Aucune année ne sera active tant qu'une autre n'aura pas été activée!",
+            'text'               => "L'année scolaire {$schoolYearSlug} ne sera plus l'année scolaire courante. Aucune année ne sera active tant qu'une autre n'aura pas été activée! Cette action déconnectera tous les enseignants, parents, élèves systématiquement!",
             'icon'               => 'warning',
             'showCancelButton'   => true,
             'confirmButtonText'  => 'Oui, Désactiver',
@@ -298,6 +299,8 @@ trait SchoolYearsActions{
                 );
 
                 session()->forget('activeSchoolYear');
+
+                broadcast(new SchoolYearDesactivatedEvent(tenant('id'), $schoolYear->slug));
 
                 broadcast(new DataUpdatedEvent(tenant('id')));
             }

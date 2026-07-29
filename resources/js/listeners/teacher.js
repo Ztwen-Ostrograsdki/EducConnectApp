@@ -15,7 +15,7 @@ export function registerTeacherListeners(tenantId, userId) {
     window.Echo.private(`tenant.${tenantId}.enseignant`)
         .listen("SchoolYearClosed", (e) => {
             $wireui.notify({
-                title: "ANNE SCOLAIRE FERME ",
+                title: "ANNEE SCOLAIRE FERME ",
                 timeout: 0,
                 description: "L'année scolaire en cours a été clôturée!",
                 icon: mapTypeToIcon("info"),

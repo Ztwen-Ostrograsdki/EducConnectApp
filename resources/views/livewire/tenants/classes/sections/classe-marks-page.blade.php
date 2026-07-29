@@ -17,11 +17,11 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
             {{-- LEFT --}}
-            <div class="min-w-0">
+            <div class="min-w-0 w-full px-3">
 
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-3 border-b border-b-slate-800 w-full">
 
-                    <h1 class="text-2xl sm:text-3xl font-bold break-words">
+                    <h1 class="md:text-xl text-base font-bold break-words py-3 ">
                         Gestion des Notes
                     </h1>
 
@@ -42,35 +42,6 @@
                     Notes, moyennes et statistiques pédagogiques de la classe.
 
                 </p>
-
-            </div>
-
-            {{-- ACTIONS --}}
-            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-indigo-500 hover:bg-indigo-600
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Ajouter Notes
-
-                </button>
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-slate-800
-                               border border-slate-700
-                               hover:bg-slate-700
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Exporter PDF
-
-                </button>
 
             </div>
 
@@ -98,7 +69,7 @@
                 </p>
 
                 <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    14.52
+                    ---
                 </h2>
 
             </div>
@@ -111,7 +82,7 @@
                 </p>
 
                 <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    87%
+                    ---
                 </h2>
 
             </div>
@@ -171,32 +142,6 @@
 
             <div class="flex flex-col xl:flex-row gap-4">
 
-                {{-- SEARCH --}}
-                <div class="flex-1 min-w-0">
-
-                    <div class="relative">
-
-                        <input type="text" placeholder="Rechercher un apprenant..."
-                            class="w-full h-12
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   pl-12 pr-4
-                                   text-sm
-                                   outline-none
-                                   focus:border-indigo-500
-                                   transition-all">
-
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-
-                            🔍
-
-                        </div>
-
-                    </div>
-
-                </div>
-
                 {{-- FILTERS --}}
                 <div
                     class="grid
@@ -223,19 +168,6 @@
                         @endforeach
                     </select>
 
-                    {{-- RESET --}}
-                    <button
-                        class="h-12 px-5 rounded-2xl
-                                   bg-slate-800
-                                   border border-slate-700
-                                   hover:bg-slate-700
-                                   transition-all
-                                   text-sm">
-
-                        Réinitialiser
-
-                    </button>
-
                 </div>
 
             </div>
@@ -247,34 +179,40 @@
     <section class="w-full">
         <div class="flex justify-end flex-wrap gap-3 text-gray-950 p-2">
 
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-red-500 hover:bg-red-600">
-
-                Verrouiller notes
-
-            </button>
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-blue-500 hover:bg-blue-600">
-
-                Imprimer PDF
-
-            </button>
-
             <button
-                class="px-3 py-2 rounded-2xl
-                                    bg-emerald-500 hover:bg-emerald-600">
-
-                Emprimer Excel
-
+                wire:click="{{ $classe->is_locked ? 'unlockClasse(' . $classe->id . ')' : 'lockClasse(' . $classe->id . ')' }}"
+                wire:loading.attr="disabled" wire:target="lockClasse, unlockClasse"
+                class="relative text-white hover:text-black py-3 px-4 rounded-2xl {{ $classe->is_locked ? 'bg-emerald-600/20 hover:bg-emerald-500/50' : 'bg-red-500/60 hover:bg-red-600' }} transition-all font-medium">
+                <span wire:loading.remove wire:target="lockClasse, unlockClasse"
+                    class="inline-flex items-center justify-center gap-3">
+                    <span class="inline-flex items-center justify-center gap-3">
+                        @if ($classe->is_locked)
+                            <x-lucide-lock-open class="w-4 h-4" />
+                            <span>Déverrouiller </span>
+                        @else
+                            <x-lucide-lock class="w-4 h-4" />
+                            <span>Verrouiller l'insertion des notes</span>
+                        @endif
+                    </span>
+                </span>
+                <span wire:loading wire:loading wire:target="lockClasse, unlockClasse"
+                    class="inline-flex items-center gap-1">
+                    <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                </span>
             </button>
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-amber-500 hover:bg-amber-600">
-
-                Imprimer Excel et PDF
-
-            </button>
+            <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+                class="inline-flex items-center justify-center px-4 py-3 bg-purple-800/45 hover:bg-purple-600 text-white hover:text-black rounded-2xl transition-colors">
+                <span class="inline-flex items-center justify-center">
+                    <span class="inline-flex items-center gap-3">
+                        <x-lucide-printer class="w-4 h-4" />
+                        <span>Générer les notes en PDF</span>
+                    </span>
+                </span>
+            </a>
 
         </div>
 
@@ -292,7 +230,7 @@
                                 <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
 
                                     <div>
-                                        <h2 class="text-xl font-mono font-semibold">
+                                        <h2 class="md:text-xl text-base font-mono font-semibold">
                                             <span>
                                                 Les notes de classe
                                             </span>
@@ -300,7 +238,7 @@
                                                 <span>
                                                     de
                                                     <span class="text-orange-500 uppercase">
-                                                        {{ $this->subject->name }}
+                                                        {{ $this->subject->code ? $this->subject->code : $this->subject->name }}
                                                     </span>
                                                 </span>
                                             @endif
@@ -317,12 +255,6 @@
                                         <p class="mt-1  text-slate-400 font-mono">Gestion complète des notes des
                                             apprenants.
                                         </p>
-                                    </div>
-
-                                    <div class="flex flex-wrap gap-2">
-                                        <button class="h-10 px-4 rounded-xl bg-sky-500 hover:bg-sky-600">
-                                            Import Excel
-                                        </button>
                                     </div>
 
                                 </div>

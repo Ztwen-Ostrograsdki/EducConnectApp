@@ -330,7 +330,12 @@
                                                                 <span>Notes de classe</span>
                                                             </span>
                                                         </a>
-                                                        @if ($this->activeYear && $this->activeYear->active_period)
+                                                        @if (
+                                                            $this->activeYear &&
+                                                                $this->activeYear->active_period &&
+                                                                $kls->classe->is_active &&
+                                                                !$kls->classe->is_locked &&
+                                                                auth('tenant')->user()->teacher->canAccessIntoClasse($kls->classe->id))
                                                             <a wire:navigate
                                                                 class="bg-blue-900 hover:bg-blue-600 hover:text-black border border-blue-600 rounded-2xl p-2"
                                                                 href="{{ route('tenant.teacher.classe.marks.manager', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}">

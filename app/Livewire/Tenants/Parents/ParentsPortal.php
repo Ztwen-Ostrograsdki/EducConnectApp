@@ -276,14 +276,19 @@ class ParentsPortal extends Component
                 $query->orwhere('birth_date', 'like', "%{$this->search}%");
                 $query->orwhere('birth_place', 'like', "%{$this->search}%");
                 $query->orwhere('job_name', 'like', "%{$this->search}%");
-                $query->orwhere('status', 'like', "%{$this->search}%");
-            })
-            ->where('identifiant', 'like', "%{$this->search}%");
+            });
         })
         ->when($this->city, function (Builder $query) {
             $query->whereHas('user', function ($query) {
                 $query->where('city', $this->city);
             });
+        })
+        ->when($this->status, function (Builder $query) {
+            match($this->status){
+                'actives' => $query->where('is_active', true)->whereNull('tutors.deleted_at'),
+                'desactives' => $query->where('is_active', false)->whereNull('tutors.deleted_at'),
+                'corbeille' => $query->whereNotNull('tutors.deleted_at'),
+            };
         })
         ->when($this->department, function (Builder $query) {
             $query->whereHas('user', function ($query) {

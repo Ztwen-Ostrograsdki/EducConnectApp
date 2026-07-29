@@ -68,22 +68,20 @@
                             <div class="break-words">👨‍🏫
                                 {{ $classe->principal ? 'PP : ' . $classe->principal?->getFullName() : 'Non précisée' }}
                             </div>
-
-                            <span class="flex font-mono text-xs items-center text-green-300 gap-x-2">
-                                <span class="rounded-2xl p-1.5 bg-green-800/50 border border-green-700">
-                                    {{ $this->effectifs['apprenants'] }}
-                                    Apprenant(s)</span>
-                                <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                    {{ $this->effectifs['apprenants_par_sexe']['F'] }}
-                                    fille(s)</span>
-                                <span class="rounded-2xl p-1.5 bg-indigo-800/50 border border-indigo-700">
-                                    {{ $this->effectifs['apprenants_par_sexe']['M'] }}
-                                    Garçon(s)</span>
+                            <span class="flex text-xs items-center text-green-300 gap-x-2">
+                                <span class="rounded-lg p-1.5 bg-green-800/50 border border-green-700 font-mono">
+                                    Apprenant(s) : {{ $this->effectifs['apprenants'] }}</span>
+                                <span class="rounded-lg p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                    F: {{ $this->effectifs['apprenants_par_sexe']['F'] }}
+                                </span>
+                                <span class="rounded-lg p-1.5 bg-indigo-800/50 border border-indigo-700">
+                                    G: {{ $this->effectifs['apprenants_par_sexe']['M'] }}
+                                </span>
                                 <span
-                                    class="rounded-2xl p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
-                                    {{ $this->effectifs['abandons'] }} Abandon(s)</span>
-                                <span class="rounded-2xl p-1.5 bg-sky-800/50 border border-sky-700 text-sky-400">
-                                    {{ $this->effectifs['profs'] }} Prof(s)</span>
+                                    class="rounded-lg p-1.5 bg-orange-800/50 border border-orange-700 text-orange-400">
+                                    Abd: {{ $this->effectifs['abandons'] }}</span>
+                                <span class="rounded-lg p-1.5 bg-sky-800/50 border border-sky-700 text-sky-400">
+                                    Prof(s) : {{ $this->effectifs['profs'] }} </span>
                             </span>
                         </div>
                     </div>
@@ -125,7 +123,7 @@
                 <div class="flex gap-2 p-3 w-max min-w-full">
 
                     <button wire:click="setSection('classe-home-page')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-home-page',
                         'hover:bg-slate-800' => $section !== 'classe-home-page',
                     ])>
@@ -133,7 +131,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-students-list')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-students-list',
                         'hover:bg-slate-800' => $section !== 'classe-students-list',
                     ])>
@@ -141,7 +139,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-teachers-list')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
                         'hover:bg-slate-800' => $section !== 'classe-teachers-list',
                     ])>
@@ -149,7 +147,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-parents-page')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-parents-page',
                         'hover:bg-slate-800' => $section !== 'classe-parents-page',
                     ])>
@@ -157,7 +155,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-marks-page')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-marks-page',
                         'hover:bg-slate-800' => $section !== 'classe-marks-page',
                     ])>
@@ -165,7 +163,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-presence-page')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-presence-page',
                         'hover:bg-slate-800' => $section !== 'classe-presence-page',
                     ])>
@@ -173,7 +171,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-plan-page')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' => $section === 'classe-plan-page',
                         'hover:bg-slate-800' => $section !== 'classe-plan-page',
                     ])>
@@ -181,7 +179,7 @@
                     </button>
 
                     <button wire:click="setSection('classe-pupil-bulletin-component')" @class([
-                        'shrink-0 px-5 py-3 rounded-2xl cursor-pointer transition-all text-sm',
+                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
                         'bg-indigo-500 text-white' =>
                             $section === 'classe-pupil-bulletin-component',
                         'hover:bg-slate-800' => $section !== 'classe-pupil-bulletin-component',

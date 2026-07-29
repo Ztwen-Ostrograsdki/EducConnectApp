@@ -292,8 +292,6 @@ Route::middleware([
 
             Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
-            Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
-
             Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
 
             //ESPACE ENSEIGNANT
@@ -303,7 +301,7 @@ Route::middleware([
                 
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/les-notes', TeacherClasseMarksViewer::class)->name('classe.marks');
                 
-                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('classe.marks.manager');
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('classe.marks.manager')->middleware('tenant.classe.is.active.and.not.locked');
                 
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
                 
@@ -316,8 +314,10 @@ Route::middleware([
             });
 
             // ── Tuteur ────────────────────────────────────────────────────
-            Route::middleware('role:tuteur')->prefix('tutor')->name('tutor.')->group(function () {
+            Route::middleware('role:tuteur')->prefix('tutor')->group(function () {
                 // sera rempli au fur et à mesure
+
+                Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
             });
 
             // ── Élève ─────────────────────────────────────────────────────

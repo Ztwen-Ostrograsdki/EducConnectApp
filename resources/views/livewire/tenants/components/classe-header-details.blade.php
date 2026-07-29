@@ -59,7 +59,6 @@
                     </span>
                 </p>
 
-                {{-- META --}}
                 <div class="mt-4 flex flex-col sm:flex-wrap gap-2 sm:gap-5 text-sm text-slate-400">
                     <span class="flex text-xs items-center text-green-300 gap-x-2">
                         <span class="rounded-lg p-1.5 bg-green-800/50 border border-green-700">
@@ -177,7 +176,12 @@
                         <span>Notes de classe</span>
                     </span>
                 </a>
-                @if ($this->activeYear && $this->activeYear->active_period)
+                @if (
+                    $this->activeYear &&
+                        $this->activeYear->active_period &&
+                        $classe->is_active &&
+                        !$classe->is_locked &&
+                        auth('tenant')->user()->teacher->canAccessIntoClasse($classe->id))
                     <a wire:navigate
                         class="bg-blue-900 hover:bg-blue-600 hover:text-black border border-blue-600 rounded-2xl p-2"
                         href="{{ route('tenant.teacher.classe.marks.manager', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}">
