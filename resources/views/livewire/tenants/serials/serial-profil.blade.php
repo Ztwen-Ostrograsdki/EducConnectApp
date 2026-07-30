@@ -1,1192 +1,452 @@
 <div class="w-full overflow-x-hidden">
 
-    <div class="mx-auto
-                w-full
-                max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
+    <div class="mx-auto w-full max-w-[1900px] px-3 sm:px-4 lg:px-6 xl:px-8">
 
         <div class="flex flex-wrap items-center gap-3 p-3 bg-indigo-500/10 rounded-4xl my-1.5">
-
-            <h1 class="text-lg sm:text-3xl font-bold">
-
-                Profil de la série AB
-
+            <h1 class="text-lg sm:text-xl font-bold text-slate-400 px-3 py-2.5">
+                Profil de la série <span class="font-mono text-amber-400 font-semibold">{{ $serial->name }}</span>
             </h1>
 
-            <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">
-
-                Série Active
-
+            <span
+                class="px-3 py-1 rounded-full @if ($serial->is_active) bg-emerald-500/10 text-emerald-400 @else bg-red-500/10 text-red-400 @endif text-xs">
+                série {{ $serial->is_active ? 'active' : 'non active' }}
             </span>
-
         </div>
 
         {{-- ===================================================== --}}
         {{-- HERO --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
-
-            <div class="relative overflow-hidden
-                        rounded-[32px]
-                        border border-slate-800
-                        bg-slate-900">
+            <div class="relative overflow-hidden rounded-[32px] border border-slate-800 bg-slate-900">
 
                 {{-- BG --}}
-                <div class="absolute inset-0
-                            bg-gradient-to-br
-                            from-indigo-500/10
-                            via-slate-900
-                            to-slate-900">
-                </div>
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-slate-900 to-slate-900"></div>
 
                 <div class="relative p-5 sm:p-6 lg:p-8">
-
-                    <div class="flex flex-col
-                                xl:flex-row
-                                xl:items-start
-                                xl:justify-between
-                                gap-8">
+                    <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
 
                         {{-- LEFT --}}
-                        <div class="flex flex-col
-                                    lg:flex-row
-                                    gap-6
-                                    min-w-0">
+                        <div class="flex flex-col lg:flex-row gap-6 min-w-0">
 
                             {{-- ICON --}}
                             <div class="flex justify-center lg:block">
-
                                 <div
                                     class="w-32 h-32 sm:w-36 sm:h-36
                                             rounded-[30px]
                                             bg-indigo-500/10
                                             border border-indigo-500/20
                                             flex items-center justify-center
-                                            text-5xl
-                                            shrink-0">
+                                            text-2xl uppercase text-center">
 
-                                    {{ initials($serial_slug) }}
+                                    <span>
+                                        {{ str()->replace('-', ' ', $serial->code) }}
+                                    </span>
 
                                 </div>
-
                             </div>
 
                             {{-- INFOS --}}
                             <div class="min-w-0">
-
-                                <div class="flex flex-wrap
-                                            items-center
-                                            gap-3">
-
-                                    <h1 class="text-2xl sm:text-3xl font-bold">
-
-                                        {{ $serial_name }}
-
-                                    </h1>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <h1 class="text-2xl sm:text-3xl font-bold">{{ $serial->name }}</h1>
                                 </div>
 
                                 <p class="mt-2 text-slate-400">
-
-                                    Tableau global des statistiques,
-                                    performances de la série.
-
+                                    Tableau global des statistiques, performances de la série {{ $serial->name }}.
                                 </p>
 
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                                bg-slate-800 border border-slate-700">
-
-                                        18 Enseignants
-
-                                    </div>
-
                                     <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
-
-                                        42 Classes
-
+                                        {{ __zero($details['teachers_count']) }}
+                                        Enseignants
                                     </div>
                                     <div class="px-4 py-2 rounded-2xl bg-slate-800 border border-slate-700">
-
-                                        4255 apprenants
-
+                                        {{ __zero($details['classes_count']) }} Classes
                                     </div>
+                                    @if ($serial->deleted_at)
+                                        <div
+                                            class="px-4 py-2 flex items-center justify-center rounded-2xl animate-pulse font-mono bg-rose-800/40 text-rose-400 text-xs">
+                                            Cette série est supprimée et se trouve dans la corbeille
+                                        </div>
+                                    @endif
+
                                 </div>
-
                             </div>
 
                         </div>
 
-                        {{-- ACTIONS --}}
-                        <div class="flex flex-wrap gap-3">
-
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600">
-
-                                Ajouter une classe
-
-                            </button>
-
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-emerald-500 hover:bg-emerald-600">
-
-                                Export PDF
-
-                            </button>
-
-                            <button class="h-11 px-5 rounded-2xl
-                                           bg-sky-500 hover:bg-sky-600">
-
-                                Statistiques
-
-                            </button>
-
-                        </div>
-
                     </div>
-
                 </div>
-
             </div>
+        </section>
+        <section class="my-4 mb-5 flex justify-end border-y border-y-slate-800 py-4">
+            <div class="flex gap-3">
+                <a wire:navigate href="{{ route('tenant.classes.create') }}"
+                    class="py-3 px-5 rounded-2xl bg-blue-500/30 hover:bg-blue-500 hover:text-black">
+                    Créer une classe
+                </a>
+                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 hover:text-black">
+                    Export PDF
+                </button>
+                <a wire:navigate href="{{ route('tenant.serial.edit', ['serial_slug' => $serial->slug]) }}"
+                    class="py-3 px-5 rounded-2xl bg-indigo-500/40 hover:bg-indigo-400 hover:text-black">
+                    Editer cette série
+                </a>
+                <button
+                    title="{{ $serial->deleted_at ? 'Restorer cette série de la corbeille ' : 'Mettre cette série dans la corbeille ' }} "
+                    wire:click="{{ $serial->deleted_at ? 'restoreSerial(' . $serial->id . ')' : 'deleteSerial(' . $serial->id . ')' }}"
+                    wire:loading.attr="disabled" wire:target="deleteSerial, restoreSerial"
+                    class="relative py-2 px-4 rounded-2xl text-white {{ $serial->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-2xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
+                    <span wire:loading.remove wire:target="deleteSerial, restoreSerial"
+                        class="inline-flex items-center justify-center gap-3">
+                        <span class="inline-flex items-center justify-center gap-3">
+                            @if ($serial->deleted_at)
+                                <x-lucide-refresh-ccw class="w-4 h-4" />
+                                <span>Restorer</span>
+                            @else
+                                <x-lucide-trash class="w-4 h-4" />
+                                <span>Corbeille</span>
+                            @endif
+                        </span>
+                    </span>
 
+                    <span wire:loading wire:target="restoreSerial, deleteSerial" class="inline-flex items-center gap-1">
+                        <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- KPI --}}
-        {{-- ===================================================== --}}
         <section class="mb-6">
-
-            <div class="grid
-                        grid-cols-2
-                        lg:grid-cols-4
-                        2xl:grid-cols-6
-                        gap-4">
-
-                @foreach ([['Moyenne Générale', '11.84', 'text-indigo-400'], ['Meilleure classe', 'Terminale F4-3', 'text-emerald-400'], ['Faibel classe', 'Terminale F4-6', 'text-rose-400'], ['Taux Réussite', '72%', 'text-sky-400'], ['Classes', '35', 'text-amber-400'], ['Enseignants', '18', 'text-violet-400']] as $kpi)
-                    <div class="rounded-3xl
-                            bg-slate-900
-                            border border-slate-800
-                            p-5">
-
-                        <p class="text-sm text-slate-400">
-
-                            {{ $kpi[0] }}
-
-                        </p>
-
-                        <h2 class="mt-3 text-xl font-bold {{ $kpi[2] }}">
-
-                            {{ $kpi[1] }}
-
-                        </h2>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- BEST / WORST --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="grid
-                        grid-cols-1
-                        xl:grid-cols-2
-                        gap-6">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
                 {{-- BEST --}}
-                <div class="rounded-[32px]
-                            bg-slate-900
-                            border border-emerald-500/20
-                            p-6">
-
+                <div class="rounded-[32px] bg-slate-900 border border-emerald-500/20 p-6">
                     <div class="flex items-center gap-4">
-
-                        <div class="w-16 h-16 rounded-2xl
-                                    bg-emerald-500/10
-                                    flex items-center justify-center
-                                    text-2xl">
-
-                            🏆
-
-                        </div>
-
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl">
+                            🏆</div>
                         <div>
-
-                            <h2 class="text-xl font-semibold">
-
-                                Meilleure Performance
-
-                            </h2>
-
-                            <p class="text-slate-400">
-
-                                Plus forte moyenne enregistrée.
-
-                            </p>
-
+                            <h2 class="text-xl font-semibold">Meilleure Performance</h2>
+                            <p class="text-slate-400">Plus forte moyenne enregistrée.</p>
                         </div>
-
                     </div>
 
                     <div class="mt-6 space-y-4">
-
-                        <div class="rounded-2xl
-                                    bg-slate-950
-                                    border border-slate-800
-                                    p-5">
-
-                            <h3 class="text-lg font-semibold">
-
-                                KOUASSI Sarah
-
-                            </h3>
-
-                            <p class="mt-2 text-slate-400">
-
-                                Classe : Terminale F4-1
-
-                            </p>
+                        <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5">
+                            <h3 class="text-lg font-semibold">KOUASSI Sarah</h3>
+                            <p class="mt-2 text-slate-400">Classe : Terminale F4-1</p>
 
                             <div class="mt-4 flex flex-wrap gap-3">
-
-                                <span class="px-3 py-1 rounded-full
-                                             bg-emerald-500/10
-                                             text-emerald-400 text-xs">
-
-                                    Moyenne : 19.75
-
-                                </span>
-
-                                <span class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400 text-xs">
-
-                                    Promotion : Terminale
-
-                                </span>
-
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">Moyenne
+                                    : 19.75</span>
+                                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">Promotion
+                                    : Terminale</span>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
                 {{-- WORST --}}
-                <div class="rounded-[32px]
-                            bg-slate-900
-                            border border-rose-500/20
-                            p-6">
-
+                <div class="rounded-[32px] bg-slate-900 border border-rose-500/20 p-6">
                     <div class="flex items-center gap-4">
-
-                        <div class="w-16 h-16 rounded-2xl
-                                    bg-rose-500/10
-                                    flex items-center justify-center
-                                    text-2xl">
-
-                            ⚠️
-
+                        <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-2xl">⚠️
                         </div>
-
                         <div>
-
-                            <h2 class="text-xl font-semibold">
-
-                                Plus Faible Performance
-
-                            </h2>
-
-                            <p class="text-slate-400">
-
-                                Plus faible moyenne enregistrée.
-
-                            </p>
-
+                            <h2 class="text-xl font-semibold">Plus Faible Performance</h2>
+                            <p class="text-slate-400">Plus faible moyenne enregistrée.</p>
                         </div>
-
                     </div>
 
                     <div class="mt-6 space-y-4">
-
-                        <div class="rounded-2xl
-                                    bg-slate-950
-                                    border border-slate-800
-                                    p-5">
-
-                            <h3 class="text-lg font-semibold">
-
-                                HOUNKPE David
-
-                            </h3>
-
-                            <p class="mt-2 text-slate-400">
-
-                                Classe : Tle F4-2
-
-                            </p>
+                        <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5">
+                            <h3 class="text-lg font-semibold">HOUNKPE David</h3>
+                            <p class="mt-2 text-slate-400">Classe : Tle F4-2</p>
 
                             <div class="mt-4 flex flex-wrap gap-3">
-
-                                <span class="px-3 py-1 rounded-full
-                                             bg-rose-500/10
-                                             text-rose-400 text-xs">
-
-                                    Moyenne : 02.15
-
-                                </span>
-
-                                <span class="px-3 py-1 rounded-full
-                                             bg-indigo-500/10
-                                             text-indigo-400 text-xs">
-
-                                    Promotion : Terminale F4
-
-                                </span>
-
+                                <span class="px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs">Moyenne :
+                                    02.15</span>
+                                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">Promotion
+                                    : Terminale F4</span>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
             </div>
-
         </section>
 
         {{-- ===================================================== --}}
         {{-- BEST BOY / BEST GIRL --}}
         {{-- ===================================================== --}}
         <section class="mb-6">
-
-            <div class="grid
-                grid-cols-1
-                xl:grid-cols-2
-                gap-6">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
                 {{-- ===================================================== --}}
                 {{-- MEILLEUR GARÇON --}}
                 {{-- ===================================================== --}}
-                <div class="rounded-[32px]
-                    bg-slate-900
-                    border border-sky-500/20
-                    overflow-hidden">
+                <div class="rounded-[32px] bg-slate-900 border border-sky-500/20 overflow-hidden">
 
                     {{-- HEADER --}}
                     <div class="p-6 border-b border-slate-800">
-
                         <div class="flex items-center gap-4">
-
-                            <div class="w-16 h-16 rounded-2xl
-                                bg-sky-500/10
-                                flex items-center justify-center
-                                text-2xl">
-
-                                🏅
-
-                            </div>
-
+                            <div class="w-16 h-16 rounded-2xl bg-sky-500/10 flex items-center justify-center text-2xl">
+                                🏅</div>
                             <div>
-
-                                <h2 class="text-xl font-semibold">
-
-                                    Meilleur Garçon
-
-                                </h2>
-
-                                <p class="mt-1 text-sm text-slate-400">
-
-                                    Meilleure performance masculine
-                                    dans la matière.
-
+                                <h2 class="text-xl font-semibold">Meilleur Garçon</h2>
+                                <p class="mt-1 text-sm text-slate-400">Meilleure performance masculine dans la matière.
                                 </p>
-
                             </div>
-
                         </div>
-
                     </div>
 
                     {{-- CONTENT --}}
                     <div class="p-6">
-
-                        <div class="flex flex-col
-                            lg:flex-row
-                            lg:items-center
-                            gap-5">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-5">
 
                             {{-- PHOTO --}}
                             <div class="flex justify-center lg:block">
-
-                                <div class="w-28 h-28 rounded-[28px]
-                                    bg-slate-800
-                                    border border-slate-700
-                                    shrink-0">
+                                <div class="w-28 h-28 rounded-[28px] bg-slate-800 border border-slate-700 shrink-0">
                                 </div>
-
                             </div>
 
                             {{-- DETAILS --}}
                             <div class="flex-1 min-w-0">
-
-                                <div class="flex flex-wrap
-                                    items-center
-                                    gap-3">
-
-                                    <h3 class="text-2xl font-bold">
-
-                                        HOUNKPE David
-
-                                    </h3>
-
-                                    <span class="px-3 py-1 rounded-full
-                                         bg-sky-500/10
-                                         text-sky-400 text-xs">
-
-                                        Rang #1 Garçon
-
-                                    </span>
-
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <h3 class="text-2xl font-bold">HOUNKPE David</h3>
+                                    <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 text-xs">Rang #1
+                                        Garçon</span>
                                 </div>
 
-                                <p class="mt-2 text-slate-400">
-
-                                    Terminale F4-1 —
-                                    Promotion Terminale
-
-                                </p>
+                                <p class="mt-2 text-slate-400">Terminale F4-1 — Promotion Terminale</p>
 
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Moyenne : 18.92
-
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Moyenne :
+                                        18.92</div>
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Coef : 4
                                     </div>
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Coef : 4
-
-                                    </div>
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Prof : M. AHOLOU
-
-                                    </div>
-
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Prof : M.
+                                        AHOLOU</div>
                                 </div>
 
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
-
-                                    <button class="h-11 px-5 rounded-2xl
-                                           bg-sky-500 hover:bg-sky-600">
-
-                                        Voir Profil
-
-                                    </button>
-
-                                    <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600">
-
-                                        Historique Notes
-
-                                    </button>
-
+                                    <button class="h-11 px-5 rounded-2xl bg-sky-500 hover:bg-sky-600">Voir
+                                        Profil</button>
+                                    <button class="h-11 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600">Historique
+                                        Notes</button>
                                 </div>
-
                             </div>
 
                         </div>
-
                     </div>
-
                 </div>
 
                 {{-- ===================================================== --}}
                 {{-- MEILLEURE FILLE --}}
                 {{-- ===================================================== --}}
-                <div class="rounded-[32px]
-                    bg-slate-900
-                    border border-pink-500/20
-                    overflow-hidden">
+                <div class="rounded-[32px] bg-slate-900 border border-pink-500/20 overflow-hidden">
 
                     {{-- HEADER --}}
                     <div class="p-6 border-b border-slate-800">
-
                         <div class="flex items-center gap-4">
-
-                            <div class="w-16 h-16 rounded-2xl
-                                bg-pink-500/10
-                                flex items-center justify-center
-                                text-2xl">
-
-                                👑
-
-                            </div>
-
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-pink-500/10 flex items-center justify-center text-2xl">
+                                👑</div>
                             <div>
-
-                                <h2 class="text-xl font-semibold">
-
-                                    Meilleure Fille
-
-                                </h2>
-
-                                <p class="mt-1 text-sm text-slate-400">
-
-                                    Meilleure performance féminine
-                                    dans la matière.
-
+                                <h2 class="text-xl font-semibold">Meilleure Fille</h2>
+                                <p class="mt-1 text-sm text-slate-400">Meilleure performance féminine dans la matière.
                                 </p>
-
                             </div>
-
                         </div>
-
                     </div>
 
                     {{-- CONTENT --}}
                     <div class="p-6">
-
-                        <div class="flex flex-col
-                            lg:flex-row
-                            lg:items-center
-                            gap-5">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-5">
 
                             {{-- PHOTO --}}
                             <div class="flex justify-center lg:block">
-
-                                <div class="w-28 h-28 rounded-[28px]
-                                    bg-slate-800
-                                    border border-slate-700
-                                    shrink-0">
+                                <div class="w-28 h-28 rounded-[28px] bg-slate-800 border border-slate-700 shrink-0">
                                 </div>
-
                             </div>
 
                             {{-- DETAILS --}}
                             <div class="flex-1 min-w-0">
-
-                                <div class="flex flex-wrap
-                                    items-center
-                                    gap-3">
-
-                                    <h3 class="text-2xl font-bold">
-
-                                        KOUASSI Sarah
-
-                                    </h3>
-
-                                    <span class="px-3 py-1 rounded-full
-                                         bg-pink-500/10
-                                         text-pink-400 text-xs">
-
-                                        Rang #1 Fille
-
-                                    </span>
-
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <h3 class="text-2xl font-bold">KOUASSI Sarah</h3>
+                                    <span class="px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs">Rang #1
+                                        Fille</span>
                                 </div>
 
-                                <p class="mt-2 text-slate-400">
-
-                                    Terminale F4-2 —
-                                    Promotion Terminale
-
-                                </p>
+                                <p class="mt-2 text-slate-400">Terminale F4-2 — Promotion Terminale</p>
 
                                 {{-- BADGES --}}
                                 <div class="mt-5 flex flex-wrap gap-3">
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Moyenne : 19.41
-
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Moyenne :
+                                        19.41</div>
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Coef : 4
                                     </div>
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Coef : 4
-
-                                    </div>
-
-                                    <div class="px-4 py-2 rounded-2xl
-                                        bg-slate-950
-                                        border border-slate-800">
-
-                                        Prof : Mme ADJOVI
-
-                                    </div>
-
+                                    <div class="px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800">Prof : Mme
+                                        ADJOVI</div>
                                 </div>
 
                                 {{-- ACTIONS --}}
                                 <div class="mt-6 flex flex-wrap gap-3">
-
-                                    <button class="h-11 px-5 rounded-2xl
-                                           bg-pink-500 hover:bg-pink-600">
-
-                                        Voir Profil
-
-                                    </button>
-
-                                    <button class="h-11 px-5 rounded-2xl
-                                           bg-indigo-500 hover:bg-indigo-600">
-
-                                        Historique Notes
-
-                                    </button>
-
+                                    <button class="h-11 px-5 rounded-2xl bg-pink-500 hover:bg-pink-600">Voir
+                                        Profil</button>
+                                    <button class="h-11 px-5 rounded-2xl bg-indigo-500 hover:bg-indigo-600">Historique
+                                        Notes</button>
                                 </div>
-
                             </div>
 
                         </div>
-
                     </div>
-
                 </div>
 
             </div>
-
         </section>
 
-        {{-- ===================================================== --}}
-        {{-- TEACHERS --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6 p-2">
-
-            <div class="rounded-[32px]
-                        bg-slate-900
-                        border border-slate-800
-                        overflow-hidden">
-
-                {{-- HEADER --}}
-                <div class="p-5 border-b border-slate-800">
-
-                    <div class="flex flex-col
-                                xl:flex-row
-                                xl:items-center
-                                xl:justify-between
-                                gap-4">
-
-                        <div>
-
-                            <h2 class="text-xl font-semibold">
-
-                                Enseignants de la série
-
-                            </h2>
-
-                            <p class="mt-1 text-sm text-slate-400">
-
-                                Gestion des enseignants concernés.
-
-                            </p>
-
-                        </div>
-
-                        {{-- FILTERS --}}
-                        <div class="flex flex-wrap gap-3">
-
-                            <input type="text" placeholder="Rechercher enseignant..."
-                                class="h-11 min-w-[220px]
-                                          rounded-2xl
-                                          bg-slate-950
-                                          border border-slate-800
-                                          px-4">
-
-                            <select class="h-11 rounded-2xl
-                                           bg-slate-950
-                                           border border-slate-800
-                                           px-4">
-
-                                <option>Toutes les classes</option>
-                                <option>AB</option>
-                                <option>C</option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- TABLE --}}
-                <div class="overflow-x-auto">
-
-                    <table class="min-w-[1700px] w-full">
-
-                        <thead class="bg-slate-950
-                                     border-b border-slate-800">
-
-                            <tr>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Enseignant
-                                </th>
-
-                                <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                    Classes
-                                </th>
-
-                                <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                    Actions
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody class="divide-y divide-slate-800">
-
-                            @foreach (range(1, 10) as $teacher)
-                                <tr class="hover:bg-slate-800/40">
-
-                                    {{-- TEACHER --}}
-                                    <td class="px-6 py-5">
-
-                                        <div class="flex items-center gap-4 truncate">
-
-                                            <div class="w-14 h-14
-                                                    rounded-2xl
-                                                    bg-slate-800">
-                                            </div>
-
-                                            <div>
-
-                                                <h3 class="font-medium">
-
-                                                    M. AHOLOU Pascal
-
-                                                </h3>
-
-                                                <p class="text-sm text-slate-400">
-
-                                                    aholou@email.com
-
-                                                </p>
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- CLASSES --}}
-                                    <td class="px-6 py-5">
-
-                                        <div class="flex flex-wrap gap-2 truncate">
-
-                                            <span class="px-3 py-1 rounded-full
-                                                     bg-indigo-500/10
-                                                     text-indigo-400 text-xs">
-
-                                                Tle F2-1
-
-                                            </span>
-
-                                            <span class="px-3 py-1 rounded-full
-                                                     bg-indigo-500/10
-                                                     text-indigo-400 text-xs">
-
-                                                1ère F3-2
-
-                                            </span>
-
-                                        </div>
-
-                                    </td>
-
-                                    {{-- ACTIONS --}}
-                                    <td class="px-6 py-5">
-
-                                        <div class="flex justify-end gap-2 truncate">
-
-                                            <button class="h-10 px-4 rounded-xl
-                                                       bg-indigo-500/10
-                                                       text-indigo-400">
-
-                                                Voir Profil
-
-                                            </button>
-
-                                            <button class="h-10 px-4 rounded-xl
-                                                       bg-amber-500/10
-                                                       text-amber-400">
-
-                                                Bloquer
-
-                                            </button>
-
-                                            <button class="h-10 px-4 rounded-xl
-                                                       bg-rose-500/10
-                                                       text-rose-400">
-
-                                                Retirer
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        {{-- ===================================================== --}}
-        {{-- LISTES DES APPRENANTS DE LA SERIE  --}}
-        {{-- ===================================================== --}}
-        <section class="mb-6">
-
-            <div class="rounded-[32px]
+        {{-- Remplacer les 2 @livewire(...) + la section "Élèves en Difficulté" par ce bloc --}}
+
+        <section class="mb-6" x-data="{ activeTab: 'teachers' }">
+
+            {{-- NAV TABS --}}
+            <div
+                class="flex flex-wrap gap-2
+                p-2 mb-6
+                rounded-2xl
                 bg-slate-900
-                border border-slate-800
-                overflow-hidden">
+                border border-slate-800">
 
-                {{-- ===================================================== --}}
-                {{-- HEADER --}}
-                {{-- ===================================================== --}}
-                <div class="p-5 sm:p-6 border-b border-slate-800">
+                <button @click="activeTab = 'teachers'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'teachers'
+                        ?
+                        'bg-indigo-500/15 text-indigo-400 shadow-[0_0_5px_-3px_rgba(99,102,241,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'teachers'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span :class="activeTab === 'teachers' ? 'bg-indigo-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-users class="w-4 h-4" />
+                    <span>Enseignants</span>
+                </button>
 
-                    <div class="flex flex-col
-                        xl:flex-row
-                        xl:items-center
-                        xl:justify-between
-                        gap-5">
+                <button @click="activeTab = 'students'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'students'
+                        ?
+                        'bg-purple-500/15 text-purple-400 shadow-[0_0_5px_-3px_rgba(16,185,129,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'students'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                        <span :class="activeTab === 'students' ? 'bg-purple-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-graduation-cap class="w-4 h-4" />
+                    <span>Élèves</span>
+                </button>
 
-                        {{-- TITLE --}}
-                        <div>
+                <button @click="activeTab = 'weak-students'"
+                    class="relative flex items-center gap-2
+                    px-4 py-2.5
+                    rounded-xl
+                    text-sm font-medium
+                    transition-all duration-300"
+                    :class="activeTab === 'weak-students'
+                        ?
+                        'bg-rose-500/15 text-rose-400 shadow-[0_0_5px_-3px_rgba(244,63,94,0.4)]' :
+                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        <span x-show="activeTab === 'weak-students'"
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span :class="activeTab === 'weak-students' ? 'bg-rose-400' : 'bg-slate-600'"
+                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                    </span>
+                    <x-lucide-triangle-alert class="w-4 h-4" />
+                    <span>Élèves en Difficulté</span>
+                </button>
 
-                            <h2 class="text-xl font-semibold">
+            </div>
 
-                                Apprenants de la série
+            {{-- PANELS --}}
+            <div class="relative">
 
-                            </h2>
+                {{-- ENSEIGNANTS --}}
+                <div x-show="activeTab === 'teachers'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
+                    @livewire('tenants.serials.serial-teachers-list-component', ['serial' => $serial, 'activeYear' => $this->activeYear])
+                </div>
 
-                            <p class="mt-1 text-sm text-slate-400">
+                {{-- ÉLÈVES --}}
+                <div x-show="activeTab === 'students'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
+                    @livewire('tenants.serials.serial-students-list-component', ['serial' => $serial, 'activeYear' => $this->activeYear])
+                </div>
 
-                                Gestion des apprenants
-                                de la série selon les
-                                promotions, classes
+                {{-- ÉLÈVES EN DIFFICULTÉ (statique) --}}
+                <div x-show="activeTab === 'weak-students'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3">
 
-                            </p>
-
+                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
+                        <div class="flex items-center gap-3">
+                            <span class="relative flex h-2.5 w-2.5 shrink-0">
+                                <span
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-400"></span>
+                            </span>
+                            <h2 class="text-lg font-semibold text-rose-400">Élèves en Difficulté</h2>
                         </div>
 
-                        {{-- FILTERS --}}
-                        <div class="flex flex-col
-                            sm:flex-row
-                            gap-3
-                            w-full
-                            xl:w-auto">
-
-                            {{-- CLASSES --}}
-                            <select
-                                class="h-12
-                                   min-w-[220px]
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   px-4
-                                   text-sm">
-
-                                <option>
-                                    Toutes les classes
-                                </option>
-
-                                <option>
-                                    Terminales F4-1
-                                </option>
-                                <option>
-                                    Terminales F4-2
-                                </option>
-                                <option>
-                                    Terminales F4-3
-                                </option>
-                                <option>
-                                    Terminales F4-4
-                                </option>
-
-                            </select>
-
-                            {{-- SERIE --}}
-                            <select
-                                class="h-12
-                                   min-w-[220px]
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   px-4
-                                   text-sm">
-
-                                <option>
-                                    Toutes les promotions
-                                </option>
-
-                                <option>
-                                    Terminales
-                                </option>
-
-                            </select>
-
+                        <div class="mt-5 space-y-4">
+                            @foreach (range(1, 5) as $weak)
+                                <div class="rounded-2xl bg-slate-950 p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="font-medium">KOFFI Junior</h3>
+                                            <p class="mt-1 text-sm text-slate-400">Terminale F2-2</p>
+                                        </div>
+                                        <span class="text-rose-400 font-bold">08.42</span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-
                     </div>
 
                 </div>
 
-                {{-- ===================================================== --}}
-                {{-- TABLE --}}
-                {{-- ===================================================== --}}
-                <section class="w-full p-2">
-
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-
-                        <div class="overflow-x-auto">
-
-                            <table class="w-full p-1">
-
-                                <thead class="bg-slate-950 border-b border-slate-800 ">
-
-                                    <tr>
-
-                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
-                                            Apprenant
-                                        </th>
-
-                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
-                                            Matricule
-                                        </th>
-
-                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
-                                            Classe
-                                        </th>
-
-                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
-                                            Présence
-                                        </th>
-
-                                        <th class="text-left px-6 py-4 text-sm font-medium text-slate-400">
-                                            Parent
-                                        </th>
-
-                                        <th class="text-center px-6 py-4 text-sm font-medium text-slate-400">
-                                            Actions
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody class="divide-y divide-slate-800">
-
-                                    @foreach (range(1, 10) as $i)
-                                        <tr class="hover:bg-slate-800/40 transition-all">
-
-                                            {{-- STUDENT --}}
-                                            <td class="px-6 py-5">
-
-                                                <div class="flex items-center gap-4 min-w-0">
-
-                                                    <div class="w-12 h-12 rounded-2xl bg-slate-800 shrink-0">
-                                                    </div>
-
-                                                    <div class="min-w-0">
-
-                                                        <a href="{{ route('tenant.student.profil', ['student_uuid' => rand(272252525, 7727277272772)]) }}">
-                                                            <h3 class="font-medium truncate">
-                                                                Kouassi Vincent {{ $i }}
-                                                            </h3>
-
-                                                            <p class="text-sm text-slate-400 truncate">
-                                                                Génie Électrique
-                                                            </p>
-                                                        </a>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </td>
-
-                                            {{-- MATRICULE --}}
-                                            <td class="px-6 py-5 text-sm text-slate-300">
-                                                <div
-                                                    class="inline-flex
-                                                items-center
-                                                px-3 py-1
-                                                rounded-full
-                                                bg-amber-500/10
-                                                text-amber-400
-                                                text-sm truncate">
-
-                                                    Matricule GGGG
-
-                                                </div>
-
-                                            </td>
-
-                                            {{-- MOYENNE --}}
-                                            <td class="px-6 py-5">
-
-                                                <div
-                                                    class="inline-flex
-                                                items-center
-                                                px-3 py-1
-                                                rounded-full
-                                                bg-emerald-500/10
-                                                text-emerald-400
-                                                text-sm truncate">
-
-                                                    Tle F4-5
-
-                                                </div>
-
-                                            </td>
-
-                                            {{-- PRESENCE --}}
-                                            <td class="px-6 py-5 text-sm">
-                                                96%
-                                            </td>
-
-                                            {{-- PARENT --}}
-                                            <td class="px-6 py-5 truncate text-sm text-slate-300">
-                                                M. HOUNDEKINDO
-                                            </td>
-
-                                            {{-- ACTIONS --}}
-                                            <td class="px-6 py-5">
-
-                                                <div class="flex justify-end gap-2 truncate">
-
-                                                    <button class="h-10 px-4 rounded-xl
-                                                       bg-indigo-500/10
-                                                       text-indigo-400">
-
-                                                        Voir Profil
-
-                                                    </button>
-
-                                                    <button class="h-10 px-4 rounded-xl
-                                                       bg-amber-500/10
-                                                       text-amber-400">
-
-                                                        Bloquer
-
-                                                    </button>
-
-                                                    <button class="h-10 px-4 rounded-xl
-                                                       bg-rose-500/10
-                                                       text-rose-400">
-
-                                                        Retirer
-
-                                                    </button>
-
-                                                </div>
-
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
             </div>
 
         </section>
-
-        <div class="rounded-3xl
-                                bg-slate-900
-                                border border-slate-800
-                                p-5">
-
-            <h2 class="text-lg font-semibold">
-
-                Élèves en Difficulté
-
-            </h2>
-
-            <div class="mt-5 space-y-4">
-
-                @foreach (range(1, 5) as $weak)
-                    <div class="rounded-2xl
-                                        bg-slate-950
-                                        p-4">
-
-                        <div class="flex items-center justify-between">
-
-                            <div>
-
-                                <h3 class="font-medium">
-
-                                    KOFFI Junior
-
-                                </h3>
-
-                                <p class="mt-1 text-sm text-slate-400">
-
-                                    Terminale F2-2
-
-                                </p>
-
-                            </div>
-
-                            <span class="text-rose-400 font-bold">
-
-                                08.42
-
-                            </span>
-
-                        </div>
-
-                    </div>
-                @endforeach
-
-            </div>
-
-        </div>
 
     </div>
 

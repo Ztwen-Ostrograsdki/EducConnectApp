@@ -216,7 +216,7 @@
                     Editer cette filière
                 </a>
                 <button
-                    title="{{ $filiar->deleted_at ? 'Restaurer cette filière de la corbeille ' : 'Mettre cette filière dans la corbeille ' }} "
+                    title="{{ $filiar->deleted_at ? 'Restorer cette filière de la corbeille ' : 'Mettre cette filière dans la corbeille ' }} "
                     wire:click="{{ $filiar->deleted_at ? 'restoreFiliar(' . $filiar->id . ')' : 'deleteFiliar(' . $filiar->id . ')' }}"
                     wire:loading.attr="disabled" wire:target="deleteFiliar, restoreFiliar"
                     class="relative py-2 px-4 rounded-2xl text-white {{ $filiar->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-2xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
@@ -225,7 +225,7 @@
                         <span class="inline-flex items-center justify-center gap-3">
                             @if ($filiar->deleted_at)
                                 <x-lucide-refresh-ccw class="w-4 h-4" />
-                                <span>Restaurer</span>
+                                <span>Restorer</span>
                             @else
                                 <x-lucide-trash class="w-4 h-4" />
                                 <span>Corbeille</span>
