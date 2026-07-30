@@ -196,6 +196,19 @@ return [
         'réligion' => 'réligion', 
     ],
 
+    'promotionInGroups' => [
+        'Sixième',
+        'Cinquième',
+        'Quatrième',
+        'Troisième',
+        'Seconde',
+        'Première',
+        'Terminale',
+        'Première année',
+        'Deuxième année',
+        'Troisième année',
+    ],
+
     'promotions_without_filiars_series' => [
         'sixieme',
         'sixième',

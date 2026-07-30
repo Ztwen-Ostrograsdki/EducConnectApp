@@ -9,6 +9,7 @@ use App\Models\Presence;
 use App\Models\SchoolYear;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Models\YearlyPromotionSpecialitySubjectCoef;
 use App\Models\YearlySubjectChief;
 use App\Notifications\RealTimeNotification;
 use App\Services\SubjectsServices\SubjectDetailsCacheService;
@@ -128,6 +129,23 @@ class Subject extends Model
     public function classeSubjects(): HasMany
     {
         return $this->hasMany(ClasseSubjectOfSchoolYear::class, 'subject_id');
+    }
+
+    /**
+     * Get all subject-coef assignments for this subject.
+     */
+    public function coefs(): HasMany
+    {
+        return $this->hasMany(YearlyPromotionSpecialitySubjectCoef::class, 'subject_id');
+    }
+
+
+    /**
+     * Get all subject-coef assignments for this subject.
+     */
+    public function coefiscients(): HasMany
+    {
+        return $this->hasMany(YearlyPromotionSpecialitySubjectCoef::class, 'subject_id');
     }
 
      /**

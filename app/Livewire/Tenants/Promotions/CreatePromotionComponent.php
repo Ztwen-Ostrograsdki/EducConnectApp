@@ -174,6 +174,12 @@ class CreatePromotionComponent extends Component
         
     }
 
+    #[Computed]
+    public function promotionInGroups()
+    {
+        return config('app.promotionInGroups');
+    }
+
 
     #[Computed]
     public function serials()

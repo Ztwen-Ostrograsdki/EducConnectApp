@@ -58,12 +58,13 @@ class ClasseMarksPage extends Component
 
             $this->period = $this->activeYear->active_period;
         }
+
     }
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        unset($this->marksData);
+        unset($this->marksData, $this->studentsRows, $this->coef_relation);
 
         $this->counter++;
     }
@@ -82,50 +83,54 @@ class ClasseMarksPage extends Component
         return $this->redirect(route('tenant.my.profil'));
     }
 
-    /**
-     * Le semestre/trimestre change → nouvelle clé de cache, on force le recalcul
-     * du computed Livewire pour relire (le cache Laravel, lui, gère déjà l'ancienne
-     * clé indépendamment sans jamais la recalculer inutilement).
-     */
-    public function updatedPeriod()
+
+    public function updatedSubjectSlug(?string $subject_slug): void
     {
-        session()->put('classe_marks_period_selected', $this->period);
-        
-        $this->resetMarksRelatedComputeds();
-    }
+        // 1. Invalider TOUS les computeds liés à la matière
+        $this->resetSubjectRelatedComputeds();
 
-    /**
-     * La matière change → même logique, mais on doit aussi recharger classe_subject
-     * (le coefficient et l'assignation dépendent de la matière sélectionnée) et
-     * la liste des colonnes de devoirs si jamais elle dépendait de la matière
-     * (pas le cas ici, elle dépend du tenant, mais on reset par prudence/cohérence).
-     */
-    public function updatedSubjectSlug(?string $subject_slug)
-    {
-        unset($this->classe_subject, $this->subject);
+        // 2. Réinitialiser l'id
+        $this->classe_subject_id = null;
 
-        if($subject_slug){
-
-            $this->classe_subject_id = $this->classe_subject->id;
+        // 3. Accès SÉCURISÉ (ne plante plus si la matière n'a pas d'assignation)
+        if ($subject_slug) {
+            $classeSubject = $this->classe_subject; // recalculé avec le nouveau slug
+            $this->classe_subject_id = $classeSubject?->id;
         }
 
+        // 4. Persister le choix
         session()->put('classe_marks_subject_selected', $this->subject_slug);
-
-        $this->resetMarksRelatedComputeds();
     }
 
+    /**
+     * Invalide tous les computed qui dépendent de la matière / période.
+     */
+    protected function resetSubjectRelatedComputeds(): void
+    {
+        unset(
+            $this->subject,
+            $this->classe_subject,
+            $this->marksData,
+            $this->studentsRows,
+            $this->coef_relation
+        );
+    }
+
+    /**
+     * Alias clair (tu avais déjà resetMarksRelatedComputeds).
+     */
     protected function resetMarksRelatedComputeds(): void
     {
+        $this->resetSubjectRelatedComputeds();
+    }
+
+    public function updatedPeriod(): void
+    {
+        session()->put('classe_marks_period_selected', $this->period);
+
         unset($this->marksData, $this->studentsRows);
     }
 
-    /**
-     * Placeholder pour le moment : ouvrira un modal d'édition des notes de l'apprenant.
-     */
-    public function editStudentMark(int $student_id)
-    {
-        // À implémenter : ouverture du formulaire/modal d'édition des notes.
-    }
 
     #[Computed]
     public function students()
@@ -215,10 +220,29 @@ class ClasseMarksPage extends Component
     }
 
     #[Computed]
+    public function coef_relation()
+    {
+        if(!$this->subject || !$this->subject_slug) return null;
+
+        return $this->classe->getCoefOfSubject($this->subject->id);
+    }
+
+    #[Computed]
     public function studentsRows(): array
     {
         $devoirColumns = array_keys($this->devoirColumns());
-        $coefficient = (float) ($this->classe_subject->coefficient ?? 0);
+
+        $coefRelation = $this->coef_relation;
+
+        if($coefRelation){
+
+            $coefficient = (float) $coefRelation->coef;
+
+        }
+        else{
+
+            $coefficient = 1;
+        }
 
         $rows = $this->students->map(function (Student $student) use ($devoirColumns, $coefficient) {
 
@@ -319,6 +343,9 @@ class ClasseMarksPage extends Component
     #[Computed]
     public function classe_subject()
     {
+        if (!$this->classe_slug || !$this->subject_slug || !$this->activeYear) {
+            return null;
+        }
         $classe_subject = ClasseSubjectOfSchoolYear::with(['classe', 'subject'])
                    ->whereHas('classe', fn($qc) =>
                         $qc->where('slug', $this->classe_slug)

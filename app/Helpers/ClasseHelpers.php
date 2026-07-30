@@ -51,7 +51,7 @@ class ClasseHelpers{
 
                 $card['root'] = "4";
             }
-            elseif (preg_match_all('/Trois/', $name)) {
+            elseif (strlen($name) < 10 && preg_match_all('/Trois/', $name)) {
 
 				$card['code'] = "3ème";
 
@@ -67,7 +67,7 @@ class ClasseHelpers{
 
                 $card['root'] = "2";
             }
-            elseif (preg_match_all('/Premi/', $name)) {
+            elseif (strlen($name) < 10 && preg_match_all('/Premi/', $name)) {
 
 				$card['code'] = "1ère";
 
@@ -84,7 +84,7 @@ class ClasseHelpers{
                 $card['root'] = "T";
                 
             }
-			elseif (preg_match_all('/premiere annee/', Str::lower(Str::ascii($name)))) {
+			elseif (strlen($name) > 10 && preg_match_all('/premiere annee/', Str::lower(Str::ascii($name)))) {
 
 				$card['code'] = "1AI";
 
@@ -93,7 +93,7 @@ class ClasseHelpers{
                 $card['root'] = "1AI";
                 
             }
-			elseif (preg_match_all('/deuxieme annee/', Str::lower(Str::ascii($name)))) {
+			elseif (strlen($name) > 10 && preg_match_all('/deuxieme annee/', Str::lower(Str::ascii($name)))) {
 
 				$card['code'] = "2AI";
 
@@ -102,7 +102,7 @@ class ClasseHelpers{
                 $card['root'] = "2AI";
                 
             }
-			elseif (preg_match_all('/troisieme annee/', Str::lower(Str::ascii($name)))) {
+			elseif (strlen($name) > 10 && preg_match_all('/troisieme annee/', Str::lower(Str::ascii($name)))) {
 
 				$card['code'] = "3AI";
 

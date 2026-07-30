@@ -406,7 +406,8 @@ class TeacherClasseMarksViewer extends Component
     {
         $columns = array_keys($this->markColumns());
         $devoirColumns = array_keys($this->devoirColumns());
-        $coefficient = (float) ($this->classe_subject->coefficient ?? 0);
+
+        $coefficient = $this->classe->getCoefValueOfSubject($this->subject->id);
 
         $rows = $this->students->map(function (Student $student) use ($columns, $devoirColumns, $coefficient) {
 

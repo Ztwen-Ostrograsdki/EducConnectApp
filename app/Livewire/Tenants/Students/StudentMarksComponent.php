@@ -180,7 +180,8 @@ class StudentMarksComponent extends Component
         return $this->classeSubjects->map(function (ClasseSubjectOfSchoolYear $classeSubject) use ($devoirColumns, $classmateIds) {
 
             $subject = $classeSubject->subject;
-            $coefficient = (float) ($classeSubject->coefficient ?? 0);
+
+            $coefficient = $this->classe->getCoefValueOfSubject($subject->id);
 
             // Une seule lecture de cache par matière — clé indépendante,
             // aucun impact sur les autres matières/périodes déjà en cache.

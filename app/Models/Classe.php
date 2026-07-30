@@ -165,6 +165,38 @@ class Classe extends Model
         return $this->belongsTo(Serial::class, 'serial_id')->withTrashed();
     }
 
+    public function getCoefOfSubject(int $subject_id)
+    {
+        $coef_relation = YearlyPromotionSpecialitySubjectCoef::where('school_year_id', $this->school_year_id)
+                        ->where('subject_id', $subject_id)
+                        ->where('filiar_id', $this->filiar_id)
+                        ->where('serial_id', $this->serial_id)
+                        ->where('promotion', $this->promotion->name)
+                        ->first();
+
+                        
+
+        if($coef_relation) return $coef_relation;
+
+        return null;
+    }
+
+    public function getCoefValueOfSubject(int $subject_id) : float
+    {
+        $coef = 1;
+
+        $coefRelation = $this->getCoefOfSubject($subject_id);
+
+        if($coefRelation){
+
+            $coef = (float) $coefRelation->coef;
+
+        }
+        
+        return $coef;
+    }
+
+
     // Professeur principal
     public function principal(): BelongsTo
     {

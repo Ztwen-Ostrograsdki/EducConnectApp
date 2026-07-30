@@ -58,6 +58,7 @@ use App\Livewire\Tenants\Students\StudentsPrintableDocumentsPage;
 use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
 use App\Livewire\Tenants\Students\StudentsPrintsManagerComponent;
 use App\Livewire\Tenants\Subjects\CreateSubjectComponent;
+use App\Livewire\Tenants\Subjects\ManagePromotionSpecialityCoefComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectChiefsComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
@@ -162,6 +163,9 @@ Route::middleware([
             Route::get('/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');
             Route::get('/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
             Route::get('/matieres/{subject_slug}/AE/edition', ManageSubjectChiefsComponent::class)->name('subject.edit.ae');
+
+            Route::get('/matieres/gestion-des-coefiscients/{subject_slug?}/{uuid?}', ManagePromotionSpecialityCoefComponent::class)->name('subjects.coefs.manage');
+
 
             // FILIRES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
@@ -306,7 +310,6 @@ Route::middleware([
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
                 
             });
-
 
             // ── Enseignant ────────────────────────────────────────────────
             Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {

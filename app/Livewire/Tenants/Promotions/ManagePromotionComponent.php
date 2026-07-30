@@ -213,6 +213,12 @@ class ManagePromotionComponent extends Component
     {
         return Filiar::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
     }
+
+    #[Computed]
+    public function promotionInGroups()
+    {
+        return config('app.promotionInGroups');
+    }
     
     public function render()
     {

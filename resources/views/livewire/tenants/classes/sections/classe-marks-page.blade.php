@@ -251,6 +251,53 @@
                                                 </span>
                                             @endif
 
+                                            @if ($this->subject)
+                                                @php
+                                                    $coef_rel = $this->coef_relation;
+
+                                                    if ($coef_rel) {
+                                                        $url = route('tenant.subjects.coefs.manage', [
+                                                            'subject_slug' => $this->subject->slug,
+                                                            'uuid' => $coef_rel->uuid,
+                                                        ]);
+                                                    } else {
+                                                        if ($classe->filiar_id) {
+                                                            $url = route('tenant.subjects.coefs.manage', [
+                                                                'subject_slug' => $this->subject->slug,
+                                                                'promotion' => $classe->promotion->name,
+                                                                'filiar_id' => $classe->filiar_id,
+                                                            ]);
+                                                        } elseif ($classe->serial_id) {
+                                                            $url = route('tenant.subjects.coefs.manage', [
+                                                                'subject_slug' => $this->subject->slug,
+                                                                'promotion' => $classe->promotion->name,
+                                                                'serial_id' => $classe->serial_id,
+                                                            ]);
+                                                        } else {
+                                                            $url = route('tenant.subjects.coefs.manage', [
+                                                                'subject_slug' => $this->subject->slug,
+                                                                'promotion' => $classe->promotion->name,
+                                                            ]);
+                                                        }
+                                                    }
+                                                @endphp
+                                                <a class="group hover:text-slate-500 hover:underline underline-offset-4"
+                                                    title="Cliquez pour définir ou éditer le coéficient de {{ $this->subject->name }} "
+                                                    wire:navigate href="{{ $url }}">
+                                                    <span class="text-slate-500 group-hover:hidden">|</span>
+                                                    <span class="text-sky-700 group-hover:text-slate-500">Coef:</span>
+                                                    @if ($coef_rel)
+                                                        <span class="text-sky-600 group-hover:text-slate-500">
+                                                            {{ $coef_rel->coef }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-red-400 group-hover:text-slate-500">
+                                                            Le coéf n'est pas défini
+                                                        </span>
+                                                    @endif
+                                                </a>
+                                            @endif
+
                                         </h2>
                                         <p class="mt-1  text-slate-400 font-mono">Gestion complète des notes des
                                             apprenants.

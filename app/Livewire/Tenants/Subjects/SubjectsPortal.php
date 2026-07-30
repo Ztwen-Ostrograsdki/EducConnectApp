@@ -20,7 +20,7 @@ class SubjectsPortal extends Component
 
     use WireUiActions, WithPagination, SubjectsActions;
 
-    public $perPage = 5;
+    public $perPage = 15;
 
     public $counter = 0;
 

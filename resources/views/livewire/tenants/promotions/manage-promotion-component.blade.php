@@ -61,8 +61,15 @@
             <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nom de la promotion <span
                         class="text-rose-400">*</span></label>
-                <input type="text" wire:model.live="name" placeholder="ex: Terminale, Troisième, Sixième"
-                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
+                <select wire:model.live="name"
+                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
+                    <option value="">— Aucune —</option>
+                    @foreach ($this->promotionInGroups as $promo)
+                        <option value="{{ $promo }}">
+                            {{ $promo }}
+                        </option>
+                    @endforeach
+                </select>
                 @error('name')
                     <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                 @enderror

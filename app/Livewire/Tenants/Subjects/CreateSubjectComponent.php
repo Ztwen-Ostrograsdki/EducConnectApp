@@ -76,7 +76,7 @@ class CreateSubjectComponent extends Component
 
             $this->notification()->error(
                 title: 'Une erreur s\'est produite lors de la mise à jour de la matière',
-                description: 'Erreur : ' . cutter($th->getMessage(), 150),
+                description: 'Erreur : ' . cutter($th->getMessage(), 1500),
             );
         }
 
