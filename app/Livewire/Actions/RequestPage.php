@@ -9,6 +9,8 @@ use App\Tools\BeninData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -41,6 +43,7 @@ class RequestPage extends Component
     public $periode_type;
     public $gender;
     public $logo;
+    public $level = 'secondaire';
     public $birth_date;
 
     public $department_key;
@@ -70,6 +73,12 @@ class RequestPage extends Component
         
     }
 
+    #[Computed]
+    public function levels()
+    {
+        return config('app.levels');
+    }
+
 
 
     protected function rules()
@@ -82,6 +91,7 @@ class RequestPage extends Component
             'name' => 'required|string|max:255',
             'prenames' => 'required|string|max:255',
             'job_name' => 'required|string|max:255',
+            'level' => ['required', 'string','max:255',  Rule::in($this->levels)],
 
             'contacts' => 'required|string|max:50',
             'country' => 'required|string|max:100',
@@ -151,6 +161,7 @@ class RequestPage extends Component
                         'job_name' => $this->job_name,
                         'contacts' => $this->contacts,
                         'country' => $this->country,
+                        'level' => $this->level,
                         'city' => $this->city,
                         'school_name' => $this->school_name,
                         'school_devise' => $this->school_devise,

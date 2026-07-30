@@ -44,19 +44,22 @@
                 {{-- Navigation Desktop --}}
                 <nav class="hidden lg:flex items-center gap-8 text-white font-medium">
                     <a href="/" class="hover:text-amber-400 transition">Accueil</a>
-                    <a href="{{ auth('tenant')->user()->to_profil_route() }}"
-                        class="hover:text-amber-400 transition">Mon Profil</a>
-                    @if (!auth('tenant')->user()->hasRole('directeur'))
-                        <a href="{{ auth('tenant')->user()->to_space_route() }}"
-                            class="hover:text-amber-400 transition">Mon espace</a>
-                        <a href="#contact" class="hover:text-amber-400 transition">Contact</a>
-                    @endif
+
                     @auth('tenant')
+                        <a href="{{ auth('tenant')->user()->to_profil_route() }}" class="hover:text-amber-400 transition">
+                            Mon Profil
+                        </a>
+                        @if (!auth('tenant')->user()->hasRole('directeur'))
+                            <a href="{{ auth('tenant')->user()->to_space_route() }}"
+                                class="hover:text-amber-400 transition">Mon espace</a>
+                        @endif
+
                         @if (auth('tenant')->user()?->hasRole('directeur'))
                             <a href="{{ route('tenant.dashboard') }}"
                                 class="hover:text-amber-400 transition">Administration</a>
                         @endif
                     @endauth
+                    <a href="#contact" class="hover:text-amber-400 transition">Contact</a>
 
                 </nav>
 
@@ -124,12 +127,14 @@
                     class="block px-5 py-4 rounded-2xl text-white hover:bg-white/10 transition font-medium">
                     Accueil
                 </a>
-                @if (!auth('tenant')->user()->hasRole('directeur'))
-                    <a href="{{ auth('tenant')->user()->to_space_route() }}" @click="mobileMenu = false"
-                        class="block px-5 py-4 rounded-2xl text-white hover:bg-white/10 transition font-medium">
-                        Mon espace
-                    </a>
-                @endif
+                @auth('tenant')
+                    @if (!auth('tenant')->user()->hasRole('directeur'))
+                        <a href="{{ auth('tenant')->user()->to_space_route() }}" @click="mobileMenu = false"
+                            class="block px-5 py-4 rounded-2xl text-white hover:bg-white/10 transition font-medium">
+                            Mon espace
+                        </a>
+                    @endif
+                @endauth
                 <a href="#" @click="mobileMenu = false"
                     class="block px-5 py-4 rounded-2xl text-white hover:bg-white/10 transition font-medium">
                     Mon profil

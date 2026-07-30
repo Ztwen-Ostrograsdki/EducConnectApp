@@ -33,7 +33,6 @@ class EditClasseComponent extends Component
     public string $name           = '';
     public string $school_year    = '';
     public string $code           = '';
-    public string $level          = 'secondaire';
     public int    $effectif_max   = 50;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
@@ -60,7 +59,6 @@ class EditClasseComponent extends Component
         $this->serial_id       = $classe->serial_id;
         $this->name            = $classe->name;
         $this->code            = $classe->code ?? '';
-        $this->level           = $classe->level;
         $this->effectif_max    = $classe->effectif_max;
         $this->is_active       = $classe->is_active;
         $this->is_locked       = $classe->is_locked;
@@ -111,7 +109,6 @@ class EditClasseComponent extends Component
                         ->whereNull('deleted_at'),
                 ],
                 'code'         => 'nullable|string|max:30',
-                'level'        => 'required|in:primaire,secondaire,superieur',
                 'effectif_max' => 'required|integer|min:1|max:200',
                 'is_active'    => 'boolean',
                 'is_locked'    => 'boolean',
@@ -125,7 +122,7 @@ class EditClasseComponent extends Component
                 'name'           => $this->name,
                 'slug'           => Str::slug($this->name),
                 'code'           => $this->code ?: null,
-                'level'          => $this->level,
+                'level'          => tenant('level'),
                 'effectif_max'   => $this->effectif_max,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,

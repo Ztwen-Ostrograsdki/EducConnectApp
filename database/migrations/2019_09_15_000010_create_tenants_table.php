@@ -22,6 +22,7 @@ class CreateTenantsTable extends Migration
             // your custom columns may go here
 
             $table->string('school_name');
+            $table->string('level')->default('secondaire');
             $table->string('simple_name')->nullable()->default(null);
             $table->string('domain_name')->unique();
             $table->string('school_slug')->nullable();

@@ -42,6 +42,7 @@ class RequestToCreateNewTenant extends Model
         'validated',
         'department',
         'gender',
+        'level',
     ];
 
     public function user()

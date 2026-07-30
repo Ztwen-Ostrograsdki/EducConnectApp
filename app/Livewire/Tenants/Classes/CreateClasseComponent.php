@@ -32,7 +32,6 @@ class CreateClasseComponent extends Component
     public ?int   $serial_id      = null;
     public string $name           = '';
     public string $code           = '';
-    public string $level          = 'secondaire';
     public string $localization   = 'Bâtiment H - Salle 1';
     public int    $effectif_max   = 40;
     public bool   $is_active      = true;
@@ -101,7 +100,6 @@ class CreateClasseComponent extends Component
                         ->where('school_year_id', $this->school_year_id),
                 ],
                 'code'         => 'nullable|string|max:30',
-                'level'        => 'required|in:primaire,secondaire,superieur',
                 'effectif_max' => 'required|integer|min:1|max:200',
                 'is_active'    => 'boolean',
                 'is_locked'    => 'boolean',
@@ -117,7 +115,7 @@ class CreateClasseComponent extends Component
                 'serial_id'      => $this->serial_id,
                 'name'           => $this->name,
                 'code'           => $this->code ?: null,
-                'level'          => $this->level,
+                'level'          => tenant('level'),
                 'effectif_max'   => $this->effectif_max,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,

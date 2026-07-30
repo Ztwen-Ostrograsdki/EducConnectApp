@@ -133,20 +133,6 @@
                     <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                 @enderror
             </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">
-                    Niveau <span class="text-rose-400">*</span>
-                </label>
-                <select wire:model="level"
-                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
-                    <option value="primaire">Primaire</option>
-                    <option value="secondaire">Secondaire</option>
-                    <option value="superieur">Supérieur</option>
-                </select>
-                @error('level')
-                    <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-                @enderror
-            </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-center">

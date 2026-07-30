@@ -21,6 +21,7 @@ return new class extends Migration
 
             $table->string('school_name');
             $table->string('simple_name');
+            $table->string('level')->default('secondaire');
             $table->string('school_slug')->nullable();
             $table->string('school_devise')->nullable();
             $table->string('domain_name')->unique();

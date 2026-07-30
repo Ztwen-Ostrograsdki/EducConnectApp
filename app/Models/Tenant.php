@@ -69,6 +69,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'request_id',
             'department',
             'birth_date',
+            'level',
             'gender',
             'completed',
             'stage',
@@ -87,6 +88,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'country' => 'Bénin',
         'city' => 'Cotonou',
         'role' => 'directeur',
+        'level' => 'secondaire',
     ];
 
     /**

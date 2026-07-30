@@ -22,7 +22,6 @@ class CreateSubjectComponent extends Component
     public string $code        = '';
     public string $description = '';
     public string $type        = 'scientifique';
-    public string $level       = 'secondaire';
     public bool   $is_active   = true;
     public string $previewSlug = '';
 
@@ -44,7 +43,6 @@ class CreateSubjectComponent extends Component
                 'code'        => 'nullable|string|max:20',
                 'description' => 'nullable|string|max:255',
                 'type'        => ['required', Rule::in($validTypes)],
-                'level'       => 'required|in:primaire,secondaire,superieur',
                 'is_active'   => 'boolean',
             ]);
 
@@ -55,7 +53,7 @@ class CreateSubjectComponent extends Component
                 'code'        => $this->code ?? Str::slug($this->name),
                 'description' => $this->description ?: null,
                 'type'        => $this->type,
-                'level'       => $this->level,
+                'level'          => tenant('level'),
                 'is_active'   => $this->is_active,
             ]);
 

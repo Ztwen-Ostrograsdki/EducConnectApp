@@ -24,7 +24,6 @@ class ManageSubjectComponent extends Component
     public ?string $code        = '';
     public ?string $description = '';
     public ?string $type        = 'scientifique';
-    public ?string $level       = 'secondaire';
     public bool   $is_active   = true;
     public string $previewSlug = '';
     public string $subject_slug = '';
@@ -44,7 +43,6 @@ class ManageSubjectComponent extends Component
         $this->code        = $subject->code ?? '';
         $this->description = $subject->description ?? '';
         $this->type        = $subject->type;
-        $this->level       = $subject->level;
         $this->is_active   = $subject->is_active;
         $this->previewSlug = $subject->slug;
     }
@@ -69,7 +67,6 @@ class ManageSubjectComponent extends Component
                 'code'        => 'nullable|string|max:20',
                 'description' => 'nullable|string|max:255',
                 'type'        => ['required', Rule::in($validTypes)],
-                'level'       => 'required|in:primaire,secondaire,superieur',
                 'is_active'   => 'boolean',
             ]);
 
@@ -79,7 +76,7 @@ class ManageSubjectComponent extends Component
                 'code'        => $this->code ?: null,
                 'description' => $this->description ?: null,
                 'type'        => $this->type,
-                'level'       => $this->level,
+                'level'       => tenant('level'),
                 'is_active'   => $this->is_active,
             ]);
 

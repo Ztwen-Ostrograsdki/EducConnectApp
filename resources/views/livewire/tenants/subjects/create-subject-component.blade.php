@@ -52,27 +52,6 @@
             @enderror
         </div>
 
-        {{-- Level --}}
-        <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1.5">Niveau <span
-                    class="text-rose-400">*</span></label>
-            <div class="flex gap-3">
-                @foreach (['primaire' => 'Primaire', 'secondaire' => 'Secondaire', 'superieur' => 'Supérieur'] as $val => $label)
-                    <label class="flex-1 cursor-pointer">
-                        <input type="radio" wire:model="level" value="{{ $val }}" class="sr-only peer" />
-                        <div
-                            class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-3 text-center text-sm text-slate-400
-                        peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 peer-checked:text-indigo-400 transition">
-                            {{ $label }}
-                        </div>
-                    </label>
-                @endforeach
-            </div>
-            @error('level')
-                <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
-            @enderror
-        </div>
-
         {{-- Description --}}
         <div>
             <label class="block text-xs font-medium text-slate-400 mb-1.5">Description <span
