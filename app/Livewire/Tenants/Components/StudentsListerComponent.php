@@ -40,7 +40,9 @@ class StudentsListerComponent extends Component
 
     public ?string $promotionInGroups = null;
 
-    public ?Promotion $promotion = null;
+    public ?string $promotion = null;
+
+    public ?Promotion $promotionModel = null;
     
     public int $perPage = 30;
 

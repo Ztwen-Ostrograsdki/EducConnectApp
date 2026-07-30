@@ -6,10 +6,14 @@ namespace App\Livewire\Tenants\Serials;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
+#[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Liste des enseignants d'une série")]
 class SerialTeachersListComponent extends Component
 {
     use WireUiActions;
@@ -18,36 +22,28 @@ class SerialTeachersListComponent extends Component
 
     public string $serial_slug;
 
-    public ?string $school_year_selected;
+    public int $counterh = 0;
 
-    public ?string $teachers_gender = null;
+    public function mount(string $serial_slug)
+    {
 
-    public ?int $teachers_subject_id = null;
+        if(!$serial_slug) return abort(404);
 
-    public ?int $teachers_promotion_id = null;
+        $this->serial_slug  = $serial_slug;
 
-    public ?int $teachers_classe_id = null;
+        $serial = Serial::withTrashed()->whereSlug($serial_slug)?->first();
 
-    public int $teachersPerPage = 30;
+        if(!$serial) return abort(404);
 
-    public $counterh = 0;
+        $this->serial       = $serial;
 
+
+    }
 
     #[Computed]
     public function activeYear(): ?SchoolYear
     {
         return SchoolYear::current()->first();
-    }
-
-    #[On('yearChanged')]
-    public function onYearChanged(string $schoolYear)
-    {
-        $this->school_year_selected = $schoolYear;
-    }
-
-    public function resetTeachersFilters()
-    {
-        $this->reset('teachers_classe_id', 'teachers_subject_id', 'teachers_promotion_id', 'teachers_gender');
     }
 
     #[On('DataUpdatedEventLiveEvent')]
@@ -56,30 +52,6 @@ class SerialTeachersListComponent extends Component
         $this->counterh++;
     }
 
-
-    #[Computed]
-    public function serials()
-    {
-        return Serial::where('is_active', true)->orderBy('name')->get();
-    }
-
-    #[Computed]
-    public function classes()
-    {
-        return $this->serial->classes()->where('classes.school_year_id', $this->activeYear->id)->where('classes.is_active', true)->where('classes.is_locked', false)->orderBy('name', 'desc')->get();
-    }
-
-    #[Computed]
-    public function subjects()
-    {
-        return $this->serial?->getSerialSubjectsOfSchoolYear()->orderBy('name', 'desc')->get();
-    }
-    
-    #[Computed]
-    public function promotions()
-    {
-        return $this->serial?->promotions;
-    }
 
 
     public function render()
