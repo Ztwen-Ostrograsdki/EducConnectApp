@@ -592,11 +592,11 @@ class Student extends Model
     {
         if(!$school_year_id) $school_year_id = SchoolYear::current()?->first()?->id;
 
-        $currentClasse = $this->getStudentCurrentClasse($school_year_id);
+        $currentClasse = $this->currentClasse($school_year_id);
 
         if(!$currentClasse) return true;
 
-        if(!$classe_id) $classe_id = $currentClasse?->id;
+        if(!$classe_id) $classe_id = $currentClasse?->classe_id;
 
         return !$this->yearlyStudentsLeaves()
                        ->where('school_year_id', $school_year_id)
@@ -606,7 +606,6 @@ class Student extends Model
 
 
     }
-
 
 
     public function markStudentAsLeaved(?int $classe_id = null, ?int $school_year_id = null, ?string $reasons = "Abondonné sans motif précisé!")

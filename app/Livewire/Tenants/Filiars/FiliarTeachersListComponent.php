@@ -2,18 +2,16 @@
 
 namespace App\Livewire\Tenants\Filiars;
 
-use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 class FiliarTeachersListComponent extends Component
 {
-    use WireUiActions, WithPagination, TeachersActions;
+    use WireUiActions;
 
     public ?Filiar $filiar;
 
@@ -30,6 +28,8 @@ class FiliarTeachersListComponent extends Component
     public ?int $teachers_classe_id = null;
 
     public int $teachersPerPage = 30;
+
+    public int $counterh = 0;
 
 
     #[Computed]
@@ -52,7 +52,7 @@ class FiliarTeachersListComponent extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterh++;
     }
 
 
@@ -81,18 +81,7 @@ class FiliarTeachersListComponent extends Component
     }
 
     #[Computed]
-    public function teachers()
-    {
-        return $this->filiar->getFiliarTeachersOfSchoolYear(
-                                school_year_id: null, 
-                                classe_id: $this->teachers_classe_id, 
-                                promotion_id: $this->teachers_promotion_id,
-                                subject_id : $this->teachers_subject_id, 
-                            )
-                            ->orderBy('users.name')
-                            ->orderBy('users.prenames')
-                            ->paginate($this->teachersPerPage);
-    }
+   
 
     public function render()
     {

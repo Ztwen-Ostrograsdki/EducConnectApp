@@ -20,6 +20,8 @@ use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
+use App\Livewire\Tenants\Filiars\FiliarStudentsListComponent;
+use App\Livewire\Tenants\Filiars\FiliarTeachersListComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarChiefsComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
 use App\Livewire\Tenants\HomePage;
@@ -42,6 +44,8 @@ use App\Livewire\Tenants\Serials\CreateSerialComponent;
 use App\Livewire\Tenants\Serials\ManageSerialComponent;
 use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
+use App\Livewire\Tenants\Serials\SerialStudentsListComponent;
+use App\Livewire\Tenants\Serials\SerialTeachersListComponent;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
 use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
@@ -171,6 +175,9 @@ Route::middleware([
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
 
             Route::get('/filieres/details-filiere/{filiar_slug}', FiliarProfil::class)->name('filiar.profil');
+            
+            Route::get('/filieres/details-filiere/{filiar_slug}/les-apprenenats', FiliarStudentsListComponent::class)->name('filiar.students');
+            Route::get('/filieres/details-filiere/{filiar_slug}/les-enseignants', FiliarTeachersListComponent::class)->name('filiar.teachers');
 
             Route::get('/filieres/nouvelle-filiere', CreateFiliarComponent::class)->name('filiar.create');
             Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
@@ -180,6 +187,10 @@ Route::middleware([
             Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
 
             Route::get('/series/details-serie/{serial_slug}', SerialProfil::class)->name('serial.profil');
+
+            Route::get('/series/details-serie/{serial_slug}/les-apprenenats', SerialStudentsListComponent::class)->name('serial.students');
+            Route::get('/series/details-serie/{serial_slug}/les-enseignants', SerialTeachersListComponent::class)->name('serial.teachers');
+
 
             Route::get('/series/nouvelle-serie', CreateSerialComponent::class)->name('serial.create');
 

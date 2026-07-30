@@ -86,6 +86,14 @@
                     class="py-3 px-5 rounded-2xl bg-blue-500/30 hover:bg-blue-500 hover:text-black">
                     Créer une classe
                 </a>
+                <a wire:navigate href="{{ route('tenant.serial.students', ['serial_slug' => $serial->slug]) }}"
+                    class="py-3 px-5 rounded-2xl bg-indigo-500/40 hover:bg-indigo-400 hover:text-black">
+                    Les apprenants
+                </a>
+                <a wire:navigate href="{{ route('tenant.serial.teachers', ['serial_slug' => $serial->slug]) }}"
+                    class="py-3 px-5 rounded-2xl bg-indigo-500/40 hover:bg-indigo-400 hover:text-black">
+                    Les enseignants
+                </a>
                 <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 hover:text-black">
                     Export PDF
                 </button>
@@ -312,138 +320,31 @@
             </div>
         </section>
 
-        {{-- Remplacer les 2 @livewire(...) + la section "Élèves en Difficulté" par ce bloc --}}
-
         <section class="mb-6" x-data="{ activeTab: 'teachers' }">
 
-            {{-- NAV TABS --}}
-            <div
-                class="flex flex-wrap gap-2
-                p-2 mb-6
-                rounded-2xl
-                bg-slate-900
-                border border-slate-800">
-
-                <button @click="activeTab = 'teachers'"
-                    class="relative flex items-center gap-2
-                    px-4 py-2.5
-                    rounded-xl
-                    text-sm font-medium
-                    transition-all duration-300"
-                    :class="activeTab === 'teachers'
-                        ?
-                        'bg-indigo-500/15 text-indigo-400 shadow-[0_0_5px_-3px_rgba(99,102,241,0.4)]' :
-                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
-                    <span class="relative flex h-2 w-2 shrink-0">
-                        <span x-show="activeTab === 'teachers'"
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                        <span :class="activeTab === 'teachers' ? 'bg-indigo-400' : 'bg-slate-600'"
-                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
-                    </span>
-                    <x-lucide-users class="w-4 h-4" />
-                    <span>Enseignants</span>
-                </button>
-
-                <button @click="activeTab = 'students'"
-                    class="relative flex items-center gap-2
-                    px-4 py-2.5
-                    rounded-xl
-                    text-sm font-medium
-                    transition-all duration-300"
-                    :class="activeTab === 'students'
-                        ?
-                        'bg-purple-500/15 text-purple-400 shadow-[0_0_5px_-3px_rgba(16,185,129,0.4)]' :
-                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
-                    <span class="relative flex h-2 w-2 shrink-0">
-                        <span x-show="activeTab === 'students'"
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                        <span :class="activeTab === 'students' ? 'bg-purple-400' : 'bg-slate-600'"
-                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
-                    </span>
-                    <x-lucide-graduation-cap class="w-4 h-4" />
-                    <span>Élèves</span>
-                </button>
-
-                <button @click="activeTab = 'weak-students'"
-                    class="relative flex items-center gap-2
-                    px-4 py-2.5
-                    rounded-xl
-                    text-sm font-medium
-                    transition-all duration-300"
-                    :class="activeTab === 'weak-students'
-                        ?
-                        'bg-rose-500/15 text-rose-400 shadow-[0_0_5px_-3px_rgba(244,63,94,0.4)]' :
-                        'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
-                    <span class="relative flex h-2 w-2 shrink-0">
-                        <span x-show="activeTab === 'weak-students'"
+            <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
+                <div class="flex items-center gap-3">
+                    <span class="relative flex h-2.5 w-2.5 shrink-0">
+                        <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span :class="activeTab === 'weak-students' ? 'bg-rose-400' : 'bg-slate-600'"
-                            class="relative inline-flex rounded-full h-2 w-2 transition-colors duration-300"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-400"></span>
                     </span>
-                    <x-lucide-triangle-alert class="w-4 h-4" />
-                    <span>Élèves en Difficulté</span>
-                </button>
-
-            </div>
-
-            {{-- PANELS --}}
-            <div class="relative">
-
-                {{-- ENSEIGNANTS --}}
-                <div x-show="activeTab === 'teachers'" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-3"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-3">
-                    @livewire('tenants.serials.serial-teachers-list-component', ['serial' => $serial, 'activeYear' => $this->activeYear])
+                    <h2 class="text-lg font-semibold text-rose-400">Élèves en Difficulté</h2>
                 </div>
 
-                {{-- ÉLÈVES --}}
-                <div x-show="activeTab === 'students'" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-3"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-3">
-                    @livewire('tenants.serials.serial-students-list-component', ['serial' => $serial, 'activeYear' => $this->activeYear])
-                </div>
-
-                {{-- ÉLÈVES EN DIFFICULTÉ (statique) --}}
-                <div x-show="activeTab === 'weak-students'" x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-3"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-3">
-
-                    <div class="rounded-3xl bg-slate-900 border border-slate-800 p-5">
-                        <div class="flex items-center gap-3">
-                            <span class="relative flex h-2.5 w-2.5 shrink-0">
-                                <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-400"></span>
-                            </span>
-                            <h2 class="text-lg font-semibold text-rose-400">Élèves en Difficulté</h2>
-                        </div>
-
-                        <div class="mt-5 space-y-4">
-                            @foreach (range(1, 5) as $weak)
-                                <div class="rounded-2xl bg-slate-950 p-4">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h3 class="font-medium">KOFFI Junior</h3>
-                                            <p class="mt-1 text-sm text-slate-400">Terminale F2-2</p>
-                                        </div>
-                                        <span class="text-rose-400 font-bold">08.42</span>
-                                    </div>
+                <div class="mt-5 space-y-4">
+                    @foreach (range(1, 5) as $weak)
+                        <div class="rounded-2xl bg-slate-950 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-medium">KOFFI Junior</h3>
+                                    <p class="mt-1 text-sm text-slate-400">Terminale F2-2</p>
                                 </div>
-                            @endforeach
+                                <span class="text-rose-400 font-bold">08.42</span>
+                            </div>
                         </div>
-                    </div>
-
+                    @endforeach
                 </div>
-
             </div>
 
         </section>

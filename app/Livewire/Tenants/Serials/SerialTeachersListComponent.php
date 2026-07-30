@@ -3,18 +3,16 @@
 namespace App\Livewire\Tenants\Serials;
 
 
-use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 class SerialTeachersListComponent extends Component
 {
-    use WireUiActions, WithPagination, TeachersActions;
+    use WireUiActions;
 
     public ?Serial $serial;
 
@@ -32,7 +30,7 @@ class SerialTeachersListComponent extends Component
 
     public int $teachersPerPage = 30;
 
-    public $counter = 0;
+    public $counterh = 0;
 
 
     #[Computed]
@@ -55,7 +53,7 @@ class SerialTeachersListComponent extends Component
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
-        $this->counter++;
+        $this->counterh++;
     }
 
 
@@ -83,19 +81,6 @@ class SerialTeachersListComponent extends Component
         return $this->serial?->promotions;
     }
 
-    #[Computed]
-    public function teachers()
-    {
-        return $this->serial->getSerialTeachersOfSchoolYear(
-                                school_year_id: null, 
-                                classe_id: $this->teachers_classe_id, 
-                                promotion_id: $this->teachers_promotion_id,
-                                subject_id : $this->teachers_subject_id, 
-                            )
-                            ->orderBy('users.name')
-                            ->orderBy('users.prenames')
-                            ->paginate($this->teachersPerPage);
-    }
 
     public function render()
     {

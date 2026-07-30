@@ -2,44 +2,47 @@
 
 namespace App\Livewire\Tenants\Filiars;
 
-use App\Livewire\Tenants\ActionsTraits\StudentsActions;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
-use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
+#[Layout('livewire.layouts.tenant-auth-layout')]
+#[Title("Liste des apprenants d'une filière")]
 class FiliarStudentsListComponent extends Component
 {
-    use WireUiActions, WithPagination, StudentsActions;
+    use WireUiActions;
 
     public ?Filiar $filiar;
 
     public string $filiar_slug;
 
-    public ?string $students_gender = null;
-
-    public ?int $students_subject_id = null;
-
-    public ?int $students_promotion_id = null;
-    
-    public ?int $students_classe_id = null;
-
-    public int $studentsPerPage = 50;
-
     public int $counterh = 0;
+
+    public function mount(string $filiar_slug)
+    {
+
+        if(!$filiar_slug) return abort(404);
+
+        $this->filiar_slug  = $filiar_slug;
+
+        $filiar = Filiar::withTrashed()->whereSlug($filiar_slug)?->first();
+
+        if(!$filiar) return abort(404);
+
+        $this->filiar       = $filiar;
+
+
+    }
 
     #[Computed]
     public function activeYear(): ?SchoolYear
     {
         return SchoolYear::current()->first();
-    }
-
-    public function resetStudentsFilters()
-    {
-        $this->reset('students_classe_id', 'students_subject_id', 'students_promotion_id', 'students_gender');
     }
 
     #[On('DataUpdatedEventLiveEvent')]
@@ -49,43 +52,6 @@ class FiliarStudentsListComponent extends Component
     }
 
 
-    #[Computed]
-    public function filiars()
-    {
-        return Filiar::where('is_active', true)->orderBy('name')->get();
-    }
-
-    #[Computed]
-    public function classes()
-    {
-        return $this->filiar->classes()->where('classes.school_year_id', $this->activeYear->id)->where('classes.is_active', true)->where('classes.is_locked', false)->orderBy('name', 'desc')->get();
-    }
-
-    #[Computed]
-    public function subjects()
-    {
-        return $this->filiar?->getFiliarSubjectsOfSchoolYear()->orderBy('name', 'desc')->get();
-    }
-    
-    #[Computed]
-    public function promotions()
-    {
-        return $this->filiar?->promotions;
-    }
-
-    #[Computed]
-    public function students()
-    {
-        return $this->filiar->getFiliarStudentsOfSchoolYear(
-                                school_year_id: null, 
-                                classe_id: $this->students_classe_id, 
-                                promotion_id: $this->students_promotion_id,
-                                gender : $this->students_gender, 
-                            )
-                            ->orderBy('students.name')
-                            ->orderBy('students.prenames')
-                            ->paginate($this->studentsPerPage);
-    }
     public function render()
     {
         return view('livewire.tenants.filiars.filiar-students-list-component');
