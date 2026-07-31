@@ -16,6 +16,8 @@ use App\Livewire\Tenants\Classes\CreateClasseComponent;
 use App\Livewire\Tenants\Classes\EditClasseComponent;
 use App\Livewire\Tenants\Classes\ManageClasseYearlyResponsiblesComponent;
 use App\Livewire\Tenants\Classes\ManageYearlyClasseSubjectsTeacherComponent;
+use App\Livewire\Tenants\Classes\MarkRankingPrintableListComponent;
+use App\Livewire\Tenants\Classes\MarkRankingPrintsManagerComponent;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
@@ -231,6 +233,14 @@ Route::middleware([
             Route::get('/notes/impression/previsualisation', MarksPrintableListComponent::class)->name('notes.print.preview');
 
             Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
+
+
+            //LES MEILLEURS - FAIBLES APPRENANTS
+            Route::get('/apprenants-remarquables/gestion-impression/configuration/{classe_slug?}', MarkRankingPrintsManagerComponent::class)->name('students.bests.weaks.print.configuration');
+
+            Route::get('/apprenants-remarquables/impression/previsualisation', MarkRankingPrintableListComponent::class)->name('students.bests.weaks.print.preview');
+
+            // Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
 
 
             // LES ENSEIGNANTS

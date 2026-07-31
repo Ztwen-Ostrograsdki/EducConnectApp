@@ -122,7 +122,7 @@ class MarkPrintQuery
      * Calcule moy/moy_coef d'un élève pour UNE matière, à partir du cache de notes déjà
      * chargé pour cette (classe, matière, période).
      */
-    protected static function computeSubjectMoy(array $studentMarks, array $devoirColumns, float $coefficient): array
+    public static function computeSubjectMoy(array $studentMarks, array $devoirColumns, float $coefficient): array
     {
         $values = [];
         foreach (array_merge(self::INTERRO_TYPES, $devoirColumns) as $type) {

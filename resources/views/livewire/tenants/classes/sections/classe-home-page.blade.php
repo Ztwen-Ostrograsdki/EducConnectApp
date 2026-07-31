@@ -1,184 +1,194 @@
-<div class="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
-    <div class="w-full overflow-x-hidden">
-        <section class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl rounded-2xl">
-            <div class="px-3 py-2">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+<div class="min-h-screen bg-transparent text-slate-100 overflow-x-hidden">
+    <div class="w-full max-w-[1850px] mx-auto px-3 sm:px-4 lg:px-6 py-6">
 
-                    {{-- LEFT --}}
-                    <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <h1 class="text-lg md:text-base font-bold break-words py-4">
-                                Détails Généraux de la {{ $classe->code }}
-                            </h1>
-                        </div>
-                    </div>
+        {{-- ===================== HEADER ===================== --}}
+        <header class="mb-8 border-b border-b-sky-900 pb-3">
+            <div class="flex items-center gap-3 mb-1">
+                <span class="h-8 w-1 rounded-full bg-cyan-400"></span>
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400/70">
+                        Classe
+                    </p>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                        {{ $classe->code }}
+                    </h1>
                 </div>
             </div>
-        </section>
+            <p class="ml-4 text-sm text-slate-500">
+                Détails généraux et suivi de la classe
+            </p>
+        </header>
 
-        <section class="w-full max-w-full my-3 overflow-hidden">
-            <div class="grid grid-cols-1 2xl:grid-cols-3 gap-4 sm:gap-6">
+        {{-- ===================== GRID ===================== --}}
+        <div class="grid grid-cols-1 2xl:grid-cols-12 gap-5">
 
-                <div class="2xl:col-span-2 min-w-0 space-y-6">
+            {{-- ========== LEFT (8 cols) ========== --}}
+            <div class="2xl:col-span-8 space-y-5 min-w-0">
 
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-
-                        <div
-                            class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div class="min-w-0">
-                                <h3 class="font-semibold text-base sm:text-lg truncate">Élèves récemment ajoutés</h3>
-                                <p class="mt-1 text-sm text-slate-400 truncate">Liste récente des ajouts
-                                    <span class="text-gray-500 italic">Il y a deux semaines environ</span>
-                                </p>
-                            </div>
+                {{-- Élèves récemment ajoutés --}}
+                <div
+                    class="rounded-2xl bg-[#111827] border border-white/[0.06] overflow-hidden shadow-sm shadow-sky-600">
+                    <div class="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-base font-semibold text-white">Élèves récemment ajoutés</h2>
+                            <p class="mt-0.5 text-xs text-slate-500">
+                                Ajouts des 2 dernières semaines
+                            </p>
                         </div>
-
-                        <div class="divide-y divide-slate-800">
-                            @foreach ($classe->recentStudentsMigratedsIntoClasse(2) as $student)
-                                <div class="p-4 sm:p-5">
-                                    <div
-                                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 min-w-0">
-
-                                        <a wire:navigate
-                                            href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                            class="flex items-center gap-4 min-w-0 flex-1 hover:text-amber-500 underline-offset-4 hover:underline">
-                                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                                <img src="{{ $student->profil_photo_url }}"
-                                                    class="w-full h-full object-cover rounded-full">
-                                            </div>
-                                            <div class="min-w-0 flex-1">
-                                                <h4 class="font-medium truncate">Élève {{ $student->getFullName() }}
-                                                </h4>
-                                                <p class="text-sm text-slate-400 truncate">Matricule
-                                                    #458{{ $student->matricule }}</p>
-                                            </div>
-                                        </a>
-
-                                        <div class="text-xs font-mono text-slate-400 shrink-0">Ajouté à la classe le
-                                            {{ __formatDate($student->currentYearlyAccess($classe->id)?->started_at) }}
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
+                        <span
+                            class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 text-[11px] font-medium border border-cyan-500/20">
+                            Récent
+                        </span>
                     </div>
 
+                    <div class="divide-y divide-white/[0.04] bg-slate-950 shadow-sm shadow-sky-600">
+                        @forelse ($classe->recentStudentsMigratedsIntoClasse(2) as $student)
+                            <a wire:navigate
+                                href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                class="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors group">
+                                <img src="{{ $student->profil_photo_url }}" alt=""
+                                    class="w-11 h-11 rounded-xl object-cover ring-2 ring-white/10 group-hover:ring-cyan-500/40 transition-all shrink-0">
+                                <div class="min-w-0 flex-1">
+                                    <p
+                                        class="text-sm font-medium text-slate-200 group-hover:text-cyan-300 transition-colors truncate">
+                                        {{ $student->getFullName() }}
+                                    </p>
+                                    <p class="text-xs text-slate-500 font-mono mt-0.5">
+                                        #{{ $student->matricule }}
+                                    </p>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <p class="text-[11px] text-slate-500">Ajouté le</p>
+                                    <p class="text-xs text-slate-400 font-mono mt-0.5">
+                                        {{ __formatDate($student->currentYearlyAccess($classe->id)?->started_at) }}
+                                    </p>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="px-5 py-12 text-center">
+                                <p class="text-sm text-slate-600">Aucun élève récemment ajouté</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <div class="min-w-0 space-y-6 text-slate-400 font-semibold">
+            </div>
 
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
-                        <h3 class="font-semibold text-base flex justify-between items-center">
-                            <span>Prof principal (PP)</span>
-                            <a class="inline-flex items-center gap-x-3 px-4 py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 text-slate-200"
-                                wire:navigate
-                                href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}">
-                                <x-lucide-pen class="h-4 w-4" />
-                                <span>Editer</span>
-                            </a>
+            {{-- ========== RIGHT (4 cols) ========== --}}
+            <div class="2xl:col-span-4 space-y-5 min-w-0">
 
-                        </h3>
+                {{-- Prof principal --}}
+                <div
+                    class="rounded-2xl bg-slate-950 shadow-sm shadow-sky-600 border border-white/[0.06] overflow-hidden">
+                    <div class="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                        <h2 class="text-sm font-semibold text-white">Professeur principal</h2>
+                        <a wire:navigate href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}"
+                            class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition-all">
+                            <x-lucide-pen class="w-3.5 h-3.5" />
+                            Éditer
+                        </a>
+                    </div>
+
+                    <div class="p-5">
                         @if ($classe->principal)
                             <a wire:navigate
                                 href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $classe->principal?->uuid]) }}"
-                                class="mt-5 flex items-center gap-4 min-w-0 group">
-                                <div
-                                    class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-600">
-                                    <img src="{{ $classe->principal?->user->profil_photo_url }}"
-                                        class="w-full h-full object-cover rounded-full ">
-                                </div>
-                                <div class="min-w-0 flex-1 hover:text-sky-500">
-                                    <h4 class="font-semibold truncate group-hover:underline underline-offset-4">
-                                        {{ $classe->principal ? $classe->principal?->getFullName() : 'Non encore défini' }}
-                                    </h4>
+                                class="flex items-center gap-3.5 group">
+                                <img src="{{ $classe->principal?->user->profil_photo_url }}" alt=""
+                                    class="w-12 h-12 rounded-xl object-cover ring-2 ring-white/10 group-hover:ring-cyan-500/40 transition-all shrink-0">
+                                <div class="min-w-0">
+                                    <p
+                                        class="text-sm font-medium text-slate-200 group-hover:text-cyan-300 transition-colors truncate">
+                                        {{ $classe->principal?->getFullName() ?? 'Non défini' }}
+                                    </p>
                                     @if ($classe->principal?->getSubjectsForThisClasse($classe->id))
-                                        <p class="text-xs font-mono text-slate-400 truncate flex flex-wrap gap-2 ">
+                                        <div class="mt-1.5 flex flex-wrap gap-1">
                                             @foreach ($classe->principal?->getSubjectsForThisClasse($classe->id) as $classeSubject)
                                                 <span
-                                                    class="rounded-xl group-hover:border-sky-500 group-hover:bg-sky-600/40 p-1 px-3 group-hover:text-sky-500 border border-green-600 bg-green-600/40 text-green-300 uppercase">{{ $classeSubject->subject?->code }}</span>
+                                                    class="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-mono uppercase">
+                                                    {{ $classeSubject->subject?->code }}
+                                                </span>
                                             @endforeach
-                                        </p>
+                                        </div>
                                     @endif
                                 </div>
                             </a>
+                        @else
+                            <p class="text-sm text-slate-600 italic py-2">Non encore défini</p>
                         @endif
                     </div>
+                </div>
 
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
-                        <h3 class="font-semibold text-base flex justify-between items-center">
-                            <span>Responsables de classes</span>
-                            <a class="inline-flex items-center gap-x-3 px-4 py-2 rounded-2xl bg-slate-600 hover:bg-slate-800 text-slate-200"
-                                wire:navigate
-                                href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}">
-                                <x-lucide-pen class="h-4 w-4" />
-                                <span>Editer</span>
-                            </a>
+                {{-- Responsables de classe --}}
+                <div
+                    class="rounded-2xl bg-slate-950 shadow-sm shadow-sky-600 border border-white/[0.06] overflow-hidden">
+                    <div class="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                        <h2 class="text-sm font-semibold text-white">Responsables de classe</h2>
+                        <a wire:navigate href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}"
+                            class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition-all">
+                            <x-lucide-pen class="w-3.5 h-3.5" />
+                            Éditer
+                        </a>
+                    </div>
 
-                        </h3>
+                    <div class="p-4 space-y-3">
                         @if ($classe->respo_1_id && $classe->respo_2_id)
-                            <div class="flex flex-col gap-2.5 my-2.5">
-                                @foreach ($classe->responsables() as $key => $respo)
-                                    <div class="flex-col items-center justify-center border border-gray-600 rounded-2xl"
-                                        wire:key='respo-{{ $loop->iteration }}'>
-                                        <h5 class=" text-center border-b border-b-slate-600 py-2.5">
-                                            Responsable N° {{ $loop->iteration }}
-                                        </h5>
-                                        <a wire:navigate
-                                            href="{{ route('tenant.student.profil', ['student_uuid' => $respo->uuid]) }}"
-                                            class="mt-5 flex items-center gap-4 min-w-0 p-2 hover:text-amber-500 underline-offset-4 hover:underline">
-                                            <div class="w-16 h-16 bg-slate-800 shrink-0 rounded-full border-4">
-                                                <img src="{{ $respo->profil_photo_url }}"
-                                                    class="w-full h-full object-cover rounded-full">
-                                            </div>
-                                            <div class="min-w-0 flex-1">
-                                                <h6 class=" truncate">
-                                                    {{ $respo ? $respo?->getFullName() : 'Non encore défini' }}
-                                                </h6>
-
-                                            </div>
-                                        </a>
+                            @foreach ($classe->responsables() as $key => $respo)
+                                <a wire:navigate
+                                    href="{{ route('tenant.student.profil', ['student_uuid' => $respo->uuid]) }}"
+                                    class="flex items-center gap-3 p-3 rounded-xl bg-transparent shadow-xs shadow-purple-600 border border-white/[0.04] hover:border-cyan-500/30 transition-all group"
+                                    wire:key="respo-{{ $loop->iteration }}">
+                                    <div
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/25 text-cyan-400 text-[11px] font-bold shrink-0">
+                                        {{ $loop->iteration }}
                                     </div>
-                                @endforeach
-                            </div>
+                                    <img src="{{ $respo->profil_photo_url }}" alt=""
+                                        class="w-9 h-9 rounded-lg object-cover ring-1 ring-white/10 shrink-0">
+                                    <p
+                                        class="text-sm text-slate-300 group-hover:text-cyan-300 transition-colors truncate min-w-0">
+                                        {{ $respo?->getFullName() ?? 'Non défini' }}
+                                    </p>
+                                </a>
+                            @endforeach
+                        @else
+                            <p class="text-sm text-slate-600 italic py-3 text-center">Non encore définis</p>
                         @endif
                     </div>
+                </div>
 
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5 overflow-hidden">
-                        <h3 class="font-semibold text-base sm:text-lg">Statistiques</h3>
-                        <div class="mt-5 space-y-5">
+                {{-- Statistiques --}}
+                <div class="rounded-2xl bg-slate-950 shadow-sm shadow-sky-600 border border-white/[0.06] p-5">
+                    <h2 class="text-sm font-semibold text-white mb-5">Statistiques</h2>
 
-                            <div>
-                                <div class="flex items-center justify-between gap-3 mb-2">
-                                    <span class="text-sm truncate">Présence</span>
-                                    <span class="text-sm shrink-0 text-slate-600">En cours...</span>
-                                </div>
-                                <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
-                                    <div class="h-full w-[96%] bg-emerald-500 rounded-full"></div>
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-slate-400">Présence</span>
+                                <span class="text-xs font-mono text-emerald-400">96%</span>
+                            </div>
+                            <div class="h-1.5 rounded-full bg-[#0a0e17] overflow-hidden">
+                                <div
+                                    class="h-full w-[96%] rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400">
                                 </div>
                             </div>
+                        </div>
 
-                            {{-- BAR --}}
-                            <div>
-                                <div class="flex items-center justify-between gap-3 mb-2">
-                                    <span class="text-sm truncate">Réussite</span>
-                                    <span class="text-sm shrink-0 text-slate-600">En cours...</span>
-                                </div>
-                                <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
-                                    <div class="h-full w-[82%] bg-indigo-500 rounded-full"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-slate-400">Réussite</span>
+                                <span class="text-xs font-mono text-indigo-400">82%</span>
+                            </div>
+                            <div class="h-1.5 rounded-full bg-[#0a0e17] overflow-hidden">
+                                <div class="h-full w-[82%] rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400">
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
 
             </div>
-        </section>
+        </div>
 
     </div>
-
 </div>
 

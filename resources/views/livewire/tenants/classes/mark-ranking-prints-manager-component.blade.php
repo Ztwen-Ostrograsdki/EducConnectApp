@@ -1,70 +1,171 @@
 <div class="min-h-screen bg-[#070b14] text-slate-100">
-    <div class="mx-auto max-w-[1100px] px-4 sm:px-6 py-10 relative" wire:loading.class="opacity-40 pointer-events-none"
-        wire:target="resetFilters, restoreSelects, promotionInGroups">
+    <div class="mx-auto max-w-[1100px] px-4 sm:px-6 py-10 relative">
 
-        {{-- ===================== HEADER ===================== --}}
-        <header class="mb-8 text-center">
+        {{-- Loading overlay --}}
+        <div wire:loading wire:target="resetFilters, restoreSelects, initPrintProcess"
+            class="fixed inset-0 z-[200] flex items-center justify-center bg-[#070b14]/80 backdrop-blur-sm">
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative">
+                    <div class="w-14 h-14 rounded-full border-2 border-violet-500/30 border-t-violet-400 animate-spin">
+                    </div>
+                </div>
+                <span class="text-sm font-mono text-slate-400 tracking-wide">Chargement…</span>
+            </div>
+        </div>
+
+        {{-- ===================== PAGE HEADER ===================== --}}
+        <header class="mb-10 text-center">
             <div
                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-[11px] font-semibold uppercase tracking-[0.2em] mb-4">
                 <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span>
-                Impression des apprenants
+                Classement & Impression
             </div>
             <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-                Configuration de la liste
+                Configuration du classement
             </h1>
             <p class="mt-3 text-slate-500 text-sm max-w-lg mx-auto">
-                Ciblez les apprenants, définissez les statuts et personnalisez le format du document.
+                Définissez la période, le périmètre et le format du document avant de lancer l’impression.
             </p>
         </header>
 
-        {{-- ===================== QUICK LINKS ===================== --}}
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-            @if ($classe_slug)
-                <a wire:navigate href="{{ route('tenant.students.docs', ['classe_slug' => $classe_slug]) }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-file class="w-3.5 h-3.5" />
-                    Documents PDF/Excel
-                </a>
-                <a wire:navigate href="{{ route('tenant.classe.profil', ['classe_slug' => $classe_slug]) }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/25 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-school class="w-3.5 h-3.5" />
-                    Profil classe
-                </a>
-            @else
-                <a wire:navigate href="{{ route('tenant.students.docs') }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-file class="w-3.5 h-3.5" />
-                    Documents PDF/Excel
-                </a>
-            @endif
-            <a href="{{ route('tenant.students.print.list') }}"
-                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
-                <x-lucide-eye class="w-3.5 h-3.5" />
-                Prévisualisation
-            </a>
-        </div>
-
         <div class="space-y-6">
 
-            {{-- ═══ 1. CIBLAGE ═══ --}}
+            {{-- ═══ 1. PÉRIODE + MATIÈRE ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
                 <div class="px-6 py-4 border-b border-white/[0.06] flex items-center gap-3">
                     <div
                         class="flex items-center justify-center w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25">
+                        <span class="text-lg">📅</span>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-white">Période et matière</h2>
+                        <p class="text-[11px] text-slate-500">Base du calcul du classement</p>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-5">
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                Période <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="period"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
+                                <option value="">Sélectionner le {{ $this->activeYear?->periodLabel() }}</option>
+                                @foreach ($this->periods_types as $p)
+                                    <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                Matière <span class="text-slate-600 normal-case tracking-normal">(optionnel)</span>
+                            </label>
+                            <select wire:model.live="subject_id"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
+                                <option value="">Toutes matières (moyenne semestrielle)</option>
+                                @foreach ($this->subjects as $sub)
+                                    <option value="{{ $sub->id }}">{{ $sub->code ?: $sub->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div wire:key="subject-hint-{{ $subject_id ?: 'none' }}"
+                        class="flex items-start gap-3 rounded-xl bg-violet-500/5 border border-violet-500/15 px-4 py-3">
+                        <x-lucide-info class="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            @if ($subject_id)
+                                Classement basé sur la moyenne <span class="text-violet-300 font-medium">de cette
+                                    matière uniquement</span>.
+                            @else
+                                Classement basé sur la <span class="text-violet-300 font-medium">moyenne
+                                    semestrielle</span> (toutes matières confondues).
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {{-- ═══ 2. PARAMÈTRES ═══ --}}
+            <section
+                class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
+                <div class="px-6 py-4 border-b border-white/[0.06] flex items-center gap-3">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/25">
+                        <span class="text-lg">⚙️</span>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-white">Paramètres du classement</h2>
+                        <p class="text-[11px] text-slate-500">Cible, limite et regroupement</p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label
+                                class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Cible</label>
+                            <select wire:model.live="targeted"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all">
+                                @foreach ($targetedOptions as $key => $label)
+                                    <option value="{{ $key }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Limite
+                                par groupe</label>
+                            <input type="number" min="1" wire:model.live.debounce.500ms="limit"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Regrouper
+                                par</label>
+                            <select wire:model.live="groupedBy"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all">
+                                @foreach ($groupedByOptions as $key => $label)
+                                    <option value="{{ $key }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Sexe</label>
+                            <select wire:model.live="gender"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all">
+                                <option value="">Indifférent</option>
+                                <option value="M">Garçons</option>
+                                <option value="F">Filles</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {{-- ═══ 3. PÉRIMÈTRE ═══ --}}
+            <section
+                class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
+                <div class="px-6 py-4 border-b border-white/[0.06] flex items-center gap-3">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/25">
                         <span class="text-lg">🎯</span>
                     </div>
                     <div>
-                        <h2 class="text-sm font-semibold text-white">Cibler les apprenants</h2>
-                        <p class="text-[11px] text-slate-500">Classe, filière, série, promotion, localisation…</p>
+                        <h2 class="text-sm font-semibold text-white">Restreindre le périmètre</h2>
+                        <p class="text-[11px] text-slate-500">Optionnel — filtrer les classes concernées</p>
                     </div>
                 </div>
 
                 <div class="p-6">
                     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         @if (!$filiar_id && !$serial_id && !$promotion_id && !$promotionInGroups)
-                            <select @disabled($classe_slug && $classe_id) wire:model.live="classe_id"
-                                class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all disabled:opacity-40">
+                            <select wire:model.live="classe_id"
+                                class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-amber-500/40 transition-all">
                                 <option value="">Toutes les classes</option>
                                 @foreach ($this->classes as $cl)
                                     <option value="{{ $cl->id }}">{{ $cl->code ?: $cl->name }}</option>
@@ -76,7 +177,7 @@
                             @if (!$promotion_id)
                                 @if (!$serial_id)
                                     <select wire:model.live="filiar_id"
-                                        class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
+                                        class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-amber-500/40 transition-all">
                                         <option value="">Toutes les filières</option>
                                         @foreach ($this->filiars as $f)
                                             <option value="{{ $f->id }}">{{ $f->code ?: $f->name }}</option>
@@ -85,7 +186,7 @@
                                 @endif
                                 @if (!$filiar_id)
                                     <select wire:model.live="serial_id"
-                                        class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
+                                        class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-amber-500/40 transition-all">
                                         <option value="">Toutes les séries</option>
                                         @foreach ($this->serials as $sr)
                                             <option value="{{ $sr->id }}">{{ $sr->code ?: $sr->name }}</option>
@@ -96,7 +197,7 @@
 
                             @if (!$filiar_id && !$serial_id && !$promotionInGroups)
                                 <select wire:model.live="promotion_id"
-                                    class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
+                                    class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-amber-500/40 transition-all">
                                     <option value="">Promotions spécifiées</option>
                                     @foreach ($this->promotions as $promo)
                                         <option value="{{ $promo->id }}">{{ $promo->code ?: $promo->name }}
@@ -107,85 +208,46 @@
 
                             @if (!$promotion_id)
                                 <select wire:model.live="promotionInGroups"
-                                    class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
+                                    class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-amber-500/40 transition-all">
                                     <option value="">Toutes les promotions</option>
-                                    @foreach ($this->promotionsGrouped as $kp => $n)
+                                    @foreach ($this->promotionsGrouped as $n)
                                         <option value="{{ $n }}">Promotion {{ $n }}</option>
                                     @endforeach
                                 </select>
                             @endif
                         @endif
 
-                        <select wire:model.live="department"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
-                            <option value="">Département</option>
-                            @foreach ($this->departments as $dp => $dpv)
-                                <option value="{{ $dpv }}">{{ $dpv }}</option>
-                            @endforeach
-                        </select>
-
-                        <select wire:model.live="city"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
-                            <option value="">Ville</option>
-                            @foreach ($this->cities as $ct => $ctv)
-                                <option value="{{ $ctv }}">{{ $ctv }}</option>
-                            @endforeach
-                        </select>
-
-                        <select wire:model.live="gender"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40 transition-all">
-                            <option value="">Sexe</option>
-                            @foreach ($this->genders as $gk => $gdr)
-                                <option value="{{ $gk }}">{{ $gdr }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" wire:model.live.debounce.400ms="level"
+                            placeholder="Niveau (ex: 6ème, 2nde…)"
+                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-amber-500/40 transition-all">
                     </div>
                 </div>
             </section>
 
-            {{-- ═══ 2. STATUTS ═══ --}}
+            {{-- ═══ 4. STATUT ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
                 <div class="px-6 py-4 border-b border-white/[0.06] flex items-center gap-3">
                     <div
                         class="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/25">
-                        <span class="text-lg">📊</span>
+                        <span class="text-lg">👤</span>
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-white">Statut des apprenants</h2>
-                        <p class="text-[11px] text-slate-500">Actifs, avec classe, corbeille…</p>
+                        <p class="text-[11px] text-slate-500">Filtrer selon le statut</p>
                     </div>
                 </div>
-
                 <div class="p-6">
-                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <select wire:model.live="studentTypesActivesOrNotTargeted"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-emerald-500/40 transition-all">
-                            @foreach ($studentsTypesActivesOrNot as $stk => $stn)
-                                <option value="{{ $stk }}">{{ $stn }}</option>
-                            @endforeach
-                        </select>
-
-                        @if (!$classe_id)
-                            <select wire:model.live="studentsTypesWithOrWithoutClasses"
-                                class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-emerald-500/40 transition-all">
-                                @foreach ($studentsWithOrWithoutClasses as $sck => $scn)
-                                    <option value="{{ $sck }}">{{ $scn }}</option>
-                                @endforeach
-                            </select>
-                        @endif
-
-                        <select wire:model.live="trashedStatus"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-emerald-500/40 transition-all">
-                            @foreach ($trashedStatuses as $sstk => $sstn)
-                                <option value="{{ $sstk }}">{{ $sstn }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <select wire:model.live="leavesStatus"
+                        class="w-full sm:w-1/2 h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all">
+                        @foreach ($leavesStatuses as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </section>
 
-            {{-- ═══ 3. COMPTEUR + TITRE ═══ --}}
+            {{-- ═══ 5. TITRE DU DOCUMENT ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
                 <div class="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
@@ -196,7 +258,7 @@
                         </div>
                         <div>
                             <h2 class="text-sm font-semibold text-white">Document généré</h2>
-                            <p class="text-[11px] text-slate-500">Volume et titre de l’impression</p>
+                            <p class="text-[11px] text-slate-500">Titre dynamique selon vos choix</p>
                         </div>
                     </div>
                     <button wire:click="resetFilters"
@@ -211,18 +273,8 @@
                     </button>
                 </div>
 
-                <div class="p-6 space-y-4">
-                    <div class="flex items-center gap-3">
-                        <span
-                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-500/25 text-violet-300 text-sm font-semibold tabular-nums">
-                            {{ __zero($this->allStudentsCounter) }}
-                        </span>
-                        <span
-                            class="text-sm text-slate-400">enregistrement{{ $this->allStudentsCounter > 1 ? 's' : '' }}
-                            trouvé{{ $this->allStudentsCounter > 1 ? 's' : '' }}</span>
-                    </div>
-
-                    <div
+                <div class="p-6">
+                    <div wire:key="doc-title-{{ md5($this->currentDocTitle) }}"
                         class="rounded-xl bg-gradient-to-r from-orange-500/10 via-orange-500/5 to-transparent border border-orange-500/20 px-5 py-4">
                         <p class="text-[10px] uppercase tracking-[0.15em] text-orange-400/70 font-semibold mb-1.5">
                             Titre du document
@@ -234,7 +286,7 @@
                 </div>
             </section>
 
-            {{-- ═══ 4. COLONNES ═══ --}}
+            {{-- ═══ 6. COLONNES ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
                 <div class="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
@@ -265,24 +317,26 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         @foreach ($this->availableColumns as $key => $column)
                             @php($order = array_search($key, $selectedColumns, true))
-                            <div wire:key="col-{{ $key }}"
-                                class="relative rounded-xl border p-3.5 transition-all duration-200 cursor-pointer
-                                        {{ $order !== false
-                                            ? 'border-violet-500/50 bg-violet-500/10 shadow-lg shadow-violet-900/20'
-                                            : 'border-white/[0.06] bg-[#070b14] hover:border-white/15' }}">
+                            <div wire:key="col-{{ $key }}" x-data="{ checked: {{ $order !== false ? 'true' : 'false' }} }"
+                                class="relative rounded-xl border p-3.5 transition-all duration-200 cursor-pointer"
+                                :class="checked
+                                    ?
+                                    'border-violet-500/50 bg-violet-500/10 shadow-lg shadow-violet-900/20' :
+                                    'border-white/[0.06] bg-[#070b14] hover:border-white/15'">
                                 <label class="flex items-center justify-between gap-2 cursor-pointer">
                                     <span class="flex items-center gap-2 min-w-0">
-                                        @if ($order !== false)
+                                        <template x-if="checked">
                                             <span
                                                 class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-600 text-[10px] font-bold text-white">
-                                                {{ $order + 1 }}
+                                                {{ $order !== false ? $order + 1 : '' }}
                                             </span>
-                                        @endif
+                                        </template>
                                         <span
                                             class="text-xs font-medium text-slate-200 truncate">{{ $column['label'] }}</span>
                                     </span>
                                     <span class="relative flex shrink-0">
                                         <input type="checkbox" wire:click="toggleColumn('{{ $key }}')"
+                                            x-on:click="checked = !checked"
                                             wire:key="input-{{ $key }}-{{ $order !== false ? 'on' : 'off' }}"
                                             @checked($order !== false) class="peer sr-only">
                                         <span
@@ -297,7 +351,7 @@
                 </div>
             </section>
 
-            {{-- ═══ 5. PRÉVISUALISATION ═══ --}}
+            {{-- ═══ 7. PRÉVISUALISATION ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
                 <div class="px-6 py-4 border-b border-white/[0.06]">
@@ -305,11 +359,9 @@
                         @if (count($this->orderedColumns))
                             Aperçu de l’entête
                             <span class="text-violet-400 font-normal text-xs ml-1">(personnalisé)</span>
-                        @elseif ($defaultColumns)
-                            Aperçu de l’entête
-                            <span class="text-slate-500 font-normal text-xs ml-1">(par défaut)</span>
                         @else
                             Aperçu de l’entête
+                            <span class="text-slate-500 font-normal text-xs ml-1">(par défaut)</span>
                         @endif
                     </h2>
                 </div>
@@ -331,25 +383,24 @@
                                 </tr>
                             </thead>
                         </table>
-                    @elseif ($defaultColumns)
+                    @else
                         <table class="w-full min-w-[600px] opacity-60">
                             <thead>
                                 <tr class="border-b border-white/10">
                                     <th
                                         class="px-4 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
                                         N°</th>
-                                    @foreach ($defaultColumns as $dfth)
+                                    @foreach ($this->defaultOrderedColumns as $th)
                                         <th
                                             class="px-4 py-3 text-center text-[11px] font-medium uppercase tracking-wider text-slate-500 whitespace-nowrap">
-                                            {{ $dfth['label'] }}
+                                            {{ $th }}
                                         </th>
                                     @endforeach
                                 </tr>
                             </thead>
                         </table>
-                    @else
-                        <p class="text-center text-slate-600 text-sm py-8 animate-pulse">
-                            En attente des sélections…
+                        <p class="text-center text-slate-600 text-xs mt-4 animate-pulse">
+                            Cochez des colonnes ci-dessus pour personnaliser…
                         </p>
                     @endif
                 </div>
@@ -365,13 +416,9 @@
                     <span
                         class="relative flex items-center justify-center gap-2.5 text-white font-semibold text-sm tracking-wide">
                         <span wire:loading.remove wire:target="initPrintProcess"
-                            class="inline-flex items-center gap-2.5 flex-wrap justify-center">
+                            class="inline-flex items-center gap-2.5">
                             <x-lucide-send class="w-5 h-5" />
-                            <span>Lancer la procédure d’impression</span>
-                            <span class="text-white/70 text-xs font-normal">
-                                ({{ __zero($this->allStudentsCounter) }}
-                                enregistrement{{ $this->allStudentsCounter > 1 ? 's' : '' }})
-                            </span>
+                            Lancer la procédure d’impression
                         </span>
                         <span wire:loading wire:target="initPrintProcess" class="inline-flex items-center gap-2.5">
                             <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />

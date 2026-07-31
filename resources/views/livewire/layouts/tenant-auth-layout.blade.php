@@ -427,13 +427,13 @@
                                 <a wire:navigate href="#" class="s-link">
                                     <div class="s-icon">📝</div><span class="s-label">Notes</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+                                <a wire:navigate href="{{ route('tenant.students.bests.weaks.print.configuration') }}"
                                     class="s-link">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a href="{{ route('tenant.notes.print.preview') }}" class="s-link">
+                                <a href="{{ route('tenant.students.bests.weaks.print.preview') }}" class="s-link">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Prévisualisation</span>

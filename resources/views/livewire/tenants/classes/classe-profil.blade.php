@@ -172,83 +172,53 @@
 
         </div>
     </section>
-    <section class="px-1 pt-6">
-        <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-            <div class="overflow-x-auto">
-                <div class="flex gap-2 p-3 w-max min-w-full">
-
-                    <button wire:click="setSection('classe-home-page')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-home-page',
-                        'hover:bg-slate-800' => $section !== 'classe-home-page',
-                    ])>
-                        Vue Générale
+    {{-- ===================== TABS ===================== --}}
+    <section class="px-1 pt-4" x-data="{
+        tabs: [
+            { id: 'classe-home-page', label: 'Vue générale', icon: '📊' },
+            { id: 'classe-students-list', label: 'Élèves', icon: '🎓' },
+            { id: 'classe-teachers-list', label: 'Enseignants', icon: '👨‍🏫' },
+            { id: 'classe-parents-page', label: 'Parents', icon: '👪' },
+            { id: 'classe-marks-page', label: 'Notes', icon: '📝' },
+            { id: 'classe-presence-page', label: 'Présences', icon: '✅' },
+            { id: 'classe-plan-page', label: 'Emploi du temps', icon: '📅' },
+            { id: 'classe-pupil-bulletin-component', label: 'Bulletins', icon: '📋' },
+        ]
+    }">
+        <div class="rounded-2xl bg-slate-950 border shadow-sm shadow-sky-900 border-white/5 p-1.5 overflow-x-auto">
+            <div class="flex gap-3 w-max min-w-full">
+                @foreach ([
+        'classe-home-page' => ['Vue générale', '📊'],
+        'classe-students-list' => ['Élèves', '🎓'],
+        'classe-teachers-list' => ['Enseignants', '👨‍🏫'],
+        'classe-parents-page' => ['Parents', '👪'],
+        'classe-marks-page' => ['Notes', '📝'],
+        'classe-presence-page' => ['Présences', '✅'],
+        'classe-plan-page' => ['Emploi du temps', '📅'],
+        'classe-pupil-bulletin-component' => ['Bulletins', '📋'],
+    ] as $id => [$label, $icon])
+                    <button wire:click="setSection('{{ $id }}')" type="button"
+                        class="relative shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer
+                               {{ $section === $id ? 'text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5' }}">
+                        {{-- Active pill background --}}
+                        @if ($section === $id)
+                            <span
+                                class="absolute inset-0 rounded-xl bg-violet-600 shadow-lg shadow-violet-900/40
+                                     animate-[tabIn_0.25s_ease-out]"></span>
+                        @endif
+                        <span class="relative z-10 inline-flex items-center gap-2">
+                            <span class="text-sm opacity-80">{{ $icon }}</span>
+                            <span>{{ $label }}</span>
+                        </span>
                     </button>
-
-                    <button wire:click="setSection('classe-students-list')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-students-list',
-                        'hover:bg-slate-800' => $section !== 'classe-students-list',
-                    ])>
-                        Élèves
-                    </button>
-
-                    <button wire:click="setSection('classe-teachers-list')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-teachers-list',
-                        'hover:bg-slate-800' => $section !== 'classe-teachers-list',
-                    ])>
-                        Enseignants
-                    </button>
-
-                    <button wire:click="setSection('classe-parents-page')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-parents-page',
-                        'hover:bg-slate-800' => $section !== 'classe-parents-page',
-                    ])>
-                        Parents
-                    </button>
-
-                    <button wire:click="setSection('classe-marks-page')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-marks-page',
-                        'hover:bg-slate-800' => $section !== 'classe-marks-page',
-                    ])>
-                        Notes
-                    </button>
-
-                    <button wire:click="setSection('classe-presence-page')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-presence-page',
-                        'hover:bg-slate-800' => $section !== 'classe-presence-page',
-                    ])>
-                        Présences
-                    </button>
-
-                    <button wire:click="setSection('classe-plan-page')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' => $section === 'classe-plan-page',
-                        'hover:bg-slate-800' => $section !== 'classe-plan-page',
-                    ])>
-                        Emploi du temps
-                    </button>
-
-                    <button wire:click="setSection('classe-pupil-bulletin-component')" @class([
-                        'shrink-0 px-2 py-3 rounded-2xl cursor-pointer transition-all text-sm',
-                        'bg-indigo-500 text-white' =>
-                            $section === 'classe-pupil-bulletin-component',
-                        'hover:bg-slate-800' => $section !== 'classe-pupil-bulletin-component',
-                    ])>
-                        Bulletins
-                    </button>
-
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
 
-    <section class="p-2 my-2.5 shadow-sm shadow-cyan-600 rounded-2xl">
-        <div wire:key="section-{{ $section }}">
+    {{-- ===================== CONTENT ===================== --}}
+    <section class="p-2 my-4 border border-slate-900 rounded-2xl">
+        <div wire:key="section-{{ $section }}" class="animate-[fadeSlide_0.3s_ease-out]">
 
             @switch($section)
                 @case('classe-home-page')
@@ -281,49 +251,38 @@
 
                 @case('classe-pupil-bulletin-component')
                     <section class="mb-6">
-                        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
-                            <div class="flex flex-col xl:flex-row gap-4">
+                        <div class="rounded-2xl bg-[#121826] border border-white/5 p-4 sm:p-5">
+                            <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+                                <select wire:model.live="period_type_selected"
+                                    class="h-11 min-w-[200px] rounded-xl bg-[#0b0f19] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
+                                    <option value="">Sélectionner le semestre / trimestre</option>
+                                    @foreach (range(1, 2) as $i)
+                                        <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
+                                    @endforeach
+                                    @foreach (range(1, 3) as $i)
+                                        <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                                    @endforeach
+                                </select>
 
-                                {{-- FILTERS --}}
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <select wire:model.live="student_uuid_selected"
+                                    class="h-11 min-w-[220px] rounded-xl bg-[#0b0f19] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
+                                    <option value="">Sélectionner l'apprenant</option>
+                                    @foreach (range(1, 10) as $i)
+                                        <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                                    {{-- SEMESTER --}}
-                                    <select wire:model.live="period_type_selected"
-                                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
-                                        <option value="">Sélectionner le semestre|trimestre</option>
-                                        @foreach (range(1, 2) as $i)
-                                            <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
-                                        @endforeach
-                                        @foreach (range(1, 3) as $i)
-                                            <option value="Trimestre {{ $i }}">Trimestre {{ $i }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    {{-- PUPILS --}}
-                                    <select wire:model.live="student_uuid_selected"
-                                        class="h-12 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
-                                        <option value="">Sélectionner l'apprenant</option>
-                                        @foreach (range(1, 10) as $i)
-                                            <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc
-                                                {{ $i }}</option>
-                                        @endforeach
-                                    </select>
-
-                                    {{-- ACTIONS --}}
-                                    @if ($student_uuid_selected && $period_type_selected)
-                                        <button wire:click='reloadStudentBulletin'
-                                            class="h-12 px-5 rounded-2xl bg-sky-800 border border-sky-700 hover:bg-sky-700 transition-all text-sm cursor-pointer">
-                                            Charger
-                                        </button>
-                                        <button wire:click='resetBulletinSelections'
-                                            class="h-12 px-5 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all text-sm cursor-pointer">
-                                            Réinitialiser
-                                        </button>
-                                    @endif
-
-                                </div>
-
+                                @if ($student_uuid_selected && $period_type_selected)
+                                    <button wire:click="reloadStudentBulletin"
+                                        class="h-11 px-5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium transition-all active:scale-[0.97]">
+                                        Charger
+                                    </button>
+                                    <button wire:click="resetBulletinSelections"
+                                        class="h-11 px-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm font-medium transition-all active:scale-[0.97]">
+                                        Réinitialiser
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </section>
@@ -334,6 +293,33 @@
 
         </div>
     </section>
+
+    {{-- Keyframes (à mettre dans ton CSS global ou via @layer si Tailwind) --}}
+    <style>
+        @keyframes tabIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 
 </div>
 

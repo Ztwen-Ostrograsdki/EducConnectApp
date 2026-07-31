@@ -1,7 +1,7 @@
 <div class="w-full max-w-full overflow-x-hidden">
     <section class="mb-6">
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border-b-2 border-b-sky-900 ">
 
             {{-- LEFT --}}
             <div class="min-w-0 p-3">

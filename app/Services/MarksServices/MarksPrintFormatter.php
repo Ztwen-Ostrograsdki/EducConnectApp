@@ -34,6 +34,7 @@ class MarksPrintFormatter
         return match ($key) {
             'student'      => $student->getFullName(),
             'classe'       => $context['classeLabel'] ?? null,
+            'average'      => $context['average'] ?? null,
             'observations' => null,
             default        => $context[$key] ?? null,
         };

@@ -29,6 +29,7 @@ class PDFFactory
         'listes'        => 'documents',
         'bulletins'     => 'bulletins',
         'epreuves'      => 'epreuves',
+        'marks'         => 'notes',
         'classes'       => 'documents', 
         'temp'          => 'temp',
     ];
