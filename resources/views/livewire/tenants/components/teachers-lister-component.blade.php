@@ -35,56 +35,75 @@
                         </div>
 
                         <div class="flex items-center flex-wrap gap-3">
-                            <select wire:model.live='subject_id'
-                                class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
-                                <option value="">Toutes les matières</option>
-                                @foreach ($this->subjects as $sub)
-                                    <option value="{{ $sub->id }}">
-                                        {{ $sub->code ? $sub->code : $sub->name }}
-                                    </option>
-                                @endforeach
-                            </select>
 
-                            <select wire:model.live='subject_type'
-                                class="py-3 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm col-span-6 uppercase">
-                                <option value="">Tous types de matières</option>
-                                @foreach ($this->subject_types as $subk => $sub)
-                                    <option class="uppercase" value="{{ $sub }}">
-                                        {{ $sub }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if (!$subject)
+                                <select wire:model.live='subject_id'
+                                    class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                                    <option value="">Toutes les matières</option>
+                                    @foreach ($this->subjects as $sub)
+                                        <option value="{{ $sub->id }}">
+                                            {{ $sub->code ? $sub->code : $sub->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                            <select wire:model.live='promotionInGroups'
-                                class="h-12  rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
-                                <option value="">Toutes les promotions groupées</option>
-                                @foreach ($this->promotions as $kp => $n)
-                                    <option value="{{ $n }}">
-                                        Promotion
-                                        {{ $n }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                <select wire:model.live='subject_type'
+                                    class="py-3 px-4 rounded-2xl bg-slate-950 border border-slate-800 text-sm col-span-6 uppercase">
+                                    <option value="">Tous types de matières</option>
+                                    @foreach ($this->subject_types as $subk => $sub)
+                                        <option class="uppercase" value="{{ $sub }}">
+                                            {{ $sub }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
 
-                            <select wire:model.live='classe_id'
-                                class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
-                                <option value="">Toutes les classes</option>
-                                @foreach ($this->classes as $cl)
-                                    <option value="{{ $cl->id }}">
-                                        Classe de {{ $cl->code ? $cl->code : $cl->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if (!$promotion && !$promotionModel)
+                                <select wire:model.live='promotionInGroups'
+                                    class="h-12  rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                                    <option value="">Toutes les promotions groupées</option>
+                                    @foreach ($this->promotions as $kp => $n)
+                                        <option value="{{ $n }}">
+                                            Promotion
+                                            {{ $n }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
 
-                            <select wire:model.live='filiar_id'
-                                class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
-                                <option value="">Toutes les filières</option>
-                                @foreach ($this->filiars as $f)
-                                    <option value="{{ $f->id }}">
-                                        Filière {{ $f->code ? $f->code : $f->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if (!$classe)
+                                <select wire:model.live='classe_id'
+                                    class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                                    <option value="">Toutes les classes</option>
+                                    @foreach ($this->classes as $cl)
+                                        <option value="{{ $cl->id }}">
+                                            Classe de {{ $cl->code ? $cl->code : $cl->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @if (!$serial && !$filiar && !$promotionModel)
+                                    <select wire:model.live='filiar_id'
+                                        class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                                        <option value="">Toutes les filières</option>
+                                        @foreach ($this->filiars as $f)
+                                            <option value="{{ $f->id }}">
+                                                Filière {{ $f->code ? $f->code : $f->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <select wire:model.live='serial_id'
+                                        class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
+                                        <option value="">Toutes les séries</option>
+                                        @foreach ($this->serials as $s)
+                                            <option value="{{ $s->id }}">
+                                                Série {{ $s->code ? $s->code : $s->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                @endif
+                            @endif
 
                             <select wire:model.live='department'
                                 class="h-11 px-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm">
@@ -185,7 +204,7 @@
                 <div class="overflow-x-auto">
 
                     @if ($this->teachers->isEmpty())
-                        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-16 text-center">
+                        <div class=" border-slate-800 border bg-transparent p-16 text-center">
                             <div class="text-4xl mb-4">🏫</div>
                             <p class="text-slate-400 text-sm">Aucune classe trouvée pour ces filtres.</p>
                             <button wire:click="clearFilters"

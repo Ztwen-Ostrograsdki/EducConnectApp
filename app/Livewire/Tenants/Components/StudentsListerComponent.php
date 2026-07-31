@@ -87,7 +87,7 @@ class StudentsListerComponent extends Component
             return;
         }
 
-        if($this->promotion){
+        if($this->promotion || $this->promotionModel){
 
             session()->forget(
                 [
@@ -241,7 +241,7 @@ class StudentsListerComponent extends Component
         
         elseif($this->promotion){
 
-            Classe::where('is_active', true)->where('school_year_id', $this->activeYear->id)
+            return Classe::where('is_active', true)->where('school_year_id', $this->activeYear->id)
                  ->whereHas('promotion', fn($q) => 
                       $q->where('name', str()->lower($this->promotion))
                       ->orWhere('name', str()->upper($this->promotion))
@@ -251,7 +251,16 @@ class StudentsListerComponent extends Component
                  ->orderBy('name', 'desc')->get();
 
         } 
-        else return [];
+        elseif($this->promotionModel){
+
+            return Classe::where('is_active', true)
+                   ->where('school_year_id', $this->activeYear->id)
+                   ->where('promotion_id', $this->promotionModel->id)
+                   ->where('is_locked', false)
+                   ->orderBy('name', 'desc')->get();
+
+        } 
+        else return collect();
         
     }
 
@@ -329,24 +338,47 @@ class StudentsListerComponent extends Component
             // Filtres secondaires possibles quand on est en mode série
             $this->applySecondaryFiltersWhenSerial($query);
         }
-        elseif ($this->promotion) {
+        elseif ($this->promotion || $this->promotionModel) {
             // Tous les élèves d'une promotion (par nom)
-            $promotionName = is_object($this->promotion) 
+            if($this->promotion && !$this->promotionModel){
+
+                $promotionName = is_object($this->promotion) 
                 ? $this->promotion->name 
                 : $this->promotion;
 
-            $query->whereHas('classes', function (Builder $q) use ($promotionName) {
-                $q->where('is_active', true)
-                ->where('school_year_id', $this->activeYear->id)
-                ->whereHas('classe', function (Builder $qr) use ($promotionName) {
-                    $qr->whereHas('promotion', function (Builder $qp) use ($promotionName) {
-                        $qp->where(function ($q) use ($promotionName) {
-                            $q->where('name', $promotionName)
-                                ->orWhere('name', strtolower($promotionName));
-                        })->where('is_active', true);
+                $query->whereHas('classes', function (Builder $q) use ($promotionName) {
+                    $q->where('is_active', true)
+                    ->where('school_year_id', $this->activeYear->id)
+                    ->whereHas('classe', function (Builder $qr) use ($promotionName) {
+                        $qr->whereHas('promotion', function (Builder $qp) use ($promotionName) {
+                            $qp->where(function ($q) use ($promotionName) {
+                                $q->where('name', $promotionName)
+                                    ->orWhere('name', strtolower($promotionName));
+                            })->where('is_active', true);
+                        });
                     });
                 });
-            });
+            }
+            elseif(!$this->promotion && $this->promotionModel){
+
+                $promotion_id = is_object($this->promotionModel) 
+                ? $this->promotionModel->id 
+                : $this->promotion;
+
+                $query->whereHas('classes', function (Builder $q) use ($promotion_id) {
+                    $q->where('is_active', true)
+                    ->where('school_year_id', $this->activeYear->id)
+                    ->whereHas('classe', function (Builder $qr) use ($promotion_id) {
+                        $qr->whereHas('promotion', function (Builder $qp) use ($promotion_id) {
+                            $qp->where(function ($q) use ($promotion_id) {
+                                $q->where('id', $promotion_id);
+                            })->where('is_active', true);
+                        });
+                    });
+                });
+            }
+
+            
 
             // Filtres secondaires possibles quand on est en mode promotion
             $this->applySecondaryFiltersWhenPromotion($query);

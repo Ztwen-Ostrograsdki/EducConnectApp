@@ -1,5 +1,5 @@
 <div>
-    <section>
+    <section class="">
         <div class="flex flex-col gap-4">
             <div class="grid grid-cols-7 gap-x-3">
                 <div class="relative col-span-5">
@@ -43,7 +43,7 @@
                 @endif
 
                 @if (!$classe)
-                    @if (!$filiar)
+                    @if (!$serial && !$filiar && !$promotionModel)
                         <select wire:model.live='filiar_id'
                             class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
                             <option value="">Toutes les filières</option>
@@ -53,8 +53,6 @@
                                 </option>
                             @endforeach
                         </select>
-                    @endif
-                    @if (!$serial)
                         <select wire:model.live='serial_id'
                             class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
                             <option value="">Toutes les séries</option>
@@ -66,7 +64,7 @@
                         </select>
                     @endif
 
-                    @if (!$promotion)
+                    @if (!$promotion && !$promotionModel)
                         <select wire:model.live='promotionInGroups'
                             class="h-12 min-w-[220px] rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono">
                             <option value="">Toutes les promotions</option>
@@ -117,7 +115,7 @@
             </div>
 
         </div>
-        <section class="w-full my-4 relative">
+        <section class="w-full relative">
             <section class="border-b rounded-3xl border-slate-800 bg-slate-900/80 backdrop-blur-xl my-3">
                 <div class="px-2 sm:px-3 lg:px-5 py-5">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -160,8 +158,8 @@
                 </div>
             </div>
             @if (count($this->students))
-                <div class="border border-slate-800 bg-slate-900 overflow-hidden">
-                    <div class="overflow-x-auto">
+                <div class=" bg-slate-900 overflow-hidden">
+                    <div class="overflow-x-auto ">
                         <table class="w-full min-w-full z-table-border">
                             <thead class="bg-slate-950 border-b border-slate-800 text-center">
                                 <tr>

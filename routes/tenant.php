@@ -36,6 +36,8 @@ use App\Livewire\Tenants\Promotions\CreatePromotionComponent;
 use App\Livewire\Tenants\Promotions\ManagePromotionComponent;
 use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
+use App\Livewire\Tenants\Promotions\PromotionStudentsComponent;
+use App\Livewire\Tenants\Promotions\PromotionTeachersComponent;
 use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
 use App\Livewire\Tenants\Schoolyears\ManageSchoolYearComponent;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
@@ -154,6 +156,10 @@ Route::middleware([
             Route::get('/promotions', PromotionsPortal::class)->name('promotions.portal');
 
             Route::get('/promotions/details-promotion/{promotion_slug}', PromotionProfil::class)->name('promotion.profil');
+
+            Route::get('/promotions/details-promotion/{promotion_slug}/les-apprenenats', PromotionStudentsComponent::class)->name('promotion.students');
+            Route::get('/promotions/details-promotion/{promotion_slug}/les-enseignants', PromotionTeachersComponent::class)->name('promotion.teachers');
+
 
             Route::get('/promotions/{promotion_slug}/edition', ManagePromotionComponent::class)->name('promotion.edit');
 
