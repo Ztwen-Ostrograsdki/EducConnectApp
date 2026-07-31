@@ -1,118 +1,208 @@
-<div class="min-h-screen flex flex-col items-center justify-center bg-sky-950 px-4">
+<div class="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#05080f]">
 
-    <div class="login-card w-full max-w-md rounded-2xl my-2 mb-4 font-semibold text-sm">
-        @if (session('abort-error'))
-            <div class="mb-4 p-3 bg-red-300 border border-red-800 text-center rounded-lg text-sm text-red-700">
-                {{ session('abort-error') }}
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="mb-4 p-3 bg-green-300 border border-green-800 text-center rounded-lg text-sm text-red-700">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        {{-- Message d'erreur global --}}
-        @if ($errorMessage)
-            <div class="mb-4 p-3 bg-red-300 border border-red-800 text-center rounded-lg text-sm text-red-700">
-                {{ $errorMessage }}
-            </div>
-        @endif
+    {{-- Background --}}
+    <div class="absolute inset-0">
+        <div
+            class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-[#05080f] to-[#05080f]">
+        </div>
+        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-indigo-600/15 blur-[140px]"></div>
+        <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full bg-violet-600/10 blur-[120px]"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-600/5 blur-[160px]">
+        </div>
+        {{-- Subtle grid --}}
+        <div class="absolute inset-0 opacity-[0.03]"
+            style="background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px); background-size: 60px 60px;">
+        </div>
     </div>
 
-    <div class="login-card w-full max-w-md bg-gray-900 rounded-2xl border border-sky-600 p-8" data-login-card>
+    <div class="relative w-full max-w-[420px] mx-auto px-4 py-12">
 
-        {{-- Logo école --}}
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-300 rounded-2xl mb-4">
-                <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083
-                             12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055
-                             a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0
-                             01.665-6.479L12 14z" />
-                </svg>
+        {{-- Flash messages --}}
+        @if (session('abort-error') || session('success') || $errorMessage)
+            <div class="mb-5 space-y-2">
+                @if (session('abort-error'))
+                    <div
+                        class="flex items-center gap-3 rounded-xl bg-rose-500/10 border border-rose-500/25 px-4 py-3 text-sm text-rose-300">
+                        <x-lucide-circle-alert class="w-4 h-4 shrink-0" />
+                        {{ session('abort-error') }}
+                    </div>
+                @endif
+                @if (session('success'))
+                    <div
+                        class="flex items-center gap-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 px-4 py-3 text-sm text-emerald-300">
+                        <x-lucide-circle-check class="w-4 h-4 shrink-0" />
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if ($errorMessage)
+                    <div
+                        class="flex items-center gap-3 rounded-xl bg-rose-500/10 border border-rose-500/25 px-4 py-3 text-sm text-rose-300">
+                        <x-lucide-circle-alert class="w-4 h-4 shrink-0" />
+                        {{ $errorMessage }}
+                    </div>
+                @endif
             </div>
-            <h1 class="text-2xl font-bold text-blue-500">Connexion</h1>
-            <p class="text-sm text-amber-600 font-semibold tracking-wide mt-1">Accédez à votre espace école</p>
-        </div>
+        @endif
 
-        {{-- Formulaire --}}
-        <form wire:submit.prevent="login" class="space-y-5">
+        {{-- Card --}}
+        <div class="rounded-3xl bg-[#0f1523]/80 backdrop-blur-2xl border border-white/[0.08] shadow-2xl shadow-black/40 overflow-hidden"
+            data-login-card>
 
-            {{-- Email --}}
-            <div>
-                <label for="email" class="block text-sm font-medium text-sky-500 mb-1">
-                    Adresse email
-                </label>
-                <input id="email" type="email" wire:model="email" autocomplete="email" placeholder="votre@email.com"
-                    class="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-300 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-primary-200
-                           focus:border-primary-500 transition
-                           @error('email') border-red-400 bg-red-50 @enderror" />
-                @error('email')
-                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+            {{-- Top accent line --}}
+            <div class="h-1 w-full bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500"></div>
 
-            {{-- Mot de passe --}}
-            <div>
-                <div class="flex items-center justify-between mb-1">
-                    <label for="password" class="block text-sm font-medium text-sky-500">
-                        Mot de passe
-                    </label>
+            <div class="p-8 sm:p-10">
 
-                </div>
-                <input id="password" type="password" wire:model="password" autocomplete="current-password" placeholder="••••••••"
-                    class="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-400 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-primary-200
-                           focus:border-primary-500 transition
-                           @error('password') border-red-400 bg-red-50 @enderror" />
-                @error('password')
-                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Se souvenir de moi --}}
-            <div class="flex items-center gap-2">
-                <input id="remember" type="checkbox" wire:model="remember" class="w-4 h-4 rounded border-gray-300 text-primary-600
-                           focus:ring-primary-500 cursor-pointer" />
-                <label for="remember" class="text-sm text-gray-600 cursor-pointer">
-                    Se souvenir de moi
-                </label>
-            </div>
-
-            {{-- Bouton connexion --}}
-            <button type="submit" wire:loading.attr="disabled"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2.5
-                       bg-primary-600 hover:bg-primary-700 active:scale-95
-                       text-white text-sm font-medium rounded-lg transition-all
-                       duration-200 focus:outline-none focus:ring-2
-                       focus:ring-primary-500 focus:ring-offset-2
-                       focus:ring-offset-gray-800
-                       disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
-                <span wire:loading.remove>Accéder à votre espace</span>
-                <span wire:loading class="flex items-center gap-1 justify-center">
-                    <div class="flex items-center gap-1 justify-center" role="status">
-                        <svg aria-hidden="true" class="w-4 h-4 text-sky-900 animate-spin fill-blue-200" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                fill="currentColor" />
-                            <path
-                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                fill="currentFill" />
+                {{-- Brand --}}
+                <div class="text-center mb-8">
+                    <div
+                        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-xl shadow-indigo-900/50 mb-5">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                         </svg>
-                        <span>Connexion...</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">Connexion</h1>
+                    <p class="mt-1.5 text-sm text-slate-500">
+                        Accédez à votre espace
+                        @if (tenant()?->school_name)
+                            <span class="text-indigo-400 font-medium">{{ tenant()->school_name }}</span>
+                        @else
+                            école
+                        @endif
+                    </p>
+                </div>
+
+                {{-- Form --}}
+                <form wire:submit.prevent="login" class="space-y-5">
+
+                    {{-- Email --}}
+                    <div>
+                        <label for="email"
+                            class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                            Adresse email
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600">
+                                <x-lucide-mail class="w-4 h-4" />
+                            </span>
+                            <input id="email" type="email" wire:model="email" autocomplete="email"
+                                placeholder="votre@email.com"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 pl-11 pr-4 text-sm text-slate-200 placeholder:text-slate-600
+                                          focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all
+                                          @error('email') border-rose-500/50 bg-rose-500/5 @enderror" />
+                        </div>
+                        @error('email')
+                            <p class="mt-1.5 text-xs text-rose-400 flex items-center gap-1">
+                                <x-lucide-circle-alert class="w-3 h-3" />
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                </span>
-            </button>
-            <div class="w-full flex justify-center">
-                <a href="{{ route('tenant.password.forgot') }}" class="text-sm text-primary-600 hover:text-primary-700 transition  text-center font-semibold mx-auto w-full">
-                    Mot de passe oublié ?
-                </a>
+                    {{-- Password --}}
+                    <div>
+                        <label for="password"
+                            class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                            Mot de passe
+                        </label>
+                        <div class="relative" x-data="{ show: false }">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600">
+                                <x-lucide-lock class="w-4 h-4" />
+                            </span>
+                            <input id="password" :type="show ? 'text' : 'password'" wire:model="password"
+                                autocomplete="current-password" placeholder="••••••••"
+                                class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 pl-11 pr-12 text-sm text-slate-200 placeholder:text-slate-600
+                                          focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all
+                                          @error('password') border-rose-500/50 bg-rose-500/5 @enderror" />
+                            <button type="button" @click="show = !show"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition">
+                                <x-lucide-eye x-show="!show" class="w-4 h-4" />
+                                <x-lucide-eye-off x-show="show" class="w-4 h-4" x-cloak />
+                            </button>
+                        </div>
+                        @error('password')
+                            <p class="mt-1.5 text-xs text-rose-400 flex items-center gap-1">
+                                <x-lucide-circle-alert class="w-3 h-3" />
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Remember + Forgot --}}
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input id="remember" type="checkbox" wire:model="remember" class="sr-only peer">
+                            <span
+                                class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-600 bg-[#070b14] transition-all
+                                         peer-checked:bg-indigo-600 peer-checked:border-indigo-600">
+                                <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </span>
+                            <span class="text-sm text-slate-500 group-hover:text-slate-300 transition">Se souvenir de
+                                moi</span>
+                        </label>
+
+                        <a href="{{ route('tenant.password.forgot') }}"
+                            class="text-sm text-indigo-400 hover:text-indigo-300 transition font-medium">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    {{-- Submit --}}
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="group relative w-full h-13 rounded-xl overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-transform duration-200 mt-2">
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_100%] group-hover:animate-[shimmer_2s_linear_infinite]"></span>
+                        <span
+                            class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500 rounded-xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity -z-10"></span>
+                        <span
+                            class="relative flex items-center justify-center gap-2 h-12 text-white font-semibold text-sm tracking-wide">
+                            <span wire:loading.remove wire:target="login" class="inline-flex items-center gap-2">
+                                Accéder à votre espace
+                                <x-lucide-arrow-right
+                                    class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            </span>
+                            <span wire:loading wire:target="login" class="inline-flex items-center gap-2">
+                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4" />
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                </svg>
+                                Connexion…
+                            </span>
+                        </span>
+                    </button>
+                </form>
             </div>
-        </form>
+        </div>
+
+        {{-- Footer --}}
+        <p class="mt-8 text-center text-xs text-slate-600">
+            © {{ date('Y') }}
+            @if (tenant()?->school_name)
+                {{ tenant()->school_name }}
+            @endif
+            — Accès sécurisé
+        </p>
     </div>
 </div>
 
+<style>
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+</style>

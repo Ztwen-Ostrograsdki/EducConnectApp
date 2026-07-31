@@ -149,23 +149,32 @@ class MarkRankingPrintQuery
 
                 if ($subjectId) {
                     $cs = $subjects->first();
+
+                    $coef = $classe->getCoefValueOfSubject($subjectId);
+
                     $marksData = $cacheService->get($classe->id, $cs->subject_id, $period, $schoolYearId);
                     $studentMarks = $marksData[$student->id] ?? [];
 
-                    $computed = MarkPrintQuery::computeSubjectMoy($studentMarks, $devoirColumns, (float) $cs->coefficient);
+                    $computed = MarkPrintQuery::computeSubjectMoy($studentMarks, $devoirColumns, (float) $coef);
                     $average = $computed['moy'];
                 } else {
-                    $sumMoyCoef = 0.0; $sumCoef = 0.0; $hasAnyMark = false;
+
+                    $sumMoyCoef = 0.0; 
+                    $sumCoef = 0.0; 
+                    $hasAnyMark = false;
 
                     foreach ($subjects as $cs) {
+                        
+                        $coef = $classe->getCoefValueOfSubject($cs->subject_id);
+
                         $marksData = $cacheService->get($classe->id, $cs->subject_id, $period, $schoolYearId);
                         $studentMarks = $marksData[$student->id] ?? [];
 
-                        $computed = MarkPrintQuery::computeSubjectMoy($studentMarks, $devoirColumns, (float) $cs->coefficient);
+                        $computed = MarkPrintQuery::computeSubjectMoy($studentMarks, $devoirColumns, (float) $coef);
 
                         if (! is_null($computed['moyCoef'])) {
                             $sumMoyCoef += $computed['moyCoef'];
-                            $sumCoef += (float) $cs->coefficient;
+                            $sumCoef += (float) $coef;
                             $hasAnyMark = true;
                         }
                     }

@@ -90,24 +90,51 @@
                     @if (auth('tenant')->user()->hasRole('enseignant'))
                         <div class="s-section">
                             <div class="s-section-label">Mon espace enseignant</div>
-                            <div class="s-acc" id="acc-classes">
-                                <div class="s-acc-trigger" onclick="toggleAcc('acc-classes')">
-                                    <div class="s-icon">🏫</div>
-                                    <span class="s-label">Mon espace enseignant</span>
-                                    <span class="s-acc-arrow">▶</span>
-                                </div>
-                                <div class="s-acc-content">
-                                    <a href="{{ route('tenant.teacher.my.dashboard') }}" class="s-link"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label">Dashboard</span>
+                            <a data-sidebar-item href="{{ route('tenant.teacher.my.dashboard') }}"
+                                class="s-link {{ request()->routeIs('tenant.teacher.my.dashboard') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-user class="h-3 w-3" />
+                                </div><span class="s-label">Mon espace enseignant</span>
+                            </a>
+
+                            @if (auth('tenant')->user()->teacher)
+                                @php
+                                    $classes = auth('tenant')
+                                        ->user()
+                                        ->teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
+                                @endphp
+                                @foreach ($classes as $kls)
+                                    <a data-sidebar-item wire:navigate
+                                        href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
+                                        class="s-link">
+                                        <div class="s-icon uppercase">🏫</div><span class="s-label">
+                                            {{ $kls->classe->code }} ({{ $kls->subject->code }})
+                                        </span>
                                     </a>
-                                </div>
-                            </div>
+                                @endforeach
+                            @endif
 
                             <a data-sidebar-item href="#" class="s-link">
                                 <div class="s-icon">🗓️</div><span class="s-label">Mon Emploi du temps</span>
                             </a>
+                        </div>
+                    @endif
+
+                    @if (auth('tenant')->user()->hasRole('enseignant') && auth('tenant')->user()->teacher?->hasCurrentlyPPRole())
+                        <div class="s-section">
+                            <div class="s-section-label">Mon espace PP</div>
+                            @if (auth('tenant')->user()->teacher)
+                                @php
+                                    $classes = auth('tenant')->user()->teacher->getClassesWhereIsPrincipal();
+                                @endphp
+                                @foreach ($classes as $cl)
+                                    <a data-sidebar-item wire:navigate href="#" class="s-link">
+                                        <div class="s-icon uppercase">📚</div><span class="s-label">
+                                            {{ $cl->code }}
+                                        </span>
+                                    </a>
+                                @endforeach
+                            @endif
                         </div>
                     @endif
 

@@ -209,11 +209,7 @@ class MarkPrintQuery
                     $marksData = $cacheService->get($classe->id, $cs->subject_id, $period, $schoolYearId);
                     $studentMarks = $marksData[$student->id] ?? [];
 
-                    $coef_relation = $classe->getCoefOfSubject($cs->subject_id);
-
-                    if($coef_relation) $coef = $coef_relation->coef;
-
-                    else $coef = 1;
+                    $coef = $classe->getCoefValueOfSubject($cs->subject_id);
 
                     $computed = self::computeSubjectMoy($studentMarks, $devoirColumns, (float) $coef);
 
@@ -237,11 +233,7 @@ class MarkPrintQuery
                         $marksData = $cacheService->get($classe->id, $cs->subject_id, $period, $schoolYearId);
                         $studentMarks = $marksData[$student->id] ?? [];
 
-                        $coef_relation = $classe->getCoefOfSubject($cs->subject_id);
-
-                        if($coef_relation) $coef = $coef_relation->coef;
-
-                        else $coef = 1;
+                        $coef = $classe->getCoefValueOfSubject($cs->subject_id);
 
                         $computed = self::computeSubjectMoy($studentMarks, $devoirColumns, (float) $coef);
 

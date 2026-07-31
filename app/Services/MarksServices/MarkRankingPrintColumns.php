@@ -25,7 +25,7 @@ class MarkRankingPrintColumns
         $labels = [
             'student'      => 'Apprenant',
             'classe'       => 'Classe',
-            'average'      => $subjectTargeted ? 'Moyenne' : 'Moy. Semestrielle',
+            'average'      => $subjectTargeted ? 'Moyenne' : 'Moy. Sem/Trim',
             'rang'         => 'Rang',
             'observations' => 'Obs.',
         ];

@@ -228,6 +228,37 @@ class ClasseMarksPage extends Component
     }
 
     #[Computed]
+    public function getTotals()
+    {
+        $coef_sum = 0;
+
+        $moy_coef_sum = 0;
+
+        $moy = 0;
+
+        // foreach($this->subjectRows as $row){
+
+        //     $coef = $row['coefficient'] && $row['moy_coef'] ? $row['coefficient'] : 0;
+
+        //     $moy_coef = $row['moy_coef'] ?? 0;
+
+        //     $coef_sum += $coef;
+
+        //     $moy_coef_sum += $moy_coef;
+
+        // }
+
+        // if($moy_coef_sum && $coef_sum){
+
+        //     $moy = round($moy_coef_sum/$coef_sum, 2);
+        // }
+
+
+
+        return ['coef_sum' => $coef_sum, 'moy_coef_sum' => $moy_coef_sum, 'moy' => $moy];
+    }
+
+    #[Computed]
     public function studentsRows(): array
     {
         $devoirColumns = array_keys($this->devoirColumns());

@@ -438,7 +438,8 @@
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Prévisualisation</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.notes.docs') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.students.bests.weaks.docs') }}"
+                                    class="s-link">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Notes imprimables</span>
@@ -449,9 +450,16 @@
                     </div>
 
                     <div class="s-section">
-                        <div class="s-section-label">Finance</div>
-                        <a href="#" class="s-link">
-                            <div class="s-icon">💳</div><span class="s-label">Paiements</span>
+                        <div class="s-section-label">Diagnostiques notes</div>
+                        <a wire:navigate href="{{ route('tenant.marks.reports.print.configuration') }}"
+                            class="s-link">
+                            <div class="s-icon">🖥️</div><span class="s-label">Lancer</span>
+                        </a>
+                        <a href="{{ route('tenant.marks.reports.print.preview') }}" class="s-link">
+                            <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
+                        </a>
+                        <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}" class="s-link">
+                            <div class="s-icon">📑</div><span class="s-label">Fichiers disponibles</span>
                         </a>
                     </div>
                 @else

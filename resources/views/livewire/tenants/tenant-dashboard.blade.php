@@ -1,434 +1,279 @@
-<div>
+<div class="min-h-screen bg-[#070b14] text-slate-100">
+    <div class="mx-auto max-w-[1400px] px-4 sm:px-6 py-8">
 
-    {{-- ── Page Header ── --}}
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between flex-wrap mb-7">
-        <div>
-            <h1 class="font-serif text-3xl italic font-normal leading-tight text-slate-100">
-                <span class="bg-gradient-to-br from-indigo-500 to-emerald-500 bg-clip-text text-transparent">
-                    {{ Auth::guard('tenant')->user()?->getFullName() ?? 'Directeur' }}
-                </span>
-                👋
-            </h1>
-            <p class="text-xs text-slate-400 mt-1">
-                Le tableau de bord de votre établissement <span class="text-amber-500 font-semibold opacity-80">
-                    {{ tenant('school_name') }}</span> — Année scolaire
-                <span class="text-emerald-400 font-mono">{{ $tenant_dashboard_selected_school_year }}</span>
-            </p>
-            <div class="flex items-center gap-3 text-slate-400 my-2 bg-slate-800 rounded-2xl p-2">
-                <h5>
-                    Détails basiques
-                </h5>
-                <p class="text-xs flex flex-col border-l border-l-slate-600 p-3">
-                    <span>
-                        Enseignement(s) : <span class="font-semibold"> {{ tenant('enseignement_type') }} </span>
-                    </span>
-                    <span>
-                        Dévise : <span class="font-semibold"> {{ tenant('school_devise') }} </span>
-                    </span>
-                    <span>
-                        Contacts : <span class="font-semibold"> {{ tenant('contacts') }} </span>
-                    </span>
-                    <span>
-                        Ecole: <span class="font-semibold"> {{ tenant('school_type') }} </span>
-                    </span>
-                    <span>
-                        Domaine: <span class="font-semibold"> {{ tenant('domain_name') }} </span>
-                    </span>
-                    <span>
-                        Localisation: <span class="font-semibold"> {{ tenant('adresse') }}, {{ tenant('country') }}
+        {{-- ════════════════ HEADER ════════════════ --}}
+        <header class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-semibold uppercase tracking-wider">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                            Directeur
                         </span>
-                    </span>
-                </p>
-            </div>
-        </div>
-        <div class="flex gap-2 flex-wrap">
-            <button
-                class="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-500/10 border border-indigo-500/25 rounded-lg text-indigo-400 text-xs font-semibold hover:bg-indigo-500/20 transition-colors cursor-pointer">
-                📤 Exporter
-            </button>
-            <button
-                class="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-br from-indigo-500 to-violet-500 border-0 rounded-lg text-white text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer">
-                ➕ Nouvelle action
-            </button>
-        </div>
-    </div>
-
-    {{-- ── KPI Cards ── --}}
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-7">
-
-        {{-- Apprenants --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-indigo-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">👨‍🎓</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Apprenants</div>
-            <div class="font-serif text-[2.2rem] font-normal text-slate-100 leading-none">847</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">↑
-                    +12</span>
-                <span class="text-[0.7rem] text-slate-400">vs année passée</span>
-            </div>
-        </div>
-
-        {{-- Enseignants --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-emerald-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">👩‍🏫</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Enseignants</div>
-            <div class="font-serif text-[2.2rem] font-normal text-slate-100 leading-none">42</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">↑
-                    +3</span>
-                <span class="text-[0.7rem] text-slate-400">actifs cette année</span>
-            </div>
-        </div>
-
-        {{-- Classes --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-amber-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">🏫</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Classes</div>
-            <div class="font-serif text-[2.2rem] font-normal text-slate-100 leading-none">18</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">→
-                    0</span>
-                <span class="text-[0.7rem] text-slate-400">inchangé</span>
-            </div>
-        </div>
-
-        {{-- Parents --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-violet-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">👨‍👩‍👧</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Parents / Tuteurs</div>
-            <div class="font-serif text-[2.2rem] font-normal text-slate-100 leading-none">634</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">↑
-                    +28</span>
-                <span class="text-[0.7rem] text-slate-400">inscrits cette année</span>
-            </div>
-        </div>
-
-        {{-- Taux présence --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-emerald-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">✅</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Taux présence</div>
-            <div class="font-serif text-[2.2rem] font-normal text-emerald-400 leading-none">94%</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">↑
-                    +2%</span>
-                <span class="text-[0.7rem] text-slate-400">cette semaine</span>
-            </div>
-        </div>
-
-        {{-- Paiements --}}
-        <div data-animate="card"
-            class=" relative overflow-hidden bg-slate-800 border border-slate-700 rounded-2xl p-5 transition-[border-color,transform] duration-200 hover:border-rose-500/40 hover:-translate-y-0.5">
-            <div class="absolute top-4 right-4 text-2xl opacity-40">💳</div>
-            <div class="font-mono text-[0.62rem] text-slate-400 uppercase tracking-widest mb-2">Paiements en attente
-            </div>
-            <div class="font-serif text-[2.2rem] font-normal text-rose-400 leading-none">47</div>
-            <div class="flex items-center gap-1.5 mt-2.5">
-                <span
-                    class="text-[0.7rem] text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">⚠
-                    Urgent</span>
-                <span class="text-[0.7rem] text-slate-400">à régulariser</span>
-            </div>
-        </div>
-
-    </div>
-
-    {{-- ── Charts + Répartition ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 mb-7">
-
-        {{-- Graphique présences --}}
-        <div data-z-card
-            class="bg-slate-800 border transition-[transform] duration-200 hover:-translate-y-0.5 border-slate-700 rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <div class="text-sm font-bold text-slate-100">Présences — 7 derniers jours</div>
-                    <div class="font-mono text-[0.62rem] text-slate-500">Présents / Absents / Retards</div>
-                </div>
-                <select
-                    class="font-mono text-[0.65rem] bg-slate-700 border border-slate-600 text-slate-400 px-2 py-1.5 rounded-md cursor-pointer">
-                    <option>7 jours</option>
-                    <option>30 jours</option>
-                    <option>Semestre</option>
-                </select>
-            </div>
-
-            <div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 100)" class="flex items-end gap-2 h-28 pb-2">
-                @foreach ([['L', 92], ['M', 88], ['Me', 95], ['J', 90], ['V', 87], ['S', 82], ['D', null]] as $d)
-                    <div class="flex-1 flex flex-col items-center gap-1">
-
-                        @if ($d[1] !== null)
-                            <div class="w-full rounded-t bg-indigo-500/70 transition-all duration-1000 ease-out"
-                                :style="loaded ?
-                                    'height: {{ $d[1] }}px; transition-delay: {{ $loop->index * 120 }}ms' :
-                                    'height:0px'">
-                            </div>
-                        @else
-                            <div class="flex-1"></div>
-                        @endif
-
-                        <div class="font-mono text-[0.55rem] text-slate-500">
-                            {{ $d[0] }}
-                        </div>
-
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="flex gap-4 mt-3">
-                <div class="flex items-center gap-1.5 text-[0.68rem] text-slate-400">
-                    <span class="w-2 h-2 rounded-sm bg-indigo-500/70 inline-block"></span>Présents
-                </div>
-                <div class="flex items-center gap-1.5 text-[0.68rem] text-slate-400">
-                    <span class="w-2 h-2 rounded-sm bg-rose-500/70 inline-block"></span>Absents
-                </div>
-                <div class="flex items-center gap-1.5 text-[0.68rem] text-slate-400">
-                    <span class="w-2 h-2 rounded-sm bg-amber-500/70 inline-block"></span>Retards
-                </div>
-            </div>
-        </div>
-
-        {{-- Répartition par niveau --}}
-        <div data-z-card x-data="{ show: false }" x-init="setTimeout(() => show = true, 150)"
-            class="bg-slate-800 border border-slate-700 transition-[transform] duration-200 hover:-translate-y-0.5 rounded-2xl p-5">
-            <div class="text-sm font-bold text-slate-100 mb-0.5">
-                Répartition niveaux
-            </div>
-
-            <div class="font-mono text-[0.62rem] text-slate-500 mb-4">
-                Effectifs par cycle
-            </div>
-
-            @foreach ([['Primaire', '312', 37, 'bg-emerald-500/70'], ['Secondaire', '428', 51, 'bg-indigo-500/70'], ['Supérieur', '107', 12, 'bg-amber-500/70']] as $n)
-                <div class="mb-3.5 transition-all duration-700 ease-out"
-                    :style="show
-                        ?
-                        'opacity:1; transform:translateY(0px); transition-delay: {{ $loop->index * 180 }}ms' :
-                        'opacity:0; transform:translateY(14px)'">
-
-                    <div class="flex justify-between mb-1">
-                        <span class="text-[0.78rem] font-medium text-slate-200">
-                            {{ $n[0] }}
-                        </span>
-
-                        <span class="font-mono text-[0.65rem] text-slate-400">
-                            {{ $n[1] }} — {{ $n[2] }}%
+                        <span class="text-[10px] font-mono text-slate-600">
+                            {{ $tenant_dashboard_selected_school_year }}
                         </span>
                     </div>
 
-                    <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                        Bonjour,
+                        <span class="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+                            {{ Auth::guard('tenant')->user()?->getFullName() ?? 'Directeur' }}
+                        </span>
+                    </h1>
+                    <p class="mt-1.5 text-sm text-slate-500">
+                        Tableau de bord —
+                        <span class="text-slate-300 font-medium">{{ tenant('school_name') }}</span>
+                    </p>
 
-                        <div class="h-full {{ $n[3] }}
-                        rounded-full
-                        origin-left
-                        transition-all duration-1000 ease-out"
-                            :style="show
-                                ?
-                                'width: {{ $n[2] }}%; transition-delay: {{ 200 + $loop->index * 180 }}ms' :
-                                'width:0%'">
-                        </div>
-
+                    {{-- School meta chips --}}
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0f1523] border border-white/5 text-[11px] text-slate-400">
+                            <span class="text-slate-600">Type</span>
+                            <span class="text-slate-300">{{ tenant('school_type') }}</span>
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0f1523] border border-white/5 text-[11px] text-slate-400">
+                            <span class="text-slate-600">Enseignement</span>
+                            <span class="text-slate-300">{{ tenant('enseignement_type') }}</span>
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0f1523] border border-white/5 text-[11px] text-slate-400">
+                            <span class="text-slate-600">📍</span>
+                            <span class="text-slate-300">{{ tenant('adresse') }}, {{ tenant('country') }}</span>
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0f1523] border border-white/5 text-[11px] text-slate-400">
+                            <span class="text-slate-600">📞</span>
+                            <span class="text-slate-300">{{ tenant('contacts') }}</span>
+                        </span>
                     </div>
+                </div>
 
+                <div class="flex gap-2 shrink-0">
+                    <button
+                        class="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 transition-all inline-flex items-center gap-1.5">
+                        <x-lucide-download class="w-3.5 h-3.5" />
+                        Exporter
+                    </button>
+                    <button
+                        class="h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shadow-lg shadow-indigo-900/30">
+                        <x-lucide-plus class="w-3.5 h-3.5" />
+                        Nouvelle action
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        {{-- ════════════════ KPI ════════════════ --}}
+        <section class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-8">
+
+            @foreach ([['label' => 'Apprenants', 'value' => '847', 'delta' => '+12', 'deltaLabel' => 'vs année passée', 'icon' => '👨‍🎓', 'color' => 'indigo', 'positive' => true], ['label' => 'Enseignants', 'value' => '42', 'delta' => '+3', 'deltaLabel' => 'actifs', 'icon' => '👩‍🏫', 'color' => 'emerald', 'positive' => true], ['label' => 'Classes', 'value' => '18', 'delta' => '0', 'deltaLabel' => 'inchangé', 'icon' => '🏫', 'color' => 'amber', 'positive' => null], ['label' => 'Parents', 'value' => '634', 'delta' => '+28', 'deltaLabel' => 'inscrits', 'icon' => '👨‍👩‍👧', 'color' => 'violet', 'positive' => true], ['label' => 'Présence', 'value' => '94%', 'delta' => '+2%', 'deltaLabel' => 'cette semaine', 'icon' => '✅', 'color' => 'emerald', 'positive' => true], ['label' => 'Paiements dus', 'value' => '47', 'delta' => 'Urgent', 'deltaLabel' => 'à régulariser', 'icon' => '💳', 'color' => 'rose', 'positive' => false]] as $kpi)
+                <div
+                    class="group relative rounded-2xl bg-[#0f1523] border border-white/[0.06] p-4 sm:p-5 hover:border-{{ $kpi['color'] }}-500/30 hover:-translate-y-0.5 transition-all duration-200 shadow-lg shadow-black/10">
+                    <div class="absolute top-3 right-3 text-xl opacity-30 group-hover:opacity-50 transition-opacity">
+                        {{ $kpi['icon'] }}</div>
+                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                        {{ $kpi['label'] }}</p>
+                    <p
+                        class="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none
+                              {{ $kpi['color'] === 'emerald' && $kpi['label'] === 'Présence' ? 'text-emerald-400' : '' }}
+                              {{ $kpi['color'] === 'rose' ? 'text-rose-400' : '' }}">
+                        {{ $kpi['value'] }}
+                    </p>
+                    <div class="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                        <span
+                            class="text-[10px] font-medium px-1.5 py-0.5 rounded-md border
+                            {{ $kpi['positive'] === true
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                : ($kpi['positive'] === false
+                                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20') }}">
+                            {{ $kpi['delta'] }}
+                        </span>
+                        <span class="text-[10px] text-slate-600">{{ $kpi['deltaLabel'] }}</span>
+                    </div>
                 </div>
             @endforeach
+        </section>
 
-            <div class="mt-4 pt-3.5 border-t border-slate-700
-                transition-all duration-700 ease-out"
-                :style="show
-                    ?
-                    'opacity:1; transform:translateY(0px); transition-delay:700ms' :
-                    'opacity:0; transform:translateY(12px)'">
-                <div class="font-mono text-[0.6rem] text-slate-500 mb-1.5">
-                    TOTAL
+        {{-- ════════════════ CHARTS ════════════════ --}}
+        <section class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
+
+            {{-- Présences --}}
+            <div
+                class="lg:col-span-3 rounded-2xl bg-[#0f1523] border border-white/[0.06] p-5 sm:p-6 shadow-xl shadow-black/10">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">Présences</h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">7 derniers jours</p>
+                    </div>
+                    <select
+                        class="h-8 rounded-lg bg-[#070b14] border border-white/10 text-[11px] text-slate-400 px-2.5 focus:outline-none focus:border-indigo-500/40">
+                        <option>7 jours</option>
+                        <option>30 jours</option>
+                        <option>Semestre</option>
+                    </select>
                 </div>
 
-                <div class="font-serif text-3xl text-slate-100">
-                    847
-                    <span class="text-sm text-slate-400 font-sans">
-                        apprenants
-                    </span>
+                <div x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 100)" class="flex items-end gap-2 h-32 pb-1">
+                    @foreach ([['L', 92], ['M', 88], ['Me', 95], ['J', 90], ['V', 87], ['S', 82], ['D', null]] as $d)
+                        <div class="flex-1 flex flex-col items-center gap-1.5">
+                            @if ($d[1] !== null)
+                                <div class="w-full max-w-[32px] mx-auto rounded-t-md bg-gradient-to-t from-indigo-600 to-indigo-400 transition-all duration-1000 ease-out"
+                                    :style="loaded ?
+                                        'height: {{ $d[1] }}px; transition-delay: {{ $loop->index * 80 }}ms' :
+                                        'height: 0px'">
+                                </div>
+                            @else
+                                <div class="flex-1"></div>
+                            @endif
+                            <span class="text-[10px] font-mono text-slate-600">{{ $d[0] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="flex gap-4 mt-4 pt-3 border-t border-white/5">
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <span class="w-2 h-2 rounded-sm bg-indigo-500"></span> Présents
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <span class="w-2 h-2 rounded-sm bg-rose-500"></span> Absents
+                    </div>
+                    <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <span class="w-2 h-2 rounded-sm bg-amber-500"></span> Retards
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+            {{-- Répartition --}}
+            <div class="lg:col-span-2 rounded-2xl bg-[#0f1523] border border-white/[0.06] p-5 sm:p-6 shadow-xl shadow-black/10"
+                x-data="{ show: false }" x-init="setTimeout(() => show = true, 150)">
+                <h3 class="text-sm font-semibold text-white">Répartition niveaux</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 mb-5">Effectifs par cycle</p>
 
-    {{-- ── Classes actives + Activité récente ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-7">
+                @foreach ([['Primaire', '312', 37, 'from-emerald-600 to-emerald-400'], ['Secondaire', '428', 51, 'from-indigo-600 to-indigo-400'], ['Supérieur', '107', 12, 'from-amber-600 to-amber-400']] as $n)
+                    <div class="mb-4 transition-all duration-700"
+                        :style="show ? 'opacity:1; transform:translateY(0)' : 'opacity:0; transform:translateY(10px)'"
+                        style="transition-delay: {{ $loop->index * 120 }}ms">
+                        <div class="flex justify-between mb-1.5">
+                            <span class="text-xs font-medium text-slate-300">{{ $n[0] }}</span>
+                            <span class="text-[11px] font-mono text-slate-500">{{ $n[1] }} ·
+                                {{ $n[2] }}%</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-[#070b14] overflow-hidden">
+                            <div class="h-full rounded-full bg-gradient-to-r {{ $n[3] }} transition-all duration-1000"
+                                :style="show ? 'width: {{ $n[2] }}%' : 'width: 0%'"
+                                style="transition-delay: {{ 150 + $loop->index * 120 }}ms"></div>
+                        </div>
+                    </div>
+                @endforeach
 
-        {{-- Classes actives --}}
-        <div data-z-card
-            class="bg-slate-800 border border-slate-700 transition-[transform] duration-200 hover:-translate-y-0.5 rounded-2xl overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-                <div class="text-sm font-bold text-slate-100">Classes actives</div>
-                <a href="#"
-                    class="font-mono text-[0.65rem] text-indigo-400 no-underline hover:text-indigo-300 transition-colors">Voir
-                    tout →</a>
+                <div class="mt-5 pt-4 border-t border-white/5" :class="show ? 'opacity-100' : 'opacity-0'"
+                    style="transition: opacity 0.6s ease 0.5s">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-1">Total</p>
+                    <p class="text-2xl font-bold text-white">
+                        847
+                        <span class="text-sm font-normal text-slate-500">apprenants</span>
+                    </p>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-slate-700/50">
-                            <th
-                                class="font-mono text-[0.6rem] text-slate-500 uppercase tracking-widest px-5 py-2.5 text-left">
-                                Classe</th>
-                            <th
-                                class="font-mono text-[0.6rem] text-slate-500 uppercase tracking-widest px-3 py-2.5 text-center">
-                                Effectif</th>
-                            <th
-                                class="font-mono text-[0.6rem] text-slate-500 uppercase tracking-widest px-3 py-2.5 text-center">
-                                Présence</th>
-                            <th
-                                class="font-mono text-[0.6rem] text-slate-500 uppercase tracking-widest px-5 py-2.5 text-center">
-                                Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ([['Terminale C', '38', '96%'], ['3ème 1', '42', '91%'], ['6ème A', '45', '88%'], ['Tle BTP 2', '35', '94%'], ['2nde 3', '40', '85%']] as $c)
-                            <tr class="border-b border-slate-700 hover:bg-white/[.02] transition-colors">
-                                <td class="px-5 py-2.5 text-[0.8rem] font-semibold text-slate-100">{{ $c[0] }}
-                                </td>
-                                <td class="px-3 py-2.5 text-center font-mono text-[0.72rem] text-slate-400">
-                                    {{ $c[1] }}</td>
-                                <td class="px-3 py-2.5 text-center font-mono text-[0.7rem] text-emerald-400">
-                                    {{ $c[2] }}</td>
-                                <td class="px-5 py-2.5 text-center">
-                                    <span
-                                        class="font-mono text-[0.62rem] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Actif</span>
-                                </td>
+        </section>
+
+        {{-- ════════════════ LISTS ════════════════ --}}
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-12">
+
+            {{-- Classes actives --}}
+            <div class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                    <h3 class="text-sm font-semibold text-white">Classes actives</h3>
+                    <a href="#" class="text-[11px] text-indigo-400 hover:text-indigo-300 transition">Voir tout
+                        →</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-white/5">
+                                <th
+                                    class="px-5 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                    Classe</th>
+                                <th
+                                    class="px-3 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                    Effectif</th>
+                                <th
+                                    class="px-3 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                    Présence</th>
+                                <th
+                                    class="px-5 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                    Statut</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="flex justify-between items-center px-5 py-3 border-t border-slate-700">
-                <span class="text-[0.72rem] text-slate-500">Affichage 1–5 sur 18</span>
-                <div class="flex gap-1.5">
-                    <button
-                        class="px-2.5 py-1 bg-slate-700 border border-slate-600 rounded-md text-slate-400 text-[0.7rem] hover:bg-slate-600 transition-colors cursor-pointer">‹
-                        Préc</button>
-                    <button
-                        class="px-2.5 py-1 bg-slate-700 border border-slate-600 rounded-md text-slate-400 text-[0.7rem] hover:bg-slate-600 transition-colors cursor-pointer">Suiv
-                        ›</button>
+                        </thead>
+                        <tbody>
+                            @foreach ([['Terminale C', '38', '96%'], ['3ème 1', '42', '91%'], ['6ème A', '45', '88%'], ['Tle BTP 2', '35', '94%'], ['2nde 3', '40', '85%']] as $c)
+                                <tr class="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-5 py-3 text-sm font-medium text-slate-200">{{ $c[0] }}</td>
+                                    <td class="px-3 py-3 text-center text-xs font-mono text-slate-400">
+                                        {{ $c[1] }}</td>
+                                    <td class="px-3 py-3 text-center text-xs font-mono text-emerald-400">
+                                        {{ $c[2] }}</td>
+                                    <td class="px-5 py-3 text-center">
+                                        <span
+                                            class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            Actif
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex items-center justify-between px-5 py-3 border-t border-white/5">
+                    <span class="text-[11px] text-slate-600">1–5 sur 18</span>
+                    <div class="flex gap-1.5">
+                        <button
+                            class="h-7 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-slate-400 transition">‹</button>
+                        <button
+                            class="h-7 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-slate-400 transition">›</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Activité récente --}}
-        <div data-z-card
-            class="bg-slate-800 border border-slate-700 transition-[transform] duration-200 hover:-translate-y-0.5 rounded-2xl overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-                <div class="text-sm font-bold text-slate-100">Activité récente</div>
-                <span
-                    class="font-mono text-[0.62rem] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">En
-                    direct</span>
-            </div>
-            <div class="py-1">
-                @foreach ([['📝', 'Notes saisies — Maths 3ème 1', 'Prof. Amoussou', '5 min'], ['👤', 'Nouvel apprenant inscrit', 'Kofi Danso', '12 min'], ['💳', 'Paiement reçu — 25 000 FCFA', 'Famille Mensah', '1h'], ['🔔', 'Absence signalée — Terminale C', 'Auto', '2h'], ['📄', 'Bulletin généré — Tle C', 'Directeur', '3h'], ['👩‍🏫', 'Enseignant affilié — Prof. Bossou', 'Directeur', '5h'], ['⚠️', 'Note modifiée avec justification', 'Prof. Koudé', '7h']] as $a)
-                    <div
-                        class="flex items-start gap-3 px-5 py-2.5 border-b border-slate-700/50 hover:bg-white/[.02] transition-colors">
-                        <div
-                            class="w-8 h-8 shrink-0 rounded-full bg-slate-700 flex items-center justify-center text-sm mt-0.5">
-                            {{ $a[0] }}</div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[0.78rem] font-medium text-slate-200 truncate">{{ $a[1] }}</div>
-                            <div class="font-mono text-[0.6rem] text-slate-500">{{ $a[2] }}</div>
-                        </div>
-                        <div class="font-mono text-[0.6rem] text-slate-500 shrink-0">{{ $a[3] }}</div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
+            {{-- Enseignants --}}
+            <div class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                    <h3 class="text-sm font-semibold text-white">Enseignants actifs</h3>
+                    <a href="#" class="text-[11px] text-indigo-400 hover:text-indigo-300 transition">Gérer →</a>
+                </div>
 
-    </div>
-
-    {{-- ── Enseignants + Paiements ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-        {{-- Enseignants actifs --}}
-        <div data-z-card
-            class="bg-slate-800 border border-slate-700 transition-[transform] duration-200 hover:-translate-y-0.5 rounded-2xl overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-                <div class="text-sm font-bold text-slate-100">Enseignants actifs</div>
-                <a href="#"
-                    class="font-mono text-[0.65rem] text-indigo-400 no-underline hover:text-indigo-300 transition-colors">Gérer
-                    →</a>
-            </div>
-            <div class="py-1">
-                @foreach ([['Sylvie Amoussou', 'Maths — Tle C, 3ème 1', 'SA', 'actif'], ['Fabrice Bossou', 'Physique — 3ème, 2nde', 'FB', 'actif'], ['Jean Koudé', 'Histoire — 6ème, 5ème', 'JK', 'actif'], ['Marie Adjovi', 'Français — Tle, 1ère', 'MA', 'actif'], ['Kofi Mensah', 'SVT — 2nde, 3ème', 'KM', 'en attente']] as $t)
-                    <div
-                        class="flex items-center gap-3 px-5 py-2.5 border-b border-slate-700/50 hover:bg-white/[.02] transition-colors">
-                        <div
-                            class="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-[0.65rem] font-extrabold text-white">
-                            {{ $t[2] }}</div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[0.8rem] font-semibold text-slate-100">{{ $t[0] }}</div>
-                            <div class="font-mono text-[0.6rem] text-slate-500 truncate">{{ $t[1] }}</div>
-                        </div>
-                        @if ($t[3] === 'actif')
-                            <span
-                                class="font-mono text-[0.62rem] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">actif</span>
-                        @else
-                            <span
-                                class="font-mono text-[0.62rem] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">en
-                                attente</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
-        {{-- Paiements en attente --}}
-        <div data-z-card
-            class="bg-slate-800 border border-slate-700 transition-[transform] duration-200 hover:-translate-y-0.5 rounded-2xl overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
-                <div class="text-sm font-bold text-slate-100">Paiements en attente</div>
-                <span
-                    class="font-mono text-[0.62rem] px-2 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full">47
-                    urgents</span>
-            </div>
-            <div class="py-1">
-                @foreach ([['Aminata Mensah', 'Terminale C', 'Scolarité S1', '50 000', 'en attente'], ['Kofi Danso', '3ème 1', 'Inscription', '25 000', 'partiel'], ['Fatoumata Bah', '6ème A', 'Scolarité S1', '45 000', 'en attente'], ['Jean-Marc Glo', 'Tle BTP 2', 'Scolarité S1', '55 000', 'en attente'], ['Abigaël Yovo', '2nde 3', 'Cantine', '15 000', 'partiel']] as $p)
-                    <div
-                        class="flex items-center gap-3 px-5 py-2.5 border-b border-slate-700/50 hover:bg-white/[.02] transition-colors">
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[0.78rem] font-semibold text-slate-100">{{ $p[0] }}</div>
-                            <div class="font-mono text-[0.6rem] text-slate-500">{{ $p[1] }} —
-                                {{ $p[2] }}</div>
-                        </div>
-                        <div class="text-right shrink-0">
-                            <div class="font-mono text-[0.72rem] text-slate-100 mb-0.5">{{ $p[3] }} F</div>
-                            @if ($p[4] === 'en attente')
+                <div class="divide-y divide-white/[0.03]">
+                    @foreach ([['Sylvie Amoussou', 'Maths — Tle C, 3ème 1', 'SA', 'actif'], ['Fabrice Bossou', 'Physique — 3ème, 2nde', 'FB', 'actif'], ['Jean Koudé', 'Histoire — 6ème, 5ème', 'JK', 'actif'], ['Marie Adjovi', 'Français — Tle, 1ère', 'MA', 'actif'], ['Kofi Mensah', 'SVT — 2nde, 3ème', 'KM', 'en attente']] as $t)
+                        <div class="flex items-center gap-3 px-5 py-3 hover:bg-white/[0.02] transition-colors">
+                            <div
+                                class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-[11px] font-bold text-white">
+                                {{ $t[2] }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-200 truncate">{{ $t[0] }}</p>
+                                <p class="text-[11px] text-slate-500 truncate">{{ $t[1] }}</p>
+                            </div>
+                            @if ($t[3] === 'actif')
                                 <span
-                                    class="font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">en
-                                    attente</span>
+                                    class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">actif</span>
                             @else
                                 <span
-                                    class="font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">partiel</span>
+                                    class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">en
+                                    attente</span>
                             @endif
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-            <div class="px-5 py-3 border-t border-slate-700">
-                <button
-                    class="w-full py-2 bg-rose-500/[.08] border border-rose-500/20 rounded-lg text-rose-400 text-[0.78rem] font-semibold hover:bg-rose-500/15 transition-colors cursor-pointer">
-                    Gérer tous les paiements en attente →
-                </button>
-            </div>
-        </div>
+        </section>
 
     </div>
-
 </div>
-

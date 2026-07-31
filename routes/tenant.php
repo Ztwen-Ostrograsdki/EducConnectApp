@@ -18,6 +18,7 @@ use App\Livewire\Tenants\Classes\ManageClasseYearlyResponsiblesComponent;
 use App\Livewire\Tenants\Classes\ManageYearlyClasseSubjectsTeacherComponent;
 use App\Livewire\Tenants\Classes\MarkRankingPrintableListComponent;
 use App\Livewire\Tenants\Classes\MarkRankingPrintsManagerComponent;
+use App\Livewire\Tenants\Classes\MarksRankingPrintableDocumentsPage;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
@@ -40,6 +41,9 @@ use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Promotions\PromotionStudentsComponent;
 use App\Livewire\Tenants\Promotions\PromotionTeachersComponent;
+use App\Livewire\Tenants\Reports\MarksDiagnosticForTeachersPrintableDocumentsPage;
+use App\Livewire\Tenants\Reports\MarksDiagnosticManagerComponent;
+use App\Livewire\Tenants\Reports\MarksDiagnosticPrintableListComponent;
 use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
 use App\Livewire\Tenants\Schoolyears\ManageSchoolYearComponent;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
@@ -240,7 +244,15 @@ Route::middleware([
 
             Route::get('/apprenants-remarquables/impression/previsualisation', MarkRankingPrintableListComponent::class)->name('students.bests.weaks.print.preview');
 
-            // Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
+            Route::get('/apprenants-remarquables/documents/imprimable/{classe_slug?}', MarksRankingPrintableDocumentsPage::class)->name('students.bests.weaks.docs');
+
+
+            //RAPPORTS NOTES EFFECTUEES PAR ENSEIGNANTS
+            Route::get('/rapport-notes/gestion-impression/configuration/{classe_slug?}', MarksDiagnosticManagerComponent::class)->name('marks.reports.print.configuration');
+
+            Route::get('/rapport-notes/impression/previsualisation', MarksDiagnosticPrintableListComponent::class)->name('marks.reports.print.preview');
+
+            Route::get('/rapport-notes/documents/imprimable/{classe_slug?}', MarksDiagnosticForTeachersPrintableDocumentsPage::class)->name('marks.reports.docs');
 
 
             // LES ENSEIGNANTS

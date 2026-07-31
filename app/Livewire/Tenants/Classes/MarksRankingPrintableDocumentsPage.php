@@ -3,7 +3,6 @@
 namespace App\Livewire\Tenants\Classes;
 
 use App\Helpers\Support\TenantStorage;
-use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\GeneratedDocument;
 use App\Models\Promotion;
@@ -19,9 +18,10 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
+
 #[Layout('livewire.layouts.tenant-auth-layout')]
-#[Title('Gestion des documents générés sur les classes')]
-class ClassesPrintableDocumentsPage extends Component
+#[Title('Gestion des documents générés sur les meilleurs et faibles élèves')]
+class MarksRankingPrintableDocumentsPage extends Component
 {
     use WireUiActions, WithPagination;
 
@@ -31,7 +31,7 @@ class ClassesPrintableDocumentsPage extends Component
 
     public string $targetRoute = 'tenant.classes.docs';
     
-    public string $pageTitle = 'Documents générés - Liste classes';
+    public string $pageTitle = 'Documents générés - Liste des meilleurs et faibles apprenants';
 
     public $targetRoutes = [
         'tenant.students.docs' => 'Liste des apprenants',
@@ -58,9 +58,9 @@ class ClassesPrintableDocumentsPage extends Component
     public $counter = 0;
 
 
-    public function mount()
+    public function mount(?string $classe_slug = null)
     {
-        
+        self::initiator();
     }
 
     public function updatedSearch(): void
@@ -88,7 +88,7 @@ class ClassesPrintableDocumentsPage extends Component
     #[Computed]
     public function documents()
     {
-        return GeneratedDocument::ofType('classe_list')
+        return GeneratedDocument::ofType('marks_ranking_list')
             ->forUser(auth('tenant')->id())
             ->when($this->search, fn ($q) =>
                 $q->where('filename', 'like', '%' . $this->search . '%')
@@ -247,6 +247,6 @@ class ClassesPrintableDocumentsPage extends Component
 
     public function render()
     {
-        return view('livewire.tenants.classes.classes-printable-documents-page');
+        return view('livewire.tenants.classes.marks-ranking-printable-documents-page');
     }
 }
