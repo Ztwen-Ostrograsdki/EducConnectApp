@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\Classes;
 
 use App\Models\Classe;
 use App\Models\SchoolYear;
+use App\Models\Student;
 use App\Models\YearlyClasseStudent;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use Livewire\Attributes\Computed;
@@ -25,13 +26,15 @@ class ClasseProfil extends Component
 
     public $counter = 0;
 
-    public ?string $student_uuid_selected;
+    public ?int $student_id = null;
 
     public ?Classe $classe;
 
+    public ?Student $student;
+
     public string $classe_slug;
 
-    public ?string $period_type_selected;
+    public ?int $period = null;
 
     public function mount(string $classe_slug)
     {
@@ -47,6 +50,29 @@ class ClasseProfil extends Component
 
         $this->classroom       = $classe->name;
 
+        if (session()->has('tenant_classe_section_selected')) {
+
+            $this->section = session('tenant_classe_section_selected');
+        }
+
+        if (session()->has('tenant_classe_bulletin_period')) {
+
+            $this->period = session('tenant_classe_bulletin_period');
+        }
+
+        if (session()->has('tenant_classe_bulletin_student_id')) {
+
+            $this->student_id = session('tenant_classe_bulletin_student_id');
+
+            if($this->student_id) $this->student = Student::find($this->student_id);
+        }
+
+    }
+
+    #[Computed]
+    public function periods_types()
+    {
+        return $this->activeYear->getPeriods();
     }
 
     #[On('DataUpdatedEventLiveEvent')]
@@ -69,6 +95,25 @@ class ClasseProfil extends Component
         return $effectifs;
     }
 
+    #[Computed]
+    public function students()
+    {
+        return Student::whereHas('yearlyClasseStudents', fn($q) =>
+            $q->where('classe_id', $this->classe->id)
+              ->where('school_year_id', $this->classe->school_year_id)
+              ->where('is_active', true)
+        )
+        ->whereDoesntHave('yearlyStudentsLeaves')
+        ->orWhereHas('yearlyStudentsLeaves', fn($req) => 
+            $req->where('school_year_id', '<>', $this->classe->school_year_id)
+                ->orWhere('classe_id', '<>', $this->classe->id)
+                ->whereNull('ended_at')
+        )
+        ->orderBy('name')
+        ->orderBy('prenames')
+        ->get();
+    }
+
     public function setSection(string $section)
     {
         session()->put('tenant_classe_section_selected', $section);
@@ -76,52 +121,45 @@ class ClasseProfil extends Component
         $this->section = $section;
     }
 
-    public function updatedStudentUuidSelected(?string $student_uuid_selected)
+    public function updatedStudentId(?int $student_id)
     {
+        $this->student = null;
 
-        session()->put('tenant_classe_bulletin_student_uuid_selected', $student_uuid_selected);
+        session()->put('tenant_classe_bulletin_student_id', $student_id);
 
+        if($student_id) $this->student = Student::find($student_id);
+
+        else $this->student = null;
+
+        $this->dispatch("ReloadForNewStudent", $this->period, $this->student_id, $this->classe->id);
     }
 
-    public function updatedPeriodTypeSelected(?string $period_type_selected)
+    public function updatedPeriod(?int $period)
     {
-        session()->put('tenant_classe_bulletin_period_type_selected', $period_type_selected);
+        session()->put('tenant_classe_bulletin_period', $period);
+
+        $this->dispatch("ReloadForNewStudent", $this->period, $this->student_id, $this->classe->id);
 
     }
 
     public function reloadStudentBulletin()
     {
-        $this->dispatch('ReloadTheStudentBulletin', $this->period_type_selected, $this->student_uuid_selected);
+        $this->dispatch('ReloadTheStudentBulletin', $this->period, $this->student_id);
     }
 
     public function resetBulletinSelections()
     {
-        $this->reset('student_uuid_selected', 'period_type_selected');
+        $this->reset('student_id', 'period');
 
-        session()->forget('tenant_classe_bulletin_period_type_selected');
+        session()->forget('tenant_classe_bulletin_period');
 
-        session()->forget('tenant_classe_bulletin_student_uuid_selected');
+        session()->forget('tenant_classe_bulletin_student_id');
 
         $this->dispatch('ReloadTheStudentBulletin', null, null);
     }
 
     public function render()
     {
-        if (session()->has('tenant_classe_section_selected')) {
-
-            $this->section = session('tenant_classe_section_selected');
-        }
-
-        if (session()->has('tenant_classe_bulletin_period_type_selected')) {
-
-            $this->period_type_selected = session('tenant_classe_bulletin_period_type_selected');
-        }
-
-        if (session()->has('tenant_classe_bulletin_student_uuid_selected')) {
-
-            $this->student_uuid_selected = session('tenant_classe_bulletin_student_uuid_selected');
-        }
-
         return view('livewire.tenants.classes.classe-profil');
     }
 }

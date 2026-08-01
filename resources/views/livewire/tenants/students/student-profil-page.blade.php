@@ -403,32 +403,26 @@
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-                <select wire:model.live="period_type_selected"
-                    class="h-12 px-4 rounded-2xl bg-slate-950 border border-white/10 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500/50 transition-all min-w-[220px]">
-                    <option value="">Sélectionner le semestre / trimestre</option>
-                    @foreach (range(1, 2) as $i)
-                        <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
-                    @endforeach
-                    @foreach (range(1, 3) as $i)
-                        <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                <select wire:model.live="period"
+                    class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
+                    <option value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>
+                    @foreach ($this->periods_types as $pv => $p)
+                        <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
                     @endforeach
                 </select>
-
-                @if ($period_type_selected)
-                    <div class="flex gap-2.5">
-                        <button wire:click="reloadStudentBulletin"
-                            class="h-12 px-6 rounded-2xl bg-sky-600 hover:bg-sky-500 border border-sky-500/40 text-sm font-medium transition-all active:scale-[0.97]">
-                            Charger
-                        </button>
-                        <button wire:click="resetBulletinSelections"
-                            class="h-12 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-sm font-medium transition-all active:scale-[0.97]">
-                            Réinitialiser
-                        </button>
-                    </div>
-                @endif
             </div>
 
-            @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
+            @if ($this->student)
+                @livewire('tenants.classes.sections.classe-pupil-bulletin-component', ['student_id' => $this->student->id, 'student' => $this->student, 'period' => $period, 'classe' => $this->currentClasse])
+            @else
+                <div
+                    class="flex w-full rounded-4xl animate-pulse text-slate-500 text-center font-semibold text-lg items-center justify-center p-5">
+                    <h2 class="p-3">Veuillez sélectionner l'apprenant et le semestre|trimestre puis charger pour
+                        afficher le
+                        bulletin</h2>
+                </div>
+            @endif
         </div>
     </section>
 </div>
+

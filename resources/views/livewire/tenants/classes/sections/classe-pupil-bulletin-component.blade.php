@@ -1,119 +1,123 @@
-<div class="
+<div
+    class="
             bg-slate-950
             text-slate-100
             py-4
             overflow-x-hidden px-1 rounded-4xl">
 
-    @if($student_uuid && $period_type)
-        <div class="mx-auto
+    <div
+        class="mx-auto
                     w-full
                     max-w-[1600px]
                     px-2 sm:px-4 lg:px-6 transition-all">
 
-            {{-- ===================================================== --}}
-            {{-- BULLETIN CONTAINER --}}
-            {{-- ===================================================== --}}
-            <div class="rounded-[32px]
+        {{-- ===================================================== --}}
+        {{-- BULLETIN CONTAINER --}}
+        {{-- ===================================================== --}}
+        <div
+            class="rounded-[32px]
                         border border-slate-800
                         bg-slate-900
                         shadow-2xl
                         overflow-hidden">
 
-                {{-- ===================================================== --}}
-                {{-- HEADER --}}
-                {{-- ===================================================== --}}
-                <section class="border-b border-slate-800">
+            {{-- ===================================================== --}}
+            {{-- HEADER --}}
+            {{-- ===================================================== --}}
+            <section class="border-b border-slate-800">
 
-                    <div class="p-4 sm:p-6 lg:p-10">
+                <div class="p-4 sm:p-6 lg:p-10">
 
-                        {{-- TOP --}}
-                        <div class="grid
+                    {{-- TOP --}}
+                    <div
+                        class="grid
                                     grid-cols-1
                                     lg:grid-cols-3
                                     gap-8
                                     items-center">
 
-                            {{-- LEFT --}}
-                            <div class="text-center lg:text-left">
+                        {{-- LEFT --}}
+                        <div class="text-center lg:text-left">
 
-                                <p class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest">
+                            <p class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest">
 
-                                    République du Bénin
+                                République du Bénin
 
-                                </p>
+                            </p>
 
-                                <h2 class="mt-2 text-lg sm:text-xl font-bold">
+                            <h2 class="mt-2 text-lg sm:text-xl font-bold">
 
-                                    Ministère des Enseignements
-                                    Secondaire, Technique
-                                    et de la Formation Professionnelle
+                                Ministère des Enseignements
+                                Secondaire, Technique
+                                et de la Formation Professionnelle
 
-                                </h2>
+                            </h2>
 
-                                <p class="mt-3 text-sm text-slate-400">
+                            <p class="mt-3 text-sm text-slate-400">
 
-                                    Direction Départementale de l'Enseignement
+                                Direction Départementale de l'Enseignement
 
-                                </p>
+                            </p>
 
-                            </div>
+                        </div>
 
-                            {{-- CENTER --}}
-                            <div class="flex flex-col items-center">
+                        {{-- CENTER --}}
+                        <div class="flex flex-col items-center">
 
-                                {{-- LOGO --}}
-                                <div class="w-24 h-24 sm:w-28 sm:h-28
+                            {{-- LOGO --}}
+                            <div
+                                class="w-24 h-24 sm:w-28 sm:h-28
                                             rounded-3xl
                                             bg-slate-800
                                             border border-slate-700">
-                                </div>
-
-                                <h1 class="mt-4 text-2xl sm:text-3xl font-bold text-center">
-
-                                    CEG TECHNIQUE DE COTONOU
-
-                                </h1>
-
-                                <p class="mt-2 text-sm text-slate-400 text-center">
-
-                                    Excellence • Discipline • Travail
-
-                                </p>
-
-                                <div class="mt-4 text-center text-sm text-slate-400">
-
-                                    <p>+229 01 00 00 00</p>
-                                    <p>contact@cet-cotonou.bj</p>
-
-                                </div>
 
                             </div>
 
-                            {{-- RIGHT --}}
-                            <div class="text-center lg:text-right">
+                            <h1 class="mt-4 text-2xl sm:text-3xl font-bold text-center">
 
-                                <p class="text-sm text-slate-400">
+                                {{ tenant('school_name') }}
 
-                                    Année Scolaire
+                            </h1>
 
-                                </p>
+                            <p class="mt-2 text-sm text-slate-400 text-center">
 
-                                <h2 class="mt-2 text-2xl font-bold text-indigo-400">
+                                {{ tenant('school_devise') }}
 
-                                    {{ $school_year_selected }}
+                            </p>
 
-                                </h2>
+                            <div class="mt-4 text-center text-sm text-slate-400">
 
-                                <div class="mt-5 inline-flex
+                                <p>{{ tenant('contacts') }}</p>
+                                <p>{{ tenant('email') }}</p>
+
+                            </div>
+
+                        </div>
+
+                        {{-- RIGHT --}}
+                        <div class="text-center lg:text-right">
+
+                            <p class="text-sm text-slate-400">
+
+                                Année Scolaire
+
+                            </p>
+
+                            <h2 class="mt-2 text-2xl font-bold text-indigo-400">
+
+                                {{ $this->activeYear->slug }}
+
+                            </h2>
+
+                            <div
+                                class="mt-5 inline-flex
                                             px-4 py-2
                                             rounded-2xl
                                             bg-indigo-500/10
                                             text-indigo-400
                                             text-sm">
 
-                                    Bulletin du {{ $period_type }}
-
-                                </div>
+                                Bulletin du {{ $this->activeYear->periodLabel() }} {{ $period }}
 
                             </div>
 
@@ -121,72 +125,71 @@
 
                     </div>
 
-                </section>
+                </div>
 
-                {{-- ===================================================== --}}
-                {{-- STUDENT INFOS --}}
-                {{-- ===================================================== --}}
-                <section class="border-b border-slate-800">
+            </section>
 
-                    <div class="p-4 sm:p-6 lg:p-10">
+            {{-- ===================================================== --}}
+            {{-- STUDENT INFOS --}}
+            {{-- ===================================================== --}}
+            <section class="border-b border-slate-800">
 
-                        <div class="grid
+                <div class="p-4 sm:p-6 lg:p-10">
+
+                    <div
+                        class="grid
                                     grid-cols-1
                                     xl:grid-cols-[240px_minmax(0,1fr)]
                                     gap-8">
 
-                            {{-- PHOTO --}}
-                            <div class="flex justify-center xl:justify-start">
+                        {{-- PHOTO --}}
+                        <div class="flex justify-center xl:justify-start">
 
-                                <div class="w-44 h-52
+                            <div
+                                class="w-44 h-52
                                             rounded-3xl
                                             bg-slate-800
                                             border border-slate-700
                                             overflow-hidden">
-                                </div>
-
+                                <img src="{{ $student->profil_photo_url }}" alt="Photo de couverture"
+                                    class="w-full h-full object-cover object-top scale-105" />
                             </div>
 
-                            {{-- DETAILS --}}
-                            <div class="min-w-0">
+                        </div>
 
-                                <div class="flex flex-wrap items-center gap-3">
+                        {{-- DETAILS --}}
+                        <div class="min-w-0">
 
-                                    <h2 class="text-2xl sm:text-3xl font-bold">
+                            <div class="flex flex-wrap items-center gap-3">
 
-                                        {{ $student_uuid }}
+                                <h2 class="text-2xl sm:text-3xl font-bold">
 
-                                    </h2>
+                                    {{ $student->getFullName() }}
 
-                                    <span class="px-3 py-1 rounded-full
+                                </h2>
+
+                                <span
+                                    class="px-3 py-1 rounded-full
                                                 bg-emerald-500/10
                                                 text-emerald-400 text-xs">
 
-                                        Élève Régulier
+                                    Élève Régulier
 
-                                    </span>
+                                </span>
 
-                                </div>
+                            </div>
 
-                                {{-- GRID --}}
-                                <div class="mt-6 grid
+                            {{-- GRID --}}
+                            <div
+                                class="mt-6 grid
                                             grid-cols-1
                                             sm:grid-cols-2
                                             xl:grid-cols-4
                                             gap-4">
 
-                                    @foreach([
-                                        ['Matricule', 'MAT-2025-001'],
-                                        ['Classe', $period_type],
-                                        ['Sexe', 'Masculin'],
-                                        ['Date Naissance', '12/08/2008'],
-                                        ['Téléphone', '+229 01 00 00 00'],
-                                        ['Nationalité', 'Béninoise'],
-                                        ['Effectif Classe', '58'],
-                                        ['Professeur Principal', 'M. AGBODJI']
-                                    ] as $info)
-
-                                    <div class="rounded-2xl
+                                @foreach ([['Matricule', $student->matricule], ['Classe', $classe->code], ['Sexe', $student->gender], ['Date Naissance', formatBirthDate($this->student->birth_date)], ['Téléphone', tenant('contacts')], ['Nationalité', $student->country], ['Effectif Classe', $this->effectifs['apprenants']], ['Professeur Principal', $classe->principal?->getFullName() ?? '---']] as $info)
+                                    <div
+                                        class="rounded-2xl
                                                 bg-slate-950
                                                 border border-slate-800
                                                 p-4">
@@ -204,55 +207,52 @@
                                         </h3>
 
                                     </div>
+                                @endforeach
 
-                                    @endforeach
+                            </div>
 
-                                </div>
-
+                            @if ($this->termAverage)
                                 {{-- CLASS DETAILS --}}
-                                <div class="mt-6 grid
+                                <div
+                                    class="mt-6 grid
                                             grid-cols-2
                                             sm:grid-cols-4
                                             gap-4">
 
-                                    @foreach([
-                                        ['Garçons', '34'],
-                                        ['Filles', '24'],
-                                        ['Rang', '5e'],
-                                        ['Moyenne Générale', '14.72']
-                                    ] as $item)
-
-                                    <div class="rounded-2xl
+                                    @foreach ([['Garçons', $this->effectifs['apprenants_par_sexe']['M']], ['Filles', $this->effectifs['apprenants_par_sexe']['F']], ['Rang', $this->termAverage['rank']], ['Moyenne Générale', $this->termAverage['moyenne']]] as $item)
+                                        <div
+                                            class="rounded-2xl
                                                 bg-indigo-500/5
                                                 border border-indigo-500/10
                                                 p-4 text-center">
 
-                                        <p class="text-xs text-slate-400">
+                                            <p class="text-xs text-slate-400">
 
-                                            {{ $item[0] }}
+                                                {{ $item[0] }}
 
-                                        </p>
+                                            </p>
 
-                                        <h3 class="mt-2 text-xl font-bold text-indigo-400">
+                                            <h3 class="mt-2 text-xl font-bold text-indigo-400">
 
-                                            {{ $item[1] }}
+                                                {{ $item[1] }}
 
-                                        </h3>
+                                            </h3>
 
-                                    </div>
-
+                                        </div>
                                     @endforeach
 
                                 </div>
-
-                            </div>
+                            @endif
 
                         </div>
 
                     </div>
 
-                </section>
+                </div>
 
+            </section>
+
+            @if ($this->termAverage && $this->subjectsDetail)
                 {{-- ===================================================== --}}
                 {{-- NOTES TABLE --}}
                 {{-- ===================================================== --}}
@@ -278,19 +278,17 @@
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moy. Interro
+                                            Moy. Int
                                         </th>
 
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Devoir 1
-                                        </th>
+                                        @foreach ($this->devoirColumns() as $type => $label)
+                                            <th class="px-4 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
+                                                {{ $label }}
+                                            </th>
+                                        @endforeach
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Devoir 2
-                                        </th>
-
-                                        <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Moyenne
+                                            Moy
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
@@ -302,11 +300,11 @@
                                         </th>
 
                                         <th class="px-4 py-4 text-center text-sm text-slate-400">
-                                            Enseignant
+                                            Prof
                                         </th>
 
                                         <th class="px-6 py-4 text-left text-sm text-slate-400">
-                                            Observation
+                                            Mention
                                         </th>
 
                                     </tr>
@@ -316,141 +314,126 @@
                                 {{-- BODY --}}
                                 <tbody class="divide-y divide-slate-800">
 
-                                    @foreach([
-                                        ['Mathématiques', 5, 15, 14, 16, 15, 75, '4e', 'M. Tognon', 'Très bon travail'],
-                                        ['Physique', 4, 13, 14, 12, 13, 52, '8e', 'Mme Ahouandjinou', 'Bon ensemble'],
-                                        ['Français', 3, 12, 10, 11, 11, 33, '11e', 'M. Gandonou', 'Peut mieux faire'],
-                                        ['Anglais', 2, 16, 15, 17, 16, 32, '2e', 'Mme Assogba', 'Excellent'],
-                                        ['Informatique', 5, 18, 17, 19, 18, 90, '1er', 'M. Houngbédji', 'Excellent niveau'],
-                                        ['EPS', 1, 15, 14, 16, 15, 15, '5e', 'M. Sossou', 'Très dynamique'],
-                                    ] as $subject)
+                                    @foreach ($this->subjectsDetail as $row)
+                                        <tr class="hover:bg-slate-800/40 transition-all">
 
-                                    <tr class="hover:bg-slate-800/40 transition-all">
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        <td class="px-4 py-5 font-medium whitespace-nowrap">
+                                                {{ $row['subject']->name }}
 
-                                            {{ $subject[0] }}
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        </td>
+                                                {{ $row['coefficient'] ?? '---' }}
 
-                                        <td class="px-4 py-5 text-center">
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                            {{ $subject[1] }}
+                                                {{ $row['moy_interro'] ?? '---' }}
 
-                                        </td>
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        <td class="px-4 py-5 text-center">
+                                                {{ $row['devoirs']['devoir1'] ?? '---' }}
 
-                                            {{ $subject[2] }}
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        </td>
+                                                {{ $row['devoirs']['devoir2'] ?? '---' }}
 
-                                        <td class="px-4 py-5 text-center">
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                            {{ $subject[3] }}
+                                                {{ $row['moy'] ?? '---' }}
 
-                                        </td>
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        <td class="px-4 py-5 text-center">
+                                                {{ $row['moy_coef'] ?? '---' }}
 
-                                            {{ $subject[4] }}
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        </td>
+                                                {{ '---' }}
 
-                                        <td class="px-4 py-5 text-center
-                                                font-semibold text-indigo-400">
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                            {{ $subject[5] }}
+                                                {{ $row['teacher']->getFullName() }}
 
-                                        </td>
+                                            </td>
+                                            <td class="px-4 py-5 font-medium whitespace-nowrap">
 
-                                        <td class="px-4 py-5 text-center
-                                                font-semibold text-emerald-400">
+                                                {{ $row['mention'] ?? '---' }}
 
-                                            {{ $subject[6] }}
+                                            </td>
 
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center">
-
-                                            {{ $subject[7] }}
-
-                                        </td>
-
-                                        <td class="px-4 py-5 whitespace-nowrap">
-
-                                            {{ $subject[8] }}
-
-                                        </td>
-
-                                        <td class="px-6 py-5 min-w-[280px]">
-
-                                            <span class="text-sm text-slate-300">
-
-                                                {{ $subject[9] }}
-
-                                            </span>
-
-                                        </td>
-
-                                    </tr>
-
+                                        </tr>
                                     @endforeach
 
                                 </tbody>
 
-                                {{-- FOOT TOTAL --}}
-                                <tfoot class="bg-slate-950 border border-slate-800">
+                                @if ($this->termAverage)
+                                    <tfoot class="bg-slate-950 border border-slate-800">
 
-                                    <tr>
+                                        <tr>
 
-                                        <td colspan="5"
-                                            class="px-6 py-5 text-right
+                                            <td colspan="5"
+                                                class="px-6 py-5 text-right
                                                 font-bold text-lg">
 
-                                            Moyenne Générale
+                                                Moyenne Générale
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center
+                                            <td
+                                                class="px-4 py-5 text-center
                                                 font-bold text-2xl
                                                 text-indigo-400">
 
-                                            14.72
+                                                {{ $this->termAverage['moyenne'] }}
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center
+                                            <td
+                                                class="px-4 py-5 text-center
                                                 font-bold text-emerald-400">
 
-                                            297
+                                                {{ $this->termAverage['sum_coef'] }}
 
-                                        </td>
+                                            </td>
 
-                                        <td class="px-4 py-5 text-center
+                                            <td
+                                                class="px-4 py-5 text-center
                                                 font-bold">
 
-                                            5e / 58
+                                                {{ $this->termAverage['rank'] }} / {{ $this->termAverage['total'] }}
 
-                                        </td>
+                                            </td>
 
-                                        <td colspan="2"
-                                            class="px-6 py-5">
+                                            <td colspan="2" class="px-6 py-5">
 
-                                            <span class="px-4 py-2 rounded-2xl
+                                                <span
+                                                    class="px-4 py-2 rounded-2xl
                                                         bg-emerald-500/10
                                                         text-emerald-400
                                                         text-sm">
 
-                                                Très Bon {{ $period_type }}
+                                                    {{ $this->termAverage['mention'] }}
 
-                                            </span>
+                                                </span>
 
-                                        </td>
+                                            </td>
 
-                                    </tr>
+                                        </tr>
 
-                                </tfoot>
+                                    </tfoot>
+                                @else
+                                    <span
+                                        class="animate-pulse text-slate-700 flex justify-center items-center text-center py-3 my-4">
+                                        Aucune moyenne calculable pour l'instant
+                                    </span>
+                                @endif
 
                             </table>
 
@@ -467,13 +450,15 @@
 
                     <div class="p-4 sm:p-6 lg:p-10">
 
-                        <div class="grid
+                        <div
+                            class="grid
                                     grid-cols-1
                                     2xl:grid-cols-3
                                     gap-6">
 
                             {{-- OBSERVATION --}}
-                            <div class="rounded-3xl
+                            <div
+                                class="rounded-3xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-6">
@@ -497,7 +482,8 @@
                             </div>
 
                             {{-- JURY --}}
-                            <div class="rounded-3xl
+                            <div
+                                class="rounded-3xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-6">
@@ -563,7 +549,8 @@
                             </div>
 
                             {{-- SIGNATURE --}}
-                            <div class="rounded-3xl
+                            <div
+                                class="rounded-3xl
                                         bg-slate-950
                                         border border-slate-800
                                         p-6">
@@ -577,7 +564,8 @@
                                 <div class="mt-8 flex flex-col items-center">
 
                                     {{-- STAMP --}}
-                                    <div class="w-36 h-36 rounded-full
+                                    <div
+                                        class="w-36 h-36 rounded-full
                                                 border-4 border-dashed
                                                 border-indigo-500/40
                                                 flex items-center
@@ -617,61 +605,63 @@
 
                 </section>
 
-                {{-- ===================================================== --}}
-                {{-- FOOTER --}}
-                {{-- ===================================================== --}}
-                <footer class="border-t border-slate-800
+            @endif
+
+            {{-- ===================================================== --}}
+            {{-- FOOTER --}}
+            {{-- ===================================================== --}}
+            <footer class="border-t border-slate-800
                             bg-slate-950">
 
-                    <div class="px-4 sm:px-6 lg:px-10 py-6">
+                <div class="px-4 sm:px-6 lg:px-10 py-6">
 
-                        <div class="flex flex-col
+                    <div
+                        class="flex flex-col
                                     lg:flex-row
                                     lg:items-center
                                     lg:justify-between
                                     gap-4">
 
-                            <div>
+                        <div>
 
-                                <p class="text-sm text-slate-400">
+                            <p class="text-sm text-slate-400">
 
-                                    Bulletin généré automatiquement par
-                                    la plateforme de gestion scolaire
+                                Bulletin généré automatiquement par
+                                la plateforme de gestion scolaire
 
-                                </p>
+                            </p>
 
-                            </div>
+                        </div>
 
-                            <div class="flex flex-wrap gap-3">
+                        <div class="flex flex-wrap gap-3">
 
-                                <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                             bg-slate-800 hover:bg-slate-700">
 
-                                    Télécharger PDF
+                                Télécharger PDF
 
-                                </button>
+                            </button>
 
-                                <button class="h-11 px-5 rounded-2xl
+                            <button
+                                class="h-11 px-5 rounded-2xl
                                             bg-indigo-500 hover:bg-indigo-600">
 
-                                    Envoyer au Parent
+                                Envoyer au Parent
 
-                                </button>
-
-                            </div>
+                            </button>
 
                         </div>
 
                     </div>
 
-                </footer>
+                </div>
 
-            </div>
+            </footer>
 
         </div>
-    @else
-        <div class="flex w-full rounded-4xl animate-pulse text-slate-500 text-center font-semibold text-lg items-center justify-center p-5">
-            <h2 class="p-3">Veuillez sélectionner l'apprenant et le semestre|trimestre puis charger pour afficher le bulletin</h2>
-        </div>
-    @endif
+
+    </div>
+
 </div>
+

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesClasseAveragesCacheForAllPeriods;
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use App\Traits\InvalidatesFiliarDetailsCache;
@@ -17,7 +18,8 @@ class ClasseSubjectOfSchoolYear extends Model
     InvalidatesClasseEffectifsCache, 
     InvalidatesSubjectDetailsCache,
     InvalidatesFiliarDetailsCache,
-    InvalidatesPromotionDetailsCache;
+    InvalidatesPromotionDetailsCache,
+    InvalidatesClasseAveragesCacheForAllPeriods;
     
     protected $table = 'classe_subject_of_school_years';
 

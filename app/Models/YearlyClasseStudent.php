@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\InvalidatesClasseAveragesCacheForAllPeriods;
 use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use App\Traits\InvalidatesFiliarDetailsCache;
@@ -15,7 +16,8 @@ class YearlyClasseStudent extends Model
     use InvalidatesDashboardCounters, 
     InvalidatesClasseEffectifsCache, 
     InvalidatesFiliarDetailsCache, 
-    InvalidatesPromotionDetailsCache;
+    InvalidatesPromotionDetailsCache,
+    InvalidatesClasseAveragesCacheForAllPeriods;
 
 
     

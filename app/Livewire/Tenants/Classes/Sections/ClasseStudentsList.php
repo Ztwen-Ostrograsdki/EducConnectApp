@@ -2,17 +2,11 @@
 
 namespace App\Livewire\Tenants\Classes\Sections;
 
-use App\Events\DataUpdatedEvent;
 use App\Jobs\JobToGeneratePrintableStudentsDataForThePrintViewComponent;
 use App\Livewire\Tenants\ActionsTraits\StudentsActions;
 use App\Models\Classe;
 use App\Models\SchoolYear;
-use App\Models\Student;
-use App\Models\YearlyClasseStudent;
-use App\Models\YearlyClasseStudentsLeave;
 use App\Services\StudentsServices\StudentPrintColumns;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -26,10 +20,6 @@ class ClasseStudentsList extends Component
     public ?Classe $classe;
     public int     $perpage  = 30;
     public int     $counterh  = 30;
-
-    // ─── Filtres ──────────────────────────────────────────────────────
-    public string $search = '';
-    public string $gender = '';
 
     public string $studentTypesActivesOrNotTargeted = 'onlyActives';
 
@@ -84,66 +74,7 @@ class ClasseStudentsList extends Component
     public function reloaddata(): void
     {
         $this->counterh++;
-        unset($this->students);
-        unset($this->leave_students);
-        $this->resetPage();
     }
-
-    #[Computed]
-    public function students()
-    {
-        return Student::whereHas('yearlyClasseStudents', fn($q) =>
-            $q->where('classe_id', $this->classe->id)
-              ->where('school_year_id', $this->classe->school_year_id)
-              ->where('is_active', true)
-        )
-        ->when($this->search, fn($q) =>
-            $q->where('name', 'like', '%'.$this->search.'%')
-              ->orWhere('prenames', 'like', '%'.$this->search.'%')
-              ->orWhere('matricule', 'like', '%'.$this->search.'%')
-        )
-        ->when($this->gender, fn ($q) =>
-            $q->whereIn('gender', [$this->gender, Str::lower($this->gender), Str::upper($this->gender), str::initials(Str::upper($this->gender), true)])
-        )
-        ->whereDoesntHave('yearlyStudentsLeaves')
-        ->orWhereHas('yearlyStudentsLeaves', fn($req) => 
-            $req->where('school_year_id', '<>', $this->classe->school_year_id)
-                ->orWhere('classe_id', '<>', $this->classe->id)
-                ->whereNull('ended_at')
-        )
-        ->orderBy('name')
-        ->orderBy('prenames')
-        ->paginate($this->perpage);
-    }
-
-    #[Computed]
-    public function leave_students()
-    {
-        $classeId = $this->classe->id;
-        $schoolYearId = $this->classe->school_year_id;
-
-        return Student::query()
-            ->whereHas('yearlyClasseStudents', fn ($q) =>
-                $q->where('classe_id', $classeId)
-                ->where('school_year_id', $schoolYearId)
-                ->where('is_active', true)
-            )
-            ->whereHas('yearlyStudentsLeaves', fn ($q) =>
-                $q->where('classe_id', $classeId)
-                ->where('school_year_id', $schoolYearId)
-                ->whereNull('ended_at')
-            )
-            // eager load contraint : uniquement l'abandon pertinent pour cette classe/année
-            ->with(['yearlyStudentsLeaves' => fn ($q) =>
-                $q->where('classe_id', $classeId)
-                ->where('school_year_id', $schoolYearId)
-                ->whereNull('ended_at')
-            ])
-            ->orderBy('name')
-            ->orderBy('prenames')
-            ->get(); // adapte selon ton UI ; évite le ->get() en liste
-    }
-
 
     protected function currentFilterConfig(): array
     {

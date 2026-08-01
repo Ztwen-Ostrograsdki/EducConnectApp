@@ -253,27 +253,24 @@
                     <section class="mb-6">
                         <div class="rounded-2xl bg-[#121826] border border-white/5 p-4 sm:p-5">
                             <div class="flex flex-col sm:flex-row flex-wrap gap-3">
-                                <select wire:model.live="period_type_selected"
-                                    class="h-11 min-w-[200px] rounded-xl bg-[#0b0f19] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
-                                    <option value="">Sélectionner le semestre / trimestre</option>
-                                    @foreach (range(1, 2) as $i)
-                                        <option value="Semestre {{ $i }}">Semestre {{ $i }}</option>
-                                    @endforeach
-                                    @foreach (range(1, 3) as $i)
-                                        <option value="Trimestre {{ $i }}">Trimestre {{ $i }}</option>
+                                <select wire:model.live="period"
+                                    class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
+                                    <option value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>
+                                    @foreach ($this->periods_types as $pv => $p)
+                                        <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
                                     @endforeach
                                 </select>
 
-                                <select wire:model.live="student_uuid_selected"
+                                <select wire:model.live="student_id"
                                     class="h-11 min-w-[220px] rounded-xl bg-[#0b0f19] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
                                     <option value="">Sélectionner l'apprenant</option>
-                                    @foreach (range(1, 10) as $i)
-                                        <option value="HOUNGNITO Marc {{ $i }}">HOUNGNITO Marc {{ $i }}
+                                    @foreach ($this->students as $st)
+                                        <option value="{{ $st->id }}">{{ $st->getFullName() }}
                                         </option>
                                     @endforeach
                                 </select>
 
-                                @if ($student_uuid_selected && $period_type_selected)
+                                @if ($student_id && $period)
                                     <button wire:click="reloadStudentBulletin"
                                         class="h-11 px-5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium transition-all active:scale-[0.97]">
                                         Charger
@@ -286,7 +283,16 @@
                             </div>
                         </div>
                     </section>
-                    @livewire('tenants.classes.sections.classe-pupil-bulletin-component')
+                    @if ($student)
+                        @livewire('tenants.classes.sections.classe-pupil-bulletin-component', ['student_id' => $student_id, 'student' => $student, 'period' => $period, 'classe' => $classe])
+                    @else
+                        <div
+                            class="flex w-full rounded-4xl animate-pulse text-slate-500 text-center font-semibold text-lg items-center justify-center p-5">
+                            <h2 class="p-3">Veuillez sélectionner l'apprenant et le semestre|trimestre puis charger pour
+                                afficher le
+                                bulletin</h2>
+                        </div>
+                    @endif
                 @break
 
             @endswitch

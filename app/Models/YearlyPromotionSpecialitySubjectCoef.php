@@ -7,12 +7,16 @@ use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Subject;
+use App\Traits\InvalidatesClasseAveragesCacheForAllPeriods;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class YearlyPromotionSpecialitySubjectCoef extends Model
 {
+    use InvalidatesClasseAveragesCacheForAllPeriods;
+
+    
     protected $fillable = ['coef', 'subject_id', 'filiar_id', 'promotion', 'serial_id', 'school_year_id', 'uuid'];
 
 
