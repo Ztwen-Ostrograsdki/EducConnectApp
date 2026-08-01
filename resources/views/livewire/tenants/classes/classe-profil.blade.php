@@ -251,7 +251,7 @@
 
                 @case('classe-pupil-bulletin-component')
                     <section class="mb-6">
-                        <div class="rounded-2xl bg-[#121826] border border-white/5 p-4 sm:p-5">
+                        <div class="rounded-2xl bg-slate-950 border border-white/5 p-4 sm:p-5">
                             <div class="flex flex-col sm:flex-row flex-wrap gap-3">
                                 <select wire:model.live="period"
                                     class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">

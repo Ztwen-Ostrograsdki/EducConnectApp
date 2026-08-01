@@ -6,6 +6,7 @@ use App\Livewire\Tenants\ActionsTraits\StudentsActions;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Student;
+use App\Services\MarksServices\ClasseAveragesCacheService;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -127,19 +128,6 @@ class StudentMarksComponent extends Component
             ->values();
     }
 
-    /**
-     * Tous les apprenants de la classe (pour calculer le rang de manière cohérente
-     * avec la vue enseignant : même population de référence pour le classement).
-     */
-    #[Computed]
-    public function classmates()
-    {
-        return Student::whereHas('yearlyClasseStudents', fn ($q) =>
-            $q->where('classe_id', $this->classe->id)
-              ->where('school_year_id', $this->activeYear->id)
-              ->where('is_active', true)
-        )->get(['id']);
-    }
 
     #[Computed]
     public function devoirColumns(): array
@@ -170,144 +158,65 @@ class StudentMarksComponent extends Component
     #[Computed]
     public function subjectRows(): array
     {
-        if (!$this->period) {
-            return [];
-        }
+        if (!$this->period) return [];
 
-        $devoirColumns = array_keys($this->devoirColumns());
-        $classmateIds = $this->classmates->pluck('id');
+        $marksService = app(ClasseSubjectMarksCacheService::class);
 
-        return $this->classeSubjects->map(function (ClasseSubjectOfSchoolYear $classeSubject) use ($devoirColumns, $classmateIds) {
+        $classeSubjects = ClasseSubjectOfSchoolYear::with('subject')
+            ->where('classe_id', $this->classe->id)
+            ->where('school_year_id', $this->activeYear->id)
+            ->where('is_active', true)
+            ->with(['teacher', 'subject'])
+            ->whereNull('ended_at')
+            ->get();
 
-            $subject = $classeSubject->subject;
 
-            $coefficient = $this->classe->getCoefValueOfSubject($subject->id);
+        return $classeSubjects->map(function (ClasseSubjectOfSchoolYear $classeSubject) use ($marksService) {
 
-            // Une seule lecture de cache par matière — clé indépendante,
-            // aucun impact sur les autres matières/périodes déjà en cache.
-            $marksData = app(ClasseSubjectMarksCacheService::class)->get(
+            $data = $marksService->forStudent(
                 $this->classe->id,
-                $subject->id,
+                $classeSubject->subject_id,
+                $this->student->id,
                 $this->period,
                 $this->activeYear->id
-            );
-
-            // Moyennes de TOUS les camarades pour cette matière, afin de classer
-            // correctement l'apprenant consulté (même logique que la vue enseignant).
-            $moyennes = $classmateIds->mapWithKeys(function ($studentId) use ($marksData, $devoirColumns) {
-                return [$studentId => $this->computeMoy($marksData[$studentId] ?? [], $devoirColumns)];
-            });
-
-            $ranked = $moyennes
-                ->filter(fn ($moy) => !is_null($moy))
-                ->sortDesc();
-
-            $rank = null;
-            $position = 0;
-            $lastMoy = null;
-
-            foreach ($ranked as $studentId => $moy) {
-                $position++;
-                if ($moy !== $lastMoy) {
-                    $rank = $position;
-                    $lastMoy = $moy;
-                }
-                if ($studentId === $this->student->id) {
-                    break;
-                }
-            }
-
-            $thisStudentMoy = $moyennes[$this->student->id] ?? null;
-
-            if (is_null($thisStudentMoy)) {
-                $rank = null;
-            }
-
-            $studentMarks = $marksData[$this->student->id] ?? [];
-
-            $values = [];
-            foreach (array_keys($this->markColumns) as $type) {
-                $values[$type] = $studentMarks[$type]['value'] ?? null;
-            }
-
-            $moyInterro = $this->computeMoyInterro($studentMarks);
-            $moyDevoirs = $this->computeMoyDevoirs($studentMarks, $devoirColumns);
-            $moy = $thisStudentMoy;
-            $moyCoef = !is_null($moy) ? round($moy * $coefficient, 2) : null;
+            ) ?? ['marks' => [], 'moy_interro' => null, 'moy' => null, 'moy_coef' => null, 'rank' => null, 'total' => 0];
 
             return [
-                'subject'     => $subject,
-                'coefficient' => $coefficient,
-                'marks'       => $values,
-                'moy_interro' => $moyInterro,
-                'moy'         => $moy,
-                'moy_coef'    => $moyCoef,
-                'rank'        => $rank,
-                'total'       => $classmateIds->count(),
+                'subject'     => $classeSubject->subject,
+                'teacher'     => $classeSubject->teacher,
+                'coefficient' => $data['coefficient'],
+                'marks'       => collect(array_keys($this->markColumns))
+                                    ->mapWithKeys(fn ($t) => [$t => $data['marks'][$t]['value'] ?? null])->all(),
+                'moy_interro' => $data['moy_interro'],
+                'moy'         => $data['moy'],
+                'moy_coef'    => $data['moy_coef'],
+                'rank'        => $data['rank'],
+                'total'       => $data['total'],
+                'mention'     => $data['mention'],
             ];
         })->all();
     }
 
+    /**
+     * Moyenne générale + rang de l'apprenant pour la période — lecture directe
+     * dans le cache ClasseAveragesCacheService (déjà calculé pour toute la classe).
+     */
     #[Computed]
-    public function getTotals()
+    public function termAverage(): ?array
     {
-        $coef_sum = 0;
+        if (!$this->period) return null;
 
-        $moy_coef_sum = 0;
-
-        $moy = 0;
-
-        foreach($this->subjectRows as $row){
-
-            $coef = $row['coefficient'] && $row['moy_coef'] ? $row['coefficient'] : 0;
-
-            $moy_coef = $row['moy_coef'] ?? 0;
-
-            $coef_sum += $coef;
-
-            $moy_coef_sum += $moy_coef;
-
-        }
-
-        if($moy_coef_sum && $coef_sum){
-
-            $moy = round($moy_coef_sum/$coef_sum, 2);
-        }
-
-
-
-        return ['coef_sum' => $coef_sum, 'moy_coef_sum' => $moy_coef_sum, 'moy' => $moy];
+        return app(ClasseAveragesCacheService::class)->forStudent(
+            $this->classe->id,
+            $this->student->id,
+            $this->period,
+            $this->activeYear->id
+        );
+        // => ['sum_moy_coef' => .., 'sum_coef' => .., 'moyenne' => .., 'mention' => .., 'rank' => .., 'total' => ..]
     }
 
-    protected function computeMoyInterro(array $studentMarks): ?float
-    {
-        $values = collect(self::INTERRO_TYPES)
-            ->map(fn ($type) => $studentMarks[$type]['value'] ?? null)
-            ->filter(fn ($v) => !is_null($v));
-
-        return $values->isNotEmpty() ? round($values->avg(), 2) : null;
-    }
-
-    protected function computeMoyDevoirs(array $studentMarks, array $devoirColumns): ?float
-    {
-        $values = collect($devoirColumns)
-            ->map(fn ($type) => $studentMarks[$type]['value'] ?? null)
-            ->filter(fn ($v) => !is_null($v));
-
-        return $values->isNotEmpty() ? round($values->avg(), 2) : null;
-    }
-
-    protected function computeMoy(array $studentMarks, array $devoirColumns): ?float
-    {
-        $moyInterro = $this->computeMoyInterro($studentMarks);
-        $moyDevoirs = $this->computeMoyDevoirs($studentMarks, $devoirColumns);
-
-        if (!is_null($moyInterro) && !is_null($moyDevoirs)) {
-            return round(($moyInterro + $moyDevoirs) / 2, 2);
-        }
-
-        return $moyInterro ?? $moyDevoirs ?? null;
-    }
+    
+    
 
     #[On('yearChanged')]
     public function onYearChanged(string $schoolYear)

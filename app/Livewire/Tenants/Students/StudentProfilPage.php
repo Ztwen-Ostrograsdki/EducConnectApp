@@ -96,21 +96,10 @@ class StudentProfilPage extends Component
     {
         session()->put('tenant_student_bulletin_period', $period);
 
+        $this->dispatch("ReloadForNewStudent", $this->period, $this->student->id, $this->currentClasse->id);
+
     }
 
-    public function reloadStudentBulletin()
-    {
-        $this->dispatch('ReloadTheStudentBulletin', $this->period, $this->student_uuid);
-    }
-
-    public function resetBulletinSelections()
-    {
-        $this->reset('period');
-
-        session()->forget('tenant_student_bulletin_period');
-
-        $this->dispatch('ReloadTheStudentBulletin', null, null);
-    }
 
     #[Computed]
     public function parents()

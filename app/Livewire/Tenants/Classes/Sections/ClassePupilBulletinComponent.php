@@ -49,9 +49,21 @@ class ClassePupilBulletinComponent extends Component
         $devoirsType = tenant()->devoirs_type ?? 'devoir1-devoir2';
 
         return $devoirsType === 'devoir1-compo'
-            ? ['devoir1' => 'Dev 1', 'compo' => 'Compo']
-            : ['devoir1' => 'Dev 1', 'devoir2' => 'Dev 2'];
+            ? ['devoir1' => 'Devoir 1', 'compo' => 'Composition']
+            : ['devoir1' => 'Devoir 1', 'devoir2' => 'Devoir 2'];
     }
+
+    #[Computed]
+    public function markColumns(): array
+    {
+        return [
+            'interro1' => 'Interro 1',
+            'interro2' => 'Interro 2',
+            'interro3' => 'Interro 3',
+            'interro4' => 'Interro 4',
+        ] + $this->devoirColumns();
+    }
+
 
     #[On('ReloadForNewStudent')]
     public function reload($period, $student_id, $classe_id)
@@ -82,49 +94,39 @@ class ClassePupilBulletinComponent extends Component
     {
         if (!$this->period) return [];
 
-        $devoirColumns = SubjectAverageCalculator::devoirColumns();
-
         $marksService = app(ClasseSubjectMarksCacheService::class);
 
         $classeSubjects = ClasseSubjectOfSchoolYear::with('subject')
             ->where('classe_id', $this->classe->id)
             ->where('school_year_id', $this->activeYear->id)
             ->where('is_active', true)
+            ->with(['teacher', 'subject'])
             ->whereNull('ended_at')
             ->get();
 
-        return $classeSubjects->map(function (ClasseSubjectOfSchoolYear $cs) use ($marksService, $devoirColumns) {
 
-            // Lecture cache : classe_marks:{classeId}:{subjectId}:sy:{id}:period:{period}
-            $marksData = $marksService->get(
+        return $classeSubjects->map(function (ClasseSubjectOfSchoolYear $classeSubject) use ($marksService) {
+
+            $data = $marksService->forStudent(
                 $this->classe->id,
-                $cs->subject_id,
+                $classeSubject->subject_id,
+                $this->student->id,
                 $this->period,
                 $this->activeYear->id
-            );
-
-            $studentMarks = $marksData[$this->student->id] ?? [];
-
-            $moy = SubjectAverageCalculator::moy($studentMarks, $devoirColumns);
-
-            $coefficient = $this->classe->getCoefValueOfSubject($cs->subject_id);
-
-            
-            $mentionService = app(MentionService::class);
+            ) ?? ['marks' => [], 'moy_interro' => null, 'moy' => null, 'moy_coef' => null, 'rank' => null, 'total' => 0];
 
             return [
-                'subject'     => $cs->subject,
-                'teacher'     => $cs->teacher,
-                'coefficient' => $coefficient,
-                'interros'    => collect(['interro1', 'interro2', 'interro3', 'interro4'])
-                                    ->mapWithKeys(fn ($t) => [$t => $studentMarks[$t]['value'] ?? null]),
-                'devoirs'     => collect($devoirColumns)
-                                    ->mapWithKeys(fn ($t) => [$t => $studentMarks[$t]['value'] ?? null]),
-                'moy_interro' => SubjectAverageCalculator::moyInterro($studentMarks),
-                'moy_devoirs' => SubjectAverageCalculator::moyDevoirs($studentMarks, $devoirColumns),
-                'moy'         => $moy,
-                'moy_coef'    => SubjectAverageCalculator::moyCoef($moy, $coefficient),
-                'mention'     => $mentionService->forValue($moy),
+                'subject'     => $classeSubject->subject,
+                'teacher'     => $classeSubject->teacher,
+                'coefficient' => $data['coefficient'],
+                'marks'       => collect(array_keys($this->markColumns))
+                                    ->mapWithKeys(fn ($t) => [$t => $data['marks'][$t]['value'] ?? null])->all(),
+                'moy_interro' => $data['moy_interro'],
+                'moy'         => $data['moy'],
+                'moy_coef'    => $data['moy_coef'],
+                'rank'        => $data['rank'],
+                'total'       => $data['total'],
+                'mention'     => $data['mention'],
             ];
         })->all();
     }

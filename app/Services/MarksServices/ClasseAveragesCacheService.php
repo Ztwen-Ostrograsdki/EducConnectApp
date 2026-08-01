@@ -5,9 +5,8 @@ namespace App\Services\MarksServices;
 
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
-use App\Models\YearlyClasseStudent;
+use App\Services\ClassesServices\ActiveClasseStudentsResolver;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
-use App\Services\MarksServices\SubjectAverageCalculator;
 use App\Services\MentionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -77,7 +76,7 @@ class ClasseAveragesCacheService
 
     protected function compute(int $classeId, int $period, ?int $schoolYearId): array
     {
-        $studentIds = $this->activeStudentIds($classeId, $schoolYearId);
+        $studentIds = app(ActiveClasseStudentsResolver::class)->ids($classeId, $schoolYearId);
 
         if ($studentIds->isEmpty()) {
             return [];
@@ -87,36 +86,26 @@ class ClasseAveragesCacheService
             ->where('classe_id', $classeId)
             ->where('school_year_id', $schoolYearId)
             ->where('is_active', true)
-            ->with(['classe', 'subject'])
             ->whereNull('ended_at')
             ->get();
 
-        $devoirColumns = SubjectAverageCalculator::devoirColumns();
-
         $marksCacheService = app(ClasseSubjectMarksCacheService::class);
 
-        // Accumulateurs par apprenant : somme des moy. coef et somme des coef
-        // RETENUES (une matière ignorée n'apporte ni sa moy. coef, ni son coef).
         $sums = $studentIds->mapWithKeys(fn ($id) => [
             $id => ['sum_moy_coef' => 0.0, 'sum_coef' => 0.0],
         ]);
 
         foreach ($classeSubjects as $classeSubject) {
 
-			$coefficient = $classeSubject->classe->getCoefValueOfSubject($classeSubject->subject_id);
-
-            // Réutilise le cache déjà en place — aucune requête Mark directe ici.
+            // Lecture cache déjà enrichi de moy/moy_coef par matière — aucun recalcul ici.
             $marksData = $marksCacheService->get($classeId, $classeSubject->subject_id, $period, $schoolYearId);
+
+            $coefficient = $classeSubject->classe->getCoefValueOfSubject($classeSubject->subject_id);
 
             foreach ($studentIds as $studentId) {
 
-                $studentMarks = $marksData[$studentId] ?? [];
+                $moyCoef = $marksData[$studentId]['moy_coef'] ?? null;
 
-                $moy = SubjectAverageCalculator::moy($studentMarks, $devoirColumns);
-
-                $moyCoef = SubjectAverageCalculator::moyCoef($moy, $coefficient);
-
-                // Moy. coef nulle (ou moy nulle) => matière ignorée, coef non compté.
                 if (is_null($moyCoef) || $moyCoef == 0.0) {
                     continue;
                 }
@@ -124,7 +113,6 @@ class ClasseAveragesCacheService
                 $item = $sums->get($studentId);
 
                 $item['sum_moy_coef'] += $moyCoef;
-
                 $item['sum_coef'] += $coefficient;
 
                 $sums->put($studentId, $item);
@@ -171,6 +159,8 @@ class ClasseAveragesCacheService
             if (is_null($r['moyenne'])) {
                 $item['rank'] = null;
                 $item['total'] = $total;
+
+                $results->put($studentId, $item);
                 continue;
             }
 
@@ -188,24 +178,7 @@ class ClasseAveragesCacheService
         return $results->all();
     }
 
-    /**
-     * Apprenants n'ayant pas abandonné : is_active=true, ended_at=null,
-     * même critère que ClasseEffectifsService::countActiveStudents().
-     */
-    protected function activeStudentIds(int $classeId, ?int $schoolYearId): Collection
-    {
-        return YearlyClasseStudent::query()
-            ->where('classe_id', $classeId)
-            ->where('school_year_id', $schoolYearId)
-            ->where('is_active', true)
-            ->whereNull('ended_at')
-			->whereHas('student', fn($q) => 
-				$q->whereDoesntHave('yearlyStudentsLeaves', fn ($qs) => 
-					$qs->where('school_year_id', $schoolYearId)
-				)
-			)
-            ->pluck('student_id');
-    }
+    
 
     protected function cacheKey(int $classeId, int $period, ?int $schoolYearId): string
     {
