@@ -1,38 +1,35 @@
 <?php
 
-namespace App\Livewire\Tenants\Users\Parent;
+namespace App\Livewire\Tenants\Components;
 
+use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Student;
+use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Services\MarksServices\ClasseAveragesCacheService;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
-use WireUi\Traits\WireUiActions;
 
-#[Title("Details des notes de mes enfants")]
-class ParentStudentsMarksViewer extends Component
+class BulletinComponent extends Component
 {
-    use WireUiActions;
-
-    public $counter = 0;
-
-    public ?string $student_uuid;
+    public ?int $student_id = null;
 
     public ?int $period = null;
 
-    public ?string $classe_slug;
+    public ?string $school_year_selected;
 
-    public function mount(string $student_uuid)
+    public ?Classe $classe = null;
+
+    public ?Student $student = null;
+
+    public int $counter = 0;
+
+
+    public function mount()
     {
-        
-        $this->student_uuid = $student_uuid;
-
-        $this->classe_slug = $student_uuid;
-
         $this->loadActivePeriod();
     }
 
@@ -44,22 +41,6 @@ class ParentStudentsMarksViewer extends Component
         }
     }
 
-    
-    #[On('DataUpdatedEventLiveEvent')]
-    public function reloaddata()
-    {
-        $this->counter++;
-    }
-
-    #[Computed]
-    public function student()
-    {
-        $student = Student::firstWhere('uuid', $this->student_uuid);
-
-        if (!$student) return abort(404);
-
-        return $student;
-    }
 
     #[Computed]
     public function activeYear(): ?SchoolYear
@@ -67,24 +48,69 @@ class ParentStudentsMarksViewer extends Component
         return SchoolYear::current()->first();
     }
 
-    /**
-     * Classe active de l'apprenant pour l'année en cours.
-     * Adapte le nom de la relation si besoin ('yearlyClasseStudents' supposé BelongsTo/HasMany
-     * vers YearlyClasseStudent, lui-même lié à Classe via classe()).
-     */
     #[Computed]
-    public function classe()
+    public function devoirColumns(): array
     {
-        $classe_rel = $this->student->currentClasse();
+        $devoirsType = tenant()->devoirs_type ?? 'devoir1-devoir2';
 
-        if($classe_rel) return $classe_rel->classe;
-
-        return null;
-
+        return $devoirsType === 'devoir1-compo'
+            ? ['devoir1' => 'Devoir 1', 'compo' => 'Composition']
+            : ['devoir1' => 'Devoir 1', 'devoir2' => 'Devoir 2'];
     }
 
     #[Computed]
-    public function subjectRows(): array
+    public function markColumns(): array
+    {
+        return [
+            'interro1' => 'Interro 1',
+            'interro2' => 'Interro 2',
+            'interro3' => 'Interro 3',
+            'interro4' => 'Interro 4',
+        ] + $this->devoirColumns();
+    }
+
+    #[Computed]
+    public function periods_types()
+    {
+        return $this->activeYear->getPeriods();
+    }
+
+
+    public function updatedPeriod(?string $period)
+    {
+        session()->put('tenant_student_bulletin_period', $period);
+
+        $this->dispatch("ReloadForNewStudent", $this->period, $this->student->id, $this->currentClasse->id);
+
+    }
+
+
+    #[On('ReloadForNewStudent')]
+    public function reload($period, $student_id, $classe_id)
+    {
+        $this->counter++;
+
+        $this->period = $period;
+
+        if($student_id) $this->student = Student::find($student_id);
+
+        if($classe_id) $this->classe = Classe::find($classe_id);
+
+        unset($this->termAverage, $this->subjectsDetail);
+
+    }
+
+
+    #[Computed]
+    public function effectifs()
+    {
+        $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
+
+        return $effectifs;
+    }
+
+    #[Computed]
+    public function subjectsDetail(): array
     {
         if (!$this->period) return [];
 
@@ -125,6 +151,10 @@ class ParentStudentsMarksViewer extends Component
         })->all();
     }
 
+    /**
+     * Moyenne générale + rang de l'apprenant pour la période — lecture directe
+     * dans le cache ClasseAveragesCacheService (déjà calculé pour toute la classe).
+     */
     #[Computed]
     public function termAverage(): ?array
     {
@@ -139,14 +169,9 @@ class ParentStudentsMarksViewer extends Component
         // => ['sum_moy_coef' => .., 'sum_coef' => .., 'moyenne' => .., 'mention' => .., 'rank' => .., 'total' => ..]
     }
 
-    #[On("StudentDataUpdatedEventLiveEvent")]
-    public function studentDataUpdated()
-    {
-        $this->counter++;
-    }
     
     public function render()
     {
-        return view('livewire.tenants.users.parent.parent-students-marks-viewer');
+        return view('livewire.tenants.components.bulletin-component');
     }
 }

@@ -390,39 +390,7 @@
 
     {{-- ===================== BULLETIN ===================== --}}
     <section class="pb-10">
-        <div
-            class="rounded-[1.75rem] border border-white/5 bg-slate-900/70 backdrop-blur-xl p-6 sm:p-8 shadow-xl shadow-black/20">
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold text-white">
-                    Bulletin de notes
-                    <span class="text-sky-400">{{ session('school_year_selected') }}</span>
-                </h2>
-                <p class="mt-1.5 text-sm text-slate-400">
-                    Détails des notes par semestre / trimestre de l’apprenant
-                </p>
-            </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-                <select wire:model.live="period"
-                    class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
-                    <option value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>
-                    @foreach ($this->periods_types as $pv => $p)
-                        <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            @if ($this->student)
-                @livewire('tenants.classes.sections.classe-pupil-bulletin-component', ['student_id' => $this->student->id, 'student' => $this->student, 'period' => $period, 'classe' => $this->currentClasse])
-            @else
-                <div
-                    class="flex w-full rounded-4xl animate-pulse text-slate-500 text-center font-semibold text-lg items-center justify-center p-5">
-                    <h2 class="p-3">Veuillez sélectionner l'apprenant et le semestre|trimestre puis charger pour
-                        afficher le
-                        bulletin</h2>
-                </div>
-            @endif
-        </div>
+        @livewire('tenants.components.bulletin-component', ['student' => $this->student, 'classe' => $this->currentClasse])
     </section>
 </div>
 

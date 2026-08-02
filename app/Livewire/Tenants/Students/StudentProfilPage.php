@@ -64,22 +64,6 @@ class StudentProfilPage extends Component
     }
 
 
-    #[Computed]
-    public function periods_types()
-    {
-        return $this->activeYear->getPeriods();
-    }
-
-    public function render()
-    {
-        if (session()->has('tenant_student_bulletin_period')) {
-
-            $this->period = session('tenant_student_bulletin_period');
-        }
-
-        return view('livewire.tenants.students.student-profil-page');
-    }
-
     #[On("StudentDataUpdatedEventLiveEvent")]
     public function studentDataUpdated()
     {
@@ -91,15 +75,6 @@ class StudentProfilPage extends Component
     {
         $this->counter++;
     }
-
-    public function updatedPeriod(?string $period)
-    {
-        session()->put('tenant_student_bulletin_period', $period);
-
-        $this->dispatch("ReloadForNewStudent", $this->period, $this->student->id, $this->currentClasse->id);
-
-    }
-
 
     #[Computed]
     public function parents()
@@ -138,5 +113,10 @@ class StudentProfilPage extends Component
         $this->student->removeStudentFromHisCurrentClasse(true);
 
         unset($this->student, $this->currentClasse);
+    }
+
+    public function render()
+    {
+        return view('livewire.tenants.students.student-profil-page');
     }
 }

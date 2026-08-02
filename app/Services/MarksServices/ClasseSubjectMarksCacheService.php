@@ -103,6 +103,10 @@ class ClasseSubjectMarksCacheService
             $moyDevoirs = SubjectAverageCalculator::moyDevoirs($marksForStudent, $devoirColumns);
             $moy = SubjectAverageCalculator::moy($marksForStudent, $devoirColumns);
             $moyCoef = SubjectAverageCalculator::moyCoef($moy, $coefficient);
+            
+            
+            $successPercentage = SubjectAverageCalculator::getSuccessPercentage($marksForStudent, $devoirColumns);
+            
             $mentionService = app(MentionService::class);
 
             return [$studentId => [
@@ -113,6 +117,7 @@ class ClasseSubjectMarksCacheService
                 'moy'         => $moy,
                 'moy_coef'    => $moyCoef,
                 'mention'      => $mentionService->forValue($moy),
+                'success_percentage'  => $successPercentage, 
             ]];
         });
 

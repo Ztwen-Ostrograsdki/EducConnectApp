@@ -474,7 +474,7 @@ trait TutorsActions{
 	{
 		$user = User::firstWhere('uuid', $userUuid);
 
-        if($user && $user->logged_count < 1 ){
+        if($user){
 
 			$domain = request()->getSchemeAndHttpHost();
 

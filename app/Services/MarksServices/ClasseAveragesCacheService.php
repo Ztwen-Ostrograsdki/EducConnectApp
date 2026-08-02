@@ -92,7 +92,7 @@ class ClasseAveragesCacheService
         $marksCacheService = app(ClasseSubjectMarksCacheService::class);
 
         $sums = $studentIds->mapWithKeys(fn ($id) => [
-            $id => ['sum_moy_coef' => 0.0, 'sum_coef' => 0.0],
+            $id => ['sum_moy_coef' => 0.0, 'sum_coef' => 0.0, 'total_notes' => 0, 'success_notes' => 0],
         ]);
 
         foreach ($classeSubjects as $classeSubject) {
@@ -104,6 +104,14 @@ class ClasseAveragesCacheService
 
             foreach ($studentIds as $studentId) {
 
+                $studentData = $marksData[$studentId] ?? null;
+
+                if (!$studentData) {
+                    continue;
+                }
+
+                $counts = SubjectAverageCalculator::successCounts($studentData['marks']);
+
                 $moyCoef = $marksData[$studentId]['moy_coef'] ?? null;
 
                 if (is_null($moyCoef) || $moyCoef == 0.0) {
@@ -111,6 +119,10 @@ class ClasseAveragesCacheService
                 }
 
                 $item = $sums->get($studentId);
+
+                $item['total_notes'] += $counts['total'];
+                $item['success_notes'] += $counts['success'];
+
 
                 $item['sum_moy_coef'] += $moyCoef;
                 $item['sum_coef'] += $coefficient;
@@ -127,11 +139,16 @@ class ClasseAveragesCacheService
                 ? round($data['sum_moy_coef'] / $data['sum_coef'], 2)
                 : null;
 
+            $successPercentage = $data['total_notes'] > 0
+                ? round(($data['success_notes'] / $data['total_notes']) * 100, 2)
+                : null;
+
             return [
                 'sum_moy_coef' => round($data['sum_moy_coef'], 2),
                 'sum_coef'     => round($data['sum_coef'], 2),
                 'moyenne'      => $moyenne,
                 'mention'      => $mentionService->forValue($moyenne),
+                'success_percentage'  => $successPercentage,
             ];
         });
 

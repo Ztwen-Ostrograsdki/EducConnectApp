@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\Parents;
 
 use App\Events\DataUpdatedEvent;
+use App\Livewire\Tenants\ActionsTraits\TutorsActions;
 use App\Models\SchoolYear;
 use App\Models\StudentTutorRelation;
 use App\Models\Tutor;
@@ -19,7 +20,7 @@ use WireUi\Traits\WireUiActions;
 #[Title("Profil Parent/Tuteur d'élève")]
 class ParentProfil extends Component
 {
-    use WireUiActions;
+    use WireUiActions, TutorsActions;
 
     public string $parent_uuid;
 
@@ -70,8 +71,6 @@ class ParentProfil extends Component
 
             return [];
         }
-
-        
     }
 
     #[Computed]
@@ -85,8 +84,6 @@ class ParentProfil extends Component
 
             return [];
         }
-
-        
     }
 
     public function removeRelation(int $studentId): void
@@ -135,6 +132,11 @@ class ParentProfil extends Component
         broadcast(new DataUpdatedEvent(tenant('id')));
     }
 
+
+    public function sendCredentialsToTheTutor()
+    {
+        $this->sendCredentialsToTutor($this->tutor->user->uuid);
+    }
 
 
     public function render()

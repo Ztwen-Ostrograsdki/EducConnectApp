@@ -87,9 +87,9 @@
                                 class="h-10 px-4 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/25 text-sky-300 text-sm font-medium transition-all">
                                 Envoyer notes
                             </button>
-                            <button
+                            <button wire:click='sendCredentialsToTheTutor'
                                 class="h-10 px-4 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/25 text-amber-300 text-sm font-medium transition-all">
-                                Notifier
+                                <span>Envoyez données</span>
                             </button>
                             <button
                                 class="h-10 px-4 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-rose-300 text-sm font-medium transition-all">
@@ -123,7 +123,6 @@
                             @endforeach
                         </div>
                     </div>
-
                     {{-- Enfants associés --}}
                     <div class="rounded-2xl bg-[#121826] border border-white/5 overflow-hidden">
                         <div class="p-5 border-b border-white/5">
@@ -140,11 +139,10 @@
                                 <a wire:navigate
                                     href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
                                     class="h-9 px-4 rounded-lg bg-violet-500/15 hover:bg-violet-500/25 border border-violet-500/20 text-violet-300 text-xs font-medium transition-all inline-flex items-center justify-center">
-                                    Gérer les associations
+                                    Gérer les liaisons parentales
                                 </a>
                             </div>
                         </div>
-
                         <div class="p-4 space-y-3">
                             @forelse ($this->children as $rel)
                                 @php $student = $rel->student; @endphp
@@ -180,15 +178,19 @@
                                             </div>
                                         </div>
 
-                                        <div class="flex flex-wrap gap-2 shrink-0">
+                                        <div class="flex flex-wrap items-center gap-2 shrink-0">
                                             <a wire:navigate
                                                 href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
-                                                class="h-8 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium transition-all">
-                                                Profil
+                                                class="h-8 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium transition-all  inline-flex items-center justify-center">
+                                                <span>
+                                                    Profil
+                                                </span>
                                             </a>
                                             <a href="{{ route('tenant.student.marks', ['student_uuid' => $student->uuid]) }}"
-                                                class="h-8 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs font-medium transition-all">
-                                                Notes
+                                                class="h-8 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs inline-flex items-center justify-center font-medium transition-all">
+                                                <span>
+                                                    Notes
+                                                </span>
                                             </a>
                                             <button wire:click="removeRelation({{ $rel->student_id }})"
                                                 wire:loading.attr="disabled"
@@ -214,55 +216,6 @@
                         </div>
                     </div>
 
-                    {{-- Dernières notes --}}
-                    <div class="rounded-2xl bg-[#121826] border border-white/5 overflow-hidden">
-                        <div class="p-5 border-b border-white/5">
-                            <h2 class="text-lg font-semibold text-white">Dernières notes des enfants</h2>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full min-w-[900px] text-sm">
-                                <thead>
-                                    <tr class="border-b border-white/5 text-left">
-                                        <th
-                                            class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                            Enfant</th>
-                                        <th
-                                            class="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-center">
-                                            Matière</th>
-                                        <th
-                                            class="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-center">
-                                            Type</th>
-                                        <th
-                                            class="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-center">
-                                            Note</th>
-                                        <th
-                                            class="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-center">
-                                            Coef</th>
-                                        <th
-                                            class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                            Enseignant</th>
-                                        <th
-                                            class="px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                            Observation</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-white/5">
-                                    @foreach (range(1, 3) as $note)
-                                        <tr class="hover:bg-white/[0.02] transition-colors">
-                                            <td class="px-5 py-4 font-medium text-slate-200">KOUASSI Sarah</td>
-                                            <td class="px-4 py-4 text-center text-slate-400">Mathématiques</td>
-                                            <td class="px-4 py-4 text-center text-slate-400">Interro 2</td>
-                                            <td class="px-4 py-4 text-center font-semibold text-emerald-400">17.5</td>
-                                            <td class="px-4 py-4 text-center text-slate-400">4</td>
-                                            <td class="px-5 py-4 text-slate-400">M. HOUNKPATI</td>
-                                            <td class="px-5 py-4 text-slate-500">Très bon travail.</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
 
                 {{-- RIGHT --}}
@@ -314,3 +267,4 @@
 
     </div>
 </div>
+

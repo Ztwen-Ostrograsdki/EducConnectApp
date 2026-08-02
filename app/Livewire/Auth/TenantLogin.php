@@ -106,18 +106,22 @@ class TenantLogin extends Component
 
             if(!$user->hasRole('directeur')){
 
-                if(!$user->teacher?->hasValidAccessForYear()){
+                if($user->hasRole('enseignant')){
 
-                    $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
+                    if(!$user->teacher->hasValidAccessForYear()){
 
-                    Auth::guard('tenant')->logout();
+                        $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
 
-                    session()->invalidate();
+                        Auth::guard('tenant')->logout();
 
-                    session()->regenerate();
+                        session()->invalidate();
 
-                    return;
+                        session()->regenerate();
+
+                        return;
+                    }
                 }
+                
             }
 
             if($logged_count < 1){

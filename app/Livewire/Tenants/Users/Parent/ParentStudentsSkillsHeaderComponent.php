@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Users\Parent;
 
+use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Student;
@@ -9,30 +10,21 @@ use App\Services\MarksServices\ClasseAveragesCacheService;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
-#[Title("Details des notes de mes enfants")]
-class ParentStudentsMarksViewer extends Component
+class ParentStudentsSkillsHeaderComponent extends Component
 {
     use WireUiActions;
 
     public $counter = 0;
 
-    public ?string $student_uuid;
+    public ?Student $student = null;
 
     public ?int $period = null;
 
-    public ?string $classe_slug;
-
-    public function mount(string $student_uuid)
+    public function mount()
     {
-        
-        $this->student_uuid = $student_uuid;
-
-        $this->classe_slug = $student_uuid;
-
         $this->loadActivePeriod();
     }
 
@@ -51,15 +43,6 @@ class ParentStudentsMarksViewer extends Component
         $this->counter++;
     }
 
-    #[Computed]
-    public function student()
-    {
-        $student = Student::firstWhere('uuid', $this->student_uuid);
-
-        if (!$student) return abort(404);
-
-        return $student;
-    }
 
     #[Computed]
     public function activeYear(): ?SchoolYear
@@ -138,15 +121,9 @@ class ParentStudentsMarksViewer extends Component
         );
         // => ['sum_moy_coef' => .., 'sum_coef' => .., 'moyenne' => .., 'mention' => .., 'rank' => .., 'total' => ..]
     }
-
-    #[On("StudentDataUpdatedEventLiveEvent")]
-    public function studentDataUpdated()
-    {
-        $this->counter++;
-    }
     
     public function render()
     {
-        return view('livewire.tenants.users.parent.parent-students-marks-viewer');
+        return view('livewire.tenants.users.parent.parent-students-skills-header-component');
     }
 }

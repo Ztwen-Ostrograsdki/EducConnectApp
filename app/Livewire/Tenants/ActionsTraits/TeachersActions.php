@@ -646,13 +646,13 @@ trait TeachersActions{
 	{
 		$user = User::firstWhere('uuid', $userUuid);
 
-        if($user && $user->logged_count < 1 ){
+        if($user){
 
 			$domain = request()->getSchemeAndHttpHost();
 
             $space_url = get_tenant_url($domain, 'login');
 
-            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url);
+            JobToSendCredentialsToUser::dispatch(tenant('id'), $user->email, null, $space_url, 'Enseignant');
 
             $this->notification()->send([
                 'icon'        => 'success',

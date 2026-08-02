@@ -110,6 +110,7 @@ class JobToSendCredentialsToUser implements ShouldQueue
             $user->update(['credentials_sent' => true]);
 
         } catch (\Throwable $th) {
+            
             broadcast(new FailedToSendCredentialsToUserEvent($this->tenantId, $this->userEmail, $this->type_of_space, cutter($th->getMessage(), 100)));
 
             $director->notify(new RealTimeNotification(

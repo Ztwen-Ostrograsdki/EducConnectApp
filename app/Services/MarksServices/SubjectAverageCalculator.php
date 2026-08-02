@@ -58,4 +58,36 @@ class SubjectAverageCalculator
     {
         return !is_null($moy) ? round($moy * $coefficient, 2) : null;
     }
+
+    /**
+     * Compte brut des notes obtenues (toutes types confondus) et celles réussies (>= 10),
+     * à partir du tableau 'marks' déjà présent dans le cache pour un apprenant/matière.
+     *
+     * @return array{total: int, success: int}
+     */
+    public static function successCounts(array $marksForStudent): array
+    {
+        $values = collect($marksForStudent)
+            ->pluck('value')
+            ->filter(fn ($v) => !is_null($v));
+
+        return [
+            'total'   => $values->count(),
+            'success' => $values->filter(fn ($v) => $v >= 10)->count(),
+        ];
+    }
+
+    /**
+     * Pourcentage de notes réussies (>= 10) sur l'ensemble des notes obtenues
+     * (interros + devoirs confondus) pour un apprenant dans une matière.
+     * Retourne null si aucune note n'a été saisie (pas de division par zéro).
+     */
+    public static function getSuccessPercentage(array $marksForStudent, ?array $devoirColumns = null): ?float
+    {
+        $counts = self::successCounts($marksForStudent);
+
+        return $counts['total'] > 0
+            ? round(($counts['success'] / $counts['total']) * 100, 2)
+            : null;
+    }
 }

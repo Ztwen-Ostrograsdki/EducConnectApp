@@ -38,24 +38,13 @@
         {{-- SIDEBAR --}}
         <aside class="sidebar" id="sidebar">
             <div class="s-brand">
-
                 <div class="s-brand-content">
-
-                    <div class="s-brand-icon">
-                        🎓
-                    </div>
-
-                    <span class="s-brand-text">
-                        EducConnect
-                    </span>
-
+                    <div class="s-brand-icon">🎓</div>
+                    <span class="s-brand-text">EducConnect</span>
                 </div>
                 <button type="button" class="s-collapse" onclick="toggleCollapse()">
-                    <span id="collapse-icon">
-                        ◀
-                    </span>
+                    <span id="collapse-icon">◀</span>
                 </button>
-
             </div>
 
             <div class="s-school">
@@ -70,31 +59,38 @@
 
             @auth('tenant')
                 <nav class="s-nav">
+                    {{-- ─── GÉNÉRAL ──────────────────────────────────────── --}}
                     <div class="s-section">
                         <div class="s-section-label">Général</div>
 
                         @if (auth('tenant')->user()?->hasRole('directeur'))
-                            <a data-sidebar-item href="{{ route('tenant.dashboard') }}"
+                            <a wire:navigate data-sidebar-item href="{{ route('tenant.dashboard') }}"
                                 class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
-                                <div class="s-icon">📊</div><span class="s-label">Administration</span>
+                                <div class="s-icon">📊</div>
+                                <span class="s-label">Administration</span>
                             </a>
                         @endif
-                        <a data-sidebar-item href="{{ route('tenant.my.profil') }}"
+
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.my.profil') }}"
                             class="s-link {{ request()->routeIs('tenant.my.profil') ? 'active' : '' }}">
                             <div class="s-icon">
                                 <x-lucide-user class="h-3 w-3" />
-                            </div><span class="s-label">Mon profil</span>
+                            </div>
+                            <span class="s-label">Mon profil</span>
                         </a>
                     </div>
 
+                    {{-- ─── ESPACE ENSEIGNANT ────────────────────────────── --}}
                     @if (auth('tenant')->user()->hasRole('enseignant'))
                         <div class="s-section">
                             <div class="s-section-label">Mon espace enseignant</div>
-                            <a data-sidebar-item href="{{ route('tenant.teacher.my.dashboard') }}"
+
+                            <a wire:navigate data-sidebar-item href="{{ route('tenant.teacher.my.dashboard') }}"
                                 class="s-link {{ request()->routeIs('tenant.teacher.my.dashboard') ? 'active' : '' }}">
                                 <div class="s-icon">
                                     <x-lucide-user class="h-3 w-3" />
-                                </div><span class="s-label">Mon espace enseignant</span>
+                                </div>
+                                <span class="s-label">Mon espace enseignant</span>
                             </a>
 
                             @if (auth('tenant')->user()->teacher)
@@ -103,11 +99,20 @@
                                         ->user()
                                         ->teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
                                 @endphp
+
                                 @foreach ($classes as $kls)
                                     <a data-sidebar-item wire:navigate
-                                        href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
-                                        class="s-link">
-                                        <div class="s-icon uppercase">🏫</div><span class="s-label">
+                                        href="{{ route('tenant.teacher.classe.students', [
+                                            'classe_slug' => $kls->classe->slug,
+                                            'subject_slug' => $kls->subject->slug,
+                                        ]) }}"
+                                        class="s-link {{ request()->routeIs('tenant.teacher.classe.*') &&
+                                        request()->route('classe_slug') === $kls->classe->slug &&
+                                        request()->route('subject_slug') === $kls->subject->slug
+                                            ? 'active'
+                                            : '' }}">
+                                        <div class="s-icon uppercase">🏫</div>
+                                        <span class="s-label">
                                             {{ $kls->classe->code }} ({{ $kls->subject->code }})
                                         </span>
                                     </a>
@@ -115,11 +120,13 @@
                             @endif
 
                             <a data-sidebar-item href="#" class="s-link">
-                                <div class="s-icon">🗓️</div><span class="s-label">Mon Emploi du temps</span>
+                                <div class="s-icon">🗓️</div>
+                                <span class="s-label">Mon Emploi du temps</span>
                             </a>
                         </div>
                     @endif
 
+                    {{-- ─── ESPACE PP ────────────────────────────────────── --}}
                     @if (auth('tenant')->user()->hasRole('enseignant') && auth('tenant')->user()->teacher?->hasCurrentlyPPRole())
                         <div class="s-section">
                             <div class="s-section-label">Mon espace PP</div>
@@ -129,40 +136,86 @@
                                 @endphp
                                 @foreach ($classes as $cl)
                                     <a data-sidebar-item wire:navigate href="#" class="s-link">
-                                        <div class="s-icon uppercase">📚</div><span class="s-label">
-                                            {{ $cl->code }}
-                                        </span>
+                                        <div class="s-icon uppercase">📚</div>
+                                        <span class="s-label">{{ $cl->code }}</span>
                                     </a>
                                 @endforeach
                             @endif
                         </div>
                     @endif
 
+                    {{-- ─── ESPACE PARENT ────────────────────────────────── --}}
                     @if (auth('tenant')->user()->hasRole('tuteur'))
+                        @php
+                            $children = auth('tenant')->user()->tutor->myChildren;
+                        @endphp
+
                         <div class="s-section">
                             <div class="s-section-label">Mon espace parent</div>
-                            <div class="s-acc" id="acc-parent-space">
-                                <div class="s-acc-trigger" onclick="toggleAcc('acc-parent-space')">
-                                    <div class="s-icon">🏫</div>
-                                    <span class="s-label">Mon espace parent</span>
-                                    <span class="s-acc-arrow">▶</span>
+                            <a wire:navigate data-sidebar-item href="{{ route('tenant.parent.space') }}"
+                                class="s-link {{ request()->routeIs('tenant.parent.space') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-user class="h-3 w-3" />
                                 </div>
-                                <div class="s-acc-content">
-                                    <a href="{{ route('tenant.my.parent.space') }}" class="s-link"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label">Dashboard</span>
-                                    </a>
-                                    <a href="{{ route('tenant.my.parent.space.marks') }}" class="s-link"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label">Les notes</span>
-                                    </a>
-                                </div>
-                            </div>
+                                <span class="s-label">Dashboard</span>
+                            </a>
+                        </div>
+
+                        <div class="s-section">
+                            <div class="s-section-label">Les notes</div>
+                            @foreach ($children as $child_rel)
+                                <a wire:navigate data-sidebar-item
+                                    href="{{ route('tenant.parent.space.marks', ['student_uuid' => $child_rel->student->uuid]) }}"
+                                    class="s-link {{ request()->routeIs('tenant.parent.space.marks') &&
+                                    request()->route('student_uuid') === $child_rel->student->uuid
+                                        ? 'active'
+                                        : '' }}">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="h-3 w-3" />
+                                    </div>
+                                    <span class="s-label truncate">
+                                        Notes de {{ $child_rel->student->getFullName() }}
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        <div class="s-section">
+                            <div class="s-section-label">Les emplois du temps</div>
+                            @foreach ($children as $child_rel)
+                                <a wire:navigate data-sidebar-item href="#" class="s-link">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="h-3 w-3" />
+                                    </div>
+                                    <span class="s-label truncate">
+                                        Emploi de {{ $child_rel->student->getFullName() }}
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+
+                        <div class="s-section">
+                            <div class="s-section-label">Les bulletins</div>
+                            @foreach ($children as $child_rel)
+                                <a wire:navigate data-sidebar-item
+                                    href="{{ route('tenant.parent.space.bulletin', ['student_uuid' => $child_rel->student->uuid]) }}"
+                                    class="s-link {{ request()->routeIs('tenant.parent.space.bulletin') &&
+                                    request()->route('student_uuid') === $child_rel->student->uuid
+                                        ? 'active'
+                                        : '' }}">
+                                    <div class="s-icon">
+                                        <x-lucide-file class="h-3 w-3" />
+                                    </div>
+                                    <span class="s-label truncate">
+                                        Bulletin de {{ $child_rel->student->getFullName() }}
+                                    </span>
+                                </a>
+                            @endforeach
                         </div>
                     @endif
                 </nav>
+
+                {{-- FOOTER (inchangé) --}}
                 <div class="s-footer">
                     <div class="s-user">
                         <div class="s-avatar">

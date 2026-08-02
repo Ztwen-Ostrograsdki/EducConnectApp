@@ -6,6 +6,7 @@ use Livewire\Component;
 
 class ParentProfil extends Component
 {
+
     public function render()
     {
         return view('livewire.tenants.users.parent.parent-profil');

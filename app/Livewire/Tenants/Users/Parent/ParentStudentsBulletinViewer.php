@@ -1,35 +1,31 @@
 <?php
 
-namespace App\Livewire\Tenants\Students;
+namespace App\Livewire\Tenants\Users\Parent;
 
-use App\Livewire\Tenants\ActionsTraits\StudentsActions;
 use App\Models\SchoolYear;
 use App\Models\Student;
-use App\Services\MarksServices\ClasseAveragesCacheService;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
-#[Layout('livewire.layouts.tenant-auth-layout')]
-#[Title("Notes de classe pour apprenant")]
-class StudentMarksComponent extends Component
+#[Title("Bulletin de notes enfant")]
+class ParentStudentsBulletinViewer extends Component
 {
-    use WireUiActions, StudentsActions;
-    
+    use WireUiActions;
 
     public $counter = 0;
 
-    public ?int $period;
-
     public ?string $student_uuid;
+
+    public ?int $period = null;
 
     public ?string $classe_slug;
 
     public function mount(string $student_uuid)
     {
+        
         $this->student_uuid = $student_uuid;
 
         $this->classe_slug = $student_uuid;
@@ -37,7 +33,6 @@ class StudentMarksComponent extends Component
         $this->loadActivePeriod();
     }
 
-    
     public function loadActivePeriod()
     {
         if ($this->activeYear && $this->activeYear->is_active && $this->activeYear->active_period) {
@@ -46,20 +41,7 @@ class StudentMarksComponent extends Component
         }
     }
 
-    #[Computed]
-    public function termAverage(): ?array
-    {
-        if (!$this->period) return null;
-
-        return app(ClasseAveragesCacheService::class)->forStudent(
-            $this->classe->id,
-            $this->student->id,
-            $this->period,
-            $this->activeYear->id
-        );
-        // => ['sum_moy_coef' => .., 'sum_coef' => .., 'moyenne' => .., 'mention' => .., 'rank' => .., 'total' => ..]
-    }
-
+    
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
     {
@@ -82,19 +64,13 @@ class StudentMarksComponent extends Component
         return SchoolYear::current()->first();
     }
 
-    #[Computed]
-    public function periods_types()
-    {
-        return $this->activeYear->getPeriods();
-    }
-
     /**
      * Classe active de l'apprenant pour l'année en cours.
      * Adapte le nom de la relation si besoin ('yearlyClasseStudents' supposé BelongsTo/HasMany
      * vers YearlyClasseStudent, lui-même lié à Classe via classe()).
      */
     #[Computed]
-    public function classe()
+    public function currentClasse()
     {
         $classe_rel = $this->student->currentClasse();
 
@@ -111,9 +87,9 @@ class StudentMarksComponent extends Component
         $this->counter++;
     }
 
+
     public function render()
     {
-        return view('livewire.tenants.students.student-marks-component');
+        return view('livewire.tenants.users.parent.parent-students-bulletin-viewer');
     }
-
 }

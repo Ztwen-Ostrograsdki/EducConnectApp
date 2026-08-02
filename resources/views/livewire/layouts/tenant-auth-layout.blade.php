@@ -81,10 +81,12 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.schoolyears.portal') }}" class="s-link">
+                            <a href="{{ route('tenant.schoolyears.portal') }}"
+                                class="s-link {{ request()->routeIs('tenant.schoolyears.portal') ? 'active' : '' }}">
                                 <div class="s-icon">📅</div><span class="s-label">Dashboard</span>
                             </a>
-                            <a href="{{ route('tenant.schoolYears.create') }}" class="s-link">
+                            <a href="{{ route('tenant.schoolYears.create') }}"
+                                class="s-link {{ request()->routeIs('tenant.schoolYears.create') ? 'active' : '' }}">
                                 <div class="s-icon">
                                     <span>➕</span>
                                 </div><span class="s-label">Créer une année</span>
@@ -97,6 +99,8 @@
 
                     <div class="s-section">
                         <div class="s-section-label">Pédagogie</div>
+
+                        {{-- CLASSES --}}
                         <div class="s-acc" id="acc-classes">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-classes')">
                                 <div class="s-icon">🏫</div>
@@ -104,37 +108,53 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.classes.portal') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.classes.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.classes.portal') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Portail</span>
                                 </a>
+
                                 @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 1) as $classe)
                                     <a wire:navigate
                                         href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
-                                        class="s-link" style="font-size:.78rem;">
+                                        class="s-link {{ request()->routeIs([
+                                            'tenant.classe.profil',
+                                            'tenant.classe.edit',
+                                            'tenant.classe.respos',
+                                            'tenant.classe.manage.subjects.teacher',
+                                            'tenant.classe.migrate.students',
+                                        ]) && request()->route('classe_slug') === $classe->slug
+                                            ? 'active'
+                                            : '' }}"
+                                        style="font-size:.78rem;">
                                         <div class="s-icon" style="font-size:.72rem;">📋</div>
                                         <span class="s-label">Classe de {{ $classe->code ?? $classe->name }}</span>
                                     </a>
                                 @endforeach
+
                                 <a wire:navigate href="{{ route('tenant.classes.print.configuration') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.classes.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.classes.docs') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.classes.docs') }}"
+                                    class="s-link {{ request()->routeIs('tenant.classes.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.classes.create') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.classes.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.classes.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
-                                        classe</span>
+                                    <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                    <span class="s-label">Nouvelle classe</span>
                                 </a>
                             </div>
                         </div>
+
+                        {{-- PROMOTIONS --}}
                         <div class="s-acc" id="acc-promotions">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-promotions')">
                                 <div class="s-icon">🎯</div>
@@ -142,7 +162,8 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.promotions.portal') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.promotions.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.promotions.portal') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Toutes les promotions
@@ -152,7 +173,15 @@
                                 @foreach (tenancy()->tenant?->promotions(2) as $promotion)
                                     <a wire:navigate
                                         href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promotion->slug]) }}"
-                                        class="s-link" style="font-size:.78rem;">
+                                        class="s-link {{ request()->routeIs([
+                                            'tenant.promotion.profil',
+                                            'tenant.promotion.students',
+                                            'tenant.promotion.teachers',
+                                            'tenant.promotion.edit',
+                                        ]) && request()->route('promotion_slug') === $promotion->slug
+                                            ? 'active'
+                                            : '' }}"
+                                        style="font-size:.78rem;">
                                         <div class="s-icon" style="font-size:.72rem;">📋</div>
                                         <span class="s-label">
                                             @if ($promotion->code)
@@ -163,14 +192,16 @@
                                         </span>
                                     </a>
                                 @endforeach
-                                <a wire:navigate href="{{ route('tenant.promotion.create') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.promotion.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.promotion.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">➕</div><span
-                                        class="s-label">Nouvelle
-                                        promotion</span>
+                                    <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                    <span class="s-label">Nouvelle promotion</span>
                                 </a>
                             </div>
                         </div>
+
+                        {{-- FILIÈRES --}}
                         <div class="s-acc" id="acc-filiars">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-filiars')">
                                 <div class="s-icon">🎯</div>
@@ -178,7 +209,8 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.filiars.portal') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.filiars.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.filiars.portal') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Toutes les filières
@@ -188,7 +220,16 @@
                                 @foreach (tenancy()->tenant?->filiars(2) as $filiar)
                                     <a wire:navigate
                                         href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
-                                        class="s-link" style="font-size:.78rem;">
+                                        class="s-link {{ request()->routeIs([
+                                            'tenant.filiar.profil',
+                                            'tenant.filiar.students',
+                                            'tenant.filiar.teachers',
+                                            'tenant.filiar.edit',
+                                            'tenant.filiar.edit.ca',
+                                        ]) && request()->route('filiar_slug') === $filiar->slug
+                                            ? 'active'
+                                            : '' }}"
+                                        style="font-size:.78rem;">
                                         <div class="s-icon" style="font-size:.72rem;">📋</div>
                                         <span class="s-label uppercase">
                                             @if ($filiar->code)
@@ -199,14 +240,16 @@
                                         </span>
                                     </a>
                                 @endforeach
-                                <a wire:navigate href="{{ route('tenant.filiar.create') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.filiar.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.filiar.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">➕</div><span
-                                        class="s-label">Nouvelle
-                                        filière</span>
+                                    <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                    <span class="s-label">Nouvelle filière</span>
                                 </a>
                             </div>
                         </div>
+
+                        {{-- SÉRIES --}}
                         <div class="s-acc" id="acc-serials">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-serials')">
                                 <div class="s-icon">🎯</div>
@@ -214,7 +257,8 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.serials.portal') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.serials.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.serials.portal') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Toutes les séries
@@ -224,7 +268,15 @@
                                 @foreach (tenancy()->tenant?->serials(2) as $serial)
                                     <a wire:navigate
                                         href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
-                                        class="s-link" style="font-size:.78rem;">
+                                        class="s-link {{ request()->routeIs([
+                                            'tenant.serial.profil',
+                                            'tenant.serial.students',
+                                            'tenant.serial.teachers',
+                                            'tenant.serial.edit',
+                                        ]) && request()->route('serial_slug') === $serial->slug
+                                            ? 'active'
+                                            : '' }}"
+                                        style="font-size:.78rem;">
                                         <div class="s-icon" style="font-size:.72rem;">📋</div>
                                         <span class="s-label uppercase">
                                             @if ($serial->code)
@@ -235,14 +287,16 @@
                                         </span>
                                     </a>
                                 @endforeach
-                                <a wire:navigate href="{{ route('tenant.serial.create') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.serial.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.serial.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">➕</div><span
-                                        class="s-label">Nouvelle
-                                        série</span>
+                                    <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                    <span class="s-label">Nouvelle série</span>
                                 </a>
                             </div>
                         </div>
+
+                        {{-- MATIÈRES --}}
                         <div class="s-acc" id="acc-subjects">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-subjects')">
                                 <div class="s-icon">📚</div>
@@ -250,20 +304,22 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.subjects.portal') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.subjects.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.subjects.portal') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Toutes les matières
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.subject.create') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.subject.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.subject.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">➕</div><span
-                                        class="s-label">Nouvelle
-                                        matière</span>
+                                    <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                    <span class="s-label">Nouvelle matière</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.teacher.manage.subjects') }}" class="s-link"
+                                <a wire:navigate href="{{ route('tenant.teacher.manage.subjects') }}"
+                                    class="s-link {{ request()->routeIs('tenant.teacher.manage.subjects') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         ⚙️
@@ -274,13 +330,17 @@
                                 </a>
                             </div>
                         </div>
+
                         <a data-sidebar-item href="#" class="s-link">
                             <div class="s-icon">🗓️</div><span class="s-label">Emploi du temps</span>
                         </a>
                     </div>
 
+                    {{-- PERSONNES --}}
                     <div class="s-section">
                         <div class="s-section-label">Personnes</div>
+
+                        {{-- APPRENANTS --}}
                         <div class="s-acc" id="acc-students">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-students')">
                                 <div class="s-icon">👥</div>
@@ -288,33 +348,38 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.students.portal') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.students.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.students.portal') ? 'active' : '' }}">
                                     <div class="s-icon">👥</div><span class="s-label">Dashboard</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.students.create') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.students.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.students.create') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-user-plus class="w-3 h-3" />
                                     </div><span class="s-label">Ajouter apprenants</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.students.crud.tasks') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.students.crud.tasks') }}"
+                                    class="s-link {{ request()->routeIs('tenant.students.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-octagon-alert class="w-3 h-3" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.print.configuration') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.students.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.students.docs') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.students.docs') }}"
+                                    class="s-link {{ request()->routeIs('tenant.students.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
-
                             </div>
                         </div>
+
+                        {{-- ENSEIGNANTS --}}
                         <div class="s-acc" id="acc-teachers">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-teachers')">
                                 <div class="s-icon">👩‍🏫</div>
@@ -322,34 +387,38 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.teachers.portal') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.teachers.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.teachers.portal') ? 'active' : '' }}">
                                     <div class="s-icon">👩‍🏫</div><span class="s-label">Dashboard</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.teachers.create') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.teachers.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.teachers.create') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-user-plus class="w-3 h-3" />
                                     </div><span class="s-label">Ajouter enseignants</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.teachers.crud.tasks') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.teachers.crud.tasks') }}"
+                                    class="s-link {{ request()->routeIs('tenant.teachers.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-octagon-alert class="w-3 h-3" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.teachers.print.configuration') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.teachers.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.teachers.docs') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.teachers.docs') }}"
+                                    class="s-link {{ request()->routeIs('tenant.teachers.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
-
                             </div>
                         </div>
 
+                        {{-- PARENTS --}}
                         <div class="s-acc" id="acc-parents">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-parents')">
                                 <div class="s-icon">👨‍👩‍👧</div>
@@ -357,32 +426,36 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a href="{{ route('tenant.parents.portal') }}" class="s-link">
+                                <a href="{{ route('tenant.parents.portal') }}"
+                                    class="s-link {{ request()->routeIs('tenant.parents.portal') ? 'active' : '' }}">
                                     <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Dashboard</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.parents.create') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.parents.create') }}"
+                                    class="s-link {{ request()->routeIs('tenant.parents.create') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-user-plus class="w-3 h-3" />
                                     </div><span class="s-label">Ajouter parent/tuteur</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}"
+                                    class="s-link {{ request()->routeIs('tenant.parents.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-octagon-alert class="w-3 h-3" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
-
                             </div>
                         </div>
-
                     </div>
 
+                    {{-- STATISTIQUES --}}
                     <div class="s-section">
                         <div class="s-section-label">Statistiques</div>
-                        <a wire:navigate href="{{ route('tenant.stats.general') }}" class="s-link">
+                        <a wire:navigate href="{{ route('tenant.stats.general') }}"
+                            class="s-link {{ request()->routeIs('tenant.stats.general') ? 'active' : '' }}">
                             <div class="s-icon">📝</div><span class="s-label">Générale</span>
                         </a>
                     </div>
 
+                    {{-- FICHES DE NOTES --}}
                     <div class="s-section">
                         <div class="s-section-label">Fiches de notes</div>
                         <div class="s-acc" id="acc-notes">
@@ -396,25 +469,28 @@
                                     <div class="s-icon">📝</div><span class="s-label">Notes</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.notes.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a href="{{ route('tenant.notes.print.preview') }}" class="s-link">
+                                <a href="{{ route('tenant.notes.print.preview') }}"
+                                    class="s-link {{ request()->routeIs('tenant.notes.print.preview') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Prévisualisation</span>
                                 </a>
-                                <a wire:navigate href="{{ route('tenant.notes.docs') }}" class="s-link">
+                                <a wire:navigate href="{{ route('tenant.notes.docs') }}"
+                                    class="s-link {{ request()->routeIs('tenant.notes.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Notes imprimables</span>
                                 </a>
-
                             </div>
                         </div>
                     </div>
+
+                    {{-- MEILLEURS / FAIBLES --}}
                     <div class="s-section">
                         <div class="s-section-label">Meilleurs/Faibles</div>
                         <div class="s-acc" id="acc-best-weak">
@@ -428,37 +504,40 @@
                                     <div class="s-icon">📝</div><span class="s-label">Notes</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.bests.weaks.print.configuration') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-file class="w-3 h-3" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
-                                <a href="{{ route('tenant.students.bests.weaks.print.preview') }}" class="s-link">
+                                <a href="{{ route('tenant.students.bests.weaks.print.preview') }}"
+                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.preview') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Prévisualisation</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.bests.weaks.docs') }}"
-                                    class="s-link">
+                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-printer class="w-3 h-3" />
                                     </div><span class="s-label">Notes imprimables</span>
                                 </a>
-
                             </div>
                         </div>
                     </div>
 
+                    {{-- DIAGNOSTIQUES NOTES --}}
                     <div class="s-section">
                         <div class="s-section-label">Diagnostiques notes</div>
                         <a wire:navigate href="{{ route('tenant.marks.reports.print.configuration') }}"
-                            class="s-link">
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.configuration') ? 'active' : '' }}">
                             <div class="s-icon">🖥️</div><span class="s-label">Lancer</span>
                         </a>
-                        <a href="{{ route('tenant.marks.reports.print.preview') }}" class="s-link">
+                        <a href="{{ route('tenant.marks.reports.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.preview') ? 'active' : '' }}">
                             <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
                         </a>
-                        <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}" class="s-link">
+                        <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.docs') ? 'active' : '' }}">
                             <div class="s-icon">📑</div><span class="s-label">Fichiers disponibles</span>
                         </a>
                     </div>
@@ -474,7 +553,6 @@
                             </span>
                         </div>
                     </div>
-
                 @endif
 
                 <div class="s-section">
@@ -482,7 +560,8 @@
                     <a href="#" class="s-link">
                         <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>
                     </a>
-                    <a wire:navigate href="{{ route('tenant.notifications.center') }}" class="s-link">
+                    <a wire:navigate href="{{ route('tenant.notifications.center') }}"
+                        class="s-link {{ request()->routeIs('tenant.notifications.center') ? 'active' : '' }}">
                         <div class="s-icon">🔔</div><span class="s-label">
                             Notifications
                             @livewire('notifications-counter', ['guard' => 'tenant'])
@@ -501,7 +580,8 @@
                             {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                         @endif
                     </div>
-                    <a wire:navigate href="{{ route('tenant.my.profil') }}" class="s-user-info">
+                    <a wire:navigate href="{{ route('tenant.my.profil') }}"
+                        class="s-user-info {{ request()->routeIs('tenant.my.profil') ? 'active' : '' }}">
                         <div class="s-user-name">{{ Auth::guard('tenant')->user()?->name ?? 'Utilisateur' }}</div>
                         <div class="s-user-role">
                             @php $u = Auth::guard('tenant')->user(); @endphp
@@ -576,7 +656,8 @@
                                 <div class="dd-title">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                 <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                             </div>
-                            <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
+                            <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon
+                                profil</a>
                             <a href="#" class="dd-item">⚙️ Paramètres du compte</a>
                             <a href="#" class="dd-item">❓ Support</a>
                             <div class="dd-sep"></div>
@@ -607,4 +688,3 @@
 </body>
 
 </html>
-

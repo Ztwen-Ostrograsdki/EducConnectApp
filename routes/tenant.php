@@ -88,6 +88,7 @@ use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
+use App\Livewire\Tenants\Users\Parent\ParentStudentsBulletinViewer;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsMarksViewer;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksManagerComponent;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksViewer;
@@ -229,7 +230,7 @@ Route::middleware([
 
             Route::get('/classes/gestion-impression/configuration', ClassesPrintsManagerComponent::class)->name('classes.print.configuration');
 
-            Route::get('/classes/documents/imprimable/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
+            Route::get('/classes/documents/imprimable/{filiar_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
 
             //NOTES
             Route::get('/notes/gestion-impression/configuration/{classe_slug?}', MarksPrintsManagerComponent::class)->name('notes.print.configuration');
@@ -272,7 +273,7 @@ Route::middleware([
 
             Route::get('/enseignants/gestion-impression/configuration/{classe_slug?}', TeachersPrintsManagerComponent::class)->name('teachers.print.configuration');
 
-            Route::get('/enseignants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
+            Route::get('/enseignants/documents/imprimable/{classe_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
 
 
 
@@ -286,7 +287,7 @@ Route::middleware([
 
             Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
 
-            Route::get('/apprenants/documents/imprimable/{classe_slug?}/{filiar_slug?}/{promotion_slug?}/{promotionsGrouped?}/{serial_slug?}', StudentsPrintableDocumentsPage::class)->name('students.docs');
+            Route::get('/apprenants/documents/imprimable/{classe_slug?}', StudentsPrintableDocumentsPage::class)->name('students.docs');
 
             Route::get('/apprenants/gestion-impression/configuration/{classe_slug?}', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
 
@@ -328,14 +329,11 @@ Route::middleware([
         
 
 
-        // ESPACE PARENT
         Route::middleware(['tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function(){
 
             Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
 
             Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
-
-            Route::get('/mon-espace-parent/notes-enfants', ParentStudentsMarksViewer::class)->name('tenant.my.parent.space.marks');
 
             //ESPACE ENSEIGNANT
             Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.teacher.')->group(function () {
@@ -356,10 +354,13 @@ Route::middleware([
             });
 
             // ── Tuteur ────────────────────────────────────────────────────
-            Route::middleware('role:tuteur')->prefix('tutor')->group(function () {
+            Route::middleware('role:tuteur')->group(function () {
                 // sera rempli au fur et à mesure
 
-                Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.my.parent.space');
+                Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.parent.space');
+
+                Route::get('/mon-espace-parent/{student_uuid}/notes-enfant', ParentStudentsMarksViewer::class)->name('tenant.parent.space.marks');
+                Route::get('/mon-espace-parent/{student_uuid}/bulletin-de-notes-enfant', ParentStudentsBulletinViewer::class)->name('tenant.parent.space.bulletin');
             });
 
             // ── Élève ─────────────────────────────────────────────────────
@@ -367,15 +368,7 @@ Route::middleware([
                 // sera rempli au fur et à mesure
             }); 
 
-
-
         });
-        
-
-
-
-       
-
         
     });
 
