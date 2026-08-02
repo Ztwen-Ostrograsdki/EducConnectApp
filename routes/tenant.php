@@ -90,6 +90,9 @@ use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsBulletinViewer;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsMarksViewer;
+use App\Livewire\Tenants\Users\Pp\PrincipalClasseStudentsMarksComponent;
+use App\Livewire\Tenants\Users\Pp\PrincipalClasseTeachersComponent;
+use App\Livewire\Tenants\Users\Pp\PrincipalClasseTutorsComponent;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksManagerComponent;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksViewer;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseStudentsViewer;
@@ -345,12 +348,17 @@ Route::middleware([
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('classe.marks.manager')->middleware('tenant.classe.is.active.and.not.locked');
                 
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
-                
-            });
 
-            // ── Enseignant ────────────────────────────────────────────────
-            Route::middleware('role:enseignant|directeur')->prefix('teacher')->name('teacher.')->group(function () {
-                // sera rempli au fur et à mesure
+                // ── ESPACE PP ─────────────────────────────────────────────────────
+                Route::middleware('teacher.is.classe.principal')->prefix('espace-pp')->group(function () {
+                    
+                    Route::get('/{classe_slug}/les-notes-de-classes', PrincipalClasseStudentsMarksComponent::class)->name('pp.students.marks');
+                    
+                    Route::get('/{classe_slug}/liste-des-profs-de-la-classe', PrincipalClasseTeachersComponent::class)->name('pp.classe.teachers.list');
+                    
+                    Route::get('/{classe_slug}/liste-des-parents-de-la-classe', PrincipalClasseTutorsComponent::class)->name('pp.classe.tutors.list');
+                });
+                
             });
 
             // ── Tuteur ────────────────────────────────────────────────────

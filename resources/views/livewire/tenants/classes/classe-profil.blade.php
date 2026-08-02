@@ -238,7 +238,7 @@
                 @break
 
                 @case('classe-marks-page')
-                    @livewire('tenants.classes.sections.classe-marks-page', ['classroom' => $classroom, 'classe' => $classe, 'classe_slug' => $classe->slug])
+                    @livewire('tenants.classes.sections.classe-marks-page', ['classe' => $classe, 'classe_slug' => $classe->slug])
                 @break
 
                 @case('classe-presence-page')

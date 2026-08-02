@@ -19,9 +19,7 @@
                     Gestion des professeurs.
 
                 </p>
-
             </div>
-
         </div>
     </section>
     <section>

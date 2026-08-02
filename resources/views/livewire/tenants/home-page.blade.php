@@ -90,7 +90,7 @@
                                     <a href="{{ route('tenant.notifications.center') }}"
                                         class="block px-4 py-2.5 text-sm text-slate-300 hover:bg-white/5">Notifications</a>
                                     <div class="border-t border-white/5 my-1"></div>
-                                    <button
+                                    <button wire:click='logout'
                                         class="block w-full px-4 py-2.5 text-left text-sm text-rose-400 hover:bg-rose-500/10">Se
                                         déconnecter</button>
                                 </div>
@@ -416,3 +416,4 @@
         </div>
     </footer>
 </div>
+

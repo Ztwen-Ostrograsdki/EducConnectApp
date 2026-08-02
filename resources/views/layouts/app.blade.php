@@ -135,9 +135,32 @@
                                     $classes = auth('tenant')->user()->teacher->getClassesWhereIsPrincipal();
                                 @endphp
                                 @foreach ($classes as $cl)
-                                    <a data-sidebar-item wire:navigate href="#" class="s-link">
+                                    <a data-sidebar-item wire:navigate
+                                        href="{{ route('tenant.teacher.pp.students.marks', ['classe_slug' => $cl->slug]) }}"
+                                        class="s-link {{ request()->routeIs('tenant.teacher.pp.students.marks') && request()->route('classe_slug') === $cl->slug
+                                            ? 'active'
+                                            : '' }}">
                                         <div class="s-icon uppercase">📚</div>
-                                        <span class="s-label">{{ $cl->code }}</span>
+                                        <span class="s-label">Notes de {{ $cl->code }}</span>
+                                    </a>
+
+                                    <a data-sidebar-item wire:navigate
+                                        href="{{ route('tenant.teacher.pp.classe.teachers.list', ['classe_slug' => $cl->slug]) }}"
+                                        class="s-link {{ request()->routeIs('tenant.teacher.pp.classe.teachers.list') && request()->route('classe_slug') === $cl->slug
+                                            ? 'active'
+                                            : '' }}">
+                                        <div class="s-icon uppercase">📬</div>
+                                        <span class="s-label">Liste prof de {{ $cl->code }}</span>
+
+                                    </a>
+                                    <a data-sidebar-item wire:navigate
+                                        href="{{ route('tenant.teacher.pp.classe.tutors.list', ['classe_slug' => $cl->slug]) }}"
+                                        class="s-link {{ request()->routeIs('tenant.teacher.pp.classe.tutors.list') && request()->route('classe_slug') === $cl->slug
+                                            ? 'active'
+                                            : '' }}">
+                                        <div class="s-icon uppercase">👥</div>
+                                        <span class="s-label">Parents de {{ $cl->code }}</span>
+
                                     </a>
                                 @endforeach
                             @endif

@@ -11,6 +11,7 @@ use App\Http\Middleware\CheckIfTenantDomainNotOpenOnlyForTenant;
 use App\Http\Middleware\CheckSuperAdmin;
 use App\Http\Middleware\EnsureTenantNotDeletedAt;
 use App\Http\Middleware\EnsureThatClasseIsActiveOrNotLockedMiddleware;
+use App\Http\Middleware\EnsureThatTeacherIsPrincipalOfClasseMiddleware;
 use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
 use App\Http\Middleware\EnsureThatTutorIsActiveMiddleware;
 use App\Http\Middleware\EnsureThatUserAccountNotBlockedMiddleware;
@@ -72,6 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.has.active.schoolYear' => RedirectIfHasntCurrentActiveSchoolYearMiddleware::class,
             'user.not.blocked' => EnsureThatUserAccountNotBlockedMiddleware::class,
             'teacher.not.blocked' => EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace::class,
+            'teacher.is.classe.principal' => EnsureThatTeacherIsPrincipalOfClasseMiddleware::class,
             'tenant.auth' => TenantAuthenticate::class,
             'guest' => RedirectIfAuthenticated::class,
             'tenant.classe.is.active.and.not.locked' => EnsureThatClasseIsActiveOrNotLockedMiddleware::class,

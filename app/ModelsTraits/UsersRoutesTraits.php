@@ -23,7 +23,7 @@ trait UsersRoutesTraits{
 
 		if($this->hasRole('tuteur')){
 
-			return route('tenant.my.parent.space');
+			return route('tenant.parent.space');
 		}
 
 		if($this->hasRole('directeur')){

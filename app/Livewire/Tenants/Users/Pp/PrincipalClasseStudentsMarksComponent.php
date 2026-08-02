@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Livewire\Tenants\Classes\Sections;
+namespace App\Livewire\Tenants\Users\Pp;
 
-use App\Livewire\Tenants\ActionsTraits\ClassesActions;
 use App\Models\Classe;
 use App\Models\SchoolYear;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
-class ClasseMarksPage extends Component
+
+#[Title("ESPACE PP - NOTES DE CLASSE")]
+class PrincipalClasseStudentsMarksComponent extends Component
 {
-    use WireUiActions, ClassesActions;
+    use WireUiActions;
 
     public ?int $period = null;
 
@@ -20,8 +22,14 @@ class ClasseMarksPage extends Component
 
     public $counter = 0;
 
-    public function mount()
+    public function mount(string $classe_slug)
     {
+        if (!$this->classe_slug) {
+            return abort(404);
+        }
+
+        $this->classe_slug = $classe_slug;
+
         $this->loadActivePeriod();
     }
 
@@ -34,27 +42,11 @@ class ClasseMarksPage extends Component
 
     }
 
-    #[On('DataUpdatedEventLiveEvent')]
-    public function reloaddata()
-    {
-        unset($this->marksData, $this->studentsRows, $this->coef_relation);
-
-        $this->counter++;
-    }
-
-    #[Computed]
-    public function user()
-    {
-        return auth('tenant')->user();
-    }
-
     #[Computed]
     public function activeYear(): ?SchoolYear
     {
         return SchoolYear::current()->first();
     }
-
-    
 
 
     #[Computed]
@@ -71,8 +63,15 @@ class ClasseMarksPage extends Component
         return $classe;
     }
 
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
+
+
     public function render()
     {
-        return view('livewire.tenants.classes.sections.classe-marks-page');
+        return view('livewire.tenants.users.pp.principal-classe-students-marks-component');
     }
 }
