@@ -18,6 +18,10 @@ class GeneratedDocument extends Model
         'downloaded',
         'downloaded_count',
         'downloadable_by_others',
+        'for_teachers',
+        'for_teacher_id',
+        'for_parent_id',
+        'for_parents',
         'path',
         'url',
         'user_id',
@@ -32,6 +36,8 @@ class GeneratedDocument extends Model
     protected $casts = [
         'downloaded'              => 'boolean',
         'downloadable_by_others'  => 'boolean',
+        'for_parents'  => 'boolean',
+        'for_teachers'  => 'boolean',
         'downloaded_count'        => 'integer',
     ];
 

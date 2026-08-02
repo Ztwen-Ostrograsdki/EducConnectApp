@@ -354,7 +354,7 @@ Route::middleware([
             });
 
             // ── Tuteur ────────────────────────────────────────────────────
-            Route::middleware('role:tuteur')->group(function () {
+            Route::middleware(['role:tuteur', 'parent.is.active'])->group(function () {
                 // sera rempli au fur et à mesure
 
                 Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.parent.space');

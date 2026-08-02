@@ -47,6 +47,13 @@ Broadcast::channel('tenant.{tenantId}.tuteur', function (User $user, string $ten
         && tenant('id') === $tenantId
         && $user->hasRole('tuteur');
 });
+
+Broadcast::channel('tenant.{tenantId}.tuteur.{userId}', function (User $user, string $tenantId, int $userId) {
+    return tenant() !== null
+        && tenant('id') === $tenantId
+        && $user->hasRole('tuteur')
+        && $user->id === $userId;
+});
 Broadcast::channel('tenant.{tenantId}.eleve', function (User $user, string $tenantId) {
     return tenant() !== null
         && tenant('id') === $tenantId

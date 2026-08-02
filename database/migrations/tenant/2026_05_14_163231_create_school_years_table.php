@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('periode_type', ['semestre', 'trimestre'])->default('semestre');
             $table->boolean('is_active')->default(false);
             $table->boolean('is_current_school_year')->default(false);
+            $table->boolean('yearly_average_is_visible')->default(false);
             $table->boolean('is_closed')->default(false);
             $table->string('locked_for_period')->nullable();
             $table->json('marks_locked_for_periods')->nullable();

@@ -28,6 +28,7 @@ class SchoolYear extends Model
         'locked_for_period',
         'is_current_school_year',
         'marks_locked_for_periods',
+        'yearly_average_is_visible',
         'periods',
         'active_period'
     ];
@@ -37,6 +38,7 @@ class SchoolYear extends Model
         'min_year' => 'int',
         'max_year' => 'int',
         'is_active' => 'boolean',
+        'yearly_average_is_visible' => 'boolean',
         'is_closed' => 'boolean',
         'periods' => 'array',
     ];

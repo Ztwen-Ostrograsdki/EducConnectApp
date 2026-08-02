@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
 use App\Events\InitProcessToGrantYearlyAccessToTeachersEvent;
+use App\Events\TutorWasBlockedEvent;
 use App\Jobs\JobBulkerActionsOnModels;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\SchoolYear;
@@ -58,9 +59,13 @@ trait TutorsActions{
             return;
         }
 
-        $tutor->update(['is_active' => false]);
+        $done = $tutor->update(['is_active' => false]);
 
-        // broadcast(new TeacherWasBlockedEvent(tenant('id'), $tutor->id));
+        if($done){
+
+            broadcast(new TutorWasBlockedEvent(tenant('id'), $tutor->user->id));
+
+        }
 
         $this->notification()->success(
             title: 'Compte parent désactivé',
@@ -98,7 +103,7 @@ trait TutorsActions{
             return;
         }
 
-        $tutor->update(['blocked' => false]);
+        $tutor->update(['is_active' => true]);
 
         $this->notification()->success(
             title: 'Parent débloqué',

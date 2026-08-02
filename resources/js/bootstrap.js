@@ -18,6 +18,7 @@ import { registerCentralListeners } from "./listeners/central";
 import { registerDirectorListeners } from "./listeners/director";
 import { registerUserListeners } from "./listeners/user";
 import { registerTeacherListeners } from "./listeners/teacher";
+import { registerTutorListeners } from "./listeners/tutor";
 
 const { tenantId, userId, role } = window.__APP_CONTEXT__ ?? {};
 
@@ -36,5 +37,9 @@ if (tenantId) {
     // Actif uniquement pour les enseignants
     if (role === "enseignant") {
         registerTeacherListeners(tenantId, userId);
+    }
+    // Actif uniquement pour les enseignants
+    if (role === "tuteur") {
+        registerTutorListeners(tenantId, userId);
     }
 }

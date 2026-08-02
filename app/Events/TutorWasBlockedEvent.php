@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DataUpdatedEvent implements ShouldBroadcast
+class TutorWasBlockedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,8 +18,8 @@ class DataUpdatedEvent implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public ?string $tenantId,
-        public ?string $message = null,
+        public string $tenantId, 
+        public int $userId, 
     )
     {
         //
@@ -33,9 +33,18 @@ class DataUpdatedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('tenant.' . $this->tenantId . '.directeur'),
-            new PrivateChannel('tenant.' . $this->tenantId . '.enseignant'),
-            new PrivateChannel('tenant.' . $this->tenantId . '.tuteur'),
+            new PrivateChannel('tenant.' . $this->tenantId . '.user.' . $this->userId),
+
+        ];
+    }
+
+    public function broadcastWith() : array
+    {
+
+        return [
+            'tenantId' => $this->tenantId,
+            'userId' => $this->userId,
+
         ];
     }
 
@@ -47,12 +56,5 @@ class DataUpdatedEvent implements ShouldBroadcast
     public function broadcastConnection(): string
     {
         return 'redis';
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'message' => $this->message,
-        ];
     }
 }
