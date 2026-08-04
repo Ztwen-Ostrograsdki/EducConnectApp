@@ -225,7 +225,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
                                                    null,
                'for_parents'             => isset($docDBInfos['for_parents']) ? 
                                                    $docDBInfos['for_parents'] : 
-                                                   null,
+                                                   false,
                 'serial_id'              => isset($docDBInfos['serial_id']) ? 
                                                    $docDBInfos['serial_id'] : 
                                                    null,
@@ -234,7 +234,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
                                                    null,
                 'for_teachers'           => isset($docDBInfos['for_teachers']) ?
                                                    $docDBInfos['for_teachers'] : 
-                                                   null,
+                                                   false,
                 'promotion_id'           => isset($docDBInfos['promotion_id']) ? 
                                                    $docDBInfos['promotion_id'] : 
                                                    null,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Tenants\Teachers;
+namespace App\Livewire\Tenants\Reports;
 
 use App\Helpers\Support\TenantStorage;
 use App\Models\Classe;
@@ -20,8 +20,8 @@ use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
-#[Title('Gestion des documents générés sur les enseignants')]
-class TeachersPrintableDocumentsPage extends Component
+#[Title('Les bulletins')]
+class BulletinsPrintableDocumentsPage extends Component
 {
     use WireUiActions, WithPagination;
 
@@ -29,15 +29,7 @@ class TeachersPrintableDocumentsPage extends Component
 
     public ?string $targeted = null;
 
-    public string $targetRoute = 'tenant.teachers.docs';
-    
-    public string $pageTitle = 'Documents générés - Liste enseignants';
-
-    public $targetRoutes = [
-        'tenant.students.docs' => 'Liste des apprenants',
-        'tenant.teachers.docs' => 'Liste des enseignants',
-    ];
-
+    public string $pageTitle = 'Documents générés - Les bulletins';
 
 
     public ?string $classe_slug = null;
@@ -101,7 +93,7 @@ class TeachersPrintableDocumentsPage extends Component
     #[Computed]
     public function documents()
     {
-        return GeneratedDocument::ofType('teacher_list')
+        return GeneratedDocument::ofType('bulletins_list')
             ->forUser(auth('tenant')->id())
             ->when($this->search, fn ($q) =>
                 $q->where('filename', 'like', '%' . $this->search . '%')
@@ -275,6 +267,6 @@ class TeachersPrintableDocumentsPage extends Component
 
     public function render()
     {
-        return view('livewire.tenants.teachers.teachers-printable-documents-page');
+        return view('livewire.tenants.reports.bulletins-printable-documents-page');
     }
 }

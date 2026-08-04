@@ -86,11 +86,11 @@ class MarkPrintQuery
                   ->where('classe_id', $classe->id)
                   ->whereNull('ended_at')
             ),
-            'withLeaves' => $query->where('is_active', true),
-			default => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
+            'withLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
                 $q->where('school_year_id', $classe->school_year_id)
                   ->where('classe_id', $classe->id)
-                  ->whereNull('ended_at'))
+                  ->whereNull('ended_at')),
+            default => $query->where('is_active', true),
         };
 
         return $query->orderBy('name')->orderBy('prenames');

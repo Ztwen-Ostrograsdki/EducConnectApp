@@ -41,6 +41,9 @@ use App\Livewire\Tenants\Promotions\PromotionProfil;
 use App\Livewire\Tenants\Promotions\PromotionsPortal;
 use App\Livewire\Tenants\Promotions\PromotionStudentsComponent;
 use App\Livewire\Tenants\Promotions\PromotionTeachersComponent;
+use App\Livewire\Tenants\Reports\BulletinsPrintableDocumentsPage;
+use App\Livewire\Tenants\Reports\BulletinsPrintableListComponent;
+use App\Livewire\Tenants\Reports\BulletinsPrintsManagerComponent;
 use App\Livewire\Tenants\Reports\MarksDiagnosticForTeachersPrintableDocumentsPage;
 use App\Livewire\Tenants\Reports\MarksDiagnosticManagerComponent;
 use App\Livewire\Tenants\Reports\MarksDiagnosticPrintableListComponent;
@@ -257,6 +260,14 @@ Route::middleware([
             Route::get('/rapport-notes/impression/previsualisation', MarksDiagnosticPrintableListComponent::class)->name('marks.reports.print.preview');
 
             Route::get('/rapport-notes/documents/imprimable/{classe_slug?}', MarksDiagnosticForTeachersPrintableDocumentsPage::class)->name('marks.reports.docs');
+
+
+            //GESTION DES BULLETINS
+            Route::get('/bulletins/gestion-impression/configuration/{classe_slug?}', BulletinsPrintsManagerComponent::class)->name('bulletins.print.configuration');
+
+            Route::get('/bulletins/impression/previsualisation', BulletinsPrintableListComponent::class)->name('bulletins.print.preview');
+
+            Route::get('/bulletins/documents/imprimable/{classe_slug?}', BulletinsPrintableDocumentsPage::class)->name('bulletins.docs');
 
 
             // LES ENSEIGNANTS

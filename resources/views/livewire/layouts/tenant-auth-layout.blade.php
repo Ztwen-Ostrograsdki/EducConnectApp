@@ -457,16 +457,16 @@
                     </div>
                     <div class="s-section">
                         <div class="s-section-label">Gestion bulletins de notes</div>
-                        <a wire:navigate href="{{ route('tenant.marks.reports.print.configuration') }}"
-                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.configuration') ? 'active' : '' }}">
+                        <a wire:navigate href="{{ route('tenant.bulletins.print.configuration') }}"
+                            class="s-link {{ request()->routeIs('tenant.bulletins.print.configuration') ? 'active' : '' }}">
                             <div class="s-icon">🖥️</div><span class="s-label">Page de génération</span>
                         </a>
-                        <a href="{{ route('tenant.marks.reports.print.preview') }}"
-                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.preview') ? 'active' : '' }}">
+                        <a href="{{ route('tenant.bulletins.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.bulletins.print.preview') ? 'active' : '' }}">
                             <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
                         </a>
-                        <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}"
-                            class="s-link {{ request()->routeIs('tenant.marks.reports.docs') ? 'active' : '' }}">
+                        <a wire:navigate href="{{ route('tenant.bulletins.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.bulletins.docs') ? 'active' : '' }}">
                             <div class="s-icon">📑</div><span class="s-label">Bulletins disponibles</span>
                         </a>
                     </div>
