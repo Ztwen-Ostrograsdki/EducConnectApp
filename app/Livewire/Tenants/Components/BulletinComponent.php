@@ -7,6 +7,7 @@ use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Services\ClassesServices\ClasseEffectifsService;
+use App\Services\ClassesServices\ClasseYearlyAveragesCacheService;
 use App\Services\MarksServices\ClasseAveragesCacheService;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Livewire\Attributes\Computed;
@@ -80,7 +81,7 @@ class BulletinComponent extends Component
     {
         session()->put('tenant_student_bulletin_period', $period);
 
-        $this->dispatch("ReloadForNewStudent", $this->period, $this->student->id, $this->currentClasse->id);
+        $this->dispatch("ReloadForNewStudent", $this->period, $this->student->id, $this->classe->id);
 
     }
 
@@ -167,6 +168,49 @@ class BulletinComponent extends Component
             $this->activeYear->id
         );
         // => ['sum_moy_coef' => .., 'sum_coef' => .., 'moyenne' => .., 'mention' => .., 'rank' => .., 'total' => ..]
+    }
+
+
+    #[Computed]
+    public function isLastPeriod(): bool
+    {
+        if (!$this->period) return false;
+
+        $lastIndex = collect($this->periods_types)->pluck('index')->max();
+
+        return $this->period === $lastIndex;
+    }
+
+    /**
+     * Données annuelles de niveau CLASSE (premier, dernier, taux de réussite
+     * annuel, effectifs détaillés avec abandons) — null hors dernière période.
+     */
+    #[Computed]
+    public function yearlyClasseData(): ?array
+    {
+        if (!$this->isLastPeriod) return null;
+
+        $data = app(ClasseYearlyAveragesCacheService::class)->get($this->classe->id, $this->activeYear->id);
+
+        unset($data['students']); // détail par apprenant non nécessaire ici
+
+        return $data;
+    }
+
+    /**
+     * Données annuelles propres à CET apprenant (moy_general, rang_general,
+     * mention_generale, success_percentage_annuel) — null hors dernière période.
+     */
+    #[Computed]
+    public function yearlyAverage(): ?array
+    {
+        if (!$this->isLastPeriod) return null;
+
+        return app(ClasseYearlyAveragesCacheService::class)->forStudent(
+            $this->classe->id,
+            $this->student->id,
+            $this->activeYear->id
+        );
     }
 
     

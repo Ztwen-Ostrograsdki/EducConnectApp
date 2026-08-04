@@ -96,7 +96,6 @@
                 </div>
 
                 @if (tenancy()->tenant->hasActiveSchoolYear())
-
                     <div class="s-section">
                         <div class="s-section-label">Pédagogie</div>
 
@@ -114,24 +113,6 @@
                                     <div class="s-icon" style="font-size:.72rem;">📋</div>
                                     <span class="s-label">Portail</span>
                                 </a>
-
-                                @foreach (tenancy()->tenant?->getSchoolYearClasses(null, 1) as $classe)
-                                    <a wire:navigate
-                                        href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
-                                        class="s-link {{ request()->routeIs([
-                                            'tenant.classe.profil',
-                                            'tenant.classe.edit',
-                                            'tenant.classe.respos',
-                                            'tenant.classe.manage.subjects.teacher',
-                                            'tenant.classe.migrate.students',
-                                        ]) && request()->route('classe_slug') === $classe->slug
-                                            ? 'active'
-                                            : '' }}"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label">Classe de {{ $classe->code ?? $classe->name }}</span>
-                                    </a>
-                                @endforeach
 
                                 <a wire:navigate href="{{ route('tenant.classes.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.classes.print.configuration') ? 'active' : '' }}">
@@ -170,28 +151,6 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->promotions(2) as $promotion)
-                                    <a wire:navigate
-                                        href="{{ route('tenant.promotion.profil', ['promotion_slug' => $promotion->slug]) }}"
-                                        class="s-link {{ request()->routeIs([
-                                            'tenant.promotion.profil',
-                                            'tenant.promotion.students',
-                                            'tenant.promotion.teachers',
-                                            'tenant.promotion.edit',
-                                        ]) && request()->route('promotion_slug') === $promotion->slug
-                                            ? 'active'
-                                            : '' }}"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label">
-                                            @if ($promotion->code)
-                                                {{ $promotion->code }}
-                                            @else
-                                                {{ $promotion->name . '' . $promotion->specialityModel()?->code }}
-                                            @endif
-                                        </span>
-                                    </a>
-                                @endforeach
                                 <a wire:navigate href="{{ route('tenant.promotion.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.promotion.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
@@ -217,29 +176,6 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->filiars(2) as $filiar)
-                                    <a wire:navigate
-                                        href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
-                                        class="s-link {{ request()->routeIs([
-                                            'tenant.filiar.profil',
-                                            'tenant.filiar.students',
-                                            'tenant.filiar.teachers',
-                                            'tenant.filiar.edit',
-                                            'tenant.filiar.edit.ca',
-                                        ]) && request()->route('filiar_slug') === $filiar->slug
-                                            ? 'active'
-                                            : '' }}"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label uppercase">
-                                            @if ($filiar->code)
-                                                {{ $filiar->code }}
-                                            @else
-                                                {{ $filiar->name }}
-                                            @endif
-                                        </span>
-                                    </a>
-                                @endforeach
                                 <a wire:navigate href="{{ route('tenant.filiar.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.filiar.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
@@ -265,28 +201,6 @@
                                         <span class="ml-3 text-sky-600"></span>
                                     </span>
                                 </a>
-                                @foreach (tenancy()->tenant?->serials(2) as $serial)
-                                    <a wire:navigate
-                                        href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
-                                        class="s-link {{ request()->routeIs([
-                                            'tenant.serial.profil',
-                                            'tenant.serial.students',
-                                            'tenant.serial.teachers',
-                                            'tenant.serial.edit',
-                                        ]) && request()->route('serial_slug') === $serial->slug
-                                            ? 'active'
-                                            : '' }}"
-                                        style="font-size:.78rem;">
-                                        <div class="s-icon" style="font-size:.72rem;">📋</div>
-                                        <span class="s-label uppercase">
-                                            @if ($serial->code)
-                                                {{ $serial->code }}
-                                            @else
-                                                {{ $serial->name }}
-                                            @endif
-                                        </span>
-                                    </a>
-                                @endforeach
                                 <a wire:navigate href="{{ route('tenant.serial.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.serial.create') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
@@ -541,6 +455,21 @@
                             <div class="s-icon">📑</div><span class="s-label">Fichiers disponibles</span>
                         </a>
                     </div>
+                    <div class="s-section">
+                        <div class="s-section-label">Gestion bulletins de notes</div>
+                        <a wire:navigate href="{{ route('tenant.marks.reports.print.configuration') }}"
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.configuration') ? 'active' : '' }}">
+                            <div class="s-icon">🖥️</div><span class="s-label">Page de génération</span>
+                        </a>
+                        <a href="{{ route('tenant.marks.reports.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.print.preview') ? 'active' : '' }}">
+                            <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
+                        </a>
+                        <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.marks.reports.docs') ? 'active' : '' }}">
+                            <div class="s-icon">📑</div><span class="s-label">Bulletins disponibles</span>
+                        </a>
+                    </div>
                 @else
                     <div class="s-section">
                         <div class="s-section-label break-all">
@@ -688,3 +617,4 @@
 </body>
 
 </html>
+

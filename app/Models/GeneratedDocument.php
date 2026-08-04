@@ -29,6 +29,10 @@ class GeneratedDocument extends Model
         'filiar_id',
         'serial_id',
         'promotion_id',
+        'for_student_id',
+        'school_year_id',
+        'school_year_slug',
+        'period',
         'promotionsGrouped',
         'tenant_id',
     ];

@@ -28,7 +28,8 @@
 
     <div class="mx-auto w-full max-w-[1400px] mb-40">
 
-        <div class="border border-white/[0.06] bg-[#0f1523] shadow-xs shadow-purple-700  overflow-hidden">
+        <div class="border border-white/[0.06] bg-[#0f1523] shadow-xs shadow-purple-700 overflow-hidden">
+
             {{-- ════════════════ HEADER OFFICIEL ════════════════ --}}
             <header class="relative border-b border-white/[0.06]">
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-transparent to-emerald-500/5">
@@ -37,7 +38,6 @@
                 <div class="relative p-5 sm:p-8 lg:p-10">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
 
-                        {{-- République --}}
                         <div class="text-center lg:text-left order-2 lg:order-1">
                             <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">
                                 République du Bénin
@@ -51,11 +51,9 @@
                             </p>
                         </div>
 
-                        {{-- École --}}
                         <div class="flex flex-col items-center order-1 lg:order-2">
                             <div
                                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#070b14] border border-white/10 flex items-center justify-center overflow-hidden">
-                                {{-- Logo placeholder --}}
                                 <span class="text-3xl">🎓</span>
                             </div>
                             <h1 class="mt-3 text-xl sm:text-2xl font-bold text-white text-center tracking-tight">
@@ -70,7 +68,6 @@
                             </div>
                         </div>
 
-                        {{-- Période --}}
                         <div class="text-center lg:text-right order-3">
                             <p class="text-[10px] uppercase tracking-wider text-slate-500">Année scolaire</p>
                             <p class="mt-1 text-xl sm:text-2xl font-bold text-indigo-400 font-mono">
@@ -80,6 +77,9 @@
                                 class="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
                                 <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
                                 Bulletin — {{ $this->activeYear->periodLabel() }} {{ $period }}
+                                @if ($this->isLastPeriod)
+                                    <span class="ml-1 text-emerald-300">· Résultats annuels inclus</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,6 @@
                 <div class="p-5 sm:p-8 lg:p-10">
                     <div class="grid grid-cols-1 xl:grid-cols-[200px_minmax(0,1fr)] gap-6 lg:gap-8">
 
-                        {{-- Photo --}}
                         <div class="flex justify-center xl:justify-start">
                             <div
                                 class="w-40 h-48 sm:w-44 sm:h-52 rounded-2xl bg-[#070b14] border border-white/10 overflow-hidden shadow-lg">
@@ -100,7 +99,6 @@
                             </div>
                         </div>
 
-                        {{-- Infos --}}
                         <div class="min-w-0">
                             <div class="flex flex-wrap items-center gap-2.5">
                                 <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">
@@ -112,7 +110,6 @@
                                 </span>
                             </div>
 
-                            {{-- Infos grid --}}
                             <div class="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                                 @foreach ([['Matricule', $student->matricule], ['Classe', $classe->code], ['Sexe', $student->gender], ['Né(e) le', formatBirthDate($this->student->birth_date)], ['Nationalité', $student->country], ['Effectif', $this->effectifs['apprenants']], ['Prof. Principal', $classe->principal?->getFullName() ?? '—'], ['Contact école', tenant('contacts')]] as $info)
                                     <div class="rounded-xl bg-[#070b14] border border-white/[0.05] px-3.5 py-3">
@@ -126,13 +123,28 @@
                             </div>
 
                             @if ($this->termAverage)
+                                {{-- Stats de la PÉRIODE : rang, moyenne, premier/dernier de la classe,
+                                     taux de réussite de la période (apprenant + classe). --}}
                                 <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                    @foreach ([['Garçons', $this->effectifs['apprenants_par_sexe']['M'], 'text-sky-400'], ['Filles', $this->effectifs['apprenants_par_sexe']['F'], 'text-pink-400'], ['Rang', $this->termAverage['rank'], 'text-amber-400'], ['Moyenne', $this->termAverage['moyenne'], 'text-indigo-400']] as $item)
+                                    @foreach ([['Garçons', $this->effectifs['apprenants_par_sexe']['M'] ?? 0, 'text-sky-400'], ['Filles', $this->effectifs['apprenants_par_sexe']['F'] ?? 0, 'text-pink-400'], ['Rang', $this->termAverage['rank'] ?? '—', 'text-amber-400'], ['Moyenne', $this->termAverage['moyenne'] ?? '—', 'text-indigo-400']] as $item)
                                         <div
                                             class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-3.5 py-3 text-center">
                                             <p class="text-[10px] uppercase tracking-wider text-slate-600">
                                                 {{ $item[0] }}</p>
                                             <p class="mt-1 text-lg font-bold {{ $item[2] }}">
+                                                {{ $item[1] }}
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <div class="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                    @foreach ([['1er de la classe', $this->termAverage['premier']['moyenne'] ?? '—', 'text-emerald-400'], ['Dernier de la classe', $this->termAverage['dernier']['moyenne'] ?? '—', 'text-red-400'], ['Réussite (apprenant)', ($this->termAverage['success_percentage'] ?? null) !== null ? $this->termAverage['success_percentage'] . '%' : '—', 'text-sky-400'], ['Réussite de la classe', ($this->termAverage['class_success_rate'] ?? null) !== null ? $this->termAverage['class_success_rate'] . '%' : '—', 'text-indigo-400']] as $item)
+                                        <div
+                                            class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-3.5 py-3 text-center">
+                                            <p class="text-[10px] uppercase tracking-wider text-slate-600">
+                                                {{ $item[0] }}</p>
+                                            <p class="mt-1 text-base font-bold {{ $item[2] }}">
                                                 {{ $item[1] }}
                                             </p>
                                         </div>
@@ -145,7 +157,7 @@
             </section>
 
             @if ($this->termAverage && $this->subjectsDetail)
-                {{-- ════════════════ NOTES ════════════════ --}}
+                {{-- ════════════════ NOTES DE LA PÉRIODE ════════════════ --}}
                 <section>
                     <div class="p-3 sm:p-5 lg:p-6">
                         <div class="overflow-x-auto rounded-2xl border border-white/[0.06]">
@@ -195,19 +207,19 @@
                                                 {{ $row['coefficient'] ?? '—' }}</td>
                                             <td class="px-3 py-3.5 text-center font-mono text-slate-300">
                                                 {{ $row['moy_interro'] ?? '—' }}</td>
-                                            <td class="px-3 py-3.5 text-center font-mono text-slate-300">
-                                                {{ $row['devoirs']['devoir1'] ?? '—' }}</td>
-                                            <td class="px-3 py-3.5 text-center font-mono text-slate-300">
-                                                {{ $row['devoirs']['devoir2'] ?? '—' }}</td>
+                                            @foreach ($this->devoirColumns() as $type => $label)
+                                                <td class="px-3 py-3.5 text-center font-mono text-slate-300">
+                                                    {{ $row['devoirs'][$type] ?? '—' }}</td>
+                                            @endforeach
                                             <td class="px-3 py-3.5 text-center font-mono font-semibold text-white">
                                                 {{ $row['moy'] ?? '—' }}</td>
                                             <td class="px-3 py-3.5 text-center font-mono text-indigo-300">
                                                 {{ $row['moy_coef'] ?? '—' }}</td>
                                             <td class="px-3 py-3.5 text-center font-mono text-slate-500">
-                                                @if ($row['rank'] === 1)
-                                                    {{ $row['rank'] . 'er' ?? '—' }}
+                                                @if ($row['rank'])
+                                                    {{ $row['rank'] . ($row['rank'] === 1 ? 'er' : 'e') }}
                                                 @else
-                                                    {{ $row['rank'] . 'e' ?? '—' }}
+                                                    —
                                                 @endif
                                             </td>
                                             <td class="px-3 py-3.5 text-slate-400 text-xs whitespace-nowrap">
@@ -216,10 +228,9 @@
                                                 @if (!empty($row['mention']))
                                                     <span
                                                         class="inline-flex px-2 py-0.5 rounded-md text-[11px] font-medium
-                                                        {{ str_contains(strtolower($row['mention'] ?? ''), 'bien') ||
-                                                        str_contains(strtolower($row['mention'] ?? ''), 'très')
+                                                        {{ str_contains(strtolower($row['mention']), 'bien') || str_contains(strtolower($row['mention']), 'très')
                                                             ? 'bg-emerald-500/10 text-emerald-400'
-                                                            : (str_contains(strtolower($row['mention'] ?? ''), 'passable')
+                                                            : (str_contains(strtolower($row['mention']), 'passable')
                                                                 ? 'bg-amber-500/10 text-amber-400'
                                                                 : 'bg-slate-500/10 text-slate-400') }}">
                                                         {{ $row['mention'] }}
@@ -270,6 +281,85 @@
                         </div>
                     </div>
                 </section>
+
+                @if ($this->isLastPeriod && $this->yearlyAverage)
+                    {{-- ════════════════ RÉSULTATS ANNUELS (dernière période uniquement) ════════════════ --}}
+                    <section class="border-t border-white/[0.06]">
+                        <div class="p-5 sm:p-8 lg:p-10">
+                            <div class="flex items-center gap-2 mb-5">
+                                <span
+                                    class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-sm">📊</span>
+                                <h3 class="text-lg font-semibold text-white">Résultats annuels</h3>
+                            </div>
+
+                            {{-- Stats de l'apprenant sur l'année --}}
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                @foreach ([['Moy. annuelle', $this->yearlyAverage['moy_general'] ?? '—', 'text-indigo-400'], ['Rang annuel', $this->yearlyAverage['rang_general'] ?? null ? $this->yearlyAverage['rang_general'] . ' / ' . $this->yearlyClasseData['total'] : '—', 'text-amber-400'], ['Mention annuelle', $this->yearlyAverage['mention_generale'] ?? '—', 'text-emerald-400'], ['Réussite annuelle (apprenant)', ($this->yearlyAverage['success_percentage_annuel'] ?? null) !== null ? $this->yearlyAverage['success_percentage_annuel'] . '%' : '—', 'text-sky-400']] as $item)
+                                    <div
+                                        class="rounded-xl bg-[#070b14] border border-white/[0.05] px-3.5 py-3 text-center">
+                                        <p class="text-[10px] uppercase tracking-wider text-slate-600">
+                                            {{ $item[0] }}</p>
+                                        <p class="mt-1 text-lg font-bold {{ $item[2] }}">{{ $item[1] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Stats de la classe sur l'année --}}
+                            <div class="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                @foreach ([['1er annuel de la classe', $this->yearlyClasseData['premier']['moyenne'] ?? '—', 'text-emerald-400'], ['Dernier annuel de la classe', $this->yearlyClasseData['dernier']['moyenne'] ?? '—', 'text-red-400'], ['Réussite annuelle (classe)', ($this->yearlyClasseData['success_percentage_annuelle'] ?? null) !== null ? $this->yearlyClasseData['success_percentage_annuelle'] . '%' : '—', 'text-indigo-400'], ['Abandons sur l’année', $this->yearlyClasseData['effectifs']['abandons'] ?? 0, 'text-slate-300']] as $item)
+                                    <div
+                                        class="rounded-xl bg-white/[0.02] border border-white/[0.05] px-3.5 py-3 text-center">
+                                        <p class="text-[10px] uppercase tracking-wider text-slate-600">
+                                            {{ $item[0] }}</p>
+                                        <p class="mt-1 text-base font-bold {{ $item[2] }}">{{ $item[1] }}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Récapitulatif par période --}}
+                            <div class="mt-5 overflow-x-auto rounded-2xl border border-white/[0.06]">
+                                <table class="min-w-[500px] w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-[#070b14] border-b border-white/[0.06]">
+                                            <th
+                                                class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                {{ $this->activeYear->periodLabel() }}</th>
+                                            <th
+                                                class="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                Moyenne</th>
+                                            <th
+                                                class="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                Rang</th>
+                                            <th
+                                                class="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                Mention</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-white/[0.03]">
+                                        @foreach ($this->yearlyAverage['periods'] as $p => $entry)
+                                            <tr>
+                                                <td class="px-4 py-3 font-medium text-slate-200">
+                                                    {{ $this->activeYear->periodLabel() }} {{ $p }}</td>
+                                                <td class="px-4 py-3 text-center font-mono text-white">
+                                                    {{ $entry['moyenne'] ?? '—' }}</td>
+                                                <td class="px-4 py-3 text-center font-mono text-slate-400">
+                                                    {{ $entry['rank'] ?? '—' }}
+                                                    @if ($entry)
+                                                        <span class="text-slate-600">/
+                                                            {{ $entry['total'] ?? '—' }}</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-4 py-3 text-center text-slate-300">
+                                                    {{ $entry['mention'] ?? '—' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                @endif
 
                 {{-- ════════════════ OBSERVATIONS ════════════════ --}}
                 <section class="border-t border-white/[0.06]">
@@ -337,31 +427,7 @@
                 </section>
             @endif
 
-            {{-- ════════════════ FOOTER ════════════════ --}}
-            <footer class="border-t border-white/[0.06] bg-[#070b14]/50">
-                <div class="px-5 sm:px-8 lg:px-10 py-5">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <p class="text-xs text-slate-600">
-                            Bulletin généré automatiquement · {{ tenant('school_name') }}
-                        </p>
-                        <div class="flex flex-wrap gap-2">
-                            <button
-                                class="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 transition-all inline-flex items-center gap-1.5">
-                                <x-lucide-download class="w-3.5 h-3.5" />
-                                Télécharger PDF
-                            </button>
-                            <button
-                                class="h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shadow-lg shadow-indigo-900/30">
-                                <x-lucide-send class="w-3.5 h-3.5" />
-                                Envoyer au parent
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
         </div>
     </div>
 
 </div>
-

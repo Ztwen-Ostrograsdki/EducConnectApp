@@ -14,7 +14,126 @@ trait SchoolYearsActions{
 
 	use WireUiActions;
 
-    public function closePeriods($schoolYearSlug): void
+    public function activateYearlyBulletin(string $schoolYearSlug): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Rendre les bulletins annuels de l'année scolaire {$schoolYearSlug} disponibles? ",
+            'text'               => "Cette action rendra les bulletins annuels de l'année scolaire {$schoolYearSlug} des apprenants disponibles et accessibles.",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, rendre disponibles',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToSetYearlyBulletinVisible',
+            'onConfirmedParams'  => ['schoolYearSlug' => $schoolYearSlug],
+        ]);
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    #[On('ConfirmToSetYearlyBulletinVisible')]
+    public function onConfirmToSetYearlyBulletinVisible(string $schoolYearSlug): void
+    {
+        $schoolYear = SchoolYear::firstWhere('slug', $schoolYearSlug);
+
+        if (!$schoolYear) {
+
+            $this->notification()->error(title: "L'année scolaire {$schoolYearSlug} est introuvable en base de données");
+            return;
+        }
+
+        try {
+
+            $done = $schoolYear->update(['yearly_average_is_visible' => true]);
+
+            if($done){
+
+                $this->notification()->success(
+                    title: "Les bulletins annuels de {$schoolYearSlug} sont disponibles",
+                    description: "Les bulletins annuels sont disponibles et peuvent êtres parcourir ou téléchargés!",
+                );
+
+                broadcast(new DataUpdatedEvent(tenant('id')));
+            }
+            else{
+                $this->notification()->error(
+                    title: "Les bulletins annuels de {$schoolYearSlug} n'ont pas été rendus visibles",
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "Les bulletins annuels de {$schoolYearSlug} n'ont pas été rendus visibles",
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+        }
+        
+        
+    }
+
+
+    public function desactivateYearlyBulletin(string $schoolYearSlug): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Masquer les bulletins annuels de l'année scolaire {$schoolYearSlug} ? ",
+            'text'               => "Cette action masquera les bulletins annuels de l'année scolaire {$schoolYearSlug} des apprenants.",
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, masquer ',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmToSetYearlyBulletinHidden',
+            'onConfirmedParams'  => ['schoolYearSlug' => $schoolYearSlug],
+        ]);
+
+    }
+
+    #[On('ConfirmToSetYearlyBulletinHidden')]
+    public function onConfirmToSetYearlyBulletinHidden(string $schoolYearSlug): void
+    {
+        $schoolYear = SchoolYear::firstWhere('slug', $schoolYearSlug);
+
+        if (!$schoolYear) {
+
+            $this->notification()->error(title: "L'année scolaire {$schoolYearSlug} est introuvable en base de données");
+            return;
+        }
+
+        try {
+
+            $done = $schoolYear->update(['yearly_average_is_visible' => false]);
+
+            if($done){
+
+                $this->notification()->success(
+                    title: "Les bulletins annuels de {$schoolYearSlug} sont masqués et inaccessibles",
+                    description: "Les bulletins annuels sont indisponibles à présent!",
+                );
+
+                 broadcast(new DataUpdatedEvent(tenant('id')));
+
+            }
+            else{
+                $this->notification()->error(
+                    title: "Les bulletins annuels de {$schoolYearSlug} n'ont pas été masqués",
+                    description: "Une erreur est survenue, veuillez réessayer!",
+                );
+            }
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "Les bulletins annuels de {$schoolYearSlug} n'ont pas été masqués",
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+        }
+        
+        
+    }
+    
+    public function closePeriods(string $schoolYearSlug): void
     {
         $this->dispatch('swal', [
             'title'              => "Fermer tous les semestres/trimestres de l'année scolaire {$schoolYearSlug} ? ",

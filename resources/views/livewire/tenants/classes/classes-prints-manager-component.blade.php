@@ -101,10 +101,6 @@
                                 @endforeach
                             </select>
                         @endif
-
-                        <input type="text" wire:model.live.debounce.400ms="level"
-                            placeholder="Niveau (ex: 6ème, 2nde…)"
-                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500/40 transition-all">
                     </div>
                 </div>
             </section>
@@ -361,3 +357,4 @@
         </div>
     </div>
 </div>
+

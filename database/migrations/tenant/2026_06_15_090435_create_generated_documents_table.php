@@ -23,6 +23,10 @@ return new class extends Migration
             $table->boolean('downloadable_by_others')->default(false);
             $table->string('path');
             $table->string('url');
+            $table->unsignedBigInteger('for_student_id')->nullable()->default(null);
+            $table->unsignedBigInteger('school_year_id')->nullable()->default(null);
+            $table->string('school_year_slug')->nullable();
+            $table->unsignedBigInteger('period')->nullable()->default(null);
             $table->unsignedBigInteger('for_parent_id')->nullable()->default(null);
             $table->unsignedBigInteger('for_teacher_id')->nullable()->default(null);
             $table->unsignedBigInteger('user_id')->nullable()->default(null);

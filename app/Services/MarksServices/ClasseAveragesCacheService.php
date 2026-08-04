@@ -97,7 +97,6 @@ class ClasseAveragesCacheService
 
         foreach ($classeSubjects as $classeSubject) {
 
-            // Lecture cache déjà enrichi de moy/moy_coef par matière — aucun recalcul ici.
             $marksData = $marksCacheService->get($classeId, $classeSubject->subject_id, $period, $schoolYearId);
 
             $coefficient = $classeSubject->classe->getCoefValueOfSubject($classeSubject->subject_id);
@@ -106,26 +105,20 @@ class ClasseAveragesCacheService
 
                 $studentData = $marksData[$studentId] ?? null;
 
-                if (!$studentData) {
-                    continue;
-                }
+                if (!$studentData) continue;
 
                 $counts = SubjectAverageCalculator::successCounts($studentData['marks']);
 
-                $moyCoef = $marksData[$studentId]['moy_coef'] ?? null;
-
-                if (is_null($moyCoef) || $moyCoef == 0.0) {
-                    continue;
-                }
-
                 $item = $sums->get($studentId);
-
                 $item['total_notes'] += $counts['total'];
                 $item['success_notes'] += $counts['success'];
 
+                $moyCoef = $studentData['moy_coef'] ?? null;
 
-                $item['sum_moy_coef'] += $moyCoef;
-                $item['sum_coef'] += $coefficient;
+                if (!is_null($moyCoef) && $moyCoef != 0.0) {
+                    $item['sum_moy_coef'] += $moyCoef;
+                    $item['sum_coef'] += $coefficient;
+                }
 
                 $sums->put($studentId, $item);
             }
@@ -144,17 +137,50 @@ class ClasseAveragesCacheService
                 : null;
 
             return [
-                'sum_moy_coef' => round($data['sum_moy_coef'], 2),
-                'sum_coef'     => round($data['sum_coef'], 2),
-                'moyenne'      => $moyenne,
-                'mention'      => $mentionService->forValue($moyenne),
-                'success_percentage'  => $successPercentage,
+                'sum_moy_coef'       => round($data['sum_moy_coef'], 2),
+                'sum_coef'           => round($data['sum_coef'], 2),
+                'moyenne'            => $moyenne,
+                'mention'            => $mentionService->forValue($moyenne),
+                'success_percentage' => $successPercentage,
+                'total_notes'        => $data['total_notes'],
+                'success_notes'      => $data['success_notes'],
             ];
         });
 
-        return $this->applyRanking($results, $studentIds->count());
+        $ranked = $this->applyRanking($results, $studentIds->count());
+
+        return $this->injectClasseLevelStats($ranked, $studentIds->count());
     }
 
+    /**
+     * Ajoute à CHAQUE entrée apprenant les stats de niveau classe pour la période :
+     * moyenne du premier, du dernier, et taux de réussite (% d'apprenants avec
+     * moyenne >= 10, sur l'effectif total actif — abandons déjà exclus en amont).
+     * Dénormalisé volontairement pour que forStudent() reste une lecture directe
+     * sans recalcul ni appel supplémentaire.
+     */
+    protected function injectClasseLevelStats(array $rows, int $totalActive): array
+    {
+        $withMoy = collect($rows)->filter(fn ($r) => !is_null($r['moyenne']));
+
+        $premierId = $withMoy->sortByDesc(fn ($r) => $r['moyenne'])->keys()->first();
+        $dernierId = $withMoy->sortBy(fn ($r) => $r['moyenne'])->keys()->first();
+
+        $premier = !is_null($premierId) ? ['student_id' => $premierId, 'moyenne' => $rows[$premierId]['moyenne']] : null;
+        $dernier = !is_null($dernierId) ? ['student_id' => $dernierId, 'moyenne' => $rows[$dernierId]['moyenne']] : null;
+
+        $classSuccessRate = $totalActive > 0
+            ? round(($withMoy->filter(fn ($r) => $r['moyenne'] >= 10)->count() / $totalActive) * 100, 2)
+            : null;
+
+        foreach ($rows as $studentId => &$row) {
+            $row['premier'] = $premier;
+            $row['dernier'] = $dernier;
+            $row['class_success_rate'] = $classSuccessRate;
+        }
+
+        return $rows;
+    }
     /**
      * Calcule le rang par moyenne décroissante, ex-aequo partagent le même rang.
      * Les apprenants sans moyenne (aucune matière suivie) n'ont pas de rang.

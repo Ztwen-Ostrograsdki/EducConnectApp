@@ -39,8 +39,6 @@ class ClassesPrintsManagerComponent extends Component
 
     public ?string $promotionInGroups = null;
 
-    public ?string $level = null;
-
     public int $counter = 0;
 
     public array $activeStatuses = [
@@ -117,9 +115,6 @@ class ClassesPrintsManagerComponent extends Component
         if (session()->has('print_classes_promotions_grouped_selected')) {
             $this->promotionInGroups = session('print_classes_promotions_grouped_selected');
         }
-        if (session()->has('print_classes_level_selected')) {
-            $this->level = session('print_classes_level_selected');
-        }
     }
 
     public function restoreSelects(): void
@@ -180,13 +175,12 @@ class ClassesPrintsManagerComponent extends Component
             'print_classes_serial_selected',
             'print_classes_promotion_selected',
             'print_classes_promotions_grouped_selected',
-            'print_classes_level_selected',
         ]);
 
         $this->reset(
             'activeStatus', 'lockedStatus', 'ppStatus', 'hasStudentsStatus',
             'hasTeachersStatus', 'filiar_id', 'serial_id', 'promotion_id',
-            'promotionInGroups', 'level'
+            'promotionInGroups'
         );
     }
 
@@ -232,7 +226,6 @@ class ClassesPrintsManagerComponent extends Component
             "serial_id"          => $this->serial_id,
             "promotion_id"       => $this->promotion_id,
             "promotionInGroups"  => $this->promotionInGroups,
-            "level"              => $this->level,
         ];
     }
 
@@ -256,7 +249,6 @@ class ClassesPrintsManagerComponent extends Component
     public function updatedPpStatus(?string $value): void { session()->put('print_classes_pp_status', $value); }
     public function updatedHasStudentsStatus(?string $value): void { session()->put('print_classes_has_students_status', $value); }
     public function updatedHasTeachersStatus(?string $value): void { session()->put('print_classes_has_teachers_status', $value); }
-    public function updatedLevel(?string $value): void { session()->put('print_classes_level_selected', $value); }
 
     public function updatedPromotionId(?string $value): void
     {

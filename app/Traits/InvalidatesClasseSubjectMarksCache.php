@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Services\ClassesServices\ClasseYearlyAveragesCacheService;
 use App\Services\MarksServices\ClasseAveragesCacheService;
 use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,8 @@ trait InvalidatesClasseSubjectMarksCache
             // Une note qui change modifie potentiellement la moyenne générale
             // ET le classement de tous les autres apprenants de la classe.
             app(ClasseAveragesCacheService::class)->forget($classeId, $period, $schoolYearId);
+
+            app(ClasseYearlyAveragesCacheService::class)->forget($classeId, $schoolYearId); // ajouté
         });
     }
 }

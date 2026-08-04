@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Events\AnyErrorEvent;
 use App\Events\DataUpdatedEvent;
 use App\Models\GeneratedDocument;
+use App\Models\SchoolYear;
 use App\Models\User;
 use App\Notifications\PDFIsReady;
 use App\Services\PDFFactory;
@@ -192,6 +193,8 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
         $user = User::find($this->notifiableId);
 
+        $activeYear = SchoolYear::current()?->first();
+
         $url  = $this->resolvePublicUrl();
 
         $docDBInfos = $this->docDBInfos;
@@ -201,14 +204,44 @@ class JobToGeneratePdfFromView implements ShouldQueue
             GeneratedDocument::create([
                 'type'                   => $this->options['document_type'] ?? 'document',
                 'filename'               => basename($this->outputPath),
+                'school_year_id'         => $activeYear?->id ?? null,
+                'school_year_slug'       => $activeYear?->slug ?? null,
                 'path'                   => $this->outputPath,
                 'url'                    => $url,
                 'user_id'                => $this->notifiableId,
-                'classe_id'              => isset($docDBInfos['classe_id']) ? $docDBInfos['classe_id'] : null,
-                'filiar_id'              => isset($docDBInfos['filiar_id']) ? $docDBInfos['filiar_id'] : null,
-                'serial_id'              => isset($docDBInfos['serial_id']) ? $docDBInfos['serial_id'] : null,
-                'promotion_id'           => isset($docDBInfos['promotion_id']) ? $docDBInfos['promotion_id'] : null,
-                'promotionsGrouped'      => isset($docDBInfos['promotionsGrouped']) ? $docDBInfos['promotionsGrouped'] : null,
+
+                
+                'classe_id'              => isset($docDBInfos['classe_id']) ?
+                                                   $docDBInfos['classe_id'] : 
+                                                   null,
+                'filiar_id'              => isset($docDBInfos['filiar_id']) ? 
+                                                   $docDBInfos['filiar_id'] : 
+                                                   null,
+                'for_student_id'         => isset($docDBInfos['for_student_id']) ?
+                                                   $docDBInfos['for_student_id'] : 
+                                                   null,
+                'for_parent_id'          => isset($docDBInfos['for_parent_id']) ? 
+                                                   $docDBInfos['for_parent_id'] : 
+                                                   null,
+               'for_parents'             => isset($docDBInfos['for_parents']) ? 
+                                                   $docDBInfos['for_parents'] : 
+                                                   null,
+                'serial_id'              => isset($docDBInfos['serial_id']) ? 
+                                                   $docDBInfos['serial_id'] : 
+                                                   null,
+                'for_teacher_id'         => isset($docDBInfos['for_teacher_id']) ?
+                                                   $docDBInfos['for_teacher_id'] : 
+                                                   null,
+                'for_teachers'           => isset($docDBInfos['for_teachers']) ?
+                                                   $docDBInfos['for_teachers'] : 
+                                                   null,
+                'promotion_id'           => isset($docDBInfos['promotion_id']) ? 
+                                                   $docDBInfos['promotion_id'] : 
+                                                   null,
+                'promotionsGrouped'      => isset($docDBInfos['promotionsGrouped']) ? 
+                                                   $docDBInfos['promotionsGrouped'] : 
+                                                   null,
+                                                   
                 'tenant_id'              => $this->tenantId,
                 'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
             ]);
@@ -222,6 +255,8 @@ class JobToGeneratePdfFromView implements ShouldQueue
                 'url'                    => $url,
                 'user_id'                => $this->notifiableId,
                 'tenant_id'              => $this->tenantId,
+                'school_year_id'         => $activeYear?->id ?? null,
+                'school_year_slug'       => $activeYear?->slug ?? null,
                 'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
             ]);
         }

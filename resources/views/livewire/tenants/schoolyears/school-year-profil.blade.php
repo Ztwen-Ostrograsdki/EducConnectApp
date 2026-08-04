@@ -75,7 +75,7 @@
 
                     {{-- Actions --}}
                     <div class="flex flex-wrap gap-2 shrink-0" wire:loading.class="opacity-50 pointer-events-none"
-                        wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}'),closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}'),deleteSchoolYear('{{ $school_year_model->slug }}'),restoreSchoolYear('{{ $school_year_model->slug }}')">
+                        wire:target="activateSchoolYear('{{ $school_year_model->slug }}'),deactivateSchoolYear('{{ $school_year_model->slug }}'),closeSchoolYear('{{ $school_year_model->slug }}'),reopenSchoolYear('{{ $school_year_model->slug }}'),deleteSchoolYear('{{ $school_year_model->slug }}'),restoreSchoolYear('{{ $school_year_model->slug }}'), activateYearlyBulletin('{{ $school_year_model->slug }}'), desactivateYearlyBulletin('{{ $school_year_model->slug }}')">
 
                         <a href="{{ route('tenant.schoolYears.edit', ['school_year' => $school_year_model->slug]) }}"
                             class="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-slate-300 transition-all inline-flex items-center gap-1.5">
@@ -177,6 +177,74 @@
                     </div>
                 </div>
             </div>
+            <div class="flex justify-start p-5 sm:p-7">
+                <label class="group relative inline-flex flex-row-reverse items-center gap-3 cursor-pointer select-none"
+                    wire:loading.class="opacity-60 pointer-events-none"
+                    wire:target="activateYearlyBulletin('{{ $school_year_model->slug }}'),desactivateYearlyBulletin('{{ $school_year_model->slug }}')">
+
+                    {{-- Label --}}
+                    <span
+                        class="text-sm font-medium transition-colors duration-300
+                     {{ $school_year_model->yearly_average_is_visible ? 'text-emerald-400' : 'text-slate-400' }}">
+                        <span wire:loading.remove
+                            wire:target="activateYearlyBulletin('{{ $school_year_model->slug }}'),desactivateYearlyBulletin('{{ $school_year_model->slug }}')">
+                            {{ $school_year_model->yearly_average_is_visible
+                                ? 'Les bulletins annuels sont visibles et accessibles'
+                                : 'Les bulletins annuels sont masqués et ne sont pas accessibles' }}
+                        </span>
+                        <span wire:loading
+                            wire:target="activateYearlyBulletin('{{ $school_year_model->slug }}'),desactivateYearlyBulletin('{{ $school_year_model->slug }}')"
+                            class="inline-flex items-center gap-1.5 text-slate-400">
+                            <span class="inline-flex items-center gap-1.5 text-slate-400">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                                <span>Mise à jour…</span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <input type="checkbox" class="peer sr-only"
+                        wire:key="yearly-bulletin-toggle-{{ $school_year_model->yearly_average_is_visible ? 'on' : 'off' }}"
+                        @checked($school_year_model->yearly_average_is_visible)
+                        wire:click.prevent="{{ $school_year_model->yearly_average_is_visible
+                            ? "desactivateYearlyBulletin('{$school_year_model->slug}')"
+                            : "activateYearlyBulletin('{$school_year_model->slug}')" }}"
+                        wire:loading.attr="disabled"
+                        wire:target="activateYearlyBulletin('{{ $school_year_model->slug }}'),desactivateYearlyBulletin('{{ $school_year_model->slug }}')">
+
+                    {{-- Track --}}
+                    <span
+                        class="relative h-8 w-14 shrink-0 rounded-full shadow-inner transition-colors duration-300 ease-out
+                     bg-slate-700
+                     peer-checked:bg-emerald-500
+                     peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500/40 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#070b14]
+                     peer-checked:[&_.thumb]:translate-x-6
+                     peer-checked:[&_.icon-off]:opacity-0 peer-checked:[&_.icon-off]:scale-50
+                     peer-checked:[&_.icon-on]:opacity-100 peer-checked:[&_.icon-on]:scale-100">
+
+                        <span
+                            class="pointer-events-none absolute inset-0 rounded-full bg-emerald-400/25 opacity-0 blur-md transition-opacity duration-300 peer-checked:opacity-100"></span>
+
+                        {{-- Thumb --}}
+                        <span
+                            class="thumb absolute top-1 left-1 h-6 w-6 rounded-full bg-white shadow-md
+                         flex items-center justify-center
+                         transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                         translate-x-0
+                         group-active:scale-90">
+
+                            <span
+                                class="icon-off absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out opacity-100 scale-100">
+                                <x-lucide-eye-off class="w-3.5 h-3.5 text-slate-500" />
+                            </span>
+
+                            <span
+                                class="icon-on absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out opacity-0 scale-50">
+                                <x-lucide-eye class="w-3.5 h-3.5 text-emerald-600" />
+                            </span>
+                        </span>
+                    </span>
+                </label>
+            </div>
         </section>
 
         {{-- ===================== PÉRIODE ACTIVE ===================== --}}
@@ -212,7 +280,8 @@
 
                     <button wire:click="saveActivePediod" wire:loading.attr="disabled" wire:target="saveActivePediod"
                         class="h-12 px-6 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium inline-flex items-center justify-center gap-2 transition-all disabled:opacity-50 shrink-0">
-                        <span wire:loading.remove wire:target="saveActivePediod" class="inline-flex items-center gap-2">
+                        <span wire:loading.remove wire:target="saveActivePediod"
+                            class="inline-flex items-center gap-2">
                             <x-lucide-save class="w-4 h-4" />
                             {{ $this->active_period
                                 ? "Activer {$school_year_model->periodLabel()} {$this->active_period}"

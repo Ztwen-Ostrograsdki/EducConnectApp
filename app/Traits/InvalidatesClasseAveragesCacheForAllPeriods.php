@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Services\ClassesServices\ClasseYearlyAveragesCacheService;
 use App\Services\MarksServices\ClasseAveragesCacheService;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,7 @@ trait InvalidatesClasseAveragesCacheForAllPeriods
 
         DB::afterCommit(function () use ($classeId, $schoolYearId) {
             app(ClasseAveragesCacheService::class)->forgetAllPeriods($classeId, $schoolYearId);
+            app(ClasseYearlyAveragesCacheService::class)->forget($classeId, $schoolYearId); // ajouté
         });
     }
 }

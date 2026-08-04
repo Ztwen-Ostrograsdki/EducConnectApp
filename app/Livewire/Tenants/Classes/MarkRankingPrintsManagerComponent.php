@@ -171,7 +171,6 @@ class MarkRankingPrintsManagerComponent extends Component
             "serial_id"         => $this->serial_id,
             "promotion_id"      => $this->promotion_id,
             "promotionInGroups" => $this->promotionInGroups,
-            "level"             => $this->level,
             "subject_id"        => $this->subject_id,
             "leavesConfig"      => $this->leavesStatus,
             "gender"            => $this->gender,

@@ -24,6 +24,24 @@
                 Ciblez les enseignants, définissez les statuts et personnalisez le format du document.
             </p>
         </header>
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <a wire:navigate href="{{ route('tenant.teachers.portal') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-users class="w-3.5 h-3.5" />
+                Portail des enseignants
+            </a>
+            <a wire:navigate href="{{ route('tenant.teachers.docs') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-file class="w-3.5 h-3.5" />
+                Documents PDF/Excel
+            </a>
+
+            <a href="{{ route('tenant.teachers.print.list') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-eye class="w-3.5 h-3.5" />
+                Prévisualisation
+            </a>
+        </div>
 
         <div class="space-y-6">
 
@@ -414,3 +432,4 @@
         </div>
     </div>
 </div>
+

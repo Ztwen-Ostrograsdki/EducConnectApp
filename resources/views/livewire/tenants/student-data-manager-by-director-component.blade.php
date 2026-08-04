@@ -1,93 +1,56 @@
 <div class="w-full max-w-full overflow-x-hidden p-3 sm:p-4 lg:p-6">
 
     {{-- ===================== HEADER ===================== --}}
-    <section class="mb-8">
+    <section class="space-y-6 max-w-5xl mx-auto mb-10">
         <div
-            class="relative rounded-[2rem] border border-white/5 bg-slate-900/80 backdrop-blur-xl overflow-hidden shadow-2xl shadow-indigo-950/40">
+            class="border rounded-[1.75rem] border-white/5 bg-slate-900/70 backdrop-blur-xl shadow-xl shadow-black/20 overflow-hidden">
 
-            {{-- COVER --}}
-            <div class="relative h-40 sm:h-52 w-full overflow-hidden">
-                <img src="{{ $student->profil_photo_url }}" alt="Photo de couverture"
-                    class="w-full h-full object-cover object-top scale-105" />
-
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-950/85 via-slate-900/50 to-violet-950/75">
+            {{-- Bandeau titre --}}
+            <div
+                class="px-5 sm:px-6 py-4 border-b border-white/[0.05] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-semibold text-white">
+                        Mise à jour des informations
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Modifiez les données de l’apprenant
+                    </p>
                 </div>
-                <div
-                    class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-500/15 via-transparent to-transparent">
-                </div>
-                <div class="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-indigo-600/25 blur-3xl"></div>
-                <div class="absolute top-10 right-1/4 w-64 h-64 rounded-full bg-violet-500/20 blur-3xl"></div>
-                <div class="absolute -bottom-16 right-0 w-72 h-72 rounded-full bg-sky-500/15 blur-3xl"></div>
-                <div
-                    class="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent">
-                </div>
-
-                {{-- Titre centré --}}
-                <div class="absolute inset-0 flex items-center justify-center z-10 px-4">
-                    <div class="px-6 py-3.5 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10">
-                        <h2
-                            class="text-xl sm:text-2xl lg:text-3xl font-semibold text-white/90 tracking-wide text-center">
-                            Mise à jour des informations
-                        </h2>
-                        <p class="mt-1 text-sm text-slate-400 text-center hidden sm:block">
-                            Apprenant • {{ $student->prenames }} {{ $student->name }}
-                        </p>
-                    </div>
-                </div>
+                <span
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-medium w-fit">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                    Édition
+                </span>
             </div>
 
-            {{-- BODY HEADER --}}
-            <div class="relative px-5 sm:px-8 pb-8 -mt-16">
-                <div class="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+            {{-- Identité --}}
+            <div class="p-5 sm:p-6">
+                <div class="flex items-center gap-4 sm:gap-5">
 
                     {{-- Avatar --}}
-                    <div class="relative group shrink-0">
-                        <div
-                            class="absolute -inset-1.5 rounded-[1.75rem] bg-gradient-to-br from-indigo-500 via-violet-500 to-sky-400 opacity-60 blur-md group-hover:opacity-90 transition-opacity duration-500">
-                        </div>
-                        <div
-                            class="absolute -inset-0.5 rounded-[1.6rem] bg-gradient-to-br from-indigo-400 via-violet-400 to-sky-300 opacity-80">
-                        </div>
-
-                        <div
-                            class="relative w-32 h-32 rounded-[1.5rem] bg-slate-900 ring-4 ring-slate-900 overflow-hidden shadow-2xl">
-                            <img src="{{ $student->profil_photo_url }}" alt="Photo de profil"
-                                class="w-full h-full object-cover" />
-                        </div>
-
-                        <span class="absolute bottom-2 right-2 flex h-5 w-5">
-                            <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                            <span
-                                class="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 ring-4 ring-slate-900"></span>
-                        </span>
+                    <div class="relative shrink-0">
+                        <img src="{{ $student->profil_photo_url }}" alt="{{ $student->prenames }} {{ $student->name }}"
+                            class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-white/10">
+                        <span
+                            class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-[#0f1523]"></span>
                     </div>
 
-                    {{-- Infos rapides --}}
-                    <div class="flex-1 min-w-0 text-center sm:text-left pt-2 sm:pt-0">
-                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                    {{-- Nom + meta --}}
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-lg sm:text-xl font-bold text-white truncate">
                             {{ $student->prenames }}
-                            <span class="text-slate-300">{{ $student->name }}</span>
+                            <span class="text-slate-400 font-semibold">{{ $student->name }}</span>
                         </h1>
 
-                        <div
-                            class="mt-2.5 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1.5 text-sm">
-                            <span class="inline-flex items-center gap-1.5 text-slate-400">
-                                <span class="text-slate-500">Matricule</span>
-                                <span class="font-mono text-slate-200">{{ $student->matricule }}</span>
+                        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                            <span>
+                                Matricule
+                                <span class="font-mono text-slate-300 ml-1">{{ $student->matricule }}</span>
                             </span>
-                            <span class="hidden sm:inline text-slate-700">•</span>
-                            <span class="inline-flex items-center gap-1.5 text-slate-400">
-                                <span class="text-slate-500">EducMaster</span>
-                                <span class="font-medium text-slate-300">{{ $student->educMaster }}</span>
-                            </span>
-                        </div>
-
-                        <div class="mt-3 flex justify-center sm:justify-start">
-                            <span
-                                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-                                Terminale F2-1
+                            <span class="text-slate-700">·</span>
+                            <span>
+                                EducMaster
+                                <span class="text-slate-300 ml-1">{{ $student->educMaster }}</span>
                             </span>
                         </div>
                     </div>
@@ -95,7 +58,6 @@
             </div>
         </div>
     </section>
-
     {{-- ===================== FORMULAIRE ===================== --}}
     <div class="space-y-6 max-w-5xl mx-auto">
 
@@ -391,12 +353,12 @@
         {{-- BOUTON FINAL --}}
         <div class="pt-2 pb-10">
             <button type="button" wire:click="finish" wire:loading.attr="disabled"
-                class="group relative w-full h-14 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold text-base shadow-lg shadow-emerald-900/30 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden">
+                class="group relative w-full h-14 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-700/35 hover:from-emerald-700/35 hover:to-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-900/30 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden hover:text-black">
                 <span class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 <span class="relative flex items-center justify-center gap-2.5" wire:loading.remove
                     wire:target="finish">
                     <span>Enregistrer les modifications</span>
-                    <x-lucide-send class="w-5 h-5" />
+                    <x-lucide-save class="w-5 h-5" />
                 </span>
                 <span class="relative flex items-center justify-center gap-2.5" wire:loading wire:target="finish">
                     <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
@@ -406,3 +368,4 @@
         </div>
     </div>
 </div>
+
