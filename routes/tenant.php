@@ -57,6 +57,9 @@ use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Serials\SerialStudentsListComponent;
 use App\Livewire\Tenants\Serials\SerialTeachersListComponent;
+use App\Livewire\Tenants\Stats\MoyenneIntervalStatsManagerComponent;
+use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableDocumentPage;
+use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableListComponent;
 use App\Livewire\Tenants\Stats\PeriodicalStatistiqueComponent;
 use App\Livewire\Tenants\StudentDataManagerByDirectorComponent;
 use App\Livewire\Tenants\Students\CreateStudents;
@@ -268,6 +271,15 @@ Route::middleware([
             Route::get('/bulletins/impression/previsualisation', BulletinsPrintableListComponent::class)->name('bulletins.print.preview');
 
             Route::get('/bulletins/documents/imprimable/{classe_slug?}', BulletinsPrintableDocumentsPage::class)->name('bulletins.docs');
+
+
+
+            //GESTION DES STATS
+            Route::get('/statistiques/gestion-impression/configuration/{classe_slug?}', MoyenneIntervalStatsManagerComponent::class)->name('stats.print.configuration');
+
+            Route::get('/statistiques/impression/previsualisation', MoyenneIntervalStatsPrintableListComponent::class)->name('stats.print.preview');
+
+            Route::get('/statistiques/documents/imprimable/{classe_slug?}', MoyenneIntervalStatsPrintableDocumentPage::class)->name('stats.docs');
 
 
             // LES ENSEIGNANTS

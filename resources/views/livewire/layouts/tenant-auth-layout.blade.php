@@ -470,6 +470,21 @@
                             <div class="s-icon">📑</div><span class="s-label">Bulletins disponibles</span>
                         </a>
                     </div>
+                    <div class="s-section">
+                        <div class="s-section-label">Statistiques périodiques</div>
+                        <a wire:navigate href="{{ route('tenant.stats.print.configuration') }}"
+                            class="s-link {{ request()->routeIs('tenant.stats.print.configuration') ? 'active' : '' }}">
+                            <div class="s-icon">🖥️</div><span class="s-label">Configuration</span>
+                        </a>
+                        <a href="{{ route('tenant.stats.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.stats.print.preview') ? 'active' : '' }}">
+                            <div class="s-icon">📗</div><span class="s-label">Lecture</span>
+                        </a>
+                        <a wire:navigate href="{{ route('tenant.stats.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.stats.docs') ? 'active' : '' }}">
+                            <div class="s-icon">📑</div><span class="s-label">Stats en fichiers disponibles</span>
+                        </a>
+                    </div>
                 @else
                     <div class="s-section">
                         <div class="s-section-label break-all">
