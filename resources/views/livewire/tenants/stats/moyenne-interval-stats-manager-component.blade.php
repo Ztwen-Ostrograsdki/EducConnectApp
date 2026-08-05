@@ -67,7 +67,8 @@
                             </label>
                             <select wire:model.live="period"
                                 class="w-full h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
-                                <option value="">Sélectionner le {{ $this->activeYear?->periodLabel() }}</option>
+                                <option disabled value="">Sélectionner le {{ $this->activeYear?->periodLabel() }}
+                                </option>
                                 @foreach ($this->periods_types as $p)
                                     <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
                                 @endforeach
@@ -224,13 +225,17 @@
                 <div class="p-6 space-y-4">
                     <div class="flex items-center gap-3">
                         <span
-                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-500/25 text-violet-300 text-sm font-semibold tabular-nums">
-                            {{ __zero($this->allClassesCounter) }}
+                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-500/25 text-violet-300 text-sm font-semibold tabular-nums  gap-x-2">
+                            <span class="font-mono">
+                                {{ __zero($this->allClassesCounter) }}
+                            </span>
+
+                            <span class="text-sm text-slate-400">
+                                classe{{ $this->allClassesCounter > 1 ? 's' : '' }}
+                                trouvée{{ $this->allClassesCounter > 1 ? 's' : '' }}
+                            </span>
                         </span>
-                        <span class="text-sm text-slate-400">
-                            classe{{ $this->allClassesCounter > 1 ? 's' : '' }}
-                            trouvée{{ $this->allClassesCounter > 1 ? 's' : '' }}
-                        </span>
+
                     </div>
 
                     <div wire:key="doc-title-{{ md5($this->currentDocTitle) }}"
@@ -238,7 +243,7 @@
                         <p class="text-[10px] uppercase tracking-[0.15em] text-orange-400/70 font-semibold mb-1.5">
                             Titre du document
                         </p>
-                        <p class="text-base sm:text-lg font-semibold text-orange-200 leading-snug">
+                        <p class="text-sm sm:text-base font-semibold text-orange-200 leading-snug">
                             {{ $this->currentDocTitle }}
                         </p>
                     </div>
@@ -248,50 +253,50 @@
             {{-- ═══ CTA ═══ --}}
             <div class="pt-4 pb-16">
                 <button wire:click="initPrintProcess" wire:loading.attr="disabled" wire:target="initPrintProcess"
-                    class="group relative w-full h-16 rounded-2xl overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.985] transition-transform duration-200">
+                    class="group relative w-full rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-200 shadow-sm shadow-gray-800">
 
-                    <span class="absolute inset-0 bg-[#0a1220]"></span>
-                    <span
-                        class="absolute inset-0 bg-gradient-to-r from-violet-600/90 via-indigo-600/80 to-fuchsia-600/80 opacity-90 group-hover:opacity-100 transition-opacity duration-300"></span>
-                    <span
-                        class="absolute -inset-1 bg-gradient-to-r from-violet-500 via-indigo-500 to-fuchsia-500 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500 -z-10"></span>
-
-                    <span class="absolute inset-0 overflow-hidden rounded-2xl">
+                    {{-- Bordure dégradée --}}
+                    <span class="absolute inset-0 rounded-2xl ">
                         <span
-                            class="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-[400%] transition-transform duration-1000 ease-out"></span>
+                            class="block h-full w-full rounded-[14px] bg-[#0f1523] group-hover:bg-[#121a2b] transition-colors duration-300"></span>
                     </span>
 
-                    <span class="relative flex items-center justify-center gap-3 h-full px-6">
+                    {{-- Contenu --}}
+                    <span class="relative flex items-center justify-between gap-4 h-14 sm:h-16 px-5 sm:px-7">
+
                         <span wire:loading.remove wire:target="initPrintProcess"
-                            class="inline-flex items-center gap-3 flex-wrap justify-center">
+                            class="flex items-center gap-3 min-w-0">
                             <span
-                                class="flex items-center justify-center w-10 h-10 rounded-full bg-white/15 border border-white/20 group-hover:scale-110 transition-transform duration-300">
-                                <x-lucide-send class="w-5 h-5 text-white" />
+                                class="flex items-center justify-center w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 text-violet-300 group-hover:bg-violet-500/25 group-hover:scale-105 transition-all duration-300 shrink-0">
+                                <x-lucide-printer class="w-4.5 h-4.5" />
                             </span>
-                            <span class="flex flex-col items-start sm:items-center text-left sm:text-center">
-                                <span class="text-white font-bold text-sm sm:text-base tracking-wide">
-                                    Lancer la procédure d’impression
+                            <span class="min-w-0">
+                                <span
+                                    class="block text-sm sm:text-base font-semibold text-white tracking-tight truncate">
+                                    Lancer l’impression
                                 </span>
-                                <span class="text-white/60 text-[11px] font-medium mt-0.5">
+                                <span class="block text-[11px] text-slate-500 mt-0.5">
                                     {{ __zero($this->allClassesCounter) }}
                                     classe{{ $this->allClassesCounter > 1 ? 's' : '' }}
+                                    concernée{{ $this->allClassesCounter > 1 ? 's' : '' }}
                                 </span>
                             </span>
                         </span>
 
-                        <span wire:loading wire:target="initPrintProcess" class="inline-flex items-center gap-3">
-                            <span
-                                class="flex items-center justify-center w-10 h-10 rounded-full bg-white/15 border border-white/20">
-                                <x-lucide-refresh-ccw class="w-5 h-5 text-white animate-spin" />
-                            </span>
-                            <span class="text-white font-semibold text-sm tracking-wide">
-                                Génération en cours…
-                            </span>
+                        <span wire:loading.remove wire:target="initPrintProcess"
+                            class="hidden sm:flex items-center gap-1.5 shrink-0 text-violet-300 text-xs font-medium group-hover:gap-2.5 transition-all duration-300">
+                            Lancer
+                            <x-lucide-arrow-right class="w-4 h-4" />
+                        </span>
+
+                        <span wire:loading wire:target="initPrintProcess"
+                            class="flex items-center gap-2.5 text-slate-300 text-sm font-medium">
+                            <x-lucide-refresh-ccw class="w-4 h-4 animate-spin text-violet-400" />
+                            Génération…
                         </span>
                     </span>
                 </button>
             </div>
-
         </div>
     </div>
 </div>

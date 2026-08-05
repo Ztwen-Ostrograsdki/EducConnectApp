@@ -300,13 +300,6 @@ class MarkPrintQuery
     {
         $doc_title = 'Liste des notes';
 
-        if ($subjectId) {
-            $subject = Subject::find($subjectId);
-            if ($subject) $doc_title .= " en {$subject->name}";
-        } else {
-            $doc_title .= ' (moyennes semestrielles, toutes matières)';
-        }
-
         if ($period && $schoolYearId) {
 
             if(!$schoolYearId){
@@ -318,8 +311,18 @@ class MarkPrintQuery
                 $schoolYear = SchoolYear::find($schoolYearId);
             }
 
-            $doc_title .= " - {$schoolYear->periodLabel()} {$period}";
+           
         }
+
+        if ($subjectId) {
+            $subject = Subject::find($subjectId);
+            if ($subject) $doc_title .= " en {$subject->name}";
+        } else {
+            $doc_title .= " (moyennes {$schoolYear->periodLabeliel('F')}s, toutes matières)";
+        }
+
+        $doc_title .= " - {$schoolYear->periodLabel()} {$period}";
+        
 
         if (! empty($config['classe_id'])) {
             $classe = Classe::find($config['classe_id']);

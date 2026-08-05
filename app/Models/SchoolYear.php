@@ -184,6 +184,16 @@ class SchoolYear extends Model
     {
         return $this->usesTrimestres() ? 'Trimestre' : 'Semestre';
     }
+    
+    /**
+     * Get the label for a period (Semestre or Trimestre).
+     */
+    public function periodLabeliel($gender = 'F'): string
+    {
+        if($gender == 'F') return $this->usesTrimestres() ? 'Trimestrielle' : 'Semestrielle';
+
+        return $this->usesTrimestres() ? 'Trimestriel' : 'Semestriel';
+    }
 
     /**
      * Get all periods as an array with their number and label.

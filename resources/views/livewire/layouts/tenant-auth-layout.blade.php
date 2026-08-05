@@ -371,7 +371,7 @@
 
                     {{-- FICHES DE NOTES --}}
                     <div class="s-section">
-                        <div class="s-section-label">Fiches de notes</div>
+                        <div class="s-section-label">Gestion des notes </div>
                         <div class="s-acc" id="acc-notes">
                             <div class="s-acc-trigger" onclick="toggleAcc('acc-notes')">
                                 <div class="s-icon">📝</div>
@@ -379,9 +379,6 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="#" class="s-link">
-                                    <div class="s-icon">📝</div><span class="s-label">Notes</span>
-                                </a>
                                 <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.notes.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
@@ -414,9 +411,6 @@
                                 <span class="s-acc-arrow">▶</span>
                             </div>
                             <div class="s-acc-content">
-                                <a wire:navigate href="#" class="s-link">
-                                    <div class="s-icon">📝</div><span class="s-label">Notes</span>
-                                </a>
                                 <a wire:navigate href="{{ route('tenant.students.bests.weaks.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">

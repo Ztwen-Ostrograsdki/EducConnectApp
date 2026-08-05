@@ -22,52 +22,22 @@
         </div>
 
     </div>
-    <div class="flex items-center justify-end gap-3 font-mono">
-        @if ($classe_slug)
-            <a wire:navigate href="{{ route('tenant.notes.print.configuration', ['classe_slug' => $classe_slug]) }}"
-                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-slate-300 hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
-                <x-lucide-printer class="w-4 h-4" />
-                <span>Page de génaration personnalisée</span>
-            </a>
-
-            <a wire:navigate href="{{ route('tenant.classe.profil', ['classe_slug' => $classe_slug]) }}"
-                class="py-2 px-2 bg-slate-700/40 border hover:bg-slate-900 border-slate-700/40 hover:border-slate-700  text-slate-300 hover:text-white flex items-center gap-2 active:scale-95 rounded-2xl">
-                <x-lucide-school class="w-4 h-4" />
-                <span>Profil {{ $classe->name }}</span>
-            </a>
-
-            <div class="flex flex-col gap-1 justify-end items-center text-slate-500 font-mono ">
-                <select wire:model.live='targetRoute'
-                    class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm uppercase font-mono transition-colors focus:border-indigo-500 disabled:opacity-55">
-                    @foreach ($targetRoutes as $r => $t)
-                        <option value="{{ $r }}">{{ $t }}</option>
-                    @endforeach
-                </select>
-            </div>
-        @else
-            <div class="flex flex-wrap justify-center gap-2 mb-8">
-                <a wire:navigate href="{{ route('tenant.students.portal') }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-users class="w-3.5 h-3.5" />
-                    Portail des apprenants
-                </a>
-                <a href="{{ route('tenant.students.print.list') }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-eye class="w-3.5 h-3.5" />
-                    Aperçu du document
-                </a>
-                <a wire:navigate href="{{ route('tenant.students.docs') }}"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-all inline-flex items-center gap-1.5">
-                    <x-lucide-file class="w-3.5 h-3.5" />
-                    Fichiers disponibles
-                </a>
-            </div>
-            <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
-                class="py-2 px-2 bg-indigo-700/40 hover:bg-indigo-800 text-slate-300 hover:text-black flex items-center gap-2 active:scale-95 rounded-2xl">
-                <x-lucide-printer class="w-4 h-4" />
-                <span>Page de génaration personnalisée</span>
-            </a>
-        @endif
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
+        <a wire:navigate href="{{ route('tenant.students.portal') }}"
+            class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
+            <x-lucide-users class="w-3.5 h-3.5" />
+            Portail des apprenants
+        </a>
+        <a href="{{ route('tenant.notes.print.preview') }}"
+            class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
+            <x-lucide-eye class="w-3.5 h-3.5" />
+            Aperçu du document
+        </a>
+        <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+            class="h-9 px-3.5 rounded-lg text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-all inline-flex items-center gap-1.5">
+            <x-lucide-upload class="w-3.5 h-3.5" />
+            Page de Génération
+        </a>
     </div>
     <div class="relative w-full my-3">
         <x-lucide-search class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />

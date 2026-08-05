@@ -25,6 +25,24 @@
             </p>
         </header>
 
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <a wire:navigate href="{{ route('tenant.students.portal') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-users class="w-3.5 h-3.5" />
+                Portail des apprenants
+            </a>
+            <a href="{{ route('tenant.notes.print.preview') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-eye class="w-3.5 h-3.5" />
+                Aperçu du document
+            </a>
+            <a wire:navigate href="{{ route('tenant.notes.docs') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-file class="w-3.5 h-3.5" />
+                Fichiers disponibles
+            </a>
+        </div>
+
         <div class="space-y-6">
 
             {{-- ═══ 1. PÉRIODE + MATIÈRE ═══ --}}
@@ -417,3 +435,4 @@
         </div>
     </div>
 </div>
+

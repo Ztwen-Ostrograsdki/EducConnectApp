@@ -98,8 +98,23 @@ class JobToGeneratePrintableMoyenneIntervalStatsDataForThePrintViewComponent imp
             category:        'documents',
             overrides:       ['landscape' => true],
             documentType:    'moyenne_stats_list',
+            downloadableByOthers:    true,
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
+            docDBInfos:      [
+                'for_teachers'              => isset($this->config['for_teachers']) ? 
+                                               $this->config['for_teachers'] : true, 
+                'classe_id'                 => isset($this->config['classe_id']) ? 
+                                               $this->config['classe_id'] : null, 
+                'filiar_id'                 => isset($this->config['filiar_id']) ? 
+                                               $this->config['filiar_id'] : null,
+                'promotion_id'              => isset($this->config['promotion_id']) ? 
+                                               $this->config['promotion_id'] : null,
+                'serial_id'                 => isset($this->config['serial_id']) ? 
+                                               $this->config['serial_id'] : null,
+                'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
+                                               $this->config['promotionInGroups'] : null,
+            ],
         );
     }
 }

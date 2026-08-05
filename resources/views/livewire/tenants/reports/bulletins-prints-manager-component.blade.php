@@ -25,6 +25,24 @@
             </p>
         </header>
 
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <a wire:navigate href="{{ route('tenant.classes.portal') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/15 text-violet-300 border border-violet-500/20 hover:bg-violet-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-school class="w-3.5 h-3.5" />
+                Portail des classes
+            </a>
+            <a href="{{ route('tenant.bulletins.print.preview') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-eye class="w-3.5 h-3.5" />
+                Aperçu du document
+            </a>
+            <a wire:navigate href="{{ route('tenant.bulletins.docs') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-file class="w-3.5 h-3.5" />
+                Fichiers disponibles
+            </a>
+        </div>
+
         <div class="space-y-6">
 
             {{-- ═══ 1. PÉRIODE ═══ --}}
@@ -44,7 +62,7 @@
                 <div class="p-6 space-y-4">
                     <select wire:model.live="period"
                         class="w-full sm:w-1/2 h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all">
-                        <option value="">Sélectionner le {{ $this->activeYear?->periodLabel() }}</option>
+                        <option disabled value="">Sélectionner le {{ $this->activeYear?->periodLabel() }}</option>
                         @foreach ($this->periods_types as $p)
                             <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
                         @endforeach
