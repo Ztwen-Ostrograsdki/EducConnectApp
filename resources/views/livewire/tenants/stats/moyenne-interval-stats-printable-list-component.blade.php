@@ -54,7 +54,7 @@
                         <th rowspan="2">Total</th>
                         <th rowspan="2">G</th>
                         <th rowspan="2">F</th>
-                        <th rowspan="2">Abandons</th>
+                        <th rowspan="2">Abds</th>
                         @foreach ($intervalLabels as $label)
                             <th colspan="2">{{ $label }}</th>
                         @endforeach
@@ -349,16 +349,21 @@
         background: var(--navy);
     }
 
+    .students-table thead tr:hover {
+        background: rgba(0, 0, 17, 0.918) !important;
+    }
+
     .students-table thead th {
         padding: 7px 4px;
         color: var(--white);
-        font-weight: 600;
-        font-size: 0.62rem;
+        font-weight: 500;
+        font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.02em;
         border: 1px solid var(--navy-mid);
         text-align: center;
         white-space: normal;
+        font-family: var(--font-mono);
     }
 
     .col-label {
@@ -388,13 +393,13 @@
     .row-subtotal td {
         background: var(--purple-bg) !important;
         color: var(--purple-text);
-        font-weight: 600;
+        font-weight: 500;
     }
 
     .row-total td {
         background: var(--amber-bg) !important;
         color: var(--amber-text);
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .row-group td {
@@ -403,11 +408,12 @@
     }
 
     .cell-bold {
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .cell-numeric {
         font-family: var(--font-mono);
+        font-size: 0.8rem;
     }
 
     .empty-state {
@@ -423,7 +429,7 @@
         padding: 4px 3px;
         background: var(--navy-mid);
         color: var(--white);
-        font-size: 0.58rem;
+        font-size: 0.68rem;
         font-weight: 500;
         text-transform: uppercase;
         border: 1px solid var(--navy);
@@ -442,7 +448,7 @@
 
     .cell-success {
         background: rgba(220, 252, 231, 0.3);
-        font-weight: 600;
+        font-weight: 500;
     }
 
     @media print {

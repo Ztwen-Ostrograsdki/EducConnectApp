@@ -68,6 +68,14 @@ class MarksPrintsManagerComponent extends Component
         if (session()->has('print_marks_leaves_status'))       $this->leavesStatus = session('print_marks_leaves_status');
     }
 
+    public function loadActivePeriod()
+    {
+        if ($this->activeYear && $this->activeYear->is_active && $this->activeYear->active_period) {
+
+            $this->period = $this->activeYear->active_period;
+        }
+    }
+
     public function restoreSelects(): void
     {
         $this->selectedColumns = [];

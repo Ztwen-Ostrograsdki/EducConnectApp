@@ -7,6 +7,7 @@ use App\Traits\InvalidatesClasseEffectifsCache;
 use App\Traits\InvalidatesDashboardCounters;
 use App\Traits\InvalidatesFiliarDetailsCache;
 use App\Traits\InvalidatesPromotionDetailsCache;
+use App\Traits\InvalidatesPromotionGroupsCountCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,7 +18,8 @@ class YearlyClasseStudent extends Model
     InvalidatesClasseEffectifsCache, 
     InvalidatesFiliarDetailsCache, 
     InvalidatesPromotionDetailsCache,
-    InvalidatesClasseAveragesCacheForAllPeriods;
+    InvalidatesClasseAveragesCacheForAllPeriods,
+    InvalidatesPromotionGroupsCountCache;
 
 
     

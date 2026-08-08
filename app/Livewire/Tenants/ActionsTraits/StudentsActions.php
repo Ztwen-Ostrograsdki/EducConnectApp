@@ -4,9 +4,7 @@ namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
 use App\Jobs\JobBulkerActionsOnModels;
-use App\Models\Classe;
 use App\Models\Student;
-use App\Models\YearlyClasseStudent;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -80,7 +78,7 @@ trait StudentsActions{
     {
         $this->dispatch('swal', [
             'title'              => "Réinséré cet apprenant dans la classe",
-            'text'               => "Cet apprenant figurera désormais dans la liste de la classe en cours d'année scolaire",
+            'text'               => "Cet apprenant figurera désormais dans la liste de la classe en cours d'année scolaire et ne sera plus considéré comme abandon",
             'icon'               => 'warning',
             'showCancelButton'   => true,
             'confirmButtonText'  => 'Oui, réinséré',

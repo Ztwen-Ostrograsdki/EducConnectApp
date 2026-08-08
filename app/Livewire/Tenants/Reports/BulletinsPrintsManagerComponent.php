@@ -38,14 +38,24 @@ class BulletinsPrintsManagerComponent extends Component
 
     public function mount(): void
     {
+        $this->loadActivePeriod();
+        
         if (session()->has('print_bulletins_classe_selected'))    $this->classe_id = session('print_bulletins_classe_selected');
         if (session()->has('print_bulletins_filiar_selected'))    $this->filiar_id = session('print_bulletins_filiar_selected');
         if (session()->has('print_bulletins_serial_selected'))     $this->serial_id = session('print_bulletins_serial_selected');
         if (session()->has('print_bulletins_promotion_selected'))  $this->promotion_id = session('print_bulletins_promotion_selected');
         if (session()->has('print_bulletins_promotions_grouped_selected')) $this->promotionInGroups = session('print_bulletins_promotions_grouped_selected');
         if (session()->has('print_bulletins_leaves_status'))       $this->leavesStatus = session('print_bulletins_leaves_status');
+        if (session()->has('print_bulletins_period_selected'))       $this->period = session('print_bulletins_period_selected');
 
-        $this->period = session('print_bulletins_period_selected') ?: $this->activeYear?->active_period;
+    }
+
+    public function loadActivePeriod()
+    {
+        if ($this->activeYear && $this->activeYear->is_active && $this->activeYear->active_period) {
+
+            $this->period = $this->activeYear->active_period;
+        }
     }
 
     #[Computed]

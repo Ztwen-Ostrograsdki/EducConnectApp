@@ -69,6 +69,14 @@ class MarksDiagnosticManagerComponent extends Component
         $this->checkedMarkTypes = session()->get('print_diag_mark_types', array_keys($this->availableMarkTypes));
     }
 
+    public function loadActivePeriod()
+    {
+        if ($this->activeYear && $this->activeYear->is_active && $this->activeYear->active_period) {
+
+            $this->period = $this->activeYear->active_period;
+        }
+    }
+
     public function restoreSelects(): void
     {
         $this->selectedColumns = [];

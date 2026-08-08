@@ -62,13 +62,20 @@
                                 class="mt-2 flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-xs text-slate-500">
                                 <span>
                                     Matricule
-                                    <span class="font-mono text-slate-300 ml-1">{{ $this->student->matricule }}</span>
+                                    <span
+                                        class="font-mono text-slate-300 ml-1 uppercase ">{{ $this->student->matricule }}</span>
                                 </span>
                                 <span class="text-slate-700">·</span>
                                 <span>
                                     EducMaster
-                                    <span class="text-slate-300 ml-1">{{ $this->student->educMaster }}</span>
+                                    <span
+                                        class="text-slate-300 font-mono ml-1 uppercase ">{{ $this->student->educMaster }}</span>
                                 </span>
+                                @if (!$this->student->checkIfStudentNotLeavedYet())
+                                    <span class="rounded-lg py-1 px-3 bg-red-500/60 text-red-300 text-xs animate-pulse">
+                                        Cet apprenant est marqué abandon
+                                    </span>
+                                @endif
                             </div>
 
                             @if ($this->student->hasResponsibleInThisYear())
@@ -179,7 +186,7 @@
                             <span wire:loading.remove wire:target="removeStudentFromCurrent"
                                 class="inline-flex items-center gap-2.5 truncate">
                                 <x-lucide-user-minus class="w-4 h-4 shrink-0" />
-                                Retirer classe
+                                Retirer de la classe
                             </span>
                             <span wire:loading wire:target="removeStudentFromCurrent"
                                 class="inline-flex items-center gap-2">
@@ -188,20 +195,37 @@
                         </button>
                     @endif
 
-                    {{-- Abandon --}}
-                    <button type="button" wire:click="markStudentAsLeaved({{ $this->student->id }})"
-                        wire:loading.attr="disabled" wire:target="markStudentAsLeaved({{ $this->student->id }})"
-                        class="flex items-center gap-2.5 h-11 px-3.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 text-xs font-medium transition-all disabled:opacity-50 active:scale-[0.97]">
-                        <span wire:loading.remove wire:target="markStudentAsLeaved({{ $this->student->id }})"
-                            class="inline-flex items-center gap-2.5 truncate">
-                            <x-lucide-user-x class="w-4 h-4 shrink-0" />
-                            Abandon
-                        </span>
-                        <span wire:loading wire:target="markStudentAsLeaved({{ $this->student->id }})"
-                            class="inline-flex items-center gap-2">
-                            <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
-                        </span>
-                    </button>
+                    @if ($this->student->checkIfStudentNotLeavedYet())
+                        <button type="button" wire:click="markStudentAsLeaved({{ $this->student->id }})"
+                            wire:loading.attr="disabled" wire:target="markStudentAsLeaved({{ $this->student->id }})"
+                            class="flex items-center gap-2.5 h-11 px-3.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 text-xs font-medium transition-all disabled:opacity-50 active:scale-[0.97]">
+                            <span wire:loading.remove wire:target="markStudentAsLeaved({{ $this->student->id }})"
+                                class="inline-flex items-center gap-2.5 truncate">
+                                <x-lucide-user-x class="w-4 h-4 shrink-0" />
+                                Marquer comme abandon
+                            </span>
+                            <span wire:loading wire:target="markStudentAsLeaved({{ $this->student->id }})"
+                                class="inline-flex items-center gap-2">
+                                <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                            </span>
+                        </button>
+                    @else
+                        <button type="button" wire:click="reinsertIntoClasseAsActive({{ $this->student->id }})"
+                            wire:loading.attr="disabled"
+                            wire:target="reinsertIntoClasseAsActive({{ $this->student->id }})"
+                            class="flex items-center gap-2.5 h-11 px-3.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium transition-all disabled:opacity-50 active:scale-[0.97]">
+                            <span wire:loading.remove
+                                wire:target="reinsertIntoClasseAsActive({{ $this->student->id }})"
+                                class="inline-flex items-center gap-2.5 truncate">
+                                <x-lucide-user-check class="w-4 h-4 shrink-0" />
+                                Réinsérer dans la classe
+                            </span>
+                            <span wire:loading wire:target="reinsertIntoClasseAsActive({{ $this->student->id }})"
+                                class="inline-flex items-center gap-2">
+                                <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                            </span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </section>
@@ -294,3 +318,4 @@
         </section>
     </div>
 </div>
+

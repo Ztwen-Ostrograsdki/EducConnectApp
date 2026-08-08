@@ -8,6 +8,7 @@ use App\Jobs\JobToPutOrUpdateCacheData;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Services\DashboardCounterService;
 use App\Services\FiliarsServices\FiliarDetailsCacheService;
+use App\Services\PromotionGroupsCountService;
 use App\Services\SubjectsServices\SubjectDetailsCacheService;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
@@ -20,7 +21,11 @@ class ListenToDispatchCacheRefreshingBatchOnYearSwitch
         DashboardCounterService::class,
         ClasseEffectifsService::class,
         FiliarDetailsCacheService::class,
+        PromotionGroupsCountService::class,
     ];
+
+
+
 
     public function handle(NewSchoolYearActivatedEvent $event): void
     {

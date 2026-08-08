@@ -44,6 +44,7 @@ class MoyenneIntervalStatsQuery
             ->values();
 
         $intervals = [];
+
         $start = 0.0;
 
         foreach ($sorted as $bp) {
@@ -103,18 +104,22 @@ class MoyenneIntervalStatsQuery
         $successCount = 0;
 
         foreach ($averages as $studentId => $data) {
+
             $moy = $data['moyenne'] ?? null;
 
             $idx = self::classifyMoyenne($moy, $intervals);
+
             if (! is_null($idx)) $intervalCounts[$idx]++;
 
             if (! is_null($moy) && $moy >= 10) $successCount++;
 
             $g = strtoupper(substr($genders[$studentId] ?? '', 0, 1));
+
             if ($g === 'M') $garcons++;
             elseif ($g === 'F') $filles++;
 
             if (! is_null($moy)) {
+                
                 if (is_null($bestMoy) || $moy > $bestMoy) { $bestMoy = $moy; $bestStudentId = $studentId; }
                 if (is_null($worstMoy) || $moy < $worstMoy) { $worstMoy = $moy; }
             }

@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\Stats;
 
 use App\Jobs\JobToGeneratePrintableMoyenneIntervalStatsDataForThePrintViewComponent;
+use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
@@ -28,7 +29,7 @@ class MoyenneIntervalStatsManagerComponent extends Component
 
     public ?int $period = null;
 
-    public string $groupedBy = 'promotionInGroups';
+    public string $groupedBy = 'classe_id';
 
     public string $breakpointsInput = '7, 9, 10, 12, 14, 16';
 
@@ -41,16 +42,46 @@ class MoyenneIntervalStatsManagerComponent extends Component
 
     public function mount(): void
     {
+       
+
         if (session()->has('print_moystats_classe_selected'))    $this->classe_id = session('print_moystats_classe_selected');
         if (session()->has('print_moystats_filiar_selected'))    $this->filiar_id = session('print_moystats_filiar_selected');
         if (session()->has('print_moystats_serial_selected'))     $this->serial_id = session('print_moystats_serial_selected');
         if (session()->has('print_moystats_promotion_selected'))  $this->promotion_id = session('print_moystats_promotion_selected');
         if (session()->has('print_moystats_promotions_grouped_selected')) $this->promotionInGroups = session('print_moystats_promotions_grouped_selected');
-        if (session()->has('print_moystats_period_selected'))     $this->period = session('print_moystats_period_selected');
-        if (session()->has('print_moystats_grouped_by'))          $this->groupedBy = session('print_moystats_grouped_by');
+        
+        if (session()->has('print_moystats_period_selected')){
+
+            $this->period = session('print_moystats_period_selected');
+
+        }  
+        else{
+            $this->loadActivePeriod();
+        }  
+
+        session()->put('print_moystats_period_selected', $this->period);
+        
+        
+        if (session()->has('print_moystats_grouped_by')) {
+
+            $this->groupedBy = session('print_moystats_grouped_by');
+        }   
+        
+        session()->put('print_moystats_grouped_by', $this->groupedBy);
+       
+
 
         $breakpoints = session()->get('print_moystats_breakpoints', [7, 9, 10, 12, 14, 16]);
         $this->breakpointsInput = implode(', ', $breakpoints);
+    }
+
+
+    public function loadActivePeriod()
+    {
+        if ($this->activeYear && $this->activeYear->is_active && $this->activeYear->active_period) {
+
+            $this->period = $this->activeYear->active_period;
+        }
     }
 
     #[Computed]
@@ -71,7 +102,7 @@ class MoyenneIntervalStatsManagerComponent extends Component
     #[Computed]
     public function classes()
     {
-        return \App\Models\Classe::where('school_year_id', $this->activeYear?->id)
+        return Classe::where('school_year_id', $this->activeYear?->id)
             ->where('is_active', true)->orderBy('name')->get();
     }
 
@@ -113,9 +144,9 @@ class MoyenneIntervalStatsManagerComponent extends Component
     #[Computed]
     public function intervalLabelsPreview(): array
     {
-        $intervals = \App\Services\ClassesServices\MoyenneIntervalStatsQuery::buildIntervals($this->parsedBreakpoints);
+        $intervals = MoyenneIntervalStatsQuery::buildIntervals($this->parsedBreakpoints);
 
-        return \App\Services\ClassesServices\MoyenneIntervalStatsQuery::intervalLabels($intervals);
+        return MoyenneIntervalStatsQuery::intervalLabels($intervals);
     }
 
     #[Computed]
@@ -190,12 +221,13 @@ class MoyenneIntervalStatsManagerComponent extends Component
         session()->forget([
             'print_moystats_classe_selected', 'print_moystats_filiar_selected', 'print_moystats_serial_selected',
             'print_moystats_promotion_selected', 'print_moystats_promotions_grouped_selected',
-            'print_moystats_period_selected', 'print_moystats_grouped_by', 'print_moystats_breakpoints',
+             'print_moystats_breakpoints',
         ]);
 
-        $this->reset('classe_id', 'filiar_id', 'serial_id', 'promotion_id', 'promotionInGroups', 'period');
+        $this->reset('classe_id', 'filiar_id', 'serial_id', 'promotion_id', 'promotionInGroups');
 
-        $this->groupedBy = 'promotionInGroups';
+        $this->groupedBy = 'classe_id';
+        
         $this->breakpointsInput = '7, 9, 10, 12, 14, 16';
     }
 

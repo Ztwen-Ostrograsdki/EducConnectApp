@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -174,6 +175,24 @@ class Student extends Model
                                   ->where('school_year_id', $school_year_id)
                                   ->where('is_active', true)
                                   ->first();
+    }
+
+
+    public function classe(): HasOneThrough
+    {
+        $schoolYearId = SchoolYear::current()?->first()?->id;
+
+        return $this->hasOneThrough(
+            Classe::class,
+            YearlyClasseStudent::class,
+            'student_id',   // FK sur yearly_classe_students qui pointe vers students.id
+            'id',           // FK sur classes qui pointe vers yearly_classe_students.classe_id
+            'id',           // clé locale sur students
+            'classe_id'     // clé locale sur yearly_classe_students
+        )
+        ->where('yearly_classe_students.school_year_id', $schoolYearId)
+        ->where('yearly_classe_students.is_active', true)
+        ->whereNull('yearly_classe_students.ended_at');
     }
 
     public function hasResponsibleInThisYear(?int $school_year_id = null) : ?string

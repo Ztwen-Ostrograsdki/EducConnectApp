@@ -7,6 +7,7 @@ use App\Models\Promotion;
 use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Tutor;
 use App\Models\YearlyClasseStudent;
 
 return [
@@ -63,6 +64,15 @@ return [
         'conditions' => ['is_active' => true],
         'ttl' => 1800,
     ],
-
+    'parents' => [
+        'model' => Tutor::class,
+        'conditions' => ['is_active' => true],
+        'ttl' => 1800,
+    ],
+    'tutors' => [
+        'model' => Tutor::class,
+        'conditions' => ['is_active' => true],
+        'ttl' => 1800,
+    ],
     
 ];
