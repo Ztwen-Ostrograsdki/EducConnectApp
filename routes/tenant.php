@@ -57,6 +57,7 @@ use App\Livewire\Tenants\Serials\SerialProfil;
 use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Serials\SerialStudentsListComponent;
 use App\Livewire\Tenants\Serials\SerialTeachersListComponent;
+use App\Livewire\Tenants\SettingsComponent;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsManagerComponent;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableDocumentPage;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableListComponent;
@@ -167,6 +168,8 @@ Route::middleware([
             
             // TABLEAU DE BORD DIRECTEUR
             Route::get('/', TenantDashboard::class)->name('dashboard');
+
+            Route::get('/settings', SettingsComponent::class)->name('settings');
 
             // PROMOTIONS
             Route::get('/promotions', PromotionsPortal::class)->name('promotions.portal');

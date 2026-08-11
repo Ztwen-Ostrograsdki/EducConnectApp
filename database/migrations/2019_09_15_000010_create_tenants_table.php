@@ -58,6 +58,13 @@ class CreateTenantsTable extends Migration
 
             $table->unsignedBigInteger('request_id')->nullable()->default(null);
 
+            $table->boolean('ae_can_edit_coef')->default(false);
+            $table->boolean('ca_can_edit_coef')->default(false);
+            $table->boolean('tutors_can_download_bulletin')->default(false);
+            $table->boolean('tutors_can_see_bulletin')->default(false);
+            $table->boolean('pp_can_edit_coef')->default(false);
+            $table->boolean('force_2fa')->default(false);
+
             $table->softDeletes();
 
             $table->timestamps();

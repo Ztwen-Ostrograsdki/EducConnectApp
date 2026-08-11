@@ -104,9 +104,9 @@ class Filiar extends Model
 
 
 
-/**
- * CA principal (is_master = true) de l'année active.
- */
+    /**
+     * CA principal (is_master = true) de l'année active.
+     */
     public function principalCA(): HasOneThrough
     {
         $schoolYearId = SchoolYear::current()?->first()?->id;

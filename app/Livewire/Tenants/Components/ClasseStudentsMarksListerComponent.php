@@ -190,6 +190,14 @@ class ClasseStudentsMarksListerComponent extends Component
         ] + $this->devoirColumns();
     }
 
+    #[Computed]
+    public function totalColumns(): int
+    {
+        return 5 + count($this->markColumns);
+    }
+
+    
+
     /**
      * Notes de la classe pour la matière/période COURANTES (peuvent avoir changé
      * via les selects), lues depuis le cache — clé différente à chaque combinaison,

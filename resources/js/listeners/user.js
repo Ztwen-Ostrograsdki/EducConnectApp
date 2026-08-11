@@ -39,12 +39,20 @@ export function registerUserListeners(tenantId, userId) {
             );
         });
 
-    window.Echo.private(`tenant.${tenantId}.others`).listen(
-        "SchoolYearDesactivatedEvent",
-        (e) => {
+    window.Echo.private(`tenant.${tenantId}.others`)
+        .listen("TenantSpaceRestrictedOnlyForDirectorEvent", (e) => {
+            $wireui.notify({
+                title: "ESPACE RESTREINT",
+                timeout: 0,
+                description: "L'espace du domaine a été restreint",
+                icon: mapTypeToIcon("error"),
+            });
+
             window.location.href = "/deconnexion-force";
-        },
-    );
+        })
+        .listen("SchoolYearDesactivatedEvent", (e) => {
+            window.location.href = "/deconnexion-force";
+        });
 }
 
 export function unregisterUserListeners(tenantId, userId) {

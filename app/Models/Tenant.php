@@ -73,6 +73,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'gender',
             'completed',
             'stage',
+            'force_2fa',
+
+            'tutors_can_see_bulletin',
+            'tutors_can_download_bulletin',
+            'pp_can_edit_coef',
+            'ae_can_edit_coef',
+            'ca_can_edit_coef',
         ];
     }
 
@@ -89,6 +96,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'city' => 'Cotonou',
         'role' => 'directeur',
         'level' => 'secondaire',
+        'force_2fa' => false,
+        'tutors_can_see_bulletin' => false,
+        'tutors_can_download_bulletin' => false,
+        'pp_can_edit_coef'=> false,
+        'ae_can_edit_coef'=> false,
+        'ca_can_edit_coef'=> false,
     ];
 
     /**
@@ -99,6 +112,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'birth_date' => 'date',
         'completed' => 'boolean',
         'stage' => 'integer',
+        'force_2fa' => 'boolean',
+        'tutors_can_see_bulletin' => 'boolean',
+        'tutors_can_download_bulletin' => 'boolean',
+        'pp_can_edit_coef'=> 'boolean',
+        'ae_can_edit_coef'=> 'boolean',
+        'ca_can_edit_coef'=> 'boolean',
     ];
 
     /**
@@ -174,67 +193,24 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->status === 'pending';
     }
 
-    /** Vérifie si l'école utilise les trimestres */
-    public function usesTrimestres(): bool
-    {
-        return Str::lower($this->periode_type) === 'trimestre';
-    }
-
-    /** Vérifie si l'école utilise les semestres */
-    public function usesSemestres(): bool
-    {
-        return Str::lower($this->periode_type) === 'semestre';
-    }
-
-    /** Nombre de périodes selon le choix */
-    public function nombrePeriodes(): int
-    {
-        return $this->usesTrimestres() ? 3 : 2;
-    }
-
-    public function getPeriodsTypes() : array
-    {
-        $periods = [];
-
-        for ($i = 1; $i <= $this->nombrePeriodes(); $i++) { 
-
-            $periods[$i] = $this->periode_type . '' . $i;
-        }
-        return $periods;
-    }
-
-
     public function getMarksTypes(?string $type = null) : array
     {
-        if($this->devoirs_type === 'devoir1-devoir2'){
+        $school_year = SchoolYear::current()?->first();
 
-            return  [
-                'interro1',
-                'interro2',
-                'interro3',
-                'interro4',
-                'devoir1',
-                'devoir2',
-                'examen'
-            ];
-        }
+        if(!$school_year) return [];
 
-        return  [
-            'interro1',
-            'interro2',
-            'interro3',
-            'interro4',
-            'devoir',
-            'compo',
-            'examen'
-        ];
+        return $school_year->getMarksTypes($type);
 
     }
 
     /** Label de la période */
     public function labelPeriode(): string
     {
-        return $this->usesTrimestres() ? 'Trimestre' : 'Semestre';
+        $school_year = SchoolYear::current()?->first();
+
+        if(!$school_year) return 'Trimestre';
+
+        return $school_year->usesTrimestres();
     }
 
     public function moduleAccess(): HasOne

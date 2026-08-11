@@ -6,6 +6,7 @@ use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Services\DashboardCounterService;
 use App\Services\PromotionGroupsCountService;
 use Livewire\Attributes\Computed;
@@ -82,44 +83,54 @@ class TenantDashboard extends Component
     #[Computed]
     public function studentsLeaves()
     {
-        $query = Student::query()
+        return Student::query()
             ->select('students.*')
             ->with(['classe'])
-            ->whereHas('yearlyClasseStudents', fn($q) => 
+            ->whereHas('yearlyClasseStudents', fn ($q) =>
                 $q->where('is_active', true)
                   ->where('school_year_id', $this->activeYear->id)
             )
             ->whereHas('yearlyStudentsLeaves', fn ($q) =>
                 $q->where('school_year_id', $this->activeYear->id)
-            );
-        return $query
+            )
             ->orderBy('students.name')
-            ->orderBy('students.prenames')->get();
+            ->orderBy('students.prenames')
+            ->paginate(10, ['*'], 'leavesPage');
     }
 
     #[Computed]
     public function principals()
     {
-        $query = Classe::query()
+        return Classe::query()
             ->select('classes.*')
             ->with(['principal'])
             ->where('school_year_id', $this->activeYear->id)
             ->whereHas('principal')
-           ->where('is_active', true);
-        return $query
-            ->orderBy('name')->limit(10)->get();
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->paginate(10, ['*'], 'principalsPage');
     }
-
 
     #[Computed]
     public function cas()
     {
-        $query = Filiar::query()
+        return Filiar::query()
             ->select('filiars.*')
             ->with(['currentChiefs'])
-           ->where('is_active', true);
-        return $query
-            ->orderBy('name')->paginate(5);
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->paginate(5, ['*'], 'casPage');
+    }
+
+    #[Computed]
+    public function aes()
+    {
+        return Subject::query()
+            ->select('subjects.*')
+            ->with(['currentChiefs'])
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->paginate(5, ['*'], 'aesPage');
     }
     
 

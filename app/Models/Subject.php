@@ -17,6 +17,8 @@ use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -266,6 +268,80 @@ class Subject extends Model
                         )->with('subjectsChiefs')->first();
 
 
+    }
+
+    /**
+     * CA principal (is_master = true) de l'année active.
+     */
+    public function principalAE(): HasOneThrough
+    {
+        $schoolYearId = SchoolYear::current()?->first()?->id;
+
+        return $this->hasOneThrough(
+            Teacher::class,
+            YearlySubjectChief::class,
+            'subject_id',   // FK sur yearly_subject_chiefs qui pointe vers subject.id
+            'id',          // FK sur teachers qui pointe vers yearly_filiar_chiefs.teacher_id
+            'id',          // clé locale sur subject
+            'teacher_id'   // clé locale sur yearly_filiar_chiefs
+        )
+        ->join('users', 'users.id', '=', 'teachers.user_id')
+        ->addSelect('teachers.*')
+        ->with('user')
+        ->whereNotNull('teachers.affiliated_at')
+        ->where('yearly_subject_chiefs.school_year_id', $schoolYearId)
+        ->where('yearly_subject_chiefs.is_active', true)
+        ->where('yearly_subject_chiefs.is_master', true);
+    }
+
+    /**
+     * CA adjoint (is_master = false) de l'année active.
+     */
+    public function adjointAE(): HasOneThrough
+    {
+        $schoolYearId = SchoolYear::current()?->first()?->id;
+
+        return $this->hasOneThrough(
+            Teacher::class,
+            YearlySubjectChief::class,
+            'subject_id',
+            'id',
+            'id',
+            'teacher_id'
+        )
+        ->join('users', 'users.id', '=', 'teachers.user_id')
+        ->addSelect('teachers.*')
+        ->with('user')
+        ->whereNotNull('teachers.affiliated_at')
+        ->where('yearly_subject_chiefs.school_year_id', $schoolYearId)
+        ->where('yearly_subject_chiefs.is_active', true)
+        ->where('yearly_subject_chiefs.is_master', false);
+    }
+
+    /**
+     * Les deux CA (principal + adjoint) de l'année active, en une seule requête.
+     * Chacun peut être absent (0, 1, ou 2 résultats selon ce qui est réellement assigné) ;
+     * is_master distingue lequel est principal (true) ou adjoint (false).
+     */
+    public function currentChiefs(): HasManyThrough
+    {
+        $schoolYearId = SchoolYear::current()?->first()?->id;
+
+        return $this->hasManyThrough(
+            Teacher::class,
+            YearlySubjectChief::class,
+            'subject_id',
+            'id',
+            'id',
+            'teacher_id'
+        )
+        ->join('users', 'users.id', '=', 'teachers.user_id')
+        ->addSelect('teachers.*', 'yearly_subject_chiefs.is_master as chief_is_master')
+        ->with('user')
+        ->whereNotNull('teachers.affiliated_at')
+        ->where('yearly_subject_chiefs.school_year_id', $schoolYearId)
+        ->where('yearly_subject_chiefs.is_active', true)
+        ->orderByDesc('yearly_subject_chiefs.is_master'); // principal (true) avant adjoint (false)
     }
 
 

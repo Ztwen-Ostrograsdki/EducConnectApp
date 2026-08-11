@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Events\TenantSpaceRestrictedOnlyForDirectorEvent;
 use App\Models\Tenant;
 
 class ObserveTenant
@@ -19,7 +20,23 @@ class ObserveTenant
      */
     public function updated(Tenant $tenant): void
     {
-        //
+        if($tenant->wasChanged('open_only_for_tenant') && $tenant->open_only_for_tenant){
+
+            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent(tenant($tenant->user->tenant_id)));
+
+        }
+    }
+
+    /**
+     * Handle the Tenant "deleted" event.
+     */
+    public function deleting(Tenant $tenant): void
+    {
+        if($tenant){
+
+            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent(tenant($tenant->user->tenant_id)));
+
+        }
     }
 
     /**

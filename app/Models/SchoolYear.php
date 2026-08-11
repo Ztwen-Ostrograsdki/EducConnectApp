@@ -30,13 +30,17 @@ class SchoolYear extends Model
         'marks_locked_for_periods',
         'yearly_average_is_visible',
         'periods',
-        'active_period'
+        'active_period',
+        'min_average_to_pass',
+        'devoirs_type',
     ];
 
 
     protected $casts = [
         'min_year' => 'int',
         'max_year' => 'int',
+        'min_average_to_pass' => 'float',
+        'devoirs_type' => 'string',
         'is_active' => 'boolean',
         'yearly_average_is_visible' => 'boolean',
         'is_closed' => 'boolean',
@@ -167,6 +171,39 @@ class SchoolYear extends Model
     public function usesTrimestres(): bool
     {
         return $this->periode_type === 'trimestre';
+    }
+
+    public function getMarksTypes(?string $type = null) : array
+    {
+        if($this->devoirs_type === 'devoir1-devoir2'){
+
+            return  [
+                'interro1',
+                'interro2',
+                'interro3',
+                'interro4',
+                'devoir1',
+                'devoir2',
+                'examen'
+            ];
+        }
+
+        return  [
+            'interro1',
+            'interro2',
+            'interro3',
+            'interro4',
+            'devoir',
+            'compo',
+            'examen'
+        ];
+
+    }
+
+    /** Label de la période */
+    public function labelPeriode(): string
+    {
+        return $this->usesTrimestres() ? 'Trimestre' : 'Semestre';
     }
 
     /**

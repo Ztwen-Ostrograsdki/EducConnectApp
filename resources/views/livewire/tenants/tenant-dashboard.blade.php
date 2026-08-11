@@ -107,8 +107,9 @@
         {{-- ════════════════ CHARTS ════════════════ --}}
         <section class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
 
-            {{-- Présences --}}
-            <div
+            {{-- Abandons --}}
+            <div wire:loading.class='opacity-20'
+                wire:target="nextPage('leavesPage'), previousPage('leavesPage'), gotoPage"
                 class="lg:col-span-3 rounded-2xl bg-[#0f1523] border border-white/[0.06] p-5 sm:p-6 shadow-xl shadow-black/10">
                 <div class="flex items-center justify-between mb-5">
                     <div>
@@ -116,29 +117,22 @@
                             <span>Abandons</span>
                             <span
                                 class="font-mono uppercase text-2xs rounded-lg p-1 px-3 bg-indigo-600/20 text-indigo-600">
-                                <span>{{ count($this->studentsLeaves) }}</span>
-                                <span>apprenants </span>
+                                <span>{{ $this->studentsLeaves->total() }}</span>
+                                <span>apprenants</span>
                             </span>
                         </h3>
                         <p class="text-[11px] text-slate-500 mt-0.5">Les apprenants ayant abandonnés</p>
                     </div>
-                    <select
-                        class="h-8 rounded-lg bg-[#070b14] border border-white/10 text-[11px] text-slate-400 px-2.5 focus:outline-none focus:border-indigo-500/40">
-                        <option>7 jours</option>
-                        <option>30 jours</option>
-                        <option>Semestre</option>
-                    </select>
                 </div>
+
                 <div class="space-y-2">
                     @forelse ($this->studentsLeaves as $student)
                         <div wire:key="leave-{{ $student->id }}"
                             class="group flex items-center justify-between gap-3 rounded-xl bg-[#0f1523] border border-white/[0.05] hover:border-amber-500/25 px-3.5 py-2 transition-all duration-200">
 
-                            {{-- Avatar initial --}}
                             <a wire:navigate
                                 href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
                                 class="inline-flex items-center gap-x-1.5 group">
-                                {{-- N° --}}
                                 <span
                                     class="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold tabular-nums shrink-0">
                                     {{ __zero($loop->iteration) }}
@@ -148,7 +142,6 @@
                                     {{ strtoupper(str()->substr($student->getFullName(), 0, 1)) }}
                                 </div>
 
-                                {{-- Nom --}}
                                 <div class="flex-1 min-w-0">
                                     <p
                                         class="text-sm font-medium text-slate-200 truncate transition-colors group-hover:text-sky-500">
@@ -160,7 +153,6 @@
                                 </div>
                             </a>
 
-                            {{-- Classe --}}
                             <span
                                 class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg bg-[#070b14] border border-white/5 text-[11px] font-mono text-amber-400/90 uppercase group-hover:text-sky-500">
                                 {{ $student->classe->code ? $student->classe->code : $student->classe->name }}
@@ -173,12 +165,48 @@
                     @endforelse
                 </div>
 
+                {{-- Pagination --}}
+                @if ($this->studentsLeaves->hasPages())
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 mt-2 border-t border-white/[0.05]">
+                        <p class="text-xs text-slate-600">
+                            {{ $this->studentsLeaves->firstItem() }}–{{ $this->studentsLeaves->lastItem() }}
+                            sur {{ $this->studentsLeaves->total() }} apprenants
+                        </p>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            @if (!$this->studentsLeaves->onFirstPage())
+                                <button wire:click="previousPage('leavesPage')" wire:loading.attr="disabled"
+                                    wire:target="previousPage('leavesPage')"
+                                    class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                    ← Préc.
+                                </button>
+                            @endif
+                            @foreach ($this->studentsLeaves->getUrlRange(1, $this->studentsLeaves->lastPage()) as $page => $url)
+                                <button wire:click="gotoPage({{ $page }}, 'leavesPage')"
+                                    wire:target="gotoPage({{ $page }}, 'leavesPage')"
+                                    class="h-9 min-w-[36px] px-2 rounded-lg text-xs font-medium transition-all
+                            {{ $page === $this->studentsLeaves->currentPage()
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/30'
+                                : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400' }}">
+                                    {{ $page }}
+                                </button>
+                            @endforeach
+                            @if ($this->studentsLeaves->hasMorePages())
+                                <button wire:click="nextPage('leavesPage')" wire:loading.attr="disabled"
+                                    wire:target="nextPage('leavesPage')"
+                                    class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                    Suiv. →
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
 
             {{-- Répartition --}}
             <div class="lg:col-span-2 rounded-2xl bg-[#0f1523] border border-white/[0.06] p-5 sm:p-6 shadow-xl shadow-black/10"
                 x-data="{ show: false }" x-init="setTimeout(() => show = true, 150)">
-                <h3 class="text-sm font-semibold text-white">Répartition par promotions</h3>
+                <h3 class="text-sm font-semibold text-white">Répartition des apprenants par promotions</h3>
                 <p class="text-[11px] text-slate-500 mt-0.5 mb-5">Effectifs par promotion</p>
 
                 @php
@@ -225,11 +253,11 @@
         {{-- ════════════════ LISTS ════════════════ --}}
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-12">
 
-            {{-- LES CAS  --}}
-            <div class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+            {{-- LES CA --}}
+            <div wire:loading.class='opacity-20' wire:target="nextPage('casPage'), previousPage('casPage'), gotoPage"
+                class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
                 <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
                     <h3 class="text-sm font-semibold text-white"> Les Chefs ateliers</h3>
-                    →</a>
                 </div>
 
                 <div>
@@ -244,7 +272,6 @@
                             <article wire:key="filiar-ca-{{ $filiar->id }}"
                                 class="rounded-xl bg-[#070b14] border border-white/[0.05] hover:border-violet-500/20 transition-all duration-200 overflow-hidden">
 
-                                {{-- Filière header --}}
                                 <div class="flex items-center gap-3 px-4 py-3 border-b border-white/[0.04]">
                                     <div
                                         class="w-9 h-9 rounded-lg bg-violet-500/15 border border-violet-500/20 flex items-center justify-center shrink-0">
@@ -262,9 +289,7 @@
                                     @endif
                                 </div>
 
-                                {{-- Chefs --}}
                                 <div class="grid sm:grid-cols-2 gap-px bg-white/[0.03]">
-                                    {{-- CA Principal --}}
                                     <div class="bg-[#070b14] px-4 py-3.5">
                                         <p
                                             class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold mb-2">
@@ -291,7 +316,6 @@
                                         @endif
                                     </div>
 
-                                    {{-- CA Adjoint --}}
                                     <div class="bg-[#070b14] px-4 py-3.5">
                                         <p
                                             class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold mb-2">
@@ -325,7 +349,7 @@
                                     class="w-12 h-12 mx-auto rounded-xl bg-white/5 border border-white/5 flex items-center justify-center mb-3">
                                     <x-lucide-wrench class="w-5 h-5 text-slate-600" />
                                 </div>
-                                <p class="text-sm text-slate-600">Aucune filière avec chefs d’atelier</p>
+                                <p class="text-sm text-slate-600">Aucune filière avec chefs d'atelier</p>
                             </div>
                         @endforelse
                     </div>
@@ -340,23 +364,25 @@
                             </p>
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 @if (!$this->cas->onFirstPage())
-                                    <button wire:click="previousPage" wire:loading.attr="disabled"
-                                        wire:target="previousPage"
+                                    <button wire:click="previousPage('casPage')" wire:loading.attr="disabled"
+                                        wire:target="previousPage('casPage')"
                                         class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
                                         ← Préc.
                                     </button>
                                 @endif
                                 @foreach ($this->cas->getUrlRange(1, $this->cas->lastPage()) as $page => $url)
-                                    <button wire:click="gotoPage({{ $page }})"
+                                    <button wire:click="gotoPage({{ $page }}, 'casPage')"
+                                        wire:target="gotoPage({{ $page }}, 'casPage')"
                                         class="h-9 min-w-[36px] px-2 rounded-lg text-xs font-medium transition-all
-                                   {{ $page === $this->cas->currentPage()
-                                       ? 'bg-violet-600 text-white shadow-lg shadow-violet-900/30'
-                                       : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400' }}">
+                                {{ $page === $this->cas->currentPage()
+                                    ? 'bg-violet-600 text-white shadow-lg shadow-violet-900/30'
+                                    : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400' }}">
                                         {{ $page }}
                                     </button>
                                 @endforeach
                                 @if ($this->cas->hasMorePages())
-                                    <button wire:click="nextPage" wire:loading.attr="disabled" wire:target="nextPage"
+                                    <button wire:click="nextPage('casPage')" wire:loading.attr="disabled"
+                                        wire:target="nextPage('casPage')"
                                         class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
                                         Suiv. →
                                     </button>
@@ -367,8 +393,153 @@
                 </div>
             </div>
 
-            {{-- Enseignants --}}
-            <div
+            {{-- LES AE  --}}
+            <div wire:loading.class='opacity-20' wire:target="nextPage('aesPage'), previousPage('aesPage'), gotoPage"
+                class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                    <h3 class="text-sm font-semibold text-white"> Les animateurs d'établissement (AE)</h3>
+                </div>
+
+                <div>
+                    <div class="space-y-3 p-3 sm:p-4">
+                        @forelse ($this->aes as $subject)
+                            @php
+                                $chiefs = $subject->currentChiefs;
+                                $principal = $chiefs[0] ?? null;
+                                $adjoint = $chiefs[1] ?? null;
+                            @endphp
+
+                            <article wire:key="subject-ae-{{ $subject->id }}"
+                                class="rounded-xl bg-[#070b14] border border-white/[0.05] hover:border-violet-500/20 transition-all duration-200 overflow-hidden">
+
+                                <div class="flex items-center gap-3 px-4 py-3 border-b border-white/[0.04]">
+                                    <div
+                                        class="w-9 h-9 rounded-lg bg-violet-500/15 border border-violet-500/20 flex items-center justify-center shrink-0">
+                                        <x-lucide-notebook-pen class="w-4 h-4 text-violet-400" />
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="text-sm font-semibold text-white truncate">{{ $subject->name }}
+                                        </h3>
+                                        <p class="text-[10px] text-slate-600 uppercase tracking-wider">Matière</p>
+                                    </div>
+                                    @if ($subject->code ?? null)
+                                        <span
+                                            class="shrink-0 px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[10px] font-mono text-slate-400 uppercase">
+                                            {{ $subject->code }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="grid sm:grid-cols-2 gap-px bg-white/[0.03]">
+                                    <div class="bg-[#070b14] px-4 py-3.5">
+                                        <p
+                                            class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold mb-2">
+                                            AE Principal
+                                        </p>
+                                        @if ($principal)
+                                            <div class="flex items-center gap-2.5">
+                                                <div
+                                                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                                                    {{ strtoupper(str()->substr($principal->getFullName(), 0, 1)) }}
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-slate-200 truncate">
+                                                        {{ $principal->getFullName() }}
+                                                    </p>
+                                                    @if ($principal->contacts ?? null)
+                                                        <p class="text-[11px] text-slate-500 truncate">
+                                                            {{ $principal->contacts }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p class="text-xs text-slate-600 italic">Non désigné</p>
+                                        @endif
+                                    </div>
+
+                                    <div class="bg-[#070b14] px-4 py-3.5">
+                                        <p
+                                            class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold mb-2">
+                                            AE Adjoint
+                                        </p>
+                                        @if ($adjoint)
+                                            <div class="flex items-center gap-2.5">
+                                                <div
+                                                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                                                    {{ strtoupper(str()->substr($adjoint->getFullName(), 0, 1)) }}
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-slate-200 truncate">
+                                                        {{ $adjoint->getFullName() }}
+                                                    </p>
+                                                    @if ($adjoint->contacts ?? null)
+                                                        <p class="text-[11px] text-slate-500 truncate">
+                                                            {{ $adjoint->contacts }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p class="text-xs text-slate-600 italic">Non désigné</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="py-14 text-center">
+                                <div
+                                    class="w-12 h-12 mx-auto rounded-xl bg-white/5 border border-white/5 flex items-center justify-center mb-3">
+                                    <x-lucide-wrench class="w-5 h-5 text-slate-600" />
+                                </div>
+                                <p class="text-sm text-slate-600">Aucune matière avec animateurs</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    {{-- Pagination --}}
+                    @if ($this->aes->hasPages())
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-5 py-3.5 border-t border-white/[0.05]">
+                            <p class="text-xs text-slate-600">
+                                {{ $this->aes->firstItem() }}–{{ $this->aes->lastItem() }}
+                                sur {{ $this->aes->total() }} matières
+                            </p>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                @if (!$this->aes->onFirstPage())
+                                    <button wire:click="previousPage('aesPage')" wire:loading.attr="disabled"
+                                        wire:target="previousPage('aesPage')"
+                                        class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                        ← Préc.
+                                    </button>
+                                @endif
+                                @foreach ($this->aes->getUrlRange(1, $this->aes->lastPage()) as $page => $url)
+                                    <button wire:click="gotoPage({{ $page }}, 'aesPage')"
+                                        wire:target="gotoPage({{ $page }}, 'aesPage')"
+                                        class="h-9 min-w-[36px] px-2 rounded-lg text-xs font-medium transition-all
+                                {{ $page === $this->aes->currentPage()
+                                    ? 'bg-violet-600 text-white shadow-lg shadow-violet-900/30'
+                                    : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400' }}">
+                                        {{ $page }}
+                                    </button>
+                                @endforeach
+                                @if ($this->aes->hasMorePages())
+                                    <button wire:click="nextPage('aesPage')" wire:loading.attr="disabled"
+                                        wire:target="nextPage('aesPage')"
+                                        class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                        Suiv. →
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+        </section>
+
+        {{-- PP --}}
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-12">
+            <div wire:loading.class='opacity-20'
+                wire:target="nextPage('principalsPage'), previousPage('principalsPage'), gotoPage"
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10 font-mono">
                 <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
                     <h3 class="text-sm font-semibold text-white">Professeurs principaux (PP)</h3>
@@ -388,7 +559,6 @@
                         <div wire:key="pp-{{ $classe->id }}"
                             class="group flex items-center gap-3.5 rounded-xl bg-[#070b14] border border-white/[0.04] hover:border-indigo-500/25 hover:bg-[#0a0f1a] px-3.5 py-2 transition-all duration-200">
 
-                            {{-- Avatar --}}
                             <div class="relative shrink-0">
                                 <div
                                     class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-indigo-900/20">
@@ -398,7 +568,6 @@
                                     class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[#070b14]"></span>
                             </div>
 
-                            {{-- Infos --}}
                             <a wire:navigate
                                 href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $pp->uuid]) }}"
                                 class="flex-1 min-w-0 group">
@@ -423,7 +592,6 @@
                                 </div>
                             </a>
 
-                            {{-- Classe --}}
                             <a wire:navigate
                                 href="{{ route('tenant.classe.profil', ['classe_slug' => $classe->slug]) }}"
                                 class="shrink-0 text-right group">
@@ -444,6 +612,43 @@
                         </div>
                     @endforelse
                 </div>
+
+                {{-- Pagination --}}
+                @if ($this->principals->hasPages())
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-5 py-3.5 border-t border-white/[0.05]">
+                        <p class="text-xs text-slate-600">
+                            {{ $this->principals->firstItem() }}–{{ $this->principals->lastItem() }}
+                            sur {{ $this->principals->total() }} classes
+                        </p>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            @if (!$this->principals->onFirstPage())
+                                <button wire:click="previousPage('principalsPage')" wire:loading.attr="disabled"
+                                    wire:target="previousPage('principalsPage')"
+                                    class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                    ← Préc.
+                                </button>
+                            @endif
+                            @foreach ($this->principals->getUrlRange(1, $this->principals->lastPage()) as $page => $url)
+                                <button wire:click="gotoPage({{ $page }}, 'principalsPage')"
+                                    wire:target="gotoPage({{ $page }}, 'principalsPage')"
+                                    class="h-9 min-w-[36px] px-2 rounded-lg text-xs font-medium transition-all
+                                {{ $page === $this->principals->currentPage()
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/30'
+                                    : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400' }}">
+                                    {{ $page }}
+                                </button>
+                            @endforeach
+                            @if ($this->principals->hasMorePages())
+                                <button wire:click="nextPage('principalsPage')" wire:loading.attr="disabled"
+                                    wire:target="nextPage('principalsPage')"
+                                    class="h-9 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 transition-all disabled:opacity-50">
+                                    Suiv. →
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
         </section>
 

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('slug')->unique();
             $table->integer('active_period')->nullable();
+            $table->float('min_average_to_pass')->default(10.0);
+            $table->string('devoirs_type')->default('devoir1-devoir2');
             $table->integer('min_year')->unique();
             $table->integer('max_year')->unique();
             $table->enum('periode_type', ['semestre', 'trimestre'])->default('semestre');
