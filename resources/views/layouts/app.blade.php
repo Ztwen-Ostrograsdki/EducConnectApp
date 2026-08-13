@@ -123,6 +123,12 @@
                                 <div class="s-icon">🗓️</div>
                                 <span class="s-label">Mon Emploi du temps</span>
                             </a>
+
+                            <a data-sidebar-item href="{{ route('tenant.subjects.coefs.manage') }}"
+                                class="s-link {{ request()->routeIs('tenant.subjects.coefs.manage') ? 'active' : '' }}">
+                                <div class="s-icon">🛠️</div>
+                                <span class="s-label">Gérer les coéf.</span>
+                            </a>
                         </div>
                     @endif
 

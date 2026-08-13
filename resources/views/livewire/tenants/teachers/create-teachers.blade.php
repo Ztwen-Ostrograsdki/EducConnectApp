@@ -1,559 +1,583 @@
-<div class="flex flex-col gap-1 p-5 justify-center mx-auto">
-    <div class="">
-        <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600">
+<div class="flex flex-col gap-7 p-4 sm:p-6 max-w-7xl mx-auto">
 
-            <div class="w-full px-4 py-1">
+    {{-- ===================== HEADER ===================== --}}
+    <section
+        class="relative overflow-hidden rounded-[2rem] bg-slate-950 border-2 border-violet-500/40 shadow-[0_0_40px_-10px_rgba(139,92,246,0.35)]">
 
-                <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+        {{-- Background décoratif --}}
+        <div
+            class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-violet-600/20 via-transparent to-transparent">
+        </div>
+        <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-fuchsia-600/10 rounded-full blur-3xl"></div>
 
-                    {{-- LEFT --}}
-                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1 p-2 my-2">
+        <div class="relative px-6 py-7 sm:px-8 sm:py-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
-                        {{-- ICON --}}
-                        <div class="shrink-0 self-start">
-
-                            <div
-                                class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                                <x-lucide-user-plus class="h-10 w-10 font-extrabold text-slate-600" />
-                            </div>
-
-                        </div>
-
-                        {{-- CONTENT --}}
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex flex-wrap items-center gap-2">
-
-                                <h1
-                                    class="text-xl sm:text-xl lg:text-xl
-                                           font-bold
-                                           leading-tight
-                                           break-words font-mono">
-                                    Gestion des migrations enseignants: Ajouts et Créations
-                                </h1>
-                            </div>
-
-                            <p
-                                class="mt-3 text-sm sm:text-base
-                                      text-slate-400
-                                      break-words">
-                                Gestion des migrations sur les utilisateurs enseignants
-                            </p>
-
-                        </div>
-
+                <div class="flex items-center gap-5">
+                    <div
+                        class="flex h-18 w-18 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-violet-600/20 border-2 border-violet-400/40 shadow-inner">
+                        <x-lucide-graduation-cap class="h-10 w-10 text-violet-300" />
                     </div>
 
-                </div>
-                <div class="flex justify-end w-full">
-                    <a href="{{ route('tenant.teachers.crud.tasks') }}"
-                        class="rounded-2xl flex items-center bg-blue-600 hover:bg-blue-800 text-white gap-x-3 px-3.5 py-2.5 my-2 ">
-                        <x-lucide-octagon-alert class="w-5 h-5" />
-                        <span class="s-label">Voir le status des migrations lancées</span>
-                    </a>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                            Migrations Enseignants
+                        </h1>
+                        <p class="mt-1 text-slate-400 text-sm sm:text-base">
+                            Ajouts & Créations • Gestion des utilisateurs enseignants
+                        </p>
+                    </div>
                 </div>
 
+                <a href="{{ route('tenant.teachers.crud.tasks') }}"
+                    class="group relative inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95">
+                    <span class="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600"></span>
+                    <span
+                        class="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <x-lucide-activity class="relative w-5 h-5" />
+                    <span class="relative">Status des migrations</span>
+                </a>
             </div>
+        </div>
+    </section>
 
-        </section>
-    </div>
+    {{-- ===================== TOGGLE + ALERTE ===================== --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
-    {{-- Bouton bascule formulaire / import --}}
-    <div class="flex gap-3 my-3 mb-4">
-        <button
-            class="px-4 py-3.5 rounded-2xl text-black active:scale-95 @if ($showImportMode) bg-gray-500 hover:bg-gray-500 @else bg-green-600 hover:bg-green-800 @endif"
-            wire:click="toggleImportMode">
-            <span wire:loading.remove wire:target='toggleImportMode' class="flex gap-1.5 items-center">
+        {{-- Bouton toggle --}}
+        <button wire:click="toggleImportMode"
+            class="relative inline-flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm tracking-wide transition-all duration-300 active:scale-95
+                       {{ $showImportMode
+                           ? 'bg-slate-800 text-slate-300 border-2 border-slate-600 hover:border-slate-500'
+                           : 'bg-emerald-500 text-white border-2 border-emerald-400 shadow-[0_8px_0_0_#059669] hover:shadow-[0_4px_0_0_#059669] hover:translate-y-[4px]' }}">
+
+            <span wire:loading.remove wire:target="toggleImportMode" class="flex items-center gap-2.5">
                 @if ($showImportMode)
-                    <x-lucide-pen class="w-4 h-4" />
-                    <span>Saisie manuelle des données</span>
+                    <x-lucide-pen-line class="w-5 h-5" />
+                    Saisie manuelle
                 @else
-                    <x-lucide-file class="w-4 h-4" />
-                    <span>Importer depuis un fichier Excel</span>
+                    <x-lucide-file-spreadsheet class="w-5 h-5" />
+                    Import Excel
                 @endif
             </span>
-            <span wire:loading wire:target='toggleImportMode' class="flex gap-1.5 items-center">
-                <span>En cours ...</span>
+            <span wire:loading wire:target="toggleImportMode" class="flex items-center gap-2.5">
+                <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                Chargement...
             </span>
         </button>
-    </div>
 
-    <div class="flex-col justify-center w-full mx-auto">
-        <div class="flex gap-x-2 justify-end">
-            @if (count($this->teachers))
+        @if (count($this->teachers))
+            <div class="flex items-center gap-3">
                 <a href="#inserts-teachers"
-                    class="block text-orange-500 p-2 my-2.2 text-end rounded-2xl mb-2 font-mono text-sm animate-pulse">
-                    {{ count($this->teachers) }} données ont été ajoutées et attendente d'être migrer en base de
-                    données!
+                    class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-sm font-medium animate-pulse">
+                    <x-lucide-database class="w-4 h-4" />
+                    {{ count($this->teachers) }} en attente
                 </a>
-                <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800 active:scale-95"
-                    wire:click="clearAddedData">
-                    <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
+
+                <button wire:click="clearAddedData"
+                    class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm text-white overflow-hidden transition-all active:scale-95">
+                    <span class="absolute inset-0 bg-gradient-to-r from-rose-600 to-red-600"></span>
+                    <span
+                        class="absolute inset-0 bg-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <span wire:loading.remove wire:target="clearAddedData" class="relative flex items-center gap-2">
                         <x-lucide-trash-2 class="w-4 h-4" />
-                        <span>Vider les données ajouter</span>
+                        Vider
                     </span>
-                    <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                        <span>En cours ...</span>
+                    <span wire:loading wire:target="clearAddedData" class="relative flex items-center gap-2">
+                        <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
                     </span>
                 </button>
-            @endif
-
-        </div>
-        <div wire:loading wire:target='toggleImportMode'
-            class="flex gap-1.5 w-full items-center text-center text-gray-600 justify-center mt-9.5 mx-auto">
-            <div class="w-full flex flex-col items-center justify-center p-3">
-                <span>
-                    <x-lucide-loader class="w-10 h-10 animate-spin" />
-                </span>
-                <span>Chargement en cours ...</span>
             </div>
-        </div>
-        <div wire:loading.remove wire:target='toggleImportMode'>
-            {{-- Zone import Excel --}}
-            @if ($showImportMode)
-                <h6 class="bg-info-700 text-black p-2 my-2.2 text-center rounded-2xl mb-5 font-mono text-sm">
-                    Vous êtes en mode importation depuis un fichier excel. Veuillez sélectionner le fichier au format
-                    indiqué!
-                </h6>
-                <div class="bg-slate-800 rounded-xl p-6 mb-6 border border-slate-700">
-                    <p class="text-sm text-slate-400 mb-4">
-                        Format attendu : <span class="text-slate-300 font-mono text-xs">Nom | Prénoms | Email | Contact
-                            | Genre | Pays | Département | Ville | Fonction | Date naissance</span>
-                    </p>
-
-                    <input type="file" wire:model="excelFile" accept=".xlsx,.xls"
-                        class="block w-full text-sm text-slate-400
-                   file:mr-4 file:py-2 file:px-4
-                   file:rounded-lg file:border-0
-                   file:bg-indigo-600 file:cursor-pointer file:w-2/5 file:text-white
-                   hover:file:bg-indigo-700 cursor-pointer" />
-
-                    <div wire:loading wire:target="excelFile"
-                        class="mt-3 text-sm text-indigo-400 flex items-center gap-x-2.5">
-                        <x-lucide-loader class="w-10 h-10 animate-spin text-center" />
-                        Lecture du fichier en cours...
-                    </div>
-
-                    {{-- Erreurs de lignes ignorées --}}
-                    @if (!empty($importErrors))
-                        <div class="mt-4 space-y-1">
-                            @foreach ($importErrors as $err)
-                                <p class="text-xs text-rose-400">{{ $err }}</p>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-            @else
-                <h6 class="bg-info-700 text-black p-2 my-2.2 text-center rounded-2xl mb-5 font-mono text-sm">
-                    Vous êtes en mode manuel. Veuillez renseigner le formulaire et ajouter les données au fur et a
-                    mesure. Une fois terminée, lancer la migration des données en cliquant "Terminer"
-                </h6>
-                <div class="space-y-6">
-                    <div
-                        class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-slate-700 rounded-2xl border border-slate-700">
-                        <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                            <x-lucide-user class="w-5 h-5" />
-                            <h3 class="">Informations personnelles de l'enseignant</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Nom
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='name' type="text" id="name"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Nom de l'enseignant">
-                                    @error('name')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="prenames">Prénoms
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='prenames' id="prenames"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Prenoms de l'enseignant ">
-                                    @error('prenames')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='email' id="email"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="L'adresse mail de l'enseignant....">
-                                    @error('email')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="contacts">Contact de
-                                    l'enseignant (unique)
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='contacts' type="text" id="contacts"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="01617777777">
-                                    @error('contacts')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="birth_date">Date de
-                                    naissance
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='birth_date' type="date" id="birth_date"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all">
-                                    @error('birth_date')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="gender">Genre
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='gender' id="gender"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le genre</option>
-                                        @foreach ($genders as $g)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $g }}">
-                                                {{ $g }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('gender')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300"
-                                    for="job_name">Fonction</label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='job_name' id="job_name"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Entrepreneur....">
-                                    @error('job_name')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-sky-500 rounded-2xl border border-sky-500">
-                        <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                            <x-lucide-map-pin-check class="w-5 h-5" />
-                            <h3 class="">Adresse</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Pays
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='country' id="country"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le pays
-                                        </option>
-                                        @foreach ($countries as $ck => $ctn)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $ctn }}">
-                                                {{ $ctn }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('country')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="grid grid-cols-1 items-center md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="department">Le
-                                    département
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='department' id="department"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le département
-                                        </option>
-                                        @foreach ($departments as $dk => $dn)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $dn }}">
-                                                {{ $dn }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('department')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div wire:loading wire:target='department,city'>
-                                <div class="py-3 mt-3 flex justify-center items-center gap-x-3 text-gray-600">
-                                    <x-lucide-loader class="w-5 h-5 animate-spin" />
-                                    <h5>Chargement en cours ...</h5>
-                                </div>
-                            </div>
-                            @if ($department)
-                                <div data-animate='card' wire:target='department,city' wire:loading.remove>
-                                    <label class="block text-sm font-medium mb-2 text-gray-300" for="city">La
-                                        ville
-                                        <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <select wire:model.live='city' id="city"
-                                            class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                            <option value="">Sélectionnez la ville</option>
-                                            @foreach ($cities as $ck => $cn)
-                                                <option class="bg-slate-800 text-slate-300"
-                                                    value="{{ $cn }}">{{ $cn }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('city')
-                                            <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                                <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            @endif
-
-                        </div>
-                    </div>
-
-                    <button type="button" wire:loading.attr="disabled"
-                        wire:click="{{ $editingUuid ? 'updateTeacher' : 'addTeacher' }}"
-                        class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800 active:scale-95">
-                        <span class="flex items-center gap-1.5" wire:target='updateTeacher, addTeacher'
-                            wire:loading.remove>
-                            <span>{{ $editingUuid ? 'Mettre à jour' : 'Ajouter' }}</span>
-                            <x-lucide-user-plus class="w-4 h-4" />
-                        </span>
-                        <span wire:target='updateTeacher, addTeacher' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                </div>
-            @endif
-
-        </div>
+        @endif
     </div>
 
-    <div id="inserts-teachers" class="mt-5 flex flex-col w-full gap-1.5 mb-40">
-        @if (count($this->teachers))
-            <section class="w-full">
-                <h4
-                    class="p-2 rounded-lg border border-slate-800 bg-slate-950 overflow-hidden my-2 flex justify-between items-center">
-                    <div class="text-gray-400">
-                        Liste des données déjà ajoutées
-                        <span>
-                            Nombre:
-                            {{ count($this->teachers) }}
-                        </span>
+    {{-- ===================== LOADING ===================== --}}
+    <div wire:loading wire:target="toggleImportMode" class="flex flex-col items-center justify-center py-20 gap-4">
+        <div class="relative">
+            <div class="absolute inset-0 bg-violet-500/30 rounded-full blur-xl animate-pulse"></div>
+            <x-lucide-loader-2 class="relative w-14 h-14 text-violet-400 animate-spin" />
+        </div>
+        <p class="text-slate-400 font-medium">Changement de mode...</p>
+    </div>
+
+    <div wire:loading.remove wire:target="toggleImportMode" class="space-y-7">
+
+        {{-- ===================== MODE IMPORT ===================== --}}
+        @if ($showImportMode)
+            <div class="rounded-[1.75rem] bg-slate-900/80 border-2 border-slate-700 p-6 sm:p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600/20 border border-violet-500/40">
+                        <x-lucide-file-up class="w-6 h-6 text-violet-300" />
                     </div>
-                    <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800 active:scale-95"
-                        wire:click="clearAddedData">
-                        <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <x-lucide-trash-2 class="w-4 h-4" />
-                            <span>Vider les données ajouter</span>
-                        </span>
-                        <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <span>En cours ...</span>
-                        </span>
-                    </button>
-                </h4>
-
-                <div class="rounded-lg border border-slate-800 bg-slate-900 overflow-hidden">
-
-                    <div class="overflow-x-auto">
-
-                        <table class="w-full min-w-full text-xs">
-
-                            <thead class="bg-slate-950 border-b border-slate-800">
-                                <tr>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        N°
-                                    </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Nom et Prenoms
-                                    </th>
-
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Email
-                                    </th>
-
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        contacts
-                                    </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Date de naissance
-                                    </th>
-
-                                    <th class="text-center p-2 font-medium text-slate-400">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-slate-800">
-
-                                @foreach ($this->teachers as $teacher)
-                                    <tr wire:key="{{ $teacher['uuid'] }}"
-                                        class="hover:bg-slate-800/40 transition-all">
-                                        <td class="p-2 truncate text-slate-300">
-                                            {{ $loop->iteration }}
-                                        </td>
-
-                                        <td class="p-2">
-
-                                            <div class="flex items-center gap-4 min-w-0">
-
-                                                <div class="min-w-0">
-
-                                                    <h3 class="font-medium truncate">
-                                                        {{ $teacher['name'] }} {{ $teacher['prenames'] }}
-                                                        ({{ $teacher['gender'] }})
-                                                    </h3>
-
-                                                    <p class=text-slate-400 truncate">
-                                                        {{ $teacher['job_name'] }}
-                                                    </p>
-                                                    <p class="text-xs">
-                                                        {{ $teacher['city'] }} - {{ $teacher['department'] }} ,
-                                                        {{ $teacher['country'] }}
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td class="p-2 truncate text-slate-300">
-                                            {{ $teacher['email'] }}
-                                        </td>
-
-                                        <td class="p-2 truncate">
-                                            {{ $teacher['contacts'] }}
-                                        </td>
-                                        <td class="p-2 truncate">
-                                            {{ $teacher['birth_date'] }}
-                                        </td>
-
-                                        {{-- ACTIONS --}}
-                                        <td class="p-2">
-
-                                            <div class="flex items-center justify-end gap-2 truncate">
-                                                <button wire:key="edit-teacher-{{ $teacher['uuid'] }}"
-                                                    wire:click="editTeacher('{{ $teacher['uuid'] }}')"
-                                                    wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 active:scale-95">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5"
-                                                        wire:target="editTeacher">
-                                                        <x-lucide-pen class="w-4 h-4" />
-                                                        Modifier
-                                                    </span>
-                                                    <span wire:loading.flex wire:target="editTeacher"
-                                                        class="items-center gap-1.5">
-                                                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                        <span>En cours...</span>
-                                                    </span>
-                                                </button>
-
-                                                <button wire:key="rem-teacher-{{ $teacher['uuid'] }}"
-                                                    wire:click="deleteTeacher('{{ $teacher['uuid'] }}')"
-                                                    wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 active:scale-95">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5"
-                                                        wire:target="deleteTeacher">
-                                                        <x-lucide-trash-2 class="w-4 h-4" />
-                                                        Supprimer
-                                                    </span>
-                                                    <span wire:loading.flex wire:target="deleteTeacher"
-                                                        class="items-center gap-1.5">
-                                                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                        <span>En cours...</span>
-                                                    </span>
-                                                </button>
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Import depuis Excel</h3>
+                        <p class="text-sm text-slate-400">Sélectionnez le fichier au format attendu</p>
                     </div>
-
                 </div>
 
+                <div class="mb-6 p-4 rounded-2xl bg-slate-950/70 border border-slate-700">
+                    <p class="text-xs sm:text-sm text-slate-400">
+                        <span class="font-semibold text-violet-300">Format attendu :</span>
+                        <span class="font-mono text-[11px] sm:text-xs text-slate-300 ml-1">
+                            Nom | Prénoms | Email | Contact | Genre | Pays | Département | Ville | Fonction | Date
+                            naissance
+                        </span>
+                    </p>
+                </div>
+
+                <input type="file" wire:model="excelFile" accept=".xlsx,.xls"
+                    class="block w-full text-sm text-slate-400
+                              file:mr-5 file:py-3.5 file:px-6
+                              file:rounded-xl file:border-0
+                              file:bg-violet-600 file:text-white file:font-semibold
+                              hover:file:bg-violet-500 file:cursor-pointer
+                              file:transition-all file:duration-200
+                              cursor-pointer rounded-2xl border-2 border-dashed border-slate-600 bg-slate-950/50 p-3 hover:border-violet-500/50 transition-colors" />
+
+                <div wire:loading wire:target="excelFile"
+                    class="mt-6 flex items-center justify-center gap-3 text-violet-300">
+                    <x-lucide-loader-2 class="w-6 h-6 animate-spin" />
+                    <span class="font-medium">Lecture du fichier...</span>
+                </div>
+
+                @if (!empty($importErrors))
+                    <div class="mt-8 space-y-2">
+                        <p class="text-xs font-bold uppercase tracking-widest text-rose-400 mb-3">Lignes ignorées</p>
+                        @foreach ($importErrors as $err)
+                            <div
+                                class="px-4 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
+                                {{ $err }}
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            {{-- ===================== MODE MANUEL ===================== --}}
+        @else
+            <div class="space-y-6">
+
+                {{-- Banner --}}
+                <div class="flex items-start gap-3 px-5 py-4 rounded-2xl bg-violet-500/10 border border-violet-500/30">
+                    <x-lucide-info class="w-5 h-5 text-violet-300 mt-0.5 shrink-0" />
+                    <p class="text-sm text-violet-100/90 leading-relaxed">
+                        Mode manuel — Remplissez le formulaire puis cliquez sur <strong
+                            class="text-white">Ajouter</strong>.
+                        Une fois terminé, lancez la migration avec le bouton <strong
+                            class="text-white">Terminer</strong>.
+                    </p>
+                </div>
+
+                {{-- ===== Infos personnelles ===== --}}
+                <div class="rounded-[1.75rem] bg-slate-900/70 border-2 border-slate-700 p-6 sm:p-7">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20 text-violet-300">
+                            <x-lucide-user class="w-5 h-5" />
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Informations personnelles</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="name">
+                                Nom <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="name" type="text" id="name"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all"
+                                placeholder="Nom de l'enseignant">
+                            @error('name')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="prenames">
+                                Prénoms <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="prenames" type="text" id="prenames"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all"
+                                placeholder="Prénoms de l'enseignant">
+                            @error('prenames')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="email">
+                                Email <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="email" type="email" id="email"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all"
+                                placeholder="email@exemple.com">
+                            @error('email')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="contacts">
+                                Contact <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="contacts" type="text" id="contacts"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all"
+                                placeholder="01617777777">
+                            @error('contacts')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="birth_date">
+                                Date de naissance <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="birth_date" type="date" id="birth_date"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all">
+                            @error('birth_date')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="gender">
+                                Genre <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="gender" id="gender"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all">
+                                <option value="">Sélectionnez</option>
+                                @foreach ($this->genders as $gk => $g)
+                                    <option value="{{ $gk }}">{{ $g }}</option>
+                                @endforeach
+                            </select>
+                            @error('gender')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="job_name">
+                                Fonction
+                            </label>
+                            <input wire:model.live="job_name" type="text" id="job_name"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all"
+                                placeholder="Ex: Enseignant de Math">
+                            @error('job_name')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ===== Adresse ===== --}}
+                <div class="rounded-[1.75rem] bg-slate-900/70 border-2 border-fuchsia-500/40 p-6 sm:p-7">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-600/20 text-fuchsia-300">
+                            <x-lucide-map-pin class="w-5 h-5" />
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Adresse</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="country">
+                                Pays <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="country" id="country"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/20 transition-all">
+                                <option value="">Sélectionnez le pays</option>
+                                @foreach ($this->countries as $ck => $ctn)
+                                    <option value="{{ $ctn }}">{{ $ctn }}</option>
+                                @endforeach
+                            </select>
+                            @error('country')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-300 mb-2" for="department">
+                                Département <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="department" id="department"
+                                class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/20 transition-all">
+                                <option value="">Sélectionnez le département</option>
+                                @foreach ($this->departments as $dk => $dn)
+                                    <option value="{{ $dn }}">{{ $dn }}</option>
+                                @endforeach
+                            </select>
+                            @error('department')
+                                <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <div wire:loading wire:target="department"
+                                class="flex items-center gap-2 py-3.5 text-slate-400">
+                                <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                                <span>Chargement des villes...</span>
+                            </div>
+
+                            @if ($department)
+                                <div wire:loading.remove wire:target="department">
+                                    <label class="block text-sm font-semibold text-slate-300 mb-2" for="city">
+                                        Ville <span class="text-rose-400">*</span>
+                                    </label>
+                                    <select wire:model.live="city" id="city"
+                                        class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/20 transition-all">
+                                        <option value="">Sélectionnez la ville</option>
+                                        @foreach ($cities as $ck => $cn)
+                                            <option value="{{ $cn }}">{{ $cn }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('city')
+                                        <p class="mt-2 flex items-center gap-1.5 text-sm text-rose-400">
+                                            <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                        </p>
+                                    @enderror
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Bouton Ajouter / Mettre à jour --}}
+                <button type="button" wire:click="{{ $editingUuid ? 'updateTeacher' : 'addTeacher' }}"
+                    wire:loading.attr="disabled"
+                    class="group relative w-full overflow-hidden rounded-2xl py-4 font-bold text-white transition-all duration-300 active:scale-[0.98] disabled:opacity-70">
+
+                    <span
+                        class="absolute inset-0 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-violet-600 bg-[length:200%_100%] group-hover:animate-[gradient_3s_ease_infinite]"></span>
+                    <span
+                        class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+                    <span wire:loading.remove wire:target="updateTeacher,addTeacher"
+                        class="relative flex items-center justify-center gap-2.5 text-lg">
+                        <x-lucide-user-plus class="w-5 h-5" />
+                        {{ $editingUuid ? 'Mettre à jour l\'enseignant' : 'Ajouter l\'enseignant' }}
+                    </span>
+
+                    <span wire:loading.flex wire:target="updateTeacher,addTeacher"
+                        class="relative items-center justify-center gap-2.5 text-lg">
+                        <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                        Traitement...
+                    </span>
+                </button>
+            </div>
+        @endif
+    </div>
+
+    {{-- ===================== LISTE DES ENSEIGNANTS ===================== --}}
+    <div id="inserts-teachers" class="mt-2">
+        @if (count($this->teachers))
+            <section class="rounded-[1.75rem] bg-slate-950 border-2 border-slate-700 overflow-hidden shadow-2xl">
+
+                {{-- Header liste --}}
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5 bg-slate-900/80 border-b-2 border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
+                            <x-lucide-users class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">Enseignants ajoutés</h4>
+                            <p class="text-sm text-slate-400">{{ count($this->teachers) }} enregistrement(s)</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button wire:click="finish" wire:loading.attr="disabled"
+                            class="group relative inline-flex items-center gap-2.5 px-5 py-3 rounded-xl font-bold text-white overflow-hidden transition-all active:scale-95">
+                            <span class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500"></span>
+                            <span
+                                class="absolute inset-0 bg-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                            <span wire:loading.remove wire:target="finish" class="relative flex items-center gap-2">
+                                <x-lucide-send class="w-4.5 h-4.5" />
+                                Terminer
+                            </span>
+                            <span wire:loading.flex wire:target="finish" class="relative items-center gap-2">
+                                <x-lucide-loader-2 class="w-4.5 h-4.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="clearAddedData"
+                            class="group relative inline-flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm text-white overflow-hidden transition-all active:scale-95">
+                            <span class="absolute inset-0 bg-gradient-to-r from-rose-600 to-red-600"></span>
+                            <span
+                                class="absolute inset-0 bg-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                            <span wire:loading.remove wire:target="clearAddedData"
+                                class="relative flex items-center gap-2">
+                                <x-lucide-trash-2 class="w-4 h-4" />
+                                Vider
+                            </span>
+                            <span wire:loading wire:target="clearAddedData" class="relative flex items-center gap-2">
+                                <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Table --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-900/90 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="px-5 py-4 text-left font-semibold">N°</th>
+                                <th class="px-5 py-4 text-left font-semibold">Enseignant</th>
+                                <th class="px-5 py-4 text-left font-semibold">Email</th>
+                                <th class="px-5 py-4 text-left font-semibold">Contact</th>
+                                <th class="px-5 py-4 text-left font-semibold">Naissance</th>
+                                <th class="px-5 py-4 text-right font-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            @foreach ($this->teachers as $teacher)
+                                <tr wire:key="{{ $teacher['uuid'] }}"
+                                    class="hover:bg-slate-900/60 transition-colors">
+
+                                    <td class="px-5 py-4 text-slate-500 font-mono text-xs">
+                                        {{ $loop->iteration }}
+                                    </td>
+
+                                    <td class="px-5 py-4">
+                                        <div class="font-semibold text-white">
+                                            {{ $teacher['name'] }} {{ $teacher['prenames'] }}
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                                {{ $teacher['gender'] }}
+                                            </span>
+                                            @if (!empty($teacher['job_name']))
+                                                <span class="text-xs text-slate-400">{{ $teacher['job_name'] }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-1">
+                                            {{ $teacher['city'] }} · {{ $teacher['department'] }} ·
+                                            {{ $teacher['country'] }}
+                                        </div>
+                                    </td>
+
+                                    <td class="px-5 py-4 text-slate-300">
+                                        {{ $teacher['email'] }}
+                                    </td>
+
+                                    <td class="px-5 py-4 font-mono text-slate-300">
+                                        {{ $teacher['contacts'] }}
+                                    </td>
+
+                                    <td class="px-5 py-4 text-slate-300">
+                                        {{ $teacher['birth_date'] }}
+                                    </td>
+
+                                    {{-- ========== BOUTONS D'ACTIONS STYLÉS ========== --}}
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center justify-end gap-2.5">
+
+                                            {{-- Bouton Modifier --}}
+                                            <button wire:click="editTeacher('{{ $teacher['uuid'] }}')"
+                                                wire:loading.attr="disabled"
+                                                class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm overflow-hidden transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60">
+
+                                                <span
+                                                    class="absolute inset-0 bg-sky-500/15 border border-sky-400/40 rounded-xl group-hover:bg-sky-500/25 group-hover:border-sky-400/60 transition-all"></span>
+                                                <span
+                                                    class="absolute inset-0 shadow-[0_0_20px_-5px_rgba(14,165,233,0.4)] opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></span>
+
+                                                <span wire:loading.remove
+                                                    wire:target="editTeacher('{{ $teacher['uuid'] }}')"
+                                                    class="relative flex items-center gap-2 text-sky-300">
+                                                    <x-lucide-pen class="w-4 h-4" />
+                                                    <span>Modifier</span>
+                                                </span>
+                                                <span wire:loading.flex
+                                                    wire:target="editTeacher('{{ $teacher['uuid'] }}')"
+                                                    class="relative items-center gap-2 text-sky-300">
+                                                    <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                                                </span>
+                                            </button>
+
+                                            {{-- Bouton Retirer --}}
+                                            <button wire:click="deleteTeacher('{{ $teacher['uuid'] }}')"
+                                                wire:loading.attr="disabled"
+                                                title="Retirer {{ $teacher['name'] }} {{ $teacher['prenames'] }}"
+                                                class="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm overflow-hidden transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60">
+
+                                                <span
+                                                    class="absolute inset-0 bg-rose-500/15 border border-rose-400/40 rounded-xl group-hover:bg-rose-500/25 group-hover:border-rose-400/60 transition-all"></span>
+                                                <span
+                                                    class="absolute inset-0 shadow-[0_0_20px_-5px_rgba(244,63,94,0.4)] opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></span>
+
+                                                <span wire:loading.remove
+                                                    wire:target="deleteTeacher('{{ $teacher['uuid'] }}')"
+                                                    class="relative flex items-center gap-2 text-rose-300">
+                                                    <x-lucide-trash-2 class="w-4 h-4" />
+                                                    <span>Retirer</span>
+                                                </span>
+                                                <span wire:loading.flex
+                                                    wire:target="deleteTeacher('{{ $teacher['uuid'] }}')"
+                                                    class="relative items-center gap-2 text-rose-300">
+                                                    <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                                                </span>
+                                            </button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Bouton Terminer en bas --}}
+                <div class="p-6 border-t-2 border-slate-800 bg-slate-900/50">
+                    <button wire:click="finish" wire:loading.attr="disabled"
+                        class="group relative w-full overflow-hidden rounded-2xl py-4 font-bold text-white transition-all duration-300 active:scale-[0.98]">
+
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 bg-[length:200%_100%]"></span>
+                        <span
+                            class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+                        <span wire:loading.remove wire:target="finish"
+                            class="relative flex items-center justify-center gap-2.5 text-lg">
+                            <x-lucide-send class="w-5 h-5" />
+                            Terminer & Lancer la migration
+                        </span>
+                        <span wire:loading.flex wire:target="finish"
+                            class="relative items-center justify-center gap-2.5 text-lg">
+                            <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                            Traitement en cours...
+                        </span>
+                    </button>
+                </div>
             </section>
-            <button type="button" wire:loading.attr="disabled" wire:click="{{ 'finish' }}"
-                class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800 active:scale-95">
-                <span class="flex items-center gap-1.5" wire:target='finish' wire:loading.remove>
-                    <span>Terminer</span>
-                    <x-lucide-send class="w-5 h-5" />
-                </span>
-                <span wire:target='finish' wire:loading.flex class="items-center gap-1.5">
-                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                    <span>En cours...</span>
-                </span>
-            </button>
         @endif
     </div>
 </div>
-

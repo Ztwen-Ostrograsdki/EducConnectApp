@@ -7,6 +7,7 @@ use App\Livewire\Traits\ValidatorTrait;
 use App\Models\Student;
 use App\Tools\BeninData;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -46,8 +47,8 @@ class CreateStudents extends Component
     public string $name = '';
     public string $prenames = '';
 
-    public ?string $father_full_name;
-    public ?string $mother_full_name;
+    public ?string $father_full_name = '';
+    public ?string $mother_full_name = '';
 
     public string $country = '';
     public ?string $city = '';
@@ -90,28 +91,6 @@ class CreateStudents extends Component
             'mother_full_name'     => 'string|nullable',
             'father_full_name'     => 'string|nullable',
         ];
-    }
-
-    public function render()
-    {
-        $imports = [];
-
-        $genders = config('app.genders');
-
-        $departments = BeninData::getDepartments();
-
-        $countries = ['BENIN' => 'BENIN'];
-
-        if(session()->has('showImportMode')){
-
-            $this->showImportMode = session('showImportMode');
-
-            session()->put('showImportMode', $this->showImportMode);
-            
-        }
-
-
-        return view('livewire.tenants.students.create-students', compact('imports', 'countries', 'departments', 'genders'));
     }
 
     public function updatedDepartment(?string $department)
@@ -249,18 +228,9 @@ class CreateStudents extends Component
         return session('pending_students', []);
     }
 
+
     public function deleteStudent(string $uuid): void
     {
-        $this->deletingUuid = $uuid;
-
-        $this->showStudentRemoveModal = true;
-
-    }
-
-    public function confirmDeleteStudent(): void
-    {
-        $uuid = $this->deletingUuid;
-
         $students = session('pending_students', []);
 
         $students = collect($students)
@@ -277,12 +247,6 @@ class CreateStudents extends Component
             description: 'Apprenant retiré.'
         );
 
-        $this->resetModal();
-    }
-
-    public function resetModal()
-    {
-        $this->reset('deletingUuid', 'showStudentRemoveModal');
     }
 
     public function editStudent(string $uuid): void
@@ -305,6 +269,7 @@ class CreateStudents extends Component
         $this->prenames = $student['prenames'];
         $this->department = $student['department'];
         $this->gender = $student['gender'];
+        $this->educMaster = $student['educMaster'];
         $this->contacts = $student['contacts'];
         $this->country = $student['country'];
         $this->birth_date = $student['birth_date'];
@@ -595,12 +560,16 @@ class CreateStudents extends Component
 
                 }
 
+                $gender = trim($row['E'] ?? '');
+
+                $gender = genderFormatter($gender);
+
                 $students[] = [
                     'uuid'              => (string) Str::uuid(),
                     'name'              => Str::upper(trim($row['A']) ?? ''),
                     'prenames'          => ucwords(trim($row['B'] ) ?? ''),
                     'contacts'          =>$contacts,
-                    'gender'            => trim($row['E'] ?? ''),
+                    'gender'            => $gender,
                     'country'           => Str::upper(trim($row['C']) ?? ''),
                     'department'        => Str::upper(trim($row['G']) ?? ''),
                     'city'              => Str::upper(trim($row['D']) ?? ''),
@@ -663,6 +632,42 @@ class CreateStudents extends Component
 
         $this->importErrors   = [];
         $this->excelFile      = null;
+    }
+
+
+    #[Computed]
+    public function genders()
+    {
+        return config('app.genders');
+    }
+
+
+    #[Computed]
+    public function departments()
+    {
+        return BeninData::getDepartments();
+    }
+
+
+    #[Computed]
+    public function countries()
+    {
+        return ['BENIN' => 'BENIN'];
+    }
+
+
+    public function render()
+    {
+        if(session()->has('showImportMode')){
+
+            $this->showImportMode = session('showImportMode');
+
+            session()->put('showImportMode', $this->showImportMode);
+            
+        }
+
+
+        return view('livewire.tenants.students.create-students');
     }
 
 

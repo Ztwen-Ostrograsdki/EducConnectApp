@@ -73,8 +73,8 @@
                                         class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                                         Nom de l’école <span class="text-rose-400">*</span>
                                     </label>
-                                    <input type="text" wire:model="school_name"
-                                        class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all
+                                    <input @disabled(true) type="text" wire:model="school_name"
+                                        class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-40
                                                   @error('school_name') border-rose-500/50 @enderror">
                                     @error('school_name')
                                         <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
@@ -95,8 +95,8 @@
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600">
                                             <x-lucide-phone class="w-4 h-4" />
                                         </span>
-                                        <input type="text" wire:model="contacts"
-                                            class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 pl-10 pr-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all">
+                                        <input @disabled(true) type="text" wire:model="contacts"
+                                            class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 pl-10 pr-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all font-mono disabled:opacity-40">
                                     </div>
                                 </div>
 
@@ -106,7 +106,7 @@
                                         Date de naissance
                                     </label>
                                     <input type="date" wire:model="birth_date"
-                                        class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-rose-500/50 transition-all">
+                                        class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-rose-500/50 transition-all font-mono">
                                     @error('birth_date')
                                         <p class="mt-1 text-[11px] text-rose-400">{{ $message }}</p>
                                     @enderror
@@ -120,23 +120,71 @@
                                             <x-lucide-mail class="w-4 h-4" />
                                         </span>
                                         <input disabled @disabled(1) type="email" wire:model="email"
-                                            class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 pl-10 pr-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all disabled:opacity-20 @error('email') border-rose-500/50 @enderror">
+                                            class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 pl-10 pr-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all disabled:opacity-40 @error('email') border-rose-500/50 @enderror">
                                     </div>
                                     @error('email')
                                         <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
-                                <div class="sm:col-span-2">
-                                    <label
-                                        class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Adresse</label>
-                                    <div class="relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600">
-                                            <x-lucide-map-pin class="w-4 h-4" />
-                                        </span>
-                                        <input type="text" wire:model="adresse"
-                                            class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 pl-10 pr-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all">
+                                <div class="grid grid-cols-1 items-center md:grid-cols-2 gap-6 mb-4 sm:col-span-2">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2 text-gray-300" for="department">Le
+                                            département
+                                            <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <select wire:model.live='department' id="department"
+                                                class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
+                                                <option value="">Sélectionnez le département
+                                                </option>
+                                                @foreach ($this->departments as $dk => $dn)
+                                                    <option class="bg-slate-800 text-slate-300"
+                                                        value="{{ $dn }}">
+                                                        {{ $dn }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('department')
+                                                <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
+                                                    <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
+                                        </div>
                                     </div>
+                                    <div wire:loading wire:target='department' wire:target='city'>
+                                        <div class="py-3 mt-3 flex justify-center items-center gap-x-3 text-gray-600">
+                                            <x-lucide-loader class="w-5 h-5 animate-spin" />
+                                            <h5>Chargement en cours ...</h5>
+                                        </div>
+                                    </div>
+                                    @if ($department)
+                                        <div data-animate='card' wire:target='department' wire:target='city'
+                                            wire:loading.remove>
+                                            <label class="block text-sm font-medium mb-2 text-gray-300"
+                                                for="city">La ville
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <div class="relative">
+                                                <select wire:model.live='city' id="city"
+                                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
+                                                    <option value="">Sélectionnez la ville</option>
+                                                    @foreach ($cities as $ck => $cn)
+                                                        <option class="bg-slate-800 text-slate-300"
+                                                            value="{{ $cn }}">
+                                                            {{ $cn }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('city')
+                                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
+                                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
+                                                        {{ $message }}
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    @endif
+
                                 </div>
                             </div>
 
@@ -236,7 +284,7 @@
                                     </label>
                                     <select wire:model="active_period"
                                         class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/50 transition-all">
-                                        <option value="">— Aucune —</option>
+                                        <option value="">— Aucune — (Fermer toutes les périodes)</option>
                                         @foreach ($this->periodOptions as $value => $label)
                                             <option value="{{ $value }}">{{ $label }}</option>
                                         @endforeach

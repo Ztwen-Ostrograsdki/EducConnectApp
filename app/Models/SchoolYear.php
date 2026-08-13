@@ -45,6 +45,8 @@ class SchoolYear extends Model
         'yearly_average_is_visible' => 'boolean',
         'is_closed' => 'boolean',
         'periods' => 'array',
+        'marks_locked_for_periods' => 'array',
+
     ];
 
 

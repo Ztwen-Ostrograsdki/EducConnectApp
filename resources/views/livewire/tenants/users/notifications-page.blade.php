@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-[#080b12] text-slate-100">
-    <div class="mx-auto w-full max-w-[900px] px-4 sm:px-6 py-8">
+    <div class="mx-auto w-full px-4 sm:px-6 py-8">
 
         {{-- ════════════════ TOP BAR ════════════════ --}}
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
@@ -165,7 +165,7 @@
                                             <x-lucide-check class="w-4 h-4" />
                                         </button>
                                     @endif
-                                    <button wire:click="confirmDeleteNotification('{{ $notif['id'] }}')"
+                                    <button wire:click="deleteNotification('{{ $notif['id'] }}')"
                                         wire:loading.attr="disabled"
                                         wire:target="deleteNotification('{{ $notif['id'] }}')" title="Supprimer"
                                         class="w-8 h-8 rounded-lg hover:bg-rose-500/15 text-slate-500 hover:text-rose-300 transition-all flex items-center justify-center">
@@ -226,3 +226,4 @@
             @endif
         </div>
     </div>
+

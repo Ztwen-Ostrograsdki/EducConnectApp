@@ -29,9 +29,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full">
             <div class="transition-all">
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">
-                    La matière <span class="text-slate-600">*</span>
+                    La matière 
+                    <span
+                        class="text-rose-400">*</span>
                 </label>
-                <select @disabled($subject_slug || $coef_relation) wire:model.live="subject_id"
+                <select @disabled($subject_slug || $coef_relation || $is_ae) wire:model.live="subject_id"
                     class="w-full rounded-xl border border-slate-700 bg-slate-800 disabled:opacity-40 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
                     <option value="">— Aucune —</option>
                     @foreach ($this->subjects as $subject)
@@ -59,9 +61,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2  gap-4 w-full">
             {{-- Name --}}
             <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">La promotion <span
-                        class="text-rose-400">*</span></label>
-                <select @disabled($coef_relation) wire:model.live="promotion"
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">La promotion 
+                    <span
+                        class="text-rose-400">*</span>
+                    </label>
+                <select @disabled($coef_relation || $is_pp) wire:model.live="promotion"
                     class="w-full rounded-xl border border-slate-700 bg-slate-800 disabled:opacity-40 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
                     <option value="">— Aucune —</option>
                     @foreach ($this->promotionInGroups as $promo)
@@ -82,7 +86,7 @@
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">
                         Filière <span class="text-slate-600">(optionnel)</span>
                     </label>
-                    <select @disabled($coef_relation) wire:model.live="filiar_id"
+                    <select @disabled($coef_relation || $is_pp || $is_ca) wire:model.live="filiar_id"
                         class="w-full rounded-xl border border-slate-700 bg-slate-800 disabled:opacity-40 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
                         <option value="">— Aucune —</option>
                         @foreach ($this->filiars as $filiar)
@@ -102,12 +106,12 @@
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">
                         Série <span class="text-slate-600">(optionnel)</span>
                     </label>
-                    <select @disabled($coef_relation) wire:model.live="serial_id"
+                    <select @disabled($coef_relation || $is_pp) wire:model.live="serial_id"
                         class="w-full rounded-xl border border-slate-700 bg-slate-800 disabled:opacity-40 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
                         <option value="">— Aucune —</option>
                         @foreach ($this->serials as $serial)
                             <option value="{{ $serial->id }}">
-                                {{ $serial->name }}{{ $serial->code ? ' (' . $serial->code . ')' : '' }}
+                                La série {{ $serial->name }}
                             </option>
                         @endforeach
                     </select>

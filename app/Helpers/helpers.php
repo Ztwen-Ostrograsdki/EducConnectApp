@@ -663,6 +663,29 @@ if(!function_exists('cutter')){
 }
 
 
+if(!function_exists('genderFormatter')){
+
+    function genderFormatter($gender, $length = 8)
+    {
+
+        if (!$gender) return '';
+
+        $gender = strtolower($gender);
+
+        if(in_array($gender, ['féminin', 'feminin', 'femme', 'fille']) || cutter($gender, 1) == 'f'){
+
+            return "F";
+        }
+
+        else{
+
+            return 'M';
+        }
+    }
+
+}
+
+
 
 if(!function_exists('getYears')){
 

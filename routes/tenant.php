@@ -193,9 +193,6 @@ Route::middleware([
             Route::get('/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
             Route::get('/matieres/{subject_slug}/AE/edition', ManageSubjectChiefsComponent::class)->name('subject.edit.ae');
 
-            Route::get('/matieres/gestion-des-coefiscients/{subject_slug?}/{uuid?}', ManagePromotionSpecialityCoefComponent::class)->name('subjects.coefs.manage');
-
-
             // FILIRES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
 
@@ -384,8 +381,14 @@ Route::middleware([
                     
                     Route::get('/{classe_slug}/liste-des-parents-de-la-classe', PrincipalClasseTutorsComponent::class)->name('pp.classe.tutors.list');
                 });
+
+
+
                 
             });
+
+
+            Route::get('configurations/matieres/gestion-des-coefiscients/{subject_slug?}/{uuid?}', ManagePromotionSpecialityCoefComponent::class)->name('tenant.subjects.coefs.manage')->middleware(['role:directeur|enseignant']);
 
             // ── Tuteur ────────────────────────────────────────────────────
             Route::middleware(['role:tuteur', 'parent.is.active'])->group(function () {

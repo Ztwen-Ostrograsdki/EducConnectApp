@@ -1,555 +1,558 @@
-<div class="flex flex-col gap-1 p-5 w-full justify-center mx-auto">
-    <div class="w-full">
-        <section class=" bg-slate-900/80 backdrop-blur-xl rounded-2xl mt-2.5 border border-slate-600 w-full">
+<div class="flex flex-col gap-7 p-4 sm:p-6 max-w-7xl mx-auto">
 
-            <div class="w-full px-4 py-1">
+    {{-- ===================== HEADER ===================== --}}
+    <section
+        class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 border border-amber-500/20 shadow-xl shadow-amber-900/10">
 
-                <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+        <div
+            class="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4">
+        </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0 flex-1 p-2 my-2">
+        <div class="relative px-6 py-7 sm:px-8 sm:py-8">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
-                        <div class="shrink-0 self-start">
-
-                            <div
-                                class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                                <x-lucide-user-plus class="h-10 w-10 font-extrabold text-slate-600" />
-                            </div>
-
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex flex-wrap items-center gap-2">
-
-                                <h1
-                                    class="text-xl sm:text-xl lg:text-xl
-                                           font-bold
-                                           leading-tight
-                                           break-words font-mono">
-                                    Gestion des migrations tuteurs: Ajouts et Créations
-                                </h1>
-                            </div>
-
-                            <p
-                                class="mt-3 text-sm sm:text-base
-                                      text-slate-400
-                                      break-words">
-                                Gestion des migrations sur les utilisateurs tuteurs
-                            </p>
-
-                        </div>
-
+                <div class="flex items-center gap-5">
+                    <div
+                        class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-400/30 shadow-inner">
+                        <x-lucide-users class="h-9 w-9 sm:h-10 sm:w-10 text-amber-300" />
                     </div>
 
-                </div>
-                <div class="flex justify-end w-full">
-                    <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}"
-                        class="rounded-2xl flex items-center bg-orange-600/45 hover:bg-orange-500 hover:text-black text-white gap-x-3 px-3.5 py-2.5 my-2 active:scale-95">
-                        <x-lucide-octagon-alert class="w-5 h-5" />
-                        <span class="s-label">Voir le status des migrations lancées</span>
-                    </a>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                            Migrations Tuteurs
+                        </h1>
+                        <p class="mt-1.5 text-slate-400 text-sm sm:text-base">
+                            Ajouts & Créations • Gestion des utilisateurs tuteurs
+                        </p>
+                    </div>
                 </div>
 
+                <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}"
+                    class="group inline-flex items-center gap-2.5 px-5 py-3.5 rounded-2xl font-medium text-white bg-amber-600/90 hover:bg-amber-500 shadow-lg shadow-amber-600/20 transition-all duration-300 hover:scale-[1.03] active:scale-95">
+                    <x-lucide-activity class="w-5 h-5 group-hover:animate-pulse" />
+                    <span>Status des migrations</span>
+                </a>
             </div>
+        </div>
+    </section>
 
-        </section>
-    </div>
+    {{-- ===================== TOGGLE + ALERTE ===================== --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
-    {{-- Bouton bascule formulaire / import --}}
-    <div class="flex gap-3 my-3 mb-4">
-        <button
-            class="px-4 py-3.5 rounded-2xl text-black active:scale-95 @if ($showImportMode) bg-gray-500 hover:bg-gray-500 @else bg-green-600 hover:bg-green-800 @endif"
-            wire:click="toggleImportMode">
-            <span wire:loading.remove wire:target='toggleImportMode' class="flex gap-1.5 items-center">
+        <button wire:click="toggleImportMode"
+            class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 active:translate-y-[3px] active:shadow-none
+               {{ $showImportMode
+                   ? 'bg-slate-800 text-slate-300 border-2 border-slate-600 shadow-[0_4px_0_0_#334155] hover:bg-slate-700'
+                   : 'bg-teal-500 text-white border-2 border-teal-400 shadow-[0_5px_0_0_#0f766e] hover:bg-teal-400 hover:shadow-[0_3px_0_0_#0f766e]' }}">
+
+            <span wire:loading.remove wire:target="toggleImportMode" class="flex items-center gap-2.5">
                 @if ($showImportMode)
-                    <x-lucide-pen class="w-4 h-4" />
-                    <span>Saisie manuelle des données</span>
+                    <x-lucide-pen-line class="w-4.5 h-4.5" />
+                    Saisie manuelle
                 @else
-                    <x-lucide-file class="w-4 h-4" />
-                    <span>Importer depuis un fichier Excel</span>
+                    <x-lucide-file-spreadsheet class="w-4.5 h-4.5" />
+                    Import Excel
                 @endif
             </span>
-            <span wire:loading wire:target='toggleImportMode' class="flex gap-1.5 items-center">
-                <span>En cours ...</span>
+
+            <span wire:loading wire:target="toggleImportMode" class="flex items-center gap-2.5">
+                <x-lucide-loader-2 class="w-4.5 h-4.5 animate-spin" />
+                Chargement...
             </span>
         </button>
-    </div>
-
-    <div class="flex-col justify-center w-full mx-auto">
-        <div class="flex gap-x-2 justify-end">
-            @if (count($this->tutors))
+        @if (count($this->tutors))
+            <div class="flex items-center gap-3">
                 <a href="#inserts-tutors"
-                    class="block text-orange-500 p-2 my-2.2 text-end rounded-2xl mb-2 font-mono text-sm animate-pulse">
-                    {{ count($this->tutors) }} données ont été ajoutées et attendent d'être migrées en base de
-                    données!
+                    class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-medium">
+                    <x-lucide-database class="w-4 h-4 animate-pulse" />
+                    {{ count($this->tutors) }} en attente
                 </a>
-                <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800"
-                    wire:click="clearAddedData">
-                    <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
+
+                <button wire:click="clearAddedData"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium shadow-md shadow-rose-600/20 transition-all active:scale-95">
+                    <span wire:loading.remove wire:target="clearAddedData" class="flex items-center gap-2">
                         <x-lucide-trash-2 class="w-4 h-4" />
-                        <span>Vider les données ajouter</span>
+                        Vider
                     </span>
-                    <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                        <span>En cours ...</span>
+                    <span wire:loading wire:target="clearAddedData" class="flex items-center gap-2">
+                        <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
                     </span>
                 </button>
-            @endif
-
-        </div>
-        <div wire:loading wire:target='toggleImportMode'
-            class="flex gap-1.5 w-full items-center text-center text-gray-600 justify-center mt-9.5 mx-auto">
-            <div class="w-full flex flex-col items-center justify-center p-3">
-                <span>
-                    <x-lucide-loader class="w-10 h-10 animate-spin" />
-                </span>
-                <span>Chargement en cours ...</span>
             </div>
-        </div>
-        <div wire:loading.remove wire:target='toggleImportMode'>
-            {{-- Zone import Excel --}}
-            @if ($showImportMode)
-                <h6 class="bg-info-700 text-black p-2 my-2.2 text-center rounded-2xl mb-5 font-mono text-sm">
-                    Vous êtes en mode importation depuis un fichier excel. Veuillez sélectionner le fichier au format
-                    indiqué!
-                </h6>
-                <div class="bg-slate-800 rounded-xl p-6 mb-6 border border-slate-700">
-                    <p class="text-sm text-slate-400 mb-4">
-                        Format attendu : <span class="text-slate-300 font-mono text-xs">Nom | Prénoms | Email | Contact
-                            | Genre | Pays | Département | Ville | Fonction | Date naissance</span>
-                    </p>
-
-                    <input type="file" wire:model="excelFile" accept=".xlsx,.xls"
-                        class="block w-full text-sm text-slate-400
-                   file:mr-4 file:py-2 file:px-4
-                   file:rounded-lg file:border-0
-                   file:bg-indigo-600 file:cursor-pointer file:w-2/5 file:text-white
-                   hover:file:bg-indigo-700 cursor-pointer" />
-
-                    <div wire:loading wire:target="excelFile"
-                        class="mt-3 text-sm text-indigo-400 flex items-center gap-x-2.5">
-                        <x-lucide-loader class="w-10 h-10 animate-spin text-center" />
-                        Lecture du fichier en cours...
-                    </div>
-
-                    {{-- Erreurs de lignes ignorées --}}
-                    @if (!empty($importErrors))
-                        <div class="mt-4 space-y-1">
-                            @foreach ($importErrors as $err)
-                                <p class="text-xs text-rose-400">{{ $err }}</p>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-            @else
-                <h6 class="bg-info-700 text-black p-2 my-2.2 text-center rounded-2xl mb-5 font-mono text-sm">
-                    Vous êtes en mode manuel. Veuillez renseigner le formulaire et ajouter les données au fur et a
-                    mesure. Une fois terminée, lancer la migration des données en cliquant "Terminer"
-                </h6>
-                <div class="space-y-6">
-                    <div
-                        class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-slate-700 rounded-2xl border border-slate-700">
-                        <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                            <x-lucide-user class="w-5 h-5" />
-                            <h3 class="">Informations personnelles du tuteur</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Nom
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='name' type="text" id="name"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Nom du tuteur">
-                                    @error('name')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="prenames">Prénoms
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='prenames' id="prenames"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Prenoms du tuteur ">
-                                    @error('prenames')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='email' id="email"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="L'adresse mail du tuteur....">
-                                    @error('email')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="contacts">Contact du
-                                    tuteur (unique)
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='contacts' type="text" id="contacts"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="01617777777">
-                                    @error('contacts')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="birth_date">Date de
-                                    naissance
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input wire:model.live='birth_date' type="date" id="birth_date"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all">
-                                    @error('birth_date')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="gender">Genre
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='gender' id="gender"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le genre</option>
-                                        @foreach ($genders as $g)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $g }}">
-                                                {{ $g }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('gender')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300"
-                                    for="job_name">Fonction</label>
-                                <div class="relative">
-                                    <input type="text" wire:model.live='job_name' id="job_name"
-                                        class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                        placeholder="Entrepreneur....">
-                                    @error('job_name')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-sky-500 rounded-2xl border border-sky-500">
-                        <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                            <x-lucide-map-pin-check class="w-5 h-5" />
-                            <h3 class="">Adresse</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Pays
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='country' id="country"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le pays
-                                        </option>
-                                        @foreach ($countries as $ck => $ctn)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $ctn }}">
-                                                {{ $ctn }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('country')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="grid grid-cols-1 items-center md:grid-cols-2 gap-6 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="department">Le
-                                    département
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select wire:model.live='department' id="department"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez le département
-                                        </option>
-                                        @foreach ($departments as $dk => $dn)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $dn }}">
-                                                {{ $dn }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('department')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div wire:loading wire:target='department,city'>
-                                <div class="py-3 mt-3 flex justify-center items-center gap-x-3 text-gray-600">
-                                    <x-lucide-loader class="w-5 h-5 animate-spin" />
-                                    <h5>Chargement en cours ...</h5>
-                                </div>
-                            </div>
-                            @if ($department)
-                                <div data-animate='card' wire:target='department,city' wire:loading.remove>
-                                    <label class="block text-sm font-medium mb-2 text-gray-300" for="city">La
-                                        ville
-                                        <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <select wire:model.live='city' id="city"
-                                            class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                            <option value="">Sélectionnez la ville</option>
-                                            @foreach ($cities as $ck => $cn)
-                                                <option class="bg-slate-800 text-slate-300"
-                                                    value="{{ $cn }}">{{ $cn }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('city')
-                                            <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                                <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                                {{ $message }}
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            @endif
-
-                        </div>
-                    </div>
-
-                    <button type="button" wire:loading.attr="disabled"
-                        wire:click="{{ $editingUuid ? 'updateTutor' : 'addTutor' }}"
-                        class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800 active:scale-95">
-                        <span class="flex items-center gap-1.5" wire:target='updateTutor, addTutor'
-                            wire:loading.remove>
-                            <span>{{ $editingUuid ? 'Mettre à jour' : 'Ajouter' }}</span>
-                            <x-lucide-user-plus class="w-4 h-4" />
-                        </span>
-                        <span wire:target='updateTutor, addTutor' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                            <span>En cours...</span>
-                        </span>
-                    </button>
-                </div>
-            @endif
-
-        </div>
+        @endif
     </div>
 
-    <div id="inserts-tutors" class="mt-5 flex flex-col w-full gap-1.5 mb-40">
-        @if (count($this->tutors))
-            <section class="w-full">
-                <h4
-                    class="p-2 rounded-lg border border-slate-800 bg-slate-950 overflow-hidden my-2 flex justify-between items-center">
-                    <div class="text-gray-400">
-                        Liste des données déjà ajoutées
-                        <span>
-                            Nombre:
-                            {{ count($this->tutors) }}
-                        </span>
+    {{-- ===================== LOADING ===================== --}}
+    <div wire:loading wire:target="toggleImportMode" class="flex flex-col items-center justify-center py-20 gap-4">
+        <x-lucide-loader-2 class="w-12 h-12 text-amber-400 animate-spin" />
+        <p class="text-slate-400 font-medium">Changement de mode...</p>
+    </div>
+
+    <div wire:loading.remove wire:target="toggleImportMode" class="space-y-6">
+
+        {{-- ===================== MODE IMPORT ===================== --}}
+        @if ($showImportMode)
+            <div class="rounded-[1.75rem] bg-slate-900/70 border border-slate-700/80 p-6 sm:p-8 shadow-xl">
+                <div class="flex items-center gap-4 mb-6">
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-400/30">
+                        <x-lucide-file-up class="w-6 h-6 text-amber-300" />
                     </div>
-                    <button class="px-4 py-2 rounded-2xl text-white bg-red-600 hover:bg-red-800 active:scale-95"
-                        wire:click="clearAddedData">
-                        <span wire:loading.remove wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <x-lucide-trash-2 class="w-4 h-4" />
-                            <span>Vider les données ajouter</span>
-                        </span>
-                        <span wire:loading wire:target='clearAddedData' class="flex gap-1.5 items-center">
-                            <span>En cours ...</span>
-                        </span>
-                    </button>
-                </h4>
-
-                <div class="rounded-lg border border-slate-800 bg-slate-900 overflow-hidden">
-
-                    <div class="overflow-x-auto">
-
-                        <table class="w-full min-w-full text-xs">
-
-                            <thead class="bg-slate-950 border-b border-slate-800">
-                                <tr>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        N°
-                                    </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Nom et Prenoms
-                                    </th>
-
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Email
-                                    </th>
-
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        contacts
-                                    </th>
-                                    <th class="text-left p-2 font-medium text-slate-400">
-                                        Date de naissance
-                                    </th>
-
-                                    <th class="text-center p-2 font-medium text-slate-400">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="divide-y divide-slate-800">
-
-                                @foreach ($this->tutors as $tutor)
-                                    <tr wire:key="{{ $tutor['uuid'] }}" class="hover:bg-slate-800/40 transition-all">
-                                        <td class="p-2 truncate text-slate-300">
-                                            {{ $loop->iteration }}
-                                        </td>
-
-                                        <td class="p-2">
-
-                                            <div class="flex items-center gap-4 min-w-0">
-
-                                                <div class="min-w-0">
-
-                                                    <h3 class="font-medium truncate">
-                                                        {{ $tutor['name'] }} {{ $tutor['prenames'] }}
-                                                        ({{ $tutor['gender'] }})
-                                                    </h3>
-
-                                                    <p class="text-slate-400 truncate">
-                                                        {{ $tutor['job_name'] }}
-                                                    </p>
-                                                    <p class="text-xs">
-                                                        {{ $tutor['city'] }} - {{ $tutor['department'] }} ,
-                                                        {{ $tutor['country'] }}
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td class="p-2 truncate text-slate-300">
-                                            {{ $tutor['email'] }}
-                                        </td>
-
-                                        <td class="p-2 truncate">
-                                            {{ $tutor['contacts'] }}
-                                        </td>
-                                        <td class="p-2 truncate">
-                                            {{ $tutor['birth_date'] }}
-                                        </td>
-
-                                        {{-- ACTIONS --}}
-                                        <td class="p-2">
-
-                                            <div class="flex items-center justify-end gap-2 truncate">
-                                                <button wire:key="edit-tutor-{{ $tutor['uuid'] }}"
-                                                    wire:click="editTutor('{{ $tutor['uuid'] }}')"
-                                                    wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 active:scale-95">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5"
-                                                        wire:target="editTutor">
-                                                        <x-lucide-pen class="w-4 h-4" />
-                                                        Modifier
-                                                    </span>
-                                                    <span wire:loading.flex wire:target="editTutor"
-                                                        class="items-center gap-1.5">
-                                                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                        <span>En cours...</span>
-                                                    </span>
-                                                </button>
-
-                                                <button wire:key="rem-tutor-{{ $tutor['uuid'] }}"
-                                                    wire:click="deleteTutor('{{ $tutor['uuid'] }}')"
-                                                    wire:loading.attr="disabled"
-                                                    class="h-11 rounded-2xl flex items-center flex-1 justify-center cursor-pointer bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 active:scale-95">
-                                                    <span wire:loading.remove class="flex items-center gap-1.5"
-                                                        wire:target="deleteTutor">
-                                                        <x-lucide-trash-2 class="w-4 h-4" />
-                                                        Supprimer
-                                                    </span>
-                                                    <span wire:loading.flex wire:target="deleteTutor"
-                                                        class="items-center gap-1.5">
-                                                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                                                        <span>En cours...</span>
-                                                    </span>
-                                                </button>
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">Import depuis Excel</h3>
+                        <p class="text-sm text-slate-400">Sélectionnez le fichier au format attendu</p>
                     </div>
-
                 </div>
 
+                <div class="mb-6 p-4 rounded-2xl bg-slate-950/60 border border-slate-700/60">
+                    <p class="text-xs sm:text-sm text-slate-400">
+                        <span class="font-medium text-amber-300">Format attendu :</span>
+                        <span class="font-mono text-[11px] sm:text-xs text-slate-300 ml-1">
+                            Nom | Prénoms | Email | Contact | Genre | Pays | Département | Ville | Fonction | Date
+                            naissance
+                        </span>
+                    </p>
+                </div>
+
+                <input type="file" wire:model="excelFile" accept=".xlsx,.xls"
+                    class="block w-full text-sm text-slate-400
+                              file:mr-4 file:py-3 file:px-5
+                              file:rounded-xl file:border-0
+                              file:bg-amber-600 file:text-white file:font-medium
+                              hover:file:bg-amber-500 file:cursor-pointer
+                              file:transition-all
+                              cursor-pointer rounded-2xl border border-dashed border-slate-600 bg-slate-950/40 p-3 hover:border-amber-500/40 transition-colors" />
+
+                <div wire:loading wire:target="excelFile"
+                    class="mt-5 flex items-center justify-center gap-3 text-amber-300">
+                    <x-lucide-loader-2 class="w-6 h-6 animate-spin" />
+                    <span class="font-medium">Lecture du fichier...</span>
+                </div>
+
+                @if (!empty($importErrors))
+                    <div class="mt-8 space-y-2">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-rose-400 mb-3">Lignes ignorées</p>
+                        @foreach ($importErrors as $err)
+                            <div
+                                class="px-4 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-sm">
+                                {{ $err }}
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            {{-- ===================== MODE MANUEL ===================== --}}
+        @else
+            <div class="space-y-6">
+
+                {{-- Banner --}}
+                <div class="flex items-start gap-3 px-5 py-4 rounded-2xl bg-teal-500/10 border border-teal-500/25">
+                    <x-lucide-info class="w-5 h-5 text-teal-300 mt-0.5 shrink-0" />
+                    <p class="text-sm text-teal-100/90 leading-relaxed">
+                        Mode manuel — Remplissez le formulaire puis cliquez sur <strong
+                            class="text-white">Ajouter</strong>.
+                        Une fois terminé, lancez la migration avec le bouton <strong
+                            class="text-white">Terminer</strong>.
+                    </p>
+                </div>
+
+                {{-- ===== Infos personnelles ===== --}}
+                <div class="rounded-[1.75rem] bg-slate-900/70 border border-slate-700/70 p-6 sm:p-7 shadow-lg">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700/60">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+                            <x-lucide-user class="w-5 h-5" />
+                        </div>
+                        <h3 class="text-lg font-semibold text-white">Informations personnelles du tuteur</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="name">
+                                Nom <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="name" type="text" id="name"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                placeholder="Nom du tuteur">
+                            @error('name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="prenames">
+                                Prénoms <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="prenames" type="text" id="prenames"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                placeholder="Prénoms du tuteur">
+                            @error('prenames')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="email">
+                                Email <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="email" type="email" id="email"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                placeholder="email@exemple.com">
+                            @error('email')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="contacts">
+                                Contact <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="contacts" type="text" id="contacts"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                placeholder="01617777777">
+                            @error('contacts')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="birth_date">
+                                Date de naissance <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="birth_date" type="date" id="birth_date"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all">
+                            @error('birth_date')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="gender">
+                                Genre <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="gender" id="gender"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all">
+                                <option value="">Sélectionnez</option>
+                                @foreach ($genders as $g)
+                                    <option value="{{ $g }}">{{ $g }}</option>
+                                @endforeach
+                            </select>
+                            @error('gender')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="job_name">
+                                Fonction
+                            </label>
+                            <input wire:model.live="job_name" type="text" id="job_name"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                                placeholder="Ex: Entrepreneur">
+                            @error('job_name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ===== Adresse ===== --}}
+                <div
+                    class="rounded-[1.75rem] bg-slate-900/70 border border-teal-500/30 p-6 sm:p-7 shadow-lg shadow-teal-900/5">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700/60">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-300">
+                            <x-lucide-map-pin class="w-5 h-5" />
+                        </div>
+                        <h3 class="text-lg font-semibold text-white">Adresse</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="country">
+                                Pays <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="country" id="country"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all">
+                                <option value="">Sélectionnez le pays</option>
+                                @foreach ($countries as $ck => $ctn)
+                                    <option value="{{ $ctn }}">{{ $ctn }}</option>
+                                @endforeach
+                            </select>
+                            @error('country')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2" for="department">
+                                Département <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="department" id="department"
+                                class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all">
+                                <option value="">Sélectionnez le département</option>
+                                @foreach ($departments as $dk => $dn)
+                                    <option value="{{ $dn }}">{{ $dn }}</option>
+                                @endforeach
+                            </select>
+                            @error('department')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                    <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <div wire:loading wire:target="department"
+                                class="flex items-center gap-2 py-3.5 text-slate-400">
+                                <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                                <span>Chargement des villes...</span>
+                            </div>
+
+                            @if ($department)
+                                <div wire:loading.remove wire:target="department">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2" for="city">
+                                        Ville <span class="text-rose-400">*</span>
+                                    </label>
+                                    <select wire:model.live="city" id="city"
+                                        class="w-full bg-slate-950/70 border border-slate-700 rounded-xl py-3.5 px-4 text-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all">
+                                        <option value="">Sélectionnez la ville</option>
+                                        @foreach ($cities as $ck => $cn)
+                                            <option value="{{ $cn }}">{{ $cn }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('city')
+                                        <p class="mt-1.5 flex items-center gap-1.5 text-sm text-rose-400">
+                                            <x-lucide-alert-circle class="w-4 h-4" /> {{ $message }}
+                                        </p>
+                                    @enderror
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Bouton Ajouter / Mettre à jour --}}
+                <button type="button" wire:click="{{ $editingUuid ? 'updateTutor' : 'addTutor' }}"
+                    wire:loading.attr="disabled"
+                    class="w-full group relative overflow-hidden rounded-2xl py-4 font-semibold text-white transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-70">
+
+                    <span class="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600"></span>
+                    <span
+                        class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+                    <span wire:loading.remove wire:target="updateTutor,addTutor"
+                        class="relative flex items-center justify-center gap-2.5">
+                        <x-lucide-user-plus class="w-5 h-5" />
+                        {{ $editingUuid ? 'Mettre à jour le tuteur' : 'Ajouter le tuteur' }}
+                    </span>
+
+                    <span wire:loading.flex wire:target="updateTutor,addTutor"
+                        class="relative items-center justify-center gap-2.5">
+                        <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                        Traitement...
+                    </span>
+                </button>
+            </div>
+        @endif
+    </div>
+
+    {{-- ===================== LISTE DES TUTEURS ===================== --}}
+    <div id="inserts-tutors" class="mt-2">
+        @if (count($this->tutors))
+            <section class="rounded-[1.75rem] bg-slate-900/80 border border-slate-700/70 overflow-hidden shadow-xl">
+
+                {{-- Header liste --}}
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5 bg-slate-950/60 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-300">
+                            <x-lucide-list class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white text-lg">Tuteurs ajoutés</h4>
+                            <p class="text-sm text-slate-400">{{ count($this->tutors) }} enregistrement(s)</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5">
+                        <button wire:click="finish" wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-medium shadow-md shadow-teal-600/20 transition-all active:scale-95">
+                            <span wire:loading.remove wire:target="finish" class="flex items-center gap-2">
+                                <x-lucide-send class="w-4.5 h-4.5" />
+                                Terminer
+                            </span>
+                            <span wire:loading.flex wire:target="finish" class="items-center gap-2">
+                                <x-lucide-loader-2 class="w-4.5 h-4.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="clearAddedData"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-sm font-medium transition-all active:scale-95">
+                            <span wire:loading.remove wire:target="clearAddedData" class="flex items-center gap-2">
+                                <x-lucide-trash-2 class="w-4 h-4" />
+                                Vider
+                            </span>
+                            <span wire:loading wire:target="clearAddedData" class="flex items-center gap-2">
+                                <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Table --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="px-5 py-4 text-left font-medium">N°</th>
+                                <th class="px-5 py-4 text-left font-medium">Tuteur</th>
+                                <th class="px-5 py-4 text-left font-medium">Email</th>
+                                <th class="px-5 py-4 text-left font-medium">Contact</th>
+                                <th class="px-5 py-4 text-left font-medium">Naissance</th>
+                                <th class="px-5 py-4 text-right font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/80">
+                            @foreach ($this->tutors as $tutor)
+                                <tr wire:key="{{ $tutor['uuid'] }}" class="hover:bg-slate-800/40 transition-colors">
+
+                                    <td class="px-5 py-4 text-slate-500 font-mono text-xs">
+                                        {{ $loop->iteration }}
+                                    </td>
+
+                                    <td class="px-5 py-4">
+                                        <div class="font-medium text-white">
+                                            {{ $tutor['name'] }} {{ $tutor['prenames'] }}
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span
+                                                class="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                                                {{ $tutor['gender'] }}
+                                            </span>
+                                            @if (!empty($tutor['job_name']))
+                                                <span class="text-xs text-slate-400">{{ $tutor['job_name'] }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-1">
+                                            {{ $tutor['city'] }} · {{ $tutor['department'] }} ·
+                                            {{ $tutor['country'] }}
+                                        </div>
+                                    </td>
+
+                                    <td class="px-5 py-4 text-slate-300">
+                                        {{ $tutor['email'] }}
+                                    </td>
+
+                                    <td class="px-5 py-4 font-mono text-slate-300">
+                                        {{ $tutor['contacts'] }}
+                                    </td>
+
+                                    <td class="px-5 py-4 text-slate-300">
+                                        {{ $tutor['birth_date'] }}
+                                    </td>
+
+                                    {{-- ========== BOUTONS D'ACTIONS ========== --}}
+                                    <td class="px-5 py-4">
+                                        <div class="flex items-center justify-end gap-2">
+
+                                            {{-- Modifier --}}
+                                            <button wire:click="editTutor('{{ $tutor['uuid'] }}')"
+                                                wire:loading.attr="disabled"
+                                                class="group inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium
+                                                           bg-sky-500/10 text-sky-300 border border-sky-400/30
+                                                           hover:bg-sky-500/20 hover:border-sky-400/50 hover:shadow-[0_0_15px_-3px_rgba(14,165,233,0.4)]
+                                                           transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60">
+                                                <span wire:loading.remove
+                                                    wire:target="editTutor('{{ $tutor['uuid'] }}')"
+                                                    class="flex items-center gap-1.5">
+                                                    <x-lucide-pen class="w-3.5 h-3.5" />
+                                                    Modifier
+                                                </span>
+                                                <span wire:loading.flex
+                                                    wire:target="editTutor('{{ $tutor['uuid'] }}')"
+                                                    class="items-center gap-1.5">
+                                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                                </span>
+                                            </button>
+
+                                            {{-- Supprimer --}}
+                                            <button wire:click="deleteTutor('{{ $tutor['uuid'] }}')"
+                                                wire:loading.attr="disabled"
+                                                class="group inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium
+                                                           bg-rose-500/10 text-rose-300 border border-rose-400/30
+                                                           hover:bg-rose-500/20 hover:border-rose-400/50 hover:shadow-[0_0_15px_-3px_rgba(244,63,94,0.4)]
+                                                           transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60">
+                                                <span wire:loading.remove
+                                                    wire:target="deleteTutor('{{ $tutor['uuid'] }}')"
+                                                    class="flex items-center gap-1.5">
+                                                    <x-lucide-trash-2 class="w-3.5 h-3.5" />
+                                                    Supprimer
+                                                </span>
+                                                <span wire:loading.flex
+                                                    wire:target="deleteTutor('{{ $tutor['uuid'] }}')"
+                                                    class="items-center gap-1.5">
+                                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                                </span>
+                                            </button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Bouton Terminer en bas --}}
+                <div class="p-6 border-t border-slate-800 bg-slate-950/40">
+                    <button wire:click="finish" wire:loading.attr="disabled"
+                        class="w-full group relative overflow-hidden rounded-2xl py-4 font-semibold text-white transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]">
+
+                        <span class="absolute inset-0 bg-gradient-to-r from-teal-600 to-emerald-600"></span>
+                        <span
+                            class="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+                        <span wire:loading.remove wire:target="finish"
+                            class="relative flex items-center justify-center gap-2.5">
+                            <x-lucide-send class="w-5 h-5" />
+                            Terminer & Lancer la migration
+                        </span>
+                        <span wire:loading.flex wire:target="finish"
+                            class="relative items-center justify-center gap-2.5">
+                            <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                            Traitement en cours...
+                        </span>
+                    </button>
+                </div>
             </section>
-            <button type="button" wire:loading.attr="disabled" wire:click="{{ 'finish' }}"
-                class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-green-600 hover:bg-green-800 active:scale-95">
-                <span class="flex items-center gap-1.5" wire:target='finish' wire:loading.remove>
-                    <span>Terminer</span>
-                    <x-lucide-send class="w-5 h-5" />
-                </span>
-                <span wire:target='finish' wire:loading.flex class="items-center gap-1.5">
-                    <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                    <span>En cours...</span>
-                </span>
-            </button>
         @endif
     </div>
 </div>

@@ -3,11 +3,14 @@
 namespace App\Livewire\Tenants\Subjects;
 
 use App\Events\DataUpdatedEvent;
+use App\Models\Classe;
 use App\Models\Filiar;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Subject;
+use App\Models\YearlyFiliarChief;
 use App\Models\YearlyPromotionSpecialitySubjectCoef;
+use App\Models\YearlySubjectChief;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -18,7 +21,6 @@ use WireUi\Traits\WireUiActions;
 
 
 
-#[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title("Gestion des coefiscients")]
 class ManagePromotionSpecialityCoefComponent extends Component
 {
@@ -46,10 +48,16 @@ class ManagePromotionSpecialityCoefComponent extends Component
 
     public ?string $error = null;
 
+    public bool $is_pp = false;
+    public bool $is_ae = false;
+    public bool $is_ca = false;
+
 
     public function mount(?string $subject_slug = null, ?string $uuid = null)
     {
         session()->put('from_url', url()->previous());
+
+        $this->initSpace();
 
         if($subject_slug){
 
@@ -62,6 +70,7 @@ class ManagePromotionSpecialityCoefComponent extends Component
             $this->subject_slug = $subject_slug;
 
             $this->subject_id = $subject->id;
+
         }
 
         if($uuid){
@@ -263,8 +272,96 @@ class ManagePromotionSpecialityCoefComponent extends Component
     }
 
 
+    public function initSpace()
+    {
+         /**@var \App\Models\User */
+        $auth_user = auth('tenant')->user();
+
+        $tenant = tenancy()->tenant;
+
+        if(!$auth_user->hasRole('directeur')){
+
+            if(!($tenant->pp_can_edit_coef && $tenant->ae_can_edit_coef && $tenant->ca_can_edit_coef)) return abort(403);
+
+            if($auth_user->teacher){
+
+                $teacher = $auth_user->teacher;
+
+                $is_pp = Classe::where('school_year_id', $this->activeYear->id)
+                ->where('principal_id', $teacher->id)
+                ->where('is_active', true)
+                ->first();
+
+                if($is_pp){
+
+                    if(!$tenant->pp_can_edit_coef) return abort(403);
+
+                    $this->filiar_id = $is_pp->filiar_id;
+
+                    $this->serial_id = $is_pp->serial_id;
+
+                    $this->promotion = $is_pp->promotion->name;
+
+                    $this->is_pp = true;
+                }
+                else{
+
+                    $is_ca = YearlyFiliarChief::where('school_year_id', $this->activeYear->id)
+                    ->where('teacher_id', $teacher->id)
+                    ->where('is_active', true)
+                    ->first();
+
+                    if($is_ca){
+
+                        if(!$tenant->ca_can_edit_coef) return abort(403);
+
+                        $this->filiar_id = $is_ca->filiar_id;
+
+                        $this->serial_id = null;
+
+                        $this->is_ca = true;
+                    }
+                    else{
+
+                        $is_ae = YearlySubjectChief::where('school_year_id', $this->activeYear->id)
+                        ->where('teacher_id', $teacher->id)
+                        ->where('is_active', true)
+                        ->first();
+
+                        if($is_ae){
+
+                            if(!$tenant->ae_can_edit_coef) return abort(403);
+
+                            $this->subject_id = $is_ae->subject_id;
+
+                            $this->subject = $is_ae->subject;
+
+                            $this->subject_slug =$is_ae->subject->slug;
+
+                            $this->is_ae = true;
+                        }
+                        else{
+
+                            return abort(403);
+                        }
+                    }
+                }
+
+            }
+            else{
+
+                return abort(403);
+
+            }
+
+        }
+    }
+
+
     public function render()
     {
-        return view('livewire.tenants.subjects.manage-promotion-speciality-coef-component');
+        /** @var \App\Models\User $user */
+        $user = auth('tenant')->user();
+        return view('livewire.tenants.subjects.manage-promotion-speciality-coef-component')->layout($user->getDashboardLayout());
     }
 }

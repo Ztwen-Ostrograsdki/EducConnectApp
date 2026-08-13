@@ -117,13 +117,13 @@
                                 <a wire:navigate href="{{ route('tenant.classes.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.classes.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="w-3 h-3" />
+                                        <x-lucide-file class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.classes.docs') }}"
                                     class="s-link {{ request()->routeIs('tenant.classes.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
+                                        <x-lucide-printer class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.classes.create') }}"
@@ -269,25 +269,25 @@
                                 <a wire:navigate href="{{ route('tenant.students.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.students.create') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-user-plus class="w-3 h-3" />
+                                        <x-lucide-user-plus class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Ajouter apprenants</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.crud.tasks') }}"
                                     class="s-link {{ request()->routeIs('tenant.students.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-octagon-alert class="w-3 h-3" />
+                                        <x-lucide-octagon-alert class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.students.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="w-3 h-3" />
+                                        <x-lucide-file class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.students.docs') }}"
                                     class="s-link {{ request()->routeIs('tenant.students.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
+                                        <x-lucide-printer class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
                             </div>
@@ -308,25 +308,25 @@
                                 <a wire:navigate href="{{ route('tenant.teachers.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.teachers.create') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-user-plus class="w-3 h-3" />
+                                        <x-lucide-user-plus class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Ajouter enseignants</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.teachers.crud.tasks') }}"
                                     class="s-link {{ request()->routeIs('tenant.teachers.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-octagon-alert class="w-3 h-3" />
+                                        <x-lucide-octagon-alert class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.teachers.print.configuration') }}"
                                     class="s-link {{ request()->routeIs('tenant.teachers.print.configuration') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="w-3 h-3" />
+                                        <x-lucide-file class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Impression personalisée</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.teachers.docs') }}"
                                     class="s-link {{ request()->routeIs('tenant.teachers.docs') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
+                                        <x-lucide-printer class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Fichiers imprimables</span>
                                 </a>
                             </div>
@@ -347,102 +347,75 @@
                                 <a wire:navigate href="{{ route('tenant.parents.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.parents.create') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-user-plus class="w-3 h-3" />
+                                        <x-lucide-user-plus class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Ajouter parent/tuteur</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.parents.crud.tasks') }}"
                                     class="s-link {{ request()->routeIs('tenant.parents.crud.tasks') ? 'active' : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-octagon-alert class="w-3 h-3" />
+                                        <x-lucide-octagon-alert class="w-3 h-3 text-sky-600" />
                                     </div><span class="s-label">Status des ajouts</span>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {{-- STATISTIQUES --}}
-                    <div class="s-section">
-                        <div class="s-section-label">Statistiques</div>
-                        <a wire:navigate href="{{ route('tenant.stats.general') }}"
-                            class="s-link {{ request()->routeIs('tenant.stats.general') ? 'active' : '' }}">
-                            <div class="s-icon">📝</div><span class="s-label">Générale</span>
-                        </a>
-                    </div>
-
                     {{-- FICHES DE NOTES --}}
                     <div class="s-section">
                         <div class="s-section-label">Gestion des notes </div>
-                        <div class="s-acc" id="acc-notes">
-                            <div class="s-acc-trigger" onclick="toggleAcc('acc-notes')">
-                                <div class="s-icon">📝</div>
-                                <div class="s-section-label">Les fiches de notes</div>
-                                <span class="s-acc-arrow">▶</span>
-                            </div>
-                            <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
-                                    class="s-link {{ request()->routeIs('tenant.notes.print.configuration') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-file class="w-3 h-3" />
-                                    </div><span class="s-label">Impression personalisée</span>
-                                </a>
-                                <a href="{{ route('tenant.notes.print.preview') }}"
-                                    class="s-link {{ request()->routeIs('tenant.notes.print.preview') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
-                                    </div><span class="s-label">Prévisualisation</span>
-                                </a>
-                                <a wire:navigate href="{{ route('tenant.notes.docs') }}"
-                                    class="s-link {{ request()->routeIs('tenant.notes.docs') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
-                                    </div><span class="s-label">Notes imprimables</span>
-                                </a>
-                            </div>
-                        </div>
+                        <a wire:navigate href="{{ route('tenant.notes.print.configuration') }}"
+                            class="s-link {{ request()->routeIs('tenant.notes.print.configuration') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-file class="w-3 h-3 text-yellow-300" />
+                            </div><span class="s-label">Impression personalisée</span>
+                        </a>
+                        <a href="{{ route('tenant.notes.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.notes.print.preview') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-printer class="w-3 h-3 text-yellow-300" />
+                            </div><span class="s-label">Prévisualisation</span>
+                        </a>
+                        <a wire:navigate href="{{ route('tenant.notes.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.notes.docs') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-printer class="w-3 h-3 text-yellow-300" />
+                            </div><span class="s-label">Notes imprimables</span>
+                        </a>
                     </div>
 
                     {{-- MEILLEURS / FAIBLES --}}
                     <div class="s-section">
                         <div class="s-section-label">Meilleurs/Faibles</div>
-                        <div class="s-acc" id="acc-best-weak">
-                            <div class="s-acc-trigger" onclick="toggleAcc('acc-best-weak')">
-                                <div class="s-icon">📝</div>
-                                <div class="s-section-label">Les Meilleurs/Faibles</div>
-                                <span class="s-acc-arrow">▶</span>
-                            </div>
-                            <div class="s-acc-content">
-                                <a wire:navigate href="{{ route('tenant.students.bests.weaks.print.configuration') }}"
-                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.configuration') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-file class="w-3 h-3" />
-                                    </div><span class="s-label">Impression personalisée</span>
-                                </a>
-                                <a href="{{ route('tenant.students.bests.weaks.print.preview') }}"
-                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.preview') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
-                                    </div><span class="s-label">Prévisualisation</span>
-                                </a>
-                                <a wire:navigate href="{{ route('tenant.students.bests.weaks.docs') }}"
-                                    class="s-link {{ request()->routeIs('tenant.students.bests.weaks.docs') ? 'active' : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-printer class="w-3 h-3" />
-                                    </div><span class="s-label">Notes imprimables</span>
-                                </a>
-                            </div>
-                        </div>
+                        <a wire:navigate href="{{ route('tenant.students.bests.weaks.print.configuration') }}"
+                            class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.configuration') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-file class="w-3 h-3 text-amber-600" />
+                            </div><span class="s-label">Impression personalisée</span>
+                        </a>
+                        <a href="{{ route('tenant.students.bests.weaks.print.preview') }}"
+                            class="s-link {{ request()->routeIs('tenant.students.bests.weaks.print.preview') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-printer class="w-3 h-3 text-amber-600" />
+                            </div><span class="s-label">Prévisualisation</span>
+                        </a>
+                        <a wire:navigate href="{{ route('tenant.students.bests.weaks.docs') }}"
+                            class="s-link {{ request()->routeIs('tenant.students.bests.weaks.docs') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-printer class="w-3 h-3 text-amber-600" />
+                            </div><span class="s-label">Notes imprimables</span>
+                        </a>
                     </div>
 
                     {{-- DIAGNOSTIQUES NOTES --}}
                     <div class="s-section">
-                        <div class="s-section-label">Diagnostiques notes</div>
+                        <div class="s-section-label">Rapports notes renseignées</div>
                         <a wire:navigate href="{{ route('tenant.marks.reports.print.configuration') }}"
                             class="s-link {{ request()->routeIs('tenant.marks.reports.print.configuration') ? 'active' : '' }}">
                             <div class="s-icon">🖥️</div><span class="s-label">Lancer</span>
                         </a>
                         <a href="{{ route('tenant.marks.reports.print.preview') }}"
                             class="s-link {{ request()->routeIs('tenant.marks.reports.print.preview') ? 'active' : '' }}">
-                            <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
+                            <div class="s-icon">📋</div><span class="s-label">Parcourir</span>
                         </a>
                         <a wire:navigate href="{{ route('tenant.marks.reports.docs') }}"
                             class="s-link {{ request()->routeIs('tenant.marks.reports.docs') ? 'active' : '' }}">
@@ -457,7 +430,7 @@
                         </a>
                         <a href="{{ route('tenant.bulletins.print.preview') }}"
                             class="s-link {{ request()->routeIs('tenant.bulletins.print.preview') ? 'active' : '' }}">
-                            <div class="s-icon">📗</div><span class="s-label">Parcourir</span>
+                            <div class="s-icon">📖</div><span class="s-label">Parcourir</span>
                         </a>
                         <a wire:navigate href="{{ route('tenant.bulletins.docs') }}"
                             class="s-link {{ request()->routeIs('tenant.bulletins.docs') ? 'active' : '' }}">
@@ -468,11 +441,11 @@
                         <div class="s-section-label">Statistiques périodiques</div>
                         <a wire:navigate href="{{ route('tenant.stats.print.configuration') }}"
                             class="s-link {{ request()->routeIs('tenant.stats.print.configuration') ? 'active' : '' }}">
-                            <div class="s-icon">🖥️</div><span class="s-label">Configuration</span>
+                            <div class="s-icon">📊</div><span class="s-label">Configuration</span>
                         </a>
                         <a href="{{ route('tenant.stats.print.preview') }}"
                             class="s-link {{ request()->routeIs('tenant.stats.print.preview') ? 'active' : '' }}">
-                            <div class="s-icon">📗</div><span class="s-label">Lecture</span>
+                            <div class="s-icon">📈</div><span class="s-label">Lecture</span>
                         </a>
                         <a wire:navigate href="{{ route('tenant.stats.docs') }}"
                             class="s-link {{ request()->routeIs('tenant.stats.docs') ? 'active' : '' }}">

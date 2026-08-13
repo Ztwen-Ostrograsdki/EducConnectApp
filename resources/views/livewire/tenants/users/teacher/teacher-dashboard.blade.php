@@ -172,6 +172,18 @@
 
         </section>
 
+        <section class="my-1.5 flex items-center justify-end gap-2">
+            <a wire:navigate href="{{ route('tenant.subjects.coefs.manage') }}"
+                class="p-2.5 rounded-2xl bg-green-500/20 text-green-400  hover:bg-green-500/60 hover:text-black transition-all text-sm flex items-center text-center">
+                <span class="flex items-center justify-center gap-x-2">
+                    <span class="flex items-center justify-center gap-x-2">
+                        <x-lucide-plus class="w-4 h-4" />
+                        <span> Ajouter un coéf</span>
+                    </span>
+                </span>
+            </a>
+        </section>
+
         <section>
 
             <div

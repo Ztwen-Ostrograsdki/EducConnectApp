@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants;
 
+use App\Events\DataUpdatedEvent;
 use App\Livewire\Tenants\ActionsTraits\SchoolYearsActions;
 use App\Models\SchoolYear;
 use App\Tools\BeninData;
@@ -37,6 +38,8 @@ class SettingsComponent extends Component
 
     public ?string $city = null;
 
+    public ?string $email = null;
+
     public ?string $department = null;
     
     
@@ -59,6 +62,8 @@ class SettingsComponent extends Component
         session()->put('settings_tab', $this->activeTab);
 
         $this->initAcademic();
+
+        $this->initGeneral();
 
         $this->initSecurity();
     }
@@ -185,6 +190,8 @@ class SettingsComponent extends Component
 
         unset($this->activeYear, $this->periodOptions);
 
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
         $this->notification()->success(
             title: 'Paramètres académiques mis à jour',
             description: 'Les modifications ont été enregistrées avec succès.',
@@ -277,6 +284,8 @@ class SettingsComponent extends Component
         
         // config(['session.lifetime' => $validated['session_lifetime']]);
 
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
         $this->notification()->success(
             title: 'Paramètres de sécurité mis à jour',
             description: 'Les modifications ont été enregistrées avec succès.',
@@ -336,7 +345,24 @@ class SettingsComponent extends Component
 
             $this->contacts = $tenant?->contacts ?? '';
 
+            $this->email = $tenant?->email ?? '';
+
+            $this->city = $tenant?->city ?? '';
+
+            $this->department = $tenant?->department ?? '';
+
             $this->adresse = $tenant?->adresse ?? '';
+
+            if($this->department){
+
+                $departments = BeninData::getDepartments();
+
+                $department_key = array_keys($departments, $this->department)[0];
+
+                $this->cities = BeninData::getCities($department_key);
+
+
+            }
         }
     }
 

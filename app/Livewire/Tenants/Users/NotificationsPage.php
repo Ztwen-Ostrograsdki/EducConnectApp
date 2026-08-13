@@ -112,7 +112,7 @@ class NotificationsPage extends Component
     /**
      * Demande de confirmation SweetAlert2 avant suppression unitaire.
      */
-    public function confirmDeleteNotification(string $id): void
+    public function deleteNotification(string $id): void
     {
         $this->dispatch('swal', [
             'title'             => 'Supprimer cette notification ?',
@@ -121,8 +121,8 @@ class NotificationsPage extends Component
             'showCancelButton'  => true,
             'confirmButtonText' => 'Supprimer',
             'cancelButtonText'  => 'Annuler',
-            'onConfirmed'       => 'deleteNotification',
-            'onConfirmedParams' => [$id],
+            'onConfirmed'       => 'ConfirmTodeleteNotification',
+            'onConfirmedParams' => ['id' => $id],
         ]);
     }
 

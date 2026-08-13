@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Tools\BeninData;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -117,15 +118,30 @@ class CreateTeachers extends Component
         ];
     }
 
+    #[Computed]
+    public function genders()
+    {
+        return config('app.genders');
+    }
+
+
+    #[Computed]
+    public function departments()
+    {
+        return BeninData::getDepartments();
+    }
+
+
+    #[Computed]
+    public function countries()
+    {
+        return ['BENIN' => 'BENIN'];
+    }
+
+
     public function render()
     {
         $imports = [];
-
-        $genders = config('app.genders');
-
-        $departments = BeninData::getDepartments();
-
-        $countries = ['BENIN' => 'BENIN'];
 
         if(session()->has('showImportMode')){
 
@@ -136,7 +152,7 @@ class CreateTeachers extends Component
         }
 
 
-        return view('livewire.tenants.teachers.create-teachers', compact('imports', 'countries', 'departments', 'genders'));
+        return view('livewire.tenants.teachers.create-teachers');
     }
 
     public function updatedDepartment(?string $department)
@@ -550,13 +566,15 @@ class CreateTeachers extends Component
 
                 }
 
+                $gender = genderFormatter(trim($row['E'] ?? ''));
+
                 $teachers[] = [
                     'uuid'       => (string) Str::uuid(),
                     'name'       => $name,
                     'prenames'   => $prenames,
                     'email'      => $email,
                     'contacts'   => $contacts,
-                    'gender'     => trim($row['E'] ?? ''),
+                    'gender'     => $gender,
                     'country'    => Str::upper(trim($row['F']) ?? ''),
                     'department' => Str::upper(trim($row['G']) ?? ''),
                     'city'       => Str::upper(trim($row['H']) ?? ''),
