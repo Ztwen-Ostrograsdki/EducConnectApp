@@ -31,6 +31,7 @@ class ClasseSubjectMarksCacheService
      *     'moy'         => 15.25,
      *     'moy_coef'    => 45.75,
      *     'rank'        => 3,
+     *     'mention'     => Bien,
      *     'total'       => 42,
      *   ],
      * ]

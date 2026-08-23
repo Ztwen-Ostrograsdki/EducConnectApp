@@ -200,7 +200,7 @@
                                         ? 'active'
                                         : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="h-3 w-3" />
+                                        <x-lucide-pen-line class="h-3 w-3 text-sky-400" />
                                     </div>
                                     <span class="s-label truncate">
                                         Notes de {{ $child_rel->student->getFullName() }}
@@ -209,7 +209,7 @@
                             @endforeach
                         </div>
 
-                        <div class="s-section">
+                        {{-- <div class="s-section">
                             <div class="s-section-label">Les emplois du temps</div>
                             @foreach ($children as $child_rel)
                                 <a wire:navigate data-sidebar-item href="#" class="s-link">
@@ -221,7 +221,7 @@
                                     </span>
                                 </a>
                             @endforeach
-                        </div>
+                        </div> --}}
 
                         <div class="s-section">
                             <div class="s-section-label">Les bulletins</div>
@@ -233,7 +233,7 @@
                                         ? 'active'
                                         : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="h-3 w-3" />
+                                        <x-lucide-file class="h-3 w-3 text-amber-500" />
                                     </div>
                                     <span class="s-label truncate">
                                         Bulletin de {{ $child_rel->student->getFullName() }}
@@ -294,11 +294,11 @@
                     <span class="breadcrumb-current">{{ $header ?? 'Dashboard' }}</span>
                 </div>
 
-                <div class="search" onclick="openSearch()">
+                {{-- <div class="search" onclick="openSearch()">
                     <span style="font-size:.8rem;color:var(--text3)">🔍</span>
                     <span class="search-text">Rechercher...</span>
                     <span class="search-kbd">Ctrl K</span>
-                </div>
+                </div> --}}
 
                 <div class="h-right">
                     <div class="year-switcher">

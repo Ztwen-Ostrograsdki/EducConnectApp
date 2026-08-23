@@ -26,8 +26,6 @@
 <body>
     <div class="shell">
 
-        {{-- @livewire('app-guard') --}}
-
         <x-notifications />
         <x-dialog />
 
@@ -58,7 +56,7 @@
             <div class="s-school">
                 <div class="s-school-inner">
                     <div class="s-school-name">
-                        <a class="hover:text-orange-500" href="{{ route('tenants.home') }}">
+                        <a wire:navigate class="hover:text-orange-500" href="{{ route('tenants.home') }}">
                             {{ tenant()?->school_name ?? 'Mon École' }}
                         </a>
                     </div>
@@ -68,7 +66,7 @@
             <nav class="s-nav">
                 <div class="s-section">
                     <div class="s-section-label">Général</div>
-                    <a data-sidebar-item href="{{ route('tenant.dashboard') }}"
+                    <a wire:navigate data-sidebar-item href="{{ route('tenant.dashboard') }}"
                         class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                         <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                     </a>
@@ -81,11 +79,11 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('tenant.schoolyears.portal') }}"
+                            <a wire:navigate href="{{ route('tenant.schoolyears.portal') }}"
                                 class="s-link {{ request()->routeIs('tenant.schoolyears.portal') ? 'active' : '' }}">
                                 <div class="s-icon">📅</div><span class="s-label">Dashboard</span>
                             </a>
-                            <a href="{{ route('tenant.schoolYears.create') }}"
+                            <a wire:navigate href="{{ route('tenant.schoolYears.create') }}"
                                 class="s-link {{ request()->routeIs('tenant.schoolYears.create') ? 'active' : '' }}">
                                 <div class="s-icon">
                                     <span>➕</span>

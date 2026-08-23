@@ -31,7 +31,7 @@ class JobToGeneratePrintableBulletinsDataForThePrintViewComponent implements Sho
         public string  $docTitle = 'bulletins',
         public array   $config = [
             'classe_id' => null, 'filiar_id' => null, 'student_id' => null, 'serial_id' => null,
-            'promotion_id' => null, 'promotionInGroups' => null, 'level' => null,
+            'promotion_id' => null, 'promotionInGroups' => null, 'level' => null, 'period' => null,
             'leavesConfig' => 'onlyActives',
         ],
     ) {}
@@ -110,7 +110,9 @@ class JobToGeneratePrintableBulletinsDataForThePrintViewComponent implements Sho
             notifiableId:    $this->notifiableId,
             docDBInfos:      [
                 'classe_id'                 => isset($this->config['classe_id']), 
-                'student_id'                 => isset($this->config['student_id']), 
+                'period'                    => $this->period, 
+                'for_student_id'            => isset($this->config['student_id']) ? 
+                                                $this->config['student_id'] : null, 
                 'filiar_id'                 => isset($this->config['filiar_id']) ? 
                                                $this->config['filiar_id'] : null,
                 'promotion_id'              => isset($this->config['promotion_id']) ? 
@@ -120,6 +122,7 @@ class JobToGeneratePrintableBulletinsDataForThePrintViewComponent implements Sho
                 'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
                                                $this->config['promotionInGroups'] : null,
             ],
+            paginable: false,
         );
     }
 }

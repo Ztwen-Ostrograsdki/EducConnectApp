@@ -43,24 +43,23 @@
     {{-- ===================== TOGGLE MODE ===================== --}}
     <div class="flex flex-wrap gap-3">
         <button wire:click="toggleImportMode"
-            class="relative overflow-hidden px-5 py-3.5 rounded-2xl font-medium transition-all duration-300 flex items-center gap-2.5
+            class="relative inline-flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm tracking-wide transition-all duration-300 active:scale-95
                        {{ $showImportMode
-                           ? 'bg-slate-700/80 text-slate-300 hover:bg-slate-600/80'
-                           : 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-600/25 hover:shadow-emerald-500/40 hover:scale-[1.02]' }}">
+                           ? 'bg-slate-800 text-slate-300 border-2 border-slate-600 hover:border-slate-500'
+                           : 'bg-emerald-500 text-white border-2 border-emerald-400 shadow-[0_8px_0_0_#059669] hover:shadow-[0_4px_0_0_#059669] hover:translate-y-[4px]' }}">
 
-            <span wire:loading.remove wire:target="toggleImportMode" class="flex items-center gap-2">
+            <span wire:loading.remove wire:target="toggleImportMode" class="flex items-center gap-2.5">
                 @if ($showImportMode)
-                    <x-lucide-pen class="w-4.5 h-4.5" />
-                    <span>Saisie manuelle</span>
+                    <x-lucide-pen-line class="w-5 h-5" />
+                    Saisie manuelle
                 @else
-                    <x-lucide-file-spreadsheet class="w-4.5 h-4.5" />
-                    <span>Importer depuis Excel</span>
+                    <x-lucide-file-spreadsheet class="w-5 h-5" />
+                    Import Excel
                 @endif
             </span>
-
-            <span wire:loading wire:target="toggleImportMode" class="flex items-center gap-2">
-                <x-lucide-loader-2 class="w-4.5 h-4.5 animate-spin" />
-                <span>Changement...</span>
+            <span wire:loading wire:target="toggleImportMode" class="flex items-center gap-2.5">
+                <x-lucide-loader-2 class="w-5 h-5 animate-spin" />
+                Chargement...
             </span>
         </button>
     </div>
@@ -617,3 +616,4 @@
         @endif
     </div>
 </div>
+

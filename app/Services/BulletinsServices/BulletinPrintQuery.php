@@ -5,6 +5,7 @@ namespace App\Services\BulletinsServices;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\Student;
+use App\Models\YearlyClasseStudent;
 use App\Services\ClassesServices\ClasseEffectifsService;
 use App\Services\ClassesServices\ClasseYearlyAveragesCacheService;
 use App\Services\MarksServices\ClasseAveragesCacheService;
@@ -30,32 +31,6 @@ class BulletinPrintQuery
         }
 
         return $query->orderBy('name');
-    }
-
-    protected static function studentsQuery(Classe $classe, array $config)
-    {
-        $query = Student::whereHas('yearlyClasseStudents', fn ($q) =>
-            $q->where('classe_id', $classe->id)
-              ->where('school_year_id', $classe->school_year_id)
-              ->where('is_active', true)
-        );
-
-        match ($config['leavesConfig'] ?? 'onlyActives') {
-            'onlyLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
-                $q->where('school_year_id', $classe->school_year_id)->where('classe_id', $classe->id)->whereNull('ended_at')
-            ),
-            'onlyActives' => $query->whereDoesntHave('yearlyStudentsLeaves', fn ($q) =>
-                $q->where('school_year_id', $classe->school_year_id)->where('classe_id', $classe->id)->whereNull('ended_at')
-            ),
-            
-			'withLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
-                $q->where('school_year_id', $classe->school_year_id)
-                  ->where('classe_id', $classe->id)
-                  ->whereNull('ended_at')),
-            default => $query->where('is_active', true),
-        };
-
-        return $query->orderBy('name')->orderBy('prenames');
     }
 
     public static function count(array $config, int $schoolYearId): int
@@ -187,6 +162,15 @@ class BulletinPrintQuery
 
     public static function resolveDocTitle(array $config, int $period, ?\App\Models\SchoolYear $schoolYear): string
     {
+        if (! empty($config['student_id'])) {
+            $student = Student::find($config['student_id']);
+            $doc_title = $student ? "Bulletin de {$student->getFullName()}" : "Bulletin";
+
+            if ($schoolYear) $doc_title .= " - {$schoolYear->periodLabel()} {$period}";
+
+            return $doc_title;
+        }
+
         $doc_title = "Bulletins de notes";
 
         if ($schoolYear) $doc_title .= " - {$schoolYear->periodLabel()} {$period}";
@@ -216,5 +200,54 @@ class BulletinPrintQuery
         }
 
         return $doc_title;
+    }
+
+    protected static function studentsQuery(Classe $classe, array $config)
+    {
+        $query = Student::whereHas('yearlyClasseStudents', fn ($q) =>
+            $q->where('classe_id', $classe->id)
+              ->where('school_year_id', $classe->school_year_id)
+              ->where('is_active', true)
+        );
+
+        if (! empty($config['student_id'])) {
+            
+            $query->where('id', $config['student_id']);
+
+            return $query->orderBy('name')->orderBy('prenames');
+        }
+
+        match ($config['leavesConfig'] ?? 'onlyActives') {
+            'onlyLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
+                $q->where('school_year_id', $classe->school_year_id)->where('classe_id', $classe->id)->whereNull('ended_at')
+            ),
+            'onlyActives' => $query->whereDoesntHave('yearlyStudentsLeaves', fn ($q) =>
+                $q->where('school_year_id', $classe->school_year_id)->where('classe_id', $classe->id)->whereNull('ended_at')
+            ),
+            
+			'withLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
+                $q->where('school_year_id', $classe->school_year_id)
+                  ->where('classe_id', $classe->id)
+                  ->whereNull('ended_at')),
+            default => $query->where('is_active', true),
+        };
+
+        return $query->orderBy('name')->orderBy('prenames');
+    }
+
+
+
+    /**
+     * Résout la classe active d'un élève pour l'année scolaire donnée —
+     * nécessaire pour restreindre classesQuery() à cette seule classe
+     * quand on génère le bulletin d'un élève précis.
+     */
+    public static function resolveClasseIdForStudent(int $studentId, int $schoolYearId): ?int
+    {
+        return YearlyClasseStudent::where('student_id', $studentId)
+            ->where('school_year_id', $schoolYearId)
+            ->where('is_active', true)
+            ->whereNull('ended_at')
+            ->value('classe_id');
     }
 }

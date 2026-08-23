@@ -10,13 +10,11 @@ class MentionService
      */
     public function forValue(?float $value): ?string
     {
-        if (is_null($value)) {
-            return null;
-        }
+        if (!($value))  return null;
 
-        foreach (config('mentions.scale') as $tier) {
-            if ($value >= $tier['min'] && $value <= $tier['max']) {
-                return $tier['label'];
+        foreach (config('mentions.scale') as $range) {
+            if ($value >= $range['min'] && $value <= $range['max']) {
+                return $range['label'];
             }
         }
 

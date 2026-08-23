@@ -1,5 +1,12 @@
 <div class="print-wrapper">
 
+    @if (empty($bulletins))
+        <div
+            style="display: flex; justify-content: center; padding-top: 10px; margin-top: 10px; text-align: center; padding-bottom: 10px; align-items: center; ">
+            Aucun bulletin trouvé
+        </div>
+    @endif
+
     @foreach ($bulletins as $i => $b)
         @php
             $student = $b['student'];
@@ -185,11 +192,11 @@
 
             {{-- ═══ SIGNATURE ═══ --}}
             <div class="signature-strip">
-                <div class="sig-block">
+                <div class="sig-block" style="text-align: left">
                     <p class="sig-label">Le Professeur Principal</p>
                     <div class="sig-space"></div>
                 </div>
-                <div class="sig-block">
+                <div class="sig-block" style="text-align: right">
                     <p class="sig-label">Le Directeur</p>
                     <div class="sig-space"></div>
                 </div>
@@ -244,6 +251,10 @@
         max-width: 780px;
         margin: 0 auto;
         padding: 14px 20px;
+        border: thin solid gray;
+        border-radius: 10px;
+        margin-top: 3px;
+        margin-bottom: 3px;
     }
 
     .page-break {
@@ -386,12 +397,12 @@
     }
 
     .bulletin-table .col-teacher {
-        text-align: left;
+        text-align: center;
         width: 14%;
     }
 
     .bulletin-table .col-mention {
-        text-align: left;
+        text-align: center;
         width: 8%;
     }
 
@@ -420,7 +431,7 @@
     .tf-label {
         font-weight: 600;
         color: var(--navy);
-        text-align: right;
+        text-align: center;
     }
 
     .tf-value {
@@ -558,7 +569,7 @@
     /* ── Signature ── */
     .signature-strip {
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         margin-top: 10px;
     }
 

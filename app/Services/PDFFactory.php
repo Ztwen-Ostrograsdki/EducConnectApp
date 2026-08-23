@@ -99,6 +99,8 @@ class PDFFactory
         ?int    $notifiableId         = null,
         ?string $notification         = null,
         ?array  $docDBInfos           = null,
+        bool    $paginable            = true,
+        
     ): void {
 
         $folder       = self::CATEGORY_MAP[$category] ?? 'documents';
@@ -126,6 +128,7 @@ class PDFFactory
             notifiable:     $notifiable,
             notification:   $notification,
             docDBInfos:     $docDBInfos,
+            paginable:      $paginable,
         )->onQueue('pdf');
     }
 }

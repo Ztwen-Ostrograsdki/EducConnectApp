@@ -5,10 +5,19 @@ namespace App\Models;
 use App\Events\DataUpdatedEvent;
 use App\Exceptions\CouldNotMigrateStudentFromClasseToNewWhenHasMarksInSubjectsThatDoesntExistsInTheNewClasseDuringTheSameSchoolYearException;
 use App\Helpers\Support\TenantStorage;
+use App\Jobs\JobToGeneratePrintableBulletinsDataForThePrintViewComponent;
+use App\Models\Classe;
+use App\Models\Payment;
+use App\Models\Presence;
 use App\Models\SchoolYear;
+use App\Models\StudentTutorRelation;
+use App\Models\TutorYearlyAccess;
 use App\Models\User;
+use App\Models\YearlyClasseStudent;
+use App\Models\YearlyClasseStudentsLeave;
 use App\ModelsTraits\StudentsRoutesTraits;
 use App\Notifications\RealTimeNotification;
+use App\Services\BulletinsServices\BulletinPrintQuery;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -921,5 +930,35 @@ class Student extends Model
 
         }
     }
+
+
+    // Dans n'importe quel composant Livewire (ex: StudentProfilComponent)
+
+    public function bulletinIsReadyYet(?string $period = null, ?string $schoolYearSlug = null)
+    {
+        return GeneratedDocument::ofType('bulletins_list')
+            ->when($this->search, fn ($q) =>
+                $q->where('filename', 'like', '%' . $this->search . '%')
+            )
+            ->when($this->classe, function($q){
+                $q->where('classe_id', $this->classe->id);
+            })
+            ->when($this->filiar, function($q){
+                $q->where('filiar_id', $this->filiar->id);
+            })
+            ->when($this->serial, function($q){
+                $q->where('serial_id', $this->serial->id);
+            })
+            ->when($this->promotion, function($q){
+                $q->where('promotion_id', $this->promotion->id);
+            })
+            ->when($this->promotionsGrouped, function($q){
+                $q->where('promotionsGrouped', $this->promotionsGrouped);
+            })
+            ->latest()
+            ->paginate(9);
+    }
+
+
     
 }

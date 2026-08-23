@@ -50,8 +50,11 @@ class TenantLogin extends Component
             'email' => $this->email,
             'password' => $this->password,
         ], $this->remember)) {
+
             RateLimiter::hit($key);
+
             $this->errorMessage = 'Identifiants incorrects.';
+            
             $this->reset('password');
 
             return;
@@ -106,9 +109,9 @@ class TenantLogin extends Component
 
             if(!$user->hasRole('directeur')){
 
-                if($user->hasRole('enseignant')){
+                if($user->hasRole('enseignant') && !$user->hasRole('tuteur')){
 
-                    if(!$user->teacher->hasValidAccessForYear()){
+                    if($user->teacher->hasValidAccessForYear()){
 
                         $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
 
@@ -126,7 +129,7 @@ class TenantLogin extends Component
 
             if($logged_count < 1){
 
-                return $this->redirectRoute('tenant.update.password');
+                return $this->redirectRoute('tenant.update.password', navigate: true);
 
             }
             else{

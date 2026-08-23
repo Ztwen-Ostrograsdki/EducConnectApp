@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Components;
 
+use App\Livewire\Tenants\ActionsTraits\StudentBulletinActions;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\SchoolYear;
@@ -13,9 +14,12 @@ use App\Services\MarksServices\ClasseSubjectMarksCacheService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 class BulletinComponent extends Component
 {
+    use WireUiActions, StudentBulletinActions;
+    
     public ?int $student_id = null;
 
     public ?int $period = null;
@@ -43,11 +47,11 @@ class BulletinComponent extends Component
     }
 
 
-    #[Computed]
-    public function activeYear(): ?SchoolYear
-    {
-        return SchoolYear::current()->first();
-    }
+    // #[Computed]
+    // public function activeYear(): ?SchoolYear
+    // {
+    //     return SchoolYear::current()->first();
+    // }
 
     #[Computed]
     public function devoirColumns(): array
@@ -105,6 +109,8 @@ class BulletinComponent extends Component
     #[Computed]
     public function effectifs()
     {
+        if(!$this->classe) return [];
+
         $effectifs = app(ClasseEffectifsService::class)->getEffectifs($this->classe->id);
 
         return $effectifs;
@@ -134,7 +140,15 @@ class BulletinComponent extends Component
                 $this->student->id,
                 $this->period,
                 $this->activeYear->id
-            ) ?? ['marks' => [], 'moy_interro' => null, 'moy' => null, 'moy_coef' => null, 'rank' => null, 'total' => 0];
+            ) ?? [
+                'marks' => [], 
+                'moy_interro' => null, 
+                'moy' => null, 
+                'moy_coef' => null, 
+                'rank' => null, 
+                'total' => 0,
+                'mention' => null,
+            ];
 
             return [
                 'subject'     => $classeSubject->subject,
@@ -149,6 +163,8 @@ class BulletinComponent extends Component
                 'total'       => $data['total'],
                 'mention'     => $data['mention'],
             ];
+
+
         })->all();
     }
 

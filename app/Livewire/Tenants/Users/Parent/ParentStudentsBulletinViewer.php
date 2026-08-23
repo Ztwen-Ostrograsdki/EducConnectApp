@@ -25,6 +25,10 @@ class ParentStudentsBulletinViewer extends Component
 
     public function mount(string $student_uuid)
     {
+        if(!(tenant('tutors_can_see_bulletin') && tenant('tutors_can_download_bulletin'))){
+
+            return abort(403);
+        }
         
         $this->student_uuid = $student_uuid;
 
@@ -86,7 +90,6 @@ class ParentStudentsBulletinViewer extends Component
     {
         $this->counter++;
     }
-
 
     public function render()
     {

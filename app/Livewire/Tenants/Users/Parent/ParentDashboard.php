@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenants\Users\Parent;
 
+use App\Livewire\Tenants\ActionsTraits\StudentBulletinActions;
 use App\Models\SchoolYear;
 use App\Models\Tutor;
 use App\Models\User;
@@ -14,7 +15,7 @@ use WireUi\Traits\WireUiActions;
 class ParentDashboard extends Component
 {
 
-    use WireUiActions;
+    use WireUiActions, StudentBulletinActions;
 
     public string $parent_uuid;
 
@@ -39,11 +40,11 @@ class ParentDashboard extends Component
         $this->user = $parent->user;
     }
 
-    #[Computed]
-    public function activeYear(): ?SchoolYear
-    {
-        return SchoolYear::current()->first();
-    }
+    // #[Computed]
+    // public function activeYear(): ?SchoolYear
+    // {
+    //     return SchoolYear::current()->first();
+    // }
 
     #[Computed]
     public function parentInfos()
@@ -77,6 +78,9 @@ class ParentDashboard extends Component
             return [];
         }
     }
+
+
+   
     
     public function render()
     {

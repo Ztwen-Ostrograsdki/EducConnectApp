@@ -87,8 +87,7 @@
 
         {{-- ===================== CONTENT ===================== --}}
         <section>
-            <div class="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_380px] gap-6">
-
+            <div class="grid grid-cols-1 gap-6">
                 {{-- LEFT --}}
                 <div class="space-y-6 min-w-0">
 
@@ -112,8 +111,8 @@
                         <div class="p-5 border-b border-white/5">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div>
-                                    <h2 class="text-lg font-semibold text-white">
-                                        Mes apprenants
+                                    <h2 class="text-lg font-semibold text-white uppercase">
+                                        Vos apprenants | enfants
                                         <span class="text-violet-400 font-mono text-sm ml-1">
                                             ({{ __zero(count($this->children)) }})
                                         </span>
@@ -172,14 +171,88 @@
 
                                         {{-- Droite : boutons d'actions centrés verticalement --}}
                                         <div class="flex flex-wrap items-center gap-2 shrink-0">
-                                            <a wire:navigate
-                                                href="{{ route('tenant.parent.space.bulletin', ['student_uuid' => $student->uuid]) }}"
-                                                class="h-8 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium transition-all inline-flex items-center justify-center">
-                                                Bulletin
-                                            </a>
+                                            @if (tenant('tutors_can_download_bulletin'))
+                                                @if (!$this->hasCurrentBulletin($student->id))
+                                                    <button wire:click='generateStudentBulletin({{ $student->id }})'
+                                                        class="py-2 px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                        <span class="inline-flex items-center">
+                                                            <span class="inline-flex items-center gap-x-2">
+                                                                <x-lucide-blocks class="w-4 h-4" />
+                                                                <span>
+                                                                    Générer bulletin @if ($this->activeYear->active_period)
+                                                                        du
+                                                                        {{ $this->activeYear->periodLabel() . ' ' . $this->activeYear->active_period }}
+                                                                    @endif
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                @else
+                                                    <button wire:click='generateStudentBulletin({{ $student->id }})'
+                                                        class="py-2 px-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                        <span class="inline-flex items-center">
+                                                            <span class="inline-flex items-center gap-x-2">
+                                                                <span wire:loading.remove
+                                                                    wire:target="generateStudentBulletin({{ $student->id }})">
+                                                                    <span class="inline-flex items-center gap-x-2">
+                                                                        <x-lucide-database-backup class="w-4 h-4" />
+                                                                        <span>
+                                                                            Mettre à jour bulletin @if ($this->activeYear->active_period)
+                                                                                du
+                                                                                {{ $this->activeYear->periodLabel() . ' ' . $this->activeYear->active_period }}
+                                                                            @endif
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                                <span wire:loading.flex
+                                                                    wire:target="generateStudentBulletin({{ $student->id }})"
+                                                                    class="relative items-center gap-2 text-rose-300">
+                                                                    <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                    <button wire:click='printStudentBulletin({{ $student->id }})'
+                                                        class="py-2 px-3 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                        <span class="inline-flex items-center">
+                                                            <span class="inline-flex items-center gap-x-2">
+                                                                <span wire:loading.remove
+                                                                    wire:target="printStudentBulletin({{ $student->id }})">
+                                                                    <span class="inline-flex items-center gap-x-2">
+                                                                        <x-lucide-download class="w-4 h-4" />
+                                                                        <span>
+                                                                            Télécharger bulletin @if ($this->activeYear->active_period)
+                                                                                du
+                                                                                {{ $this->activeYear->periodLabel() . ' ' . $this->activeYear->active_period }}
+                                                                            @endif
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                                <span wire:loading.flex
+                                                                    wire:target="printStudentBulletin({{ $student->id }})"
+                                                                    class="relative items-center gap-2 text-rose-300">
+                                                                    <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                @endif
+                                            @endif
+                                            @if (tenant('tutors_can_see_bulletin'))
+                                                <a wire:navigate
+                                                    href="{{ route('tenant.parent.space.bulletin', ['student_uuid' => $student->uuid]) }}"
+                                                    class="py-2 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                    Lire bulletin
+                                                </a>
+                                            @else
+                                                <a wire:navigate href="#"
+                                                    class="py-2 px-3 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 border border-slate-500/20 text-slate-300 text-2xs font-medium transition-all inline-flex items-center justify-center">
+                                                    Bulletin indisponible
+                                                </a>
+                                            @endif
                                             <a wire:navigate
                                                 href="{{ route('tenant.parent.space.marks', ['student_uuid' => $student->uuid]) }}"
-                                                class="h-8 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                class="py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs font-medium transition-all inline-flex items-center justify-center">
                                                 Notes
                                             </a>
                                         </div>
@@ -204,6 +277,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 

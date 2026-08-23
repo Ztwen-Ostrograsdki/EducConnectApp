@@ -50,6 +50,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
         public readonly ?array  $docDBInfos      = null,
+        public readonly  bool  $paginable        = true,
         
     ) {}
 
@@ -76,14 +77,23 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
             $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimée sur la plateforme ' . $name;
 
-            $headerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:gray;">'
+            $headerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:gray;">'
                 . $header_title
                 . '</div>';
 
-            $footerHtml = '<div style="font-size:13px; width:100%; text-align:center; color:black;">'
-            . $formattedDate
-            . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
-            . '</div>';
+            if($this->paginable){
+
+                $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
+                . $formattedDate
+                . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
+                . '</div>';
+            }
+            else{
+
+                $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
+                . $formattedDate
+                . '</div>';
+            }
 
             $browsershot = Browsershot::html($html)
                 ->setNodeBinary(config('browsershot.node_binary'))
@@ -122,34 +132,6 @@ class JobToGeneratePdfFromView implements ShouldQueue
         }
     }
 
-    /**
-     * Injecte le CSS Tailwind compilé directement dans le <head> du HTML,
-     * en inline plutôt que via addStyleTag() de Browsershot — plus fiable
-     * puisque Browsershot::html() ne fait pas de vraie navigation réseau,
-     * ce qui rend le timing d'addStyleTag() imprévisible.
-     */
-    private function injectCompiledCss(string $html): string
-    {
-        $cssPath = $this->resolveCompiledCssPath();
-
-        if (! $cssPath || ! File::exists($cssPath)) {
-            logger()->warning('PDF généré sans CSS Tailwind : manifest.json introuvable ou fichier CSS absent.', [
-                'resolved_path' => $cssPath,
-            ]);
-            return $html;
-        }
-
-        $css = File::get($cssPath);
-        $styleTag = '<style>' . $css . '</style>';
-
-        // Si le Blade a déjà une balise <head>, on injecte juste avant sa fermeture.
-        // Sinon (fragment sans <html>/<head>), on préfixe simplement le CSS au début.
-        if (str_contains($html, '</head>')) {
-            return str_replace('</head>', $styleTag . '</head>', $html);
-        }
-
-        return $styleTag . $html;
-    }
 
      /**
      * Applique les options Browsershot de manière dynamique.
@@ -219,6 +201,10 @@ class JobToGeneratePdfFromView implements ShouldQueue
                                                    null,
                 'for_student_id'         => isset($docDBInfos['for_student_id']) ?
                                                    $docDBInfos['for_student_id'] : 
+                                                   null,
+
+                'period'                 => isset($docDBInfos['period']) ?
+                                                   $docDBInfos['period'] : 
                                                    null,
                 'for_parent_id'          => isset($docDBInfos['for_parent_id']) ? 
                                                    $docDBInfos['for_parent_id'] : 
