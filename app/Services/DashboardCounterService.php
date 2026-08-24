@@ -86,6 +86,25 @@ class DashboardCounterService implements RefreshableSchoolYearCache
             $query->where($field, $value);
         }
 
+        if(isset($definition['roles']) && $definition['roles']){
+
+            $roles =  $definition['roles'];
+
+            if($roles['has'] === true && isset($roles['roles'])){
+
+                $query->whereHas('roles', function($q) use ($roles){
+
+                    $q->whereIn('name', $roles['roles']);
+
+                });
+            } 
+            else{
+
+                $query->whereDoesntHave('roles');
+
+            }          
+        }
+
         return $query->count();
     }
 

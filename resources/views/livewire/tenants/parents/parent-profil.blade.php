@@ -34,6 +34,14 @@
                                         </span>
                                     @endif
                                 </div>
+                                <span class="inline-flex gap-3 items-center">
+                                    @foreach ($user->roles as $r)
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/25 text-indigo-300 text-[11px] font-semibold">
+                                            {{ $r->name }}
+                                        </span>
+                                    @endforeach
+                                </span>
 
                                 <p class="mt-2 text-sm text-amber-400/90">
                                     {{ $user->email }}
@@ -53,7 +61,7 @@
                                     @if ($user->job_name)
                                         <span
                                             class="px-3 py-1.5 rounded-lg bg-[#0b0f19] border border-white/5 text-xs text-slate-300">
-                                            {{ $user->job_name }}
+                                            Profession : {{ $user->job_name }}
                                         </span>
                                     @endif
                                     @if ($user->adresse)
@@ -72,30 +80,36 @@
                             </div>
                         </div>
 
-                        {{-- Actions --}}
-                        <div class="flex flex-wrap gap-2 shrink-0">
+                    </div>
+                    <div class="flex flex-wrap gap-2 shrink-0 justify-end my-2 mt-6">
+                        @if ($user->teacher)
                             <a wire:navigate
-                                href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
-                                class="h-10 px-4 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium transition-all active:scale-[0.97] inline-flex items-center">
-                                Ajouter des apprenants
+                                href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $user->teacher->uuid]) }}"
+                                class="h-10 px-4 rounded-lg bg-lime-600 hover:bg-lime-500 text-white text-sm font-medium transition-all active:scale-[0.97] inline-flex items-center">
+                                Voir profil enseignant
                             </a>
-                            <button
-                                class="h-10 px-4 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/25 text-emerald-300 text-sm font-medium transition-all">
-                                Envoyer bulletin
-                            </button>
-                            <button
-                                class="h-10 px-4 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/25 text-sky-300 text-sm font-medium transition-all">
-                                Envoyer notes
-                            </button>
-                            <button wire:click='sendCredentialsToTheTutor'
-                                class="h-10 px-4 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/25 text-amber-300 text-sm font-medium transition-all">
-                                <span>Envoyez données</span>
-                            </button>
-                            <button
-                                class="h-10 px-4 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-rose-300 text-sm font-medium transition-all">
-                                Bloquer accès
-                            </button>
-                        </div>
+                        @endif
+                        <a wire:navigate
+                            href="{{ route('tenant.parents.manage.relations', ['parent_uuid' => $parent->uuid]) }}"
+                            class="h-10 px-4 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium transition-all active:scale-[0.97] inline-flex items-center">
+                            Lier des apprenants | enfants
+                        </a>
+                        <button
+                            class="h-10 px-4 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/25 text-emerald-300 text-sm font-medium transition-all">
+                            Envoyer bulletin
+                        </button>
+                        <button
+                            class="h-10 px-4 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/25 text-sky-300 text-sm font-medium transition-all">
+                            Envoyer notes
+                        </button>
+                        <button wire:click='sendCredentialsToTheTutor'
+                            class="h-10 px-4 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/25 text-amber-300 text-sm font-medium transition-all">
+                            <span>Envoyez données</span>
+                        </button>
+                        <button
+                            class="h-10 px-4 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-rose-300 text-sm font-medium transition-all">
+                            Bloquer accès
+                        </button>
                     </div>
                 </div>
             </div>

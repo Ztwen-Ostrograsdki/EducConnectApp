@@ -8,6 +8,7 @@ use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Tutor;
+use App\Models\User;
 use App\Models\YearlyClasseStudent;
 
 return [
@@ -72,6 +73,32 @@ return [
     'tutors' => [
         'model' => Tutor::class,
         'conditions' => ['is_active' => true],
+        'ttl' => 1800,
+    ],
+
+    'users' => [
+        'model' => User::class,
+        'ttl' => 1800,
+    ],
+    
+    'users_blockeds' => [
+        'model' => User::class,
+        'conditions' => ['blocked' => true],
+        'ttl' => 1800,
+    ],
+    'users_without_roles' => [
+        'model' => User::class,
+        'roles' => ['has' => false, 'roles' => []],
+        'ttl' => 1800,
+    ],
+    'users_tutors' => [
+        'model' => User::class,
+        'roles' => ['has' => true, 'roles' => ['tuteur']],
+        'ttl' => 1800,
+    ],
+    'users_teachers' => [
+        'model' => User::class,
+        'roles' => ['has' => true, 'roles' => ['enseignant']],
         'ttl' => 1800,
     ],
     

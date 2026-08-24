@@ -93,6 +93,7 @@ use App\Livewire\Tenants\Teachers\TeachersPrintableListComponent;
 use App\Livewire\Tenants\Teachers\TeachersPrintsManagerComponent;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\UpdateProfilePhoto;
+use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsBulletinViewer;
@@ -170,6 +171,9 @@ Route::middleware([
             Route::get('/', TenantDashboard::class)->name('dashboard');
 
             Route::get('/settings', SettingsComponent::class)->name('settings');
+
+            // LES COMPTES
+            Route::get('/enseignants/les-comptes', AccountsDashboard::class)->name('accounts');
 
             // PROMOTIONS
             Route::get('/promotions', PromotionsPortal::class)->name('promotions.portal');

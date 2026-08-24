@@ -114,21 +114,6 @@ class NotificationsPage extends Component
      */
     public function deleteNotification(string $id): void
     {
-        $this->dispatch('swal', [
-            'title'             => 'Supprimer cette notification ?',
-            'text'              => 'Cette action est irréversible.',
-            'icon'              => 'warning',
-            'showCancelButton'  => true,
-            'confirmButtonText' => 'Supprimer',
-            'cancelButtonText'  => 'Annuler',
-            'onConfirmed'       => 'ConfirmTodeleteNotification',
-            'onConfirmedParams' => ['id' => $id],
-        ]);
-    }
-
-    #[On('ConfirmTodeleteNotification')]
-    public function onConfirmTodeleteNotification(string $id): void
-    {
         /** @var \App\Models\User $user */
         $user = Auth::guard('tenant')->user();
 

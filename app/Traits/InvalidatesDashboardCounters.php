@@ -18,5 +18,6 @@ trait InvalidatesDashboardCounters
         static::updated(fn ($model) => app(DashboardCounterService::class)->flushModel(static::class));
 
         static::deleted(fn ($model) => app(DashboardCounterService::class)->flushModel(static::class));
+
     }
 }

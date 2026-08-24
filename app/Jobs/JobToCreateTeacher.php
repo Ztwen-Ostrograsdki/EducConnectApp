@@ -3,14 +3,11 @@
 namespace App\Jobs;
 
 use App\Events\ATeacherCreationFailedEvent;
-use App\Events\DefaultForAnyEvent;
-use App\Events\TeacherCreatedEvent;
 use App\Events\TeachersCreationStatusUpdatedEvent;
 use App\Helpers\Robot;
 use App\Jobs\JobToSendCredentialsToUser;
 use App\Models\ImportTask;
 use App\Models\Teacher;
-use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\RealTimeNotification;
 use Illuminate\Bus\Batchable;

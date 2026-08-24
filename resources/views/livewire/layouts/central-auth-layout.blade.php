@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>ADMINISTRATION CENTRALE - {{ $title ?? config('app.name') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
 
     {{-- <script>
         window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
@@ -16,7 +18,7 @@
         window.__APP_CONTEXT__ = {
             tenantId: {{ 'null' }},
             userId: {{ auth('central')->id() ?? 'null' }},
-            role: "{{ auth('central')->user()?->getRoleNames()->first() ?? '' }}",
+            role: "{{ '' }}",
         };
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -61,14 +63,17 @@
                     <div class="s-school-name">{{ auth()->guard('central')->user()?->name ?? 'Super Admin' }}</div>
                     <div class="s-school-year">
                         <span class="s-school-dot"></span>
-                        <livewire:school-year-selector-component key='sidebaar' />
+                        <select name="" id="">
+                            <option value="">2022</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
             <nav class="s-nav">
                 <div class="s-section">
-                    <a data-sidebar-item href="{{ route('central.dashboard') }}" class="s-link {{ request()->routeIs('central.dashboard') ? 'active' : '' }}">
+                    <a data-sidebar-item href="{{ route('central.dashboard') }}"
+                        class="s-link {{ request()->routeIs('central.dashboard') ? 'active' : '' }}">
                         <div class="s-icon">📊</div><span class="s-label">Dashboard - Acceuil</span>
                     </a>
                 </div>
@@ -107,7 +112,8 @@
                 </div>
                 <div class="s-section">
                     <div class="s-section-label">Les demandes d'abonnement</div>
-                    <a href="{{ route('central.pendings.subscriptions.requests.portal') }}" class="s-link {{ request()->routeIs('central.pendings.subscriptions.requests.portal') ? 'active' : '' }}">
+                    <a href="{{ route('central.pendings.subscriptions.requests.portal') }}"
+                        class="s-link {{ request()->routeIs('central.pendings.subscriptions.requests.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
                         </div>
@@ -131,7 +137,8 @@
                 </div>
                 <div class="s-section">
                     <div class="s-section-label">Les écoles</div>
-                    <a href="{{ route('central.schools.portal', ['status' => 'active']) }}" class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
+                    <a href="{{ route('central.schools.portal', ['status' => 'active']) }}"
+                        class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-school class="w-3 h-3 text-green-400" />
                         </div>
@@ -140,7 +147,8 @@
                             {{ __zero(count(getNotDeletedTenants())) }}
                         </span>
                     </a>
-                    <a href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}" class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'corbeille' ? 'active' : '' }}">
+                    <a href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}"
+                        class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'corbeille' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-trash class="w-3 h-3 text-red-400" />
                         </div>
@@ -161,14 +169,18 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('central.tenants.portal') }}" class="s-link {{ request()->routeIs('central.tenants.portal') ? 'active' : '' }}" style="font-size:.78rem;">
+                            <a href="{{ route('central.tenants.portal') }}"
+                                class="s-link {{ request()->routeIs('central.tenants.portal') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-circle-pile class="w-3 h-3 text-gray-500" />
                                 </div>
                                 <span class="s-label">Tous les tenants</span>
                             </a>
                             @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}" class="s-link {{ request()->routeIs('central.tenant.profil') ? 'active' : '' }}" style="font-size:.78rem;">
+                                <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}"
+                                    class="s-link {{ request()->routeIs('central.tenant.profil') ? 'active' : '' }}"
+                                    style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         <x-lucide-user class="w-3 h-3 text-indigo-400" />
                                     </div>
@@ -178,7 +190,8 @@
                                 </a>
                             @endfor
                             <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouveau tenant</span>
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouveau
+                                    tenant</span>
                             </a>
                         </div>
                     </div>
@@ -189,7 +202,9 @@
                             <span class="s-acc-arrow">▶</span>
                         </div>
                         <div class="s-acc-content">
-                            <a href="{{ route('central.schools.portal') }}" class="s-link {{ request()->routeIs('central.schools.portal') ? 'active' : '' }}" style="font-size:.78rem;">
+                            <a href="{{ route('central.schools.portal') }}"
+                                class="s-link {{ request()->routeIs('central.schools.portal') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-sliders-vertical class="w-3 h-3 text-amber-800" />
 
@@ -197,7 +212,9 @@
                                 <span class="s-label">Toutes les écoles</span>
                             </a>
                             @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}" class="s-link {{ request()->routeIs('central.school.profil') ? 'active' : '' }}" style="font-size:.78rem;">
+                                <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}"
+                                    class="s-link {{ request()->routeIs('central.school.profil') ? 'active' : '' }}"
+                                    style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         <x-lucide-school class="w-3 h-3 text-amber-400" />
                                     </div>
@@ -207,7 +224,8 @@
                                 </a>
                             @endfor
                             <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle école</span>
+                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
+                                    école</span>
                             </a>
                         </div>
                     </div>
@@ -216,12 +234,14 @@
 
                 <div class="s-section">
                     <div class="s-section-label">Les abonnements validés</div>
-                    <a href="{{ route('central.validateds.subscriptions.portal') }}" class="s-link {{ request()->routeIs('central.validateds.subscriptions.portal') ? 'active' : '' }}">
+                    <a href="{{ route('central.validateds.subscriptions.portal') }}"
+                        class="s-link {{ request()->routeIs('central.validateds.subscriptions.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-check-2 class="w-3 h-3 text-green-400" />
                         </div>
                         <span class="s-label">Actifs</span>
-                        <span class="rounded-lg px-3 bg-indigo-400/20 text-indigo-300 border border-gray-500">777</span>
+                        <span
+                            class="rounded-lg px-3 bg-indigo-400/20 text-indigo-300 border border-gray-500">777</span>
                     </a>
                     <a href="#" class="s-link">
                         <div class="s-icon">
@@ -292,7 +312,6 @@
                     <div class="year-switcher">
                         <span class="year-icon">📅</span>
 
-                        <livewire:school-year-selector-component key='navbaar' />
                     </div>
 
                     <button class="h-btn" title="Thème">🌙</button>
@@ -305,7 +324,8 @@
                                 <x-lucide-user-round-cog class="w-5 h-5 text-amber-400" />
                             </div>
                             <div>
-                                <div class="ut-name">{{ auth()->guard('central')->user()?->name ?? 'Super Admin' }}</div>
+                                <div class="ut-name">{{ auth()->guard('central')->user()?->name ?? 'Super Admin' }}
+                                </div>
                                 <div class="ut-role">
                                     {{ 'Super Admin' }}
                                 </div>
@@ -336,11 +356,13 @@
                 </div>
             </header>
 
-            <main class="flex-1
+            <main
+                class="flex-1
             min-w-0
             w-full
             max-w-full
-            overflow-x-hidden" id="content">
+            overflow-x-hidden"
+                id="content">
                 {{ $slot }}
             </main>
         </div>

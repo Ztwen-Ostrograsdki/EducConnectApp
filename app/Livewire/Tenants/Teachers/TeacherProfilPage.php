@@ -6,7 +6,6 @@ use App\Livewire\Tenants\ActionsTraits\TeachersActions;
 use App\Livewire\Tenants\ActionsTraits\UsersActions;
 use App\Models\SchoolYear;
 use App\Models\Teacher;
-use App\Models\User;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -53,6 +52,19 @@ class TeacherProfilPage extends Component
         if(!$teacher) return abort(404);
 
         return $teacher;
+
+    }
+
+
+    #[Computed]
+    public function user()
+    {
+        if(!$this->teacher_uuid) return abort(404);
+
+
+        if(!$this->teacher) return abort(404);
+
+        return $this->teacher->user;
 
     }
 
