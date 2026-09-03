@@ -32,6 +32,7 @@ if (!function_exists('getAge')) {
     }
 }
 
+
 if (!function_exists('__getAge')) {
     function __getAge(string|null $birthDate): ?int
     {
@@ -41,7 +42,6 @@ if (!function_exists('__getAge')) {
         return Carbon::parse($birthDate)->age;
     }
 }
-
 
 
 
@@ -925,9 +925,14 @@ if(!function_exists('getTenant')){
 
 if(!function_exists('getTenants')){
 
-    function getTenants($value, $column = "id")
+    function getTenants($value = null, $column = "id")
     {
-        return Tenant::where($column, $value)->get();
+        if($value){
+
+            return Tenant::where($column, $value)->get();
+        }
+
+        return Tenant::whereNotNull('id')->orderBy('name')->orderBy('prenames')->take(10)->get();
     }
 
 }

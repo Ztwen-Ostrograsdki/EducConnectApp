@@ -109,6 +109,20 @@ class TenantLogin extends Component
 
             if(!$user->hasRole('directeur')){
 
+                if((tenant() && !tenancy()->tenant->hasActiveSubscription())){
+
+
+                    $this->errorMessage = "Cet espace n'est pas accessible! Contacter votre directeur";
+
+                    Auth::guard('tenant')->logout();
+
+                    session()->invalidate();
+
+                    session()->regenerate();
+
+                }
+            
+
                 if($user->hasRole('enseignant') && !$user->hasRole('tuteur')){
 
                     if($user->teacher->hasValidAccessForYear()){
@@ -133,11 +147,16 @@ class TenantLogin extends Component
 
             }
             else{
-
                 
                 $user->update(['logged_count' => $logged_count + 1]);
 
                 if($user->hasRole('directeur')){
+
+                    if((tenant() && !tenancy()->tenant->hasActiveSubscription())){
+
+                        return $this->redirectIntended(route('tenant.subscription.request'), navigate: true);
+
+                    }
 
                     return $this->redirectIntended(route('tenant.dashboard'), navigate: true);
                 }

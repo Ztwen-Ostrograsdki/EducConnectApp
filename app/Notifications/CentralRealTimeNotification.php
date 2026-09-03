@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\CentralUser;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -28,8 +27,9 @@ class CentralRealTimeNotification extends Notification implements ShouldQueue, S
         public readonly string  $type = 'info',
         public readonly ?string $url = null,
         public readonly ?array   $meta = null,
-        public readonly ?string  $tenantId = null,
-    ) {}
+    ) {
+        $this->onQueue('notifications');
+    }
 
     /**
      * Canaux de livraison.

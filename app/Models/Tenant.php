@@ -10,12 +10,15 @@ use App\Models\RequestToCreateNewTenant;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\Subject;
+use App\Models\Subscription;
+use App\Models\SubscriptionRequest;
 use App\Models\TenantModuleAccess;
 use App\Models\TenantStatistic;
 use App\Models\User;
 use App\Observers\ObserveTenant;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -151,6 +154,47 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function tenant_request()
     {
         return $this->belongsTo(RequestToCreateNewTenant::class, 'request_id');
+    }
+
+
+    public function subscriptionRequests() : HasMany
+    {
+        return $this->hasMany(SubscriptionRequest::class);
+    }
+
+
+    public function subscriptions() : HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+    
+    public function hasActiveSubscription() : bool
+    {
+        return $this->subscriptions()
+        ->where('status', 'active')
+        ->where('expire_at', '>', now())
+        ->exists();
+
+    }
+
+
+    public function activeSubscription() : HasOne
+    {
+        return $this->hasOne(Subscription::class)
+        ->where('status', 'active')
+        ->where('expire_at', '>', now())
+        ->latestOfMany('started_at');
+
+    }
+
+
+    public function currentSubscription() : HasOne
+    {
+        return $this->hasOne(Subscription::class)
+        ->where('status', 'active')
+        ->where('expire_at', '>', now())
+        ->latestOfMany('started_at');
+
     }
 
     // ─── Scopes ───────────────────────────────────────────────────────

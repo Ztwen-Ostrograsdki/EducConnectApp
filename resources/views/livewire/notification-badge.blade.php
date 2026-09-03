@@ -14,7 +14,8 @@
             <div class="dd-sub">{{ __zero($unreadCount) }} non lues</div>
         </div>
         @foreach ($notifications as $notif)
-            <div wire:key='notification-badge-{{ $notif['id'] }}' class="notif-item notif-unread @if ($notif['read_at']) opacity-50 @endif">
+            <div wire:key='notification-badge-{{ $notif['id'] }}'
+                class="notif-item notif-unread @if ($notif['read_at']) opacity-50 @endif">
                 <div class="notif-title">📝 {{ cutter($notif['title'], 50) }}
                     @if ($notif['read_at'])
                         <span class="text-xs text-amber-500 italic font-mono">(Déjà lue)</span>
@@ -27,9 +28,15 @@
             </div>
         @endforeach
         <div class="dd-item" style="justify-content:center;color:var(--accent);font-size:.73rem;">
-            <a class="w-full text-center hover:underline py-1.5" href="{{ route('tenant.notifications.center') }}">
-                Voir toutes →
-            </a>
+            @if (tenant('id'))
+                <a class="w-full text-center hover:underline py-1.5" href="{{ route('tenant.notifications.center') }}">
+                    Voir toutes →
+                </a>
+            @else
+                <a class="w-full text-center hover:underline py-1.5" href="{{ route('central.notifications.center') }}">
+                    Voir toutes →
+                </a>
+            @endif
         </div>
     </div>
 </div>

@@ -29,8 +29,6 @@
 <body>
     <div class="shell">
 
-        {{-- @livewire('app-guard') --}}
-
         <x-notifications />
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
@@ -57,7 +55,6 @@
 
             </div>
 
-            {{-- {{ dd(auth()->guard('central')->user()) }} --}}
             <div class="s-school">
                 <div class="s-school-inner">
                     <div class="s-school-name">{{ auth()->guard('central')->user()?->name ?? 'Super Admin' }}</div>
@@ -71,203 +68,216 @@
             </div>
 
             <nav class="s-nav">
+
+                {{-- ===================== DASHBOARD ===================== --}}
                 <div class="s-section">
                     <a data-sidebar-item href="{{ route('central.dashboard') }}"
                         class="s-link {{ request()->routeIs('central.dashboard') ? 'active' : '' }}">
-                        <div class="s-icon">📊</div><span class="s-label">Dashboard - Acceuil</span>
+                        <div class="s-icon">📊</div>
+                        <span class="s-label">Dashboard - Accueil</span>
                     </a>
                 </div>
+
+                {{-- ===================== DEMANDES D'ESPACE ÉCOLE ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Les demandes d'espace école</div>
+
+                    {{-- En attente --}}
                     <a href="{{ route('central.requests.school.space.portal', ['status' => 'tout']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'tout' ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-calendar-sync class="w-3 h-3 text-orange-400" />
+                            <x-lucide-calendar-sync class="w-3.5 h-3.5 text-amber-400" />
                         </div>
-                        <span class="s-label">En attentes</span>
-                        <span class="rounded-lg px-3 bg-orange-400/80 text-orange-900 border border-gray-500">
-                            {{ __zero(count(getSpace_requests('status', 'pending'))) }}
-                        </span>
+                        <span class="s-label">En attente</span>
+
                     </a>
+
+                    {{-- Approuvées --}}
                     <a href="{{ route('central.requests.school.space.portal', ['status' => 'active']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-circle-check-big class="w-3 h-3 text-green-400" />
+                            <x-lucide-circle-check-big class="w-3.5 h-3.5 text-emerald-400" />
                         </div>
                         <span class="s-label">Approuvées</span>
-                        <span class="rounded-lg px-3 bg-green-400/20 text-green-300 border border-gray-500">
-                            {{ __zero(count(getSpace_requests('validated', 1))) }}
-                        </span>
+
                     </a>
+
+                    {{-- Rejetées --}}
                     <a href="{{ route('central.requests.school.space.portal', ['status' => 'suspended']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'suspended' ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-circle-x class="w-3 h-3 text-red-400" />
+                            <x-lucide-circle-x class="w-3.5 h-3.5 text-rose-400" />
                         </div>
                         <span class="s-label">Rejetées</span>
-                        <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">
-                            {{ __zero(count(getSpace_requests('status', 'suspended'))) }}
-                        </span>
+
                     </a>
                 </div>
+
+                {{-- ===================== DEMANDES D'ABONNEMENT ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Les demandes d'abonnement</div>
+
+                    {{-- En attente --}}
                     <a href="{{ route('central.pendings.subscriptions.requests.portal') }}"
                         class="s-link {{ request()->routeIs('central.pendings.subscriptions.requests.portal') ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-calendar-sync class="w-3 h-3 text-green-400" />
+                            <x-lucide-calendar-sync class="w-3.5 h-3.5 text-amber-400" />
                         </div>
-                        <span class="s-label">En attentes</span>
-                        <span class="rounded-lg px-3 bg-orange-400/20 text-orange-300 border border-gray-500">100</span>
+                        <span class="s-label">En attente</span>
+
                     </a>
+
+                    {{-- Approuvées --}}
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-circle-check-big class="w-3 h-3 text-red-400" />
+                            <x-lucide-circle-check-big class="w-3.5 h-3.5 text-emerald-400" />
                         </div>
                         <span class="s-label">Approuvées</span>
-                        <span class="rounded-lg px-3 bg-green-400/20 text-red-300 border border-gray-500">7</span>
+
                     </a>
+
+                    {{-- Rejetées --}}
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-circle-x class="w-3 h-3 text-red-400" />
+                            <x-lucide-circle-x class="w-3.5 h-3.5 text-rose-400" />
                         </div>
                         <span class="s-label">Rejetées</span>
-                        <span class="rounded-lg px-3 bg-red-400/20 text-red-300 border border-gray-500">7</span>
+
                     </a>
                 </div>
+
+                {{-- ===================== LES ÉCOLES ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Les écoles</div>
+
+                    {{-- Actives --}}
                     <a href="{{ route('central.schools.portal', ['status' => 'active']) }}"
                         class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-school class="w-3 h-3 text-green-400" />
+                            <x-lucide-school class="w-3.5 h-3.5 text-emerald-400" />
                         </div>
                         <span class="s-label">Actives</span>
-                        <span class="rounded-lg px-3 bg-orange-400/80 text-orange-900 border border-gray-500">
-                            {{ __zero(count(getNotDeletedTenants())) }}
-                        </span>
+
                     </a>
+
+                    {{-- Inactives / Corbeille --}}
                     <a href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}"
                         class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'corbeille' ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-trash class="w-3 h-3 text-red-400" />
+                            <x-lucide-trash-2 class="w-3.5 h-3.5 text-rose-400" />
                         </div>
                         <span class="s-label">Inactives | Corbeille</span>
-                        <span class="rounded-lg px-3 bg-green-400/20 text-green-300 border border-gray-500">
-                            {{ __zero(count(getDeletedTenants())) }}
-                        </span>
+
                     </a>
                 </div>
+
+                {{-- ===================== GÉNÉRAL (Accordion) ===================== --}}
                 <div class="s-section">
-                    <div class="s-section-label">General</div>
-                    <div class="s-acc" id="acc-tenants">
-                        <div class="s-acc-trigger" onclick="toggleAcc('acc-tenants')">
-                            <div class="s-icon">
-                                <x-lucide-users class="w-3 h-3 text-gray-900" />
-                            </div>
-                            <span class="s-label">Les tenants</span>
-                            <span class="s-acc-arrow">▶</span>
-                        </div>
-                        <div class="s-acc-content">
-                            <a href="{{ route('central.tenants.portal') }}"
-                                class="s-link {{ request()->routeIs('central.tenants.portal') ? 'active' : '' }}"
-                                style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">
-                                    <x-lucide-circle-pile class="w-3 h-3 text-gray-500" />
-                                </div>
-                                <span class="s-label">Tous les tenants</span>
-                            </a>
-                            @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.tenant.profil', ['tenant_uuid' => $i]) }}"
-                                    class="s-link {{ request()->routeIs('central.tenant.profil') ? 'active' : '' }}"
-                                    style="font-size:.78rem;">
-                                    <div class="s-icon" style="font-size:.72rem;">
-                                        <x-lucide-user class="w-3 h-3 text-indigo-400" />
-                                    </div>
-                                    <span class="s-label">
-                                        Mr Tenant {{ $i }}
-                                    </span>
-                                </a>
-                            @endfor
-                            <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouveau
-                                    tenant</span>
-                            </a>
-                        </div>
-                    </div>
+                    <div class="s-section-label">Général</div>
+
                     <div class="s-acc" id="acc-schools">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-schools')">
                             <div class="s-icon">🏫</div>
-                            <span class="s-label">Les Ecoles</span>
+                            <span class="s-label">Les Écoles</span>
                             <span class="s-acc-arrow">▶</span>
                         </div>
+
                         <div class="s-acc-content">
                             <a href="{{ route('central.schools.portal') }}"
                                 class="s-link {{ request()->routeIs('central.schools.portal') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
-                                    <x-lucide-sliders-vertical class="w-3 h-3 text-amber-800" />
-
+                                    <x-lucide-sliders-vertical class="w-3 h-3 text-slate-400" />
                                 </div>
                                 <span class="s-label">Toutes les écoles</span>
                             </a>
-                            @for ($i = 1; $i < 4; $i++)
-                                <a href="{{ route('central.school.profil', ['school_uuid' => $i]) }}"
+
+                            @foreach (getTenants() as $ten)
+                                <a href="{{ route('central.school.profil', ['school' => $ten->id]) }}"
                                     class="s-link {{ request()->routeIs('central.school.profil') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
                                         <x-lucide-school class="w-3 h-3 text-amber-400" />
                                     </div>
                                     <span class="s-label">
-                                        Ecole {{ $i }}
+                                        <span>{{ $ten->school_name }}</span>
+                                        <span class="text-slate-600 text-xs">({{ $ten->simple_name }})</span>
                                     </span>
                                 </a>
-                            @endfor
+                            @endforeach
+
                             <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div><span class="s-label">Nouvelle
-                                    école</span>
+                                <div class="s-icon" style="font-size:.72rem;">
+                                    <x-lucide-plus class="w-3 h-3 text-emerald-400" />
+                                </div>
+                                <span class="s-label">Nouvelle école</span>
                             </a>
                         </div>
                     </div>
-
                 </div>
 
+                {{-- ===================== ABONNEMENTS VALIDÉS ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Les abonnements validés</div>
+
+                    {{-- Actifs --}}
                     <a href="{{ route('central.validateds.subscriptions.portal') }}"
                         class="s-link {{ request()->routeIs('central.validateds.subscriptions.portal') ? 'active' : '' }}">
                         <div class="s-icon">
-                            <x-lucide-calendar-check-2 class="w-3 h-3 text-green-400" />
+                            <x-lucide-calendar-check-2 class="w-3.5 h-3.5 text-indigo-400" />
                         </div>
                         <span class="s-label">Actifs</span>
-                        <span
-                            class="rounded-lg px-3 bg-indigo-400/20 text-indigo-300 border border-gray-500">777</span>
+
                     </a>
+
+                    {{-- Expirés --}}
                     <a href="#" class="s-link">
                         <div class="s-icon">
-                            <x-lucide-copy-x class="w-3 h-3 text-red-400" />
+                            <x-lucide-calendar-x-2 class="w-3.5 h-3.5 text-rose-400" />
                         </div>
                         <span class="s-label">Expirés</span>
-                        <span class="rounded-lg px-3 bg-indigo-400/20 text-red-300 border border-gray-500">7</span>
+
                     </a>
                 </div>
 
+                {{-- ===================== FINANCE ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Finance</div>
                     <a href="#" class="s-link">
-                        <div class="s-icon">💳</div><span class="s-label">Paiements</span>
+                        <div class="s-icon">
+                            <x-lucide-credit-card class="w-3.5 h-3.5 text-sky-400" />
+                        </div>
+                        <span class="s-label">Paiements</span>
                     </a>
                 </div>
 
+                {{-- ===================== ADMINISTRATION ===================== --}}
                 <div class="s-section">
                     <div class="s-section-label">Administration</div>
-                    <a href="#" class="s-link">
-                        <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>
+
+                    <a wire:navigate href="{{ route('central.plans.portal') }}"
+                        class="s-link {{ request()->routeIs('central.plans.portal') ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-package class="w-3.5 h-3.5 text-violet-400" />
+                        </div>
+                        <span class="s-label">Les packs</span>
                     </a>
+
                     <a href="#" class="s-link">
-                        <div class="s-icon">🔔</div><span class="s-label">Notifications</span>
+                        <div class="s-icon">
+                            <x-lucide-settings class="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                        <span class="s-label">Paramètres</span>
+                    </a>
+
+                    <a wire:navigate href="{{ route('central.notifications.center') }}" class="s-link">
+                        <div class="s-icon">
+                            <x-lucide-bell class="w-3.5 h-3.5 text-amber-400" />
+                        </div>
+                        <span class="s-label">Notifications</span>
                     </a>
                 </div>
+
             </nav>
 
             <div class="s-footer">
@@ -300,12 +310,6 @@
                     <span>EducConnect</span>
                     <span class="breadcrumb-sep">›</span>
                     <span class="breadcrumb-current">{{ $header ?? 'Dashboard' }}</span>
-                </div>
-
-                <div class="search" onclick="openSearch()">
-                    <span style="font-size:.8rem;color:var(--text3)">🔍</span>
-                    <span class="search-text">Rechercher...</span>
-                    <span class="search-kbd">Ctrl K</span>
                 </div>
 
                 <div class="h-right">
@@ -361,7 +365,7 @@
             min-w-0
             w-full
             max-w-full
-            overflow-x-hidden"
+            overflow-x-hidden bg-transparent"
                 id="content">
                 {{ $slot }}
             </main>

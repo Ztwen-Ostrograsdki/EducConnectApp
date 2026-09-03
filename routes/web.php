@@ -3,7 +3,9 @@
 use App\Livewire\Actions\RequestPage;
 use App\Livewire\Auth\CentralLogin;
 use App\Livewire\Central\CentralDashboard;
+use App\Livewire\Central\CentralNotificationsComponent;
 use App\Livewire\Central\NotificationsCenter;
+use App\Livewire\Central\PlansManagerComponent;
 use App\Livewire\Central\SchoolProfilComponent;
 use App\Livewire\Central\SchoolsComponent;
 use App\Livewire\Central\SchoolSpaceRequestsManageComponent;
@@ -44,10 +46,13 @@ Route::post('/logout', function () {
 })->name('central.logout')->middleware('auth:central');
 
 // ─── Pages super admin ────────────────────────────────────────────────
-Route::middleware(['auth:central'])->prefix('administration/master')->name('central.')->group(function () {
+Route::middleware(['auth:central'])->prefix('administration/central')->name('central.')->group(function () {
 
     // Dashboard central
     Route::get('/', CentralDashboard::class)->name('dashboard');
+
+    // Gestion des plans d'abonnement
+    Route::get('/plans/gestion', PlansManagerComponent::class)->name('plans.portal');
 
     // Gestion des demandes d'espace ecole
     Route::get('/les-demandes-espace/gestion/{status?}', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');
@@ -69,10 +74,10 @@ Route::middleware(['auth:central'])->prefix('administration/master')->name('cent
     Route::get('/les-abonnes/profil/ID={tenant_uuid}', TenantProfilComponent::class)->name('tenant.profil');
 
 
-    Route::get('/les-ecoles/profil/ID={school_uuid}', SchoolProfilComponent::class)->name('school.profil');
+    Route::get('/profil/ecole/{school}', SchoolProfilComponent::class)->name('school.profil');
 
 
-    Route::get('/centre-de-notifications', NotificationsCenter::class)->name('notifications.center');
+    Route::get('/centre-de-notifications', CentralNotificationsComponent::class)->name('notifications.center');
 
 });
 

@@ -82,6 +82,7 @@ use App\Livewire\Tenants\Subjects\ManageSubjectChiefsComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
 use App\Livewire\Tenants\Subjects\SubjectsPortal;
+use App\Livewire\Tenants\Subscription\RequestSubscriptionComponent;
 use App\Livewire\Tenants\Teachers\CreateTeachers;
 use App\Livewire\Tenants\Teachers\ManageTeacherSubjectsComponent;
 use App\Livewire\Tenants\Teachers\ManageTeacherYearlyClassesAssignmentComponent;
@@ -157,6 +158,8 @@ Route::middleware([
             // ANNEES SCOLAIRES
             Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
 
+            Route::get('/abonnement', RequestSubscriptionComponent::class)->name('subscription.request');
+
             Route::get('/annees-scolaires/details-annee-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
 
             Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
@@ -165,7 +168,7 @@ Route::middleware([
 
         });
 
-        Route::middleware(['role:directeur', 'tenant.has.active.schoolYear'])->prefix('administration')->name('tenant.')->group(function () {
+        Route::middleware(['role:directeur', 'tenant.has.active.schoolYear', 'tenant.has.active.subscription'])->prefix('administration')->name('tenant.')->group(function () {
             
             // TABLEAU DE BORD DIRECTEUR
             Route::get('/', TenantDashboard::class)->name('dashboard');
@@ -359,7 +362,7 @@ Route::middleware([
         
 
 
-        Route::middleware(['tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function(){
+        Route::middleware(['tenant.has.active.subscription', 'tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function(){
 
             Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
 

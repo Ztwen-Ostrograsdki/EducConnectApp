@@ -13,6 +13,7 @@ use App\Http\Middleware\EnsureTenantNotDeletedAt;
 use App\Http\Middleware\EnsureThatClasseIsActiveOrNotLockedMiddleware;
 use App\Http\Middleware\EnsureThatTeacherIsPrincipalOfClasseMiddleware;
 use App\Http\Middleware\EnsureThatTeacherNotBlockedAndCanAccessToTeacherSpace;
+use App\Http\Middleware\EnsureThatTenantHasValidNotExpiredSubscriptionMiddleware;
 use App\Http\Middleware\EnsureThatTutorIsActiveMiddleware;
 use App\Http\Middleware\EnsureThatUserAccountNotBlockedMiddleware;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
@@ -68,6 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.super.admin' => CheckSuperAdmin::class,
             'tenant.init' => InitializeTenancyByDomainForLivewire::class,
             'tenant.domain.open' => CheckIfTenantDomainNotBlocked::class,
+            'tenant.has.active.subscription' => EnsureThatTenantHasValidNotExpiredSubscriptionMiddleware::class,
             'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
             'tenant.domain.not.deleted.at' => EnsureTenantNotDeletedAt::class,
             'tenant.has.active.schoolYear' => RedirectIfHasntCurrentActiveSchoolYearMiddleware::class,

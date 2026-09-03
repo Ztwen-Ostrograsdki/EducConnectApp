@@ -38,4 +38,25 @@ class CentralUser extends Authenticatable
     {
         return 1;
     }
+
+
+
+    public function getTenantProfilPhotoUrl(string $tenantId)
+    {
+        $tenant = Tenant::find($tenantId);
+
+        if(!$tenant) return null;
+
+        $url = null;
+
+        $tenant->run(function() use (&$url){
+
+            $director = User::first();
+
+            $url = $director->profil_photo_url;
+
+        });
+
+        return $url;
+    }
 }

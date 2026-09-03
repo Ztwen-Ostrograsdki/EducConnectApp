@@ -8,6 +8,7 @@ export function registerUserListeners(tenantId, userId) {
                 icon: mapTypeToIcon(notification.type ?? "info"),
             });
         })
+
         .listen("UserAccountWasBlockedEvent", (e) => {
             Livewire.dispatch("UserAccountWasBlockedLiveEvent");
 
@@ -53,11 +54,26 @@ export function registerUserListeners(tenantId, userId) {
         .listen("SchoolYearDesactivatedEvent", (e) => {
             window.location.href = "/deconnexion-force";
         });
+
+    window.Echo.private(`tenant.${tenantId}`).listen(
+        "TenantSpaceWasBlockedEvent",
+        (e) => {
+            $wireui.notify({
+                title: "ESPACE ECOLE BLOQUE",
+                timeout: 0,
+                description: "L'accès à l'espace de cette école a été bloqué",
+                icon: mapTypeToIcon("error"),
+            });
+
+            window.location.href = "/deconnexion-force";
+        },
+    );
 }
 
 export function unregisterUserListeners(tenantId, userId) {
     window.Echo.leave(`tenant.${tenantId}.user.${userId}`);
     window.Echo.leave(`tenant.${tenantId}.others`);
+    window.Echo.leave(`tenant.${tenantId}`);
 }
 
 /**

@@ -470,6 +470,10 @@
 
                 <div class="s-section">
                     <div class="s-section-label">Administration</div>
+                    <a wire:navigate href="{{ route('tenant.subscription.request') }}"
+                        class="s-link {{ request()->routeIs('tenant.subscription.request') ? 'active' : '' }}">
+                        <div class="s-icon">🚀</div><span class="s-label">Abonnements</span>
+                    </a>
                     <a wire:navigate href="{{ route('tenant.settings') }}"
                         class="s-link {{ request()->routeIs('tenant.settings') ? 'active' : '' }}">
                         <div class="s-icon">⚙️</div><span class="s-label">Paramètres</span>

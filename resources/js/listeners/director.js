@@ -20,6 +20,10 @@ export function registerDirectorListeners(tenantId) {
             Livewire.dispatch("DataUpdatedEventLiveEvent");
         })
 
+        .listen("TenantDirectorDataUpdatedEvent", (e) => {
+            Livewire.dispatch("TenantDirectorDataUpdatedLiveEvent");
+        })
+
         // SCHOOL YEAR EVENTS
         .listen("NewSchoolYearCreated", (e) => {
             $wireui.notify({
