@@ -6,9 +6,11 @@ use App\Events\AnyErrorEvent;
 use App\Events\CredentialsSentToCreatedTenantSucessfullyEvent;
 use App\Events\FailedToSendCredentialsToCreatedTenantEvent;
 use App\Mail\MailToSendSchoolSpaceDataToNewTenantAfterRequestValidation;
+use App\Models\CentralUser;
 use App\Models\RequestToCreateNewTenant;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Notifications\CentralRealTimeNotification;
 use App\Services\EmailTemplateBuilder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -37,7 +39,7 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
     public function handle(): void
     {
         try {
-            $tenant = Tenant::findOrFail($this->tenantId);
+            $tenant = Tenant::find($this->tenantId);
 
             if (!$tenant) {
                 broadcast(new AnyErrorEvent("TENANT INEXISTANT", "Le tenant n'existe pas"));
@@ -81,12 +83,28 @@ class JobToSendCredentialsToCreatedTenant implements ShouldQueue
 
             CredentialsSentToCreatedTenantSucessfullyEvent::dispatch($this->tenantId);
 
+            $central  = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+                title:             "DONNEES DE CONNEXION ENVOYEE",
+                message:           "Les données de connexions à son espace école ({$tenant->school_name}) du tenant {$tenant->getFullName()} lui ont étés envoyées avec succès !",
+                type:              'success',
+            ));
+
             $tenant->update(['completed' => true]);
 
             $user->update(['credentials_sent' => true]);
 
         } catch (\Throwable $th) {
-            broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, cutter($th->getMessage(), 100)));
+            broadcast(new FailedToSendCredentialsToCreatedTenantEvent($this->tenantId, cutter($th->getMessage(), 2000)));
+
+            $central  = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+                title:             "ECHEC DE L'ENVOIE DES DONNEES DE CONNEXIONS",
+                message:           "Nous n'avons pas pu envoyer les données de connexions à {$tenant->getFullName()} pour qu'il puisse se connecter à l'espace de son école {$tenant->school_name}, veuiller réessayer!",
+                type:              'error',
+            ));
             throw $th; 
         } finally {
             tenancy()->end(); 

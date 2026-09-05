@@ -6,6 +6,7 @@ use App\Events\CentralDataUpdatedEvent;
 use App\Events\TenantDirectorDataUpdatedEvent;
 use App\Exceptions\SubscriptionRequestActionException;
 use App\Models\CentralUser;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\SubscriptionRequest;
 use App\Models\Tenant;
@@ -370,4 +371,84 @@ class SubscriptionService
 			Mail::to($email)->queue($mailable);
 		}
 	}
+
+
+   /**
+     * Le central offre un abonnement gratuit à un tenant, sans passer
+     * par une SubscriptionRequest (octroi manuel, hors flux de demande).
+     */
+    public function grantFree(string $tenantId, int $planId, int $daysCount): ?Subscription
+    {
+        $tenant = Tenant::find($tenantId);
+
+        $plan = Plan::find($planId);
+
+        if(!$tenant || !$plan){
+
+
+            $central  = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+                title:             "ECHEC DE L'OCTROIE DE L'ABONNEMENT",
+                message:           "Nous n'avons pas pu octroyer l'abonnement, veuiller réessayer!",
+                type:              'error',
+            ));
+
+            return null;
+        }
+
+
+        try {
+            
+            return DB::transaction(function () use ($tenant, $plan, $daysCount) {
+                
+                $subscription = Subscription::create([
+                    'tenant_id' => $tenant->id,
+                    'plan_id' => $plan->id,
+                    'subscription_request_id' => null,
+                    'started_at' => now(),
+                    'expire_at' => now()->addDays($daysCount),
+                    'status' => 'active',
+                    'is_free' => true,
+                ]);
+
+                $moduleAccess = TenantModuleAccess::firstOrCreate(['tenant_id' => $tenant->id]);
+                $moduleAccess->applyPack($plan->pack);
+                $moduleAccess->update(['pack_expires_at' => $subscription->expire_at]);
+
+                DB::afterCommit(function () use ($tenant, $plan, $subscription, $daysCount) {
+                    
+                    $central  = CentralUser::first();
+
+                    $central?->notify(new CentralRealTimeNotification(
+                        title:             "ABONNEMENT OFFERT",
+                        message:           "Vous avez offert un abonnement {$plan->name} à {$tenant->getFullName()} pour une durée de {$daysCount}",
+                        type:              'success',
+                    ));
+                    
+                });
+
+                return $subscription;
+            });
+            
+        } catch (\Throwable $th) {
+            
+            $central  = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+                title:             "ECHEC DE L'OCTROIE DE L'ABONNEMENT",
+                message:           "L'octroie de l'abonnement a échoué! : " . cutter($th->getMessage(), 2000),
+                type:              'error',
+            ));
+
+            return null;
+        }
+        finally{
+
+            broadcast(new CentralDataUpdatedEvent());
+
+            broadcast(new TenantDirectorDataUpdatedEvent($tenantId));
+
+        }
+    }
 }

@@ -6,6 +6,7 @@ use App\Exceptions\SubscriptionRequestActionException;
 use App\Livewire\Central\CentralTraits\CentralReloaderTrait;
 use App\Models\SubscriptionRequest;
 use App\Services\Subscriptions\SubscriptionService;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -29,6 +30,25 @@ class SubscriptionsRequestsManageComponent extends Component
     public ?int $rejectingRequestId = null;
     public string $reject_reason = '';
 
+    public function mount()
+    {
+        // Restaure depuis la session au chargement de la page
+        $this->filter = session('subscription_requests.filter', 'awaiting');
+        $this->search = session('subscription_requests.search', '');
+    }
+
+    public function updatedFilter(?string $value)
+    {
+        session(['subscription_requests.filter' => $value]);
+        $this->resetPage();
+    }
+
+    public function updatedSearch(?string $value)
+    {
+        session(['subscription_requests.search' => $value]);
+        $this->resetPage();
+    }
+
 
     #[On('CentralDataUpdatedLiveEvent')]
     public function relaodData(): void
@@ -46,7 +66,8 @@ class SubscriptionsRequestsManageComponent extends Component
         $this->resetPage();
     }
 
-    protected function baseQuery()
+    #[Computed]
+    public function requests()
     {
         return SubscriptionRequest::query()
             ->with(['tenant', 'plan', 'treatedBy'])
@@ -59,7 +80,7 @@ class SubscriptionsRequestsManageComponent extends Component
                         ->orWhere('email', 'like', "%{$this->search}%");
                 });
             })
-            ->latest();
+            ->latest()->paginate(20);
     }
 
     // ─── Approbation ────────────────────────────────────────────────
@@ -229,8 +250,6 @@ class SubscriptionsRequestsManageComponent extends Component
 
     public function render()
     {
-        return view('livewire.central.subscriptions-requests-manage-component', [
-            'requests' => $this->baseQuery()->paginate(10),
-        ]);
+        return view('livewire.central.subscriptions-requests-manage-component');
     }
 }

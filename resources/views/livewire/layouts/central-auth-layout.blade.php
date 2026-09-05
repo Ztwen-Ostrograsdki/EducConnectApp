@@ -60,9 +60,7 @@
                     <div class="s-school-name">{{ auth()->guard('central')->user()?->name ?? 'Super Admin' }}</div>
                     <div class="s-school-year">
                         <span class="s-school-dot"></span>
-                        <select name="" id="">
-                            <option value="">2022</option>
-                        </select>
+                        <span>{{ __formatDate(now()) }}</span>
                     </div>
                 </div>
             </div>
@@ -118,32 +116,15 @@
                     <div class="s-section-label">Les demandes d'abonnement</div>
 
                     {{-- En attente --}}
-                    <a href="{{ route('central.pendings.subscriptions.requests.portal') }}"
-                        class="s-link {{ request()->routeIs('central.pendings.subscriptions.requests.portal') ? 'active' : '' }}">
+                    <a href="{{ route('central.subscriptions.requests.portal') }}"
+                        class="s-link {{ request()->routeIs('central.subscriptions.requests.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3.5 h-3.5 text-amber-400" />
                         </div>
-                        <span class="s-label">En attente</span>
+                        <span class="s-label">Portail des demandes</span>
 
                     </a>
 
-                    {{-- Approuvées --}}
-                    <a href="#" class="s-link">
-                        <div class="s-icon">
-                            <x-lucide-circle-check-big class="w-3.5 h-3.5 text-emerald-400" />
-                        </div>
-                        <span class="s-label">Approuvées</span>
-
-                    </a>
-
-                    {{-- Rejetées --}}
-                    <a href="#" class="s-link">
-                        <div class="s-icon">
-                            <x-lucide-circle-x class="w-3.5 h-3.5 text-rose-400" />
-                        </div>
-                        <span class="s-label">Rejetées</span>
-
-                    </a>
                 </div>
 
                 {{-- ===================== LES ÉCOLES ===================== --}}
@@ -205,13 +186,6 @@
                                     </span>
                                 </a>
                             @endforeach
-
-                            <a href="#" class="s-link" style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">
-                                    <x-lucide-plus class="w-3 h-3 text-emerald-400" />
-                                </div>
-                                <span class="s-label">Nouvelle école</span>
-                            </a>
                         </div>
                     </div>
                 </div>

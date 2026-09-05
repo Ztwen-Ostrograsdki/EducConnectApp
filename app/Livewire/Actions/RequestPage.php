@@ -213,7 +213,7 @@ class RequestPage extends Component
     public function render()
     {
 
-        $enseignement_types = BeninData::getSytems();
+        $enseignement_types = config('app.enseignement_types');
 
         $periode_types = config('app.periode_types');
 

@@ -47,7 +47,7 @@
                         </p>
                     </div>
                     <div class="shrink-0">
-                        <div class="h-2 w-full sm:w-32 rounded-full bg-emerald-950/50 overflow-hidden">
+                        <div class="h-2 w-full sm:w-32 rounded-full bg-emerald-950/80 overflow-hidden">
                             @php
                                 $pct = min(
                                     100,
@@ -59,8 +59,9 @@
                                     ),
                                 );
                             @endphp
-                            <div class="h-full rounded-full bg-emerald-400 transition-all"
-                                style="width: {{ $pct }}%"></div>
+                            <div class="h-full rounded-full bg-emerald-500/90 transition-all"
+                                style="width: {{ $pct }}%">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -135,10 +135,13 @@ return [
     ],
 
     'enseignement_types' => [
-        'technique' => 'Technique',
-        'industriel' => 'Industriel',
-        'general' => 'Général',
-        'hybride' => 'Hybride',
+        'general' => "Général",
+        'profesionnel' => "Professionnel",
+        'technique' => "Technique",
+        'general-profesionnel' => "Général - Professionnel",
+        'general-technique' => "Général - Technique",
+        'profesionnel-technique' => "Technique - Professionnel",
+        'general-profesionnel-technique' => "Général - Technique - Professionnel",
     ],
 
 

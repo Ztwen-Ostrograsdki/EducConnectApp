@@ -1,517 +1,496 @@
-<div class="bg-slate-950 min-h-screen flex items-center justify-center p-4 md:p-8">
+<div class="min-h-screen bg-[#070b14] text-slate-100 flex items-center justify-center p-4 md:p-8">
 
     @if ($done)
-        <section data-animate='card' class="w-full max-w-5xl glass rounded-2xl p-8 md:p-12 shadow-glow">
-            <div id="alert-additional-content-3" class="p-4 mb-4 text-lg bg-green-500 text-green-900 rounded-2xl"
-                role="alert">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center text-gray-950 text-xl">
-                        <x-lucide-check-check class="w-6 h-6" />
-                        <span class="sr-only">Info</span>
-                        <h3 class="">Votre demande a été soumise avec succès</h3>
+        {{-- ===================== SUCCESS STATE ===================== --}}
+        <section class="w-full max-w-2xl">
+            <div
+                class="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-[#0f1523] p-8 md:p-12 shadow-2xl shadow-black/40 text-center">
+                {{-- Glow --}}
+                <div
+                    class="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-64 rounded-full bg-emerald-500/20 blur-3xl">
+                </div>
+
+                <div class="relative">
+                    <div
+                        class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/15">
+                        <x-lucide-check-check class="h-10 w-10 text-emerald-400" />
                     </div>
-                    <button wire:click='resetForm' type="button"
-                        class="ms-auto -mx-1.5 -my-1.5 bg-green-500 text-gray-700 rounded focus:ring-2 focus:ring-success-medium p-1.5 hover:text-gray-900 inline-flex items-center justify-center h-8 w-8 shrink-0">
-                        <span class="" wire:target='resetForm' wire:loading.remove>
-                            <x-lucide-circle-x class="w-5 h-5" />
+
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">
+                        Demande soumise avec succès
+                    </h2>
+                    <p class="mt-3 text-slate-400 leading-relaxed max-w-md mx-auto">
+                        Vous recevrez un e-mail contenant les informations de votre espace.
+                        <span class="text-amber-300/90">Ne partagez pas ces détails.</span>
+                    </p>
+
+                    <button wire:click="resetForm" type="button"
+                        class="mt-8 inline-flex h-12 items-center gap-2 rounded-xl bg-emerald-600 px-8 text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition-all hover:bg-emerald-500 disabled:opacity-60">
+                        <span wire:loading.remove wire:target="resetForm" class="inline-flex items-center gap-2">
+                            <x-lucide-check class="h-4 w-4" />
+                            Terminé
                         </span>
-                        <span wire:target='resetForm' wire:loading.flex class="items-center gap-1.5">
-                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                        <span wire:loading wire:target="resetForm" class="inline-flex items-center gap-2">
+                            <x-lucide-loader-2 class="h-4 w-4 animate-spin" />
+                            En cours…
                         </span>
                     </button>
                 </div>
-                <div class="mt-2 mb-4">
-                    Votre demande a été soumise avec succès! Vous recevrez un courriel contenant les information de
-                    votre espace. Veuillez cependant à ne pas partager les détails que vous recevrez!
-                </div>
-                <button wire:click='resetForm' type="button"
-                    class="inline-flex items-center text-green-300 bg-green-700 p-3 px-6 rounded-2xl hover:bg-green-950 hover:text-green-100">
-                    <span class="flex items-center gap-1.5" wire:target='resetForm' wire:loading.remove>
-                        <span>Terminé</span>
-                        <x-lucide-check class="w-5 h-5" />
-                    </span>
-                    <span wire:target='resetForm' wire:loading.flex class="items-center gap-1.5">
-                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                        <span>En cours...</span>
-                    </span>
-                </button>
             </div>
         </section>
     @else
-        <section data-animate='card' class="w-full max-w-5xl glass rounded-2xl p-8 md:p-12 shadow-glow">
+        {{-- ===================== FORMULAIRE ===================== --}}
+        <section class="w-full max-w-4xl">
+
+            {{-- Header --}}
             <div class="mb-10 text-center">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2 gradient-text">Créez votre espace</h2>
-                <p class="text-gray-400">Et prenez le controle, soyez pro</p>
+                <div
+                    class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-indigo-500/25 bg-indigo-500/10">
+                    <x-lucide-rocket class="h-7 w-7 text-indigo-400" />
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                    Créez votre espace
+                </h1>
+                <p class="mt-2 text-slate-400">
+                    Prenez le contrôle. Soyez pro.
+                </p>
             </div>
+
+            {{-- Erreurs globales --}}
             @if ($errors->any())
-                <div class="flex p-4 mb-4 text-sm border border-red-200 bg-red-200 text-red-900 rounded-2xl animate-pulse"
-                    role="alert">
-                    <svg class="w-4 h-4 me-2 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <span class="sr-only">Danger</span>
+                <div
+                    class="mb-6 flex items-start gap-3 rounded-2xl border border-rose-500/25 bg-rose-500/10 px-4 py-3.5 text-sm text-rose-200">
+                    <x-lucide-octagon-alert class="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
                     <div>
-                        <h4 class="font-medium">FORMULAIRE INCORRECT : Vérifiez que tous les champs sont bien rensignés:
-                        </h4>
+                        <p class="font-semibold">Formulaire incorrect</p>
+                        <p class="mt-0.5 text-rose-300/80">Vérifiez que tous les champs obligatoires sont correctement
+                            renseignés.</p>
                     </div>
                 </div>
             @endif
-            <div class="my-4 flex justify-center font-semibold text-red-300">
-                <h5>
-                    Les champs avec <span class="text-red-600 mx-1.5">*</span> sont obligatoires!
-                </h5>
-            </div>
-            <form wire:submit.prevent='submit' class="space-y-6">
-                <div
-                    class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-slate-700 rounded-2xl border border-slate-700">
-                    <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                        <x-lucide-user class="w-5 h-5" />
-                        <h3 class="">Vos informations personnelles</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Nom
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input wire:model.live='name' type="text" id="name"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Votre nom">
-                                @error('name')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+
+            <p class="mb-6 text-center text-sm text-slate-500">
+                Les champs marqués <span class="text-rose-400 font-medium">*</span> sont obligatoires
+            </p>
+
+            <form wire:submit.prevent="submit" class="space-y-6">
+
+                {{-- ═══════ 1. INFORMATIONS PERSONNELLES ═══════ --}}
+                <div class="rounded-2xl border border-white/[0.06] bg-[#0f1523] p-5 sm:p-6 shadow-lg shadow-black/10">
+                    <div class="mb-5 flex items-center gap-3 border-b border-white/[0.05] pb-4">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/15 border border-indigo-500/20">
+                            <x-lucide-user class="h-4.5 w-4.5 text-indigo-400" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="prenames">Prénoms
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="text" wire:model.live='prenames' id="prenames"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Vos prénoms ">
-                                @error('prenames')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <h3 class="font-semibold text-white">Informations personnelles</h3>
+                            <p class="text-xs text-slate-500">Vos coordonnées en tant que responsable</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        {{-- Nom --}}
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="email">Email
-                                <span class="text-red-500">*</span>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Nom <span class="text-rose-400">*</span>
                             </label>
-                            <div class="relative">
-                                <input type="text" wire:model.live='email' id="email"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Votre mail....">
-                                @error('email')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="contacts">Votre contact
-                                (unique)
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input wire:model.live='contacts' type="text" id="contacts"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="01617777777">
-                                @error('contacts')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="birth_date">Date de
-                                naissance
-                            </label>
-                            <div class="relative">
-                                <input wire:model.live='birth_date' type="date" id="birth_date"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all">
-                                @error('birth_date')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="gender">Genre
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <select wire:model.live='gender' id="gender"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le genre</option>
-                                    @foreach ($genders as $g)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $g }}">
-                                            {{ $g }}</option>
-                                    @endforeach
-                                </select>
-                                @error('gender')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <input wire:model.live="name" type="text" id="name"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="Votre nom">
+                            @error('name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
 
+                        {{-- Prénoms --}}
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300"
-                                for="job_name">Fonction</label>
-                            <div class="relative">
-                                <input type="text" wire:model.live='job_name' id="job_name"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Entrepreneur....">
-                                @error('job_name')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="domain_name">Votre nom de
-                                domaine
-                                <span class="text-red-500">*</span>
-                                <span class="text-xs text-amber-500">NB: Le nom de domaine n'est plus modifiable après
-                                    validation et ne doit contenir ni d'espace ni de masjuscules</span>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Prénoms <span class="text-rose-400">*</span>
                             </label>
-                            <div class="relative">
-                                <input type="text" wire:model.live='domain_name' id="domain_name"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Choisissez un nom de domaine pour votre école. Ex: ecole-nom-ecole">
-                                @error('domain_name')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <input wire:model.live="prenames" type="text" id="prenames"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="Vos prénoms">
+                            @error('prenames')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Email --}}
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Email <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="email" type="email" id="email"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="vous@exemple.com">
+                            @error('email')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Contact --}}
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Contact (unique) <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="contacts" type="text" id="contacts"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="01 61 77 77 77">
+                            @error('contacts')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Date de naissance --}}
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Date de naissance
+                            </label>
+                            <input wire:model.live="birth_date" type="date" id="birth_date"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                            @error('birth_date')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Genre --}}
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Genre <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="gender" id="gender"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le genre</option>
+                                @foreach ($genders as $g)
+                                    <option value="{{ $g }}">{{ $g }}</option>
+                                @endforeach
+                            </select>
+                            @error('gender')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Fonction --}}
+                        <div class="md:col-span-2">
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Fonction
+                            </label>
+                            <input wire:model.live="job_name" type="text" id="job_name"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="Directeur, Entrepreneur…">
+                            @error('job_name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        {{-- Domaine --}}
+                        <div class="md:col-span-2">
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Nom de domaine <span class="text-rose-400">*</span>
+                            </label>
+                            <input wire:model.live="domain_name" type="text" id="domain_name"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="ecole-nom-ecole">
+                            <p class="mt-1.5 text-[11px] text-amber-400/80">
+                                Non modifiable après validation · sans espaces ni majuscules
+                            </p>
+                            @error('domain_name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-amber-500 rounded-2xl border border-amber-500">
-                    <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                        <x-lucide-school class="w-5 h-5" />
-                        <h3 class="">Les informations de l'école</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="school_name">Nom complet
-                                de l'école
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input wire:model.live='school_name' type="text" id="school_name"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Nom complet de l'école">
-                                @error('school_name')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                {{-- ═══════ 2. INFORMATIONS ÉCOLE ═══════ --}}
+                <div class="rounded-2xl border border-white/[0.06] bg-[#0f1523] p-5 sm:p-6 shadow-lg shadow-black/10">
+                    <div class="mb-5 flex items-center gap-3 border-b border-white/[0.05] pb-4">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/20">
+                            <x-lucide-school class="h-4.5 w-4.5 text-amber-400" />
                         </div>
-
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="simple_name">Abbréviation
-                                adoptée pour le nom de l'école</label>
-                            <div class="relative">
-                                <input wire:model.live='simple_name' id="simple_name" type="text"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="CEPGA">
-                                @error('simple_name')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <h3 class="font-semibold text-white">Informations de l’école</h3>
+                            <p class="text-xs text-slate-500">Identité et organisation de l’établissement</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="level">Niveau de
-                                l'enseignement
-                                <span class="text-red-500">*</span>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Nom complet de l’école <span class="text-rose-400">*</span>
                             </label>
-                            <div class="relative">
-                                <select wire:model.live='level' id="level"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le niveau d'enseignement</option>
-                                    @foreach ($this->levels as $lev)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $lev }}">
-                                            {{ $lev }}</option>
-                                    @endforeach
-                                </select>
-                                @error('level')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="school_devise">Dévise de
-                                l'école</label>
-                            <div class="relative">
-                                <input wire:model.live='school_devise' id="school_devise" type="text"
-                                    class="w-full bg-gray-900/50 border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all"
-                                    placeholder="Succès - Discipline - Travail ">
-                                @error('school_devise')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="enseignement_type">Type
-                                d'énseignement
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <select wire:model.live='enseignement_type' id="enseignement_type"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le type d'enseignement</option>
-                                    @foreach ($enseignement_types as $et)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $et }}">
-                                            {{ $et }}</option>
-                                    @endforeach
-                                </select>
-                                @error('enseignement_type')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <input wire:model.live="school_name" type="text" id="school_name"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="Nom complet de l’école">
+                            @error('school_name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="school_type">Type d'école
-                                <span class="text-red-500">*</span> </label>
-                            <div class="relative">
-                                <select wire:model.live='school_type' id="school_type"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le type d'école</option>
-                                    @foreach ($school_types as $st)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $st }}">
-                                            {{ $st }}</option>
-                                    @endforeach
-                                </select>
-                                @error('school_type')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="periode_type">Type de
-                                période
-                                <span class="text-red-500">*</span> </label>
-                            <div class="relative">
-                                <select wire:model.live='periode_type' id="periode_type"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le type de période</option>
-                                    @foreach ($periode_types as $pt)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $pt }}">
-                                            {{ $pt }}</option>
-                                    @endforeach
-                                </select>
-                                @error('periode_type')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="devoirs_type">Les devoirs
-                                par
-                                <span class="text-red-500">*</span> {{ $periode_type ? $periode_type : 'période' }}
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Abréviation
                             </label>
-                            <div class="relative">
-                                <select wire:model.live='devoirs_type' id="devoirs_type"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le type</option>
-                                    @foreach ($devoirs_types as $dt)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $dt }}">
-                                            {{ $dt }}</option>
-                                    @endforeach
-                                </select>
-                                @error('devoirs_type')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <input wire:model.live="simple_name" type="text" id="simple_name"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="CEPGA">
+                            @error('simple_name')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Niveau d’enseignement <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="level" id="level"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le niveau</option>
+                                @foreach ($this->levels as $lev)
+                                    <option value="{{ $lev }}">{{ $lev }}</option>
+                                @endforeach
+                            </select>
+                            @error('level')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Devise de l’école
+                            </label>
+                            <input wire:model.live="school_devise" type="text" id="school_devise"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all"
+                                placeholder="Succès · Discipline · Travail">
+                            @error('school_devise')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Type d’enseignement <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="enseignement_type" id="enseignement_type"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le type</option>
+                                @foreach ($enseignement_types as $et)
+                                    <option value="{{ $et }}">{{ $et }}</option>
+                                @endforeach
+                            </select>
+                            @error('enseignement_type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Type d’école <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="school_type" id="school_type"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le type</option>
+                                @foreach ($school_types as $st)
+                                    <option value="{{ $st }}">{{ $st }}</option>
+                                @endforeach
+                            </select>
+                            @error('school_type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Type de période <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="periode_type" id="periode_type"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le type de période</option>
+                                @foreach ($periode_types as $pt)
+                                    <option value="{{ $pt }}">{{ $pt }}</option>
+                                @endforeach
+                            </select>
+                            @error('periode_type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Les devoirs par <span class="text-rose-400">*</span>
+                                {{ $periode_type ? $periode_type : 'période' }}
+                            </label>
+                            <select wire:model.live="devoirs_type" id="devoirs_type"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le type</option>
+                                @foreach ($devoirs_types as $dt)
+                                    <option value="{{ $dt }}">{{ $dt }}</option>
+                                @endforeach
+                            </select>
+                            @error('devoirs_type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="flex flex-col gap-y-2 w-full p-3 shadow-md shadow-sky-500 rounded-2xl border border-sky-500">
-                    <div class="flex justify-start gap-x-2 border-b border-gray-700 py-2 text-gray-500 mb-2.5">
-                        <x-lucide-map-pin-check class="w-5 h-5" />
-                        <h3 class="">Localisation de l'école</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="name">Pays
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <select wire:model.live='country' id="country"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le pays
-                                    </option>
-                                    @foreach ($countries as $ck => $ctn)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $ctn }}">
-                                            {{ $ctn }}</option>
-                                    @endforeach
-                                </select>
-                                @error('country')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                {{-- ═══════ 3. LOCALISATION ═══════ --}}
+                <div class="rounded-2xl border border-white/[0.06] bg-[#0f1523] p-5 sm:p-6 shadow-lg shadow-black/10">
+                    <div class="mb-5 flex items-center gap-3 border-b border-white/[0.05] pb-4">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/15 border border-sky-500/20">
+                            <x-lucide-map-pin class="h-4.5 w-4.5 text-sky-400" />
                         </div>
-
+                        <div>
+                            <h3 class="font-semibold text-white">Localisation de l’école</h3>
+                            <p class="text-xs text-slate-500">Pays, département et ville</p>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 items-center md:grid-cols-2 gap-6 mb-4">
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-medium mb-2 text-gray-300" for="department">Le
-                                département
-                                <span class="text-red-500">*</span>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Pays <span class="text-rose-400">*</span>
                             </label>
-                            <div class="relative">
-                                <select wire:model.live='department' id="department"
-                                    class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                    <option value="">Sélectionnez le département
-                                    </option>
-                                    @foreach ($departments as $dk => $dn)
-                                        <option class="bg-slate-800 text-slate-300" value="{{ $dn }}">
-                                            {{ $dn }}</option>
-                                    @endforeach
-                                </select>
-                                @error('department')
-                                    <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                        <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
+                            <select wire:model.live="country" id="country"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le pays</option>
+                                @foreach ($countries as $ck => $ctn)
+                                    <option value="{{ $ctn }}">{{ $ctn }}</option>
+                                @endforeach
+                            </select>
+                            @error('country')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
-                        <div wire:loading wire:target='department' wire:target='city'>
-                            <div class="py-3 mt-3 flex justify-center items-center gap-x-3 text-gray-600">
-                                <x-lucide-loader class="w-5 h-5 animate-spin" />
-                                <h5>Chargement en cours ...</h5>
-                            </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                Département <span class="text-rose-400">*</span>
+                            </label>
+                            <select wire:model.live="department" id="department"
+                                class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                <option value="">Sélectionnez le département</option>
+                                @foreach ($departments as $dk => $dn)
+                                    <option value="{{ $dn }}">{{ $dn }}</option>
+                                @endforeach
+                            </select>
+                            @error('department')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                    <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                </p>
+                            @enderror
                         </div>
-                        @if ($department)
-                            <div data-animate='card' wire:target='department' wire:target='city' wire:loading.remove>
-                                <label class="block text-sm font-medium mb-2 text-gray-300" for="city">La ville
-                                    <span class="text-red-500">*</span>
+
+                        {{-- Ville (conditionnelle) --}}
+                        <div class="md:col-span-2" wire:loading.class="opacity-50" wire:target="department">
+                            @if ($department)
+                                <label
+                                    class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                    Ville <span class="text-rose-400">*</span>
                                 </label>
-                                <div class="relative">
-                                    <select wire:model.live='city' id="city"
-                                        class="w-full border bg-gray-900/50 border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-primary-500 transition-all ">
-                                        <option value="">Sélectionnez la ville</option>
-                                        @foreach ($cities as $ck => $cn)
-                                            <option class="bg-slate-800 text-slate-300" value="{{ $cn }}">
-                                                {{ $cn }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('city')
-                                        <span class="flex items-center p-2 text-sm text-red-400 gap-x-2">
-                                            <x-lucide-octagon-alert class="w-4 h-4 text-red-500" />
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
+                                <select wire:model.live="city" id="city"
+                                    class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                                    <option value="">Sélectionnez la ville</option>
+                                    @foreach ($cities as $ck => $cn)
+                                        <option value="{{ $cn }}">{{ $cn }}</option>
+                                    @endforeach
+                                </select>
+                                @error('city')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                        <x-lucide-octagon-alert class="h-3.5 w-3.5" /> {{ $message }}
+                                    </p>
+                                @enderror
+                            @else
+                                <div
+                                    class="flex h-[46px] items-center justify-center rounded-xl border border-dashed border-white/10 bg-[#070b14]/50 text-sm text-slate-500">
+                                    Sélectionnez d’abord un département
                                 </div>
-                            </div>
-                        @endif
-
+                            @endif
+                        </div>
                     </div>
                 </div>
 
+                {{-- Bouton submit --}}
                 <button type="submit" wire:loading.attr="disabled"
-                    class="p-3 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-sky-600 hover:bg-sky-800">
-                    <span class="flex items-center gap-1.5" wire:target='submit' wire:loading.remove>
-                        <span>Soumettre ma demande</span>
-                        <x-lucide-send class="w-5 h-5" />
+                    class="group relative flex h-13 w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-indigo-600 text-sm font-semibold text-white shadow-xl shadow-indigo-900/40 transition-all hover:bg-indigo-500 disabled:opacity-60">
+                    <span
+                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                    <span wire:loading.remove wire:target="submit" class="relative inline-flex items-center gap-2">
+                        Soumettre ma demande
+                        <x-lucide-send class="h-4.5 w-4.5" />
                     </span>
-                    <span wire:target='submit' wire:loading.flex class="items-center gap-1.5">
-                        <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
-                        <span>En cours...</span>
+                    <span wire:loading wire:target="submit" class="relative inline-flex items-center gap-2">
+                        <x-lucide-loader-2 class="h-4.5 w-4.5 animate-spin" />
+                        Envoi en cours…
                     </span>
                 </button>
             </form>
 
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                <div class="glass p-6 rounded-xl hover:bg-gray-900/20 transition-all">
-                    <i class="fa-solid fa-phone text-3xl mb-4 text-primary-500"></i>
-                    <h4 class="font-semibold mb-2">Contacter nous</h4>
-                    <p class="text-gray-400 text-sm">{{ env('APP_NUMBER') }}</p>
+            {{-- Contact footer --}}
+            <div class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div
+                    class="rounded-2xl border border-white/[0.05] bg-[#0f1523]/60 p-5 text-center transition-all hover:border-indigo-500/20">
+                    <div
+                        class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400">
+                        <x-lucide-phone class="h-5 w-5" />
+                    </div>
+                    <h4 class="text-sm font-semibold text-white">Nous contacter</h4>
+                    <p class="mt-1 text-xs text-slate-500">{{ env('APP_NUMBER') }}</p>
                 </div>
-                <div class="glass p-6 rounded-xl hover:bg-gray-900/20 transition-all">
-                    <i class="fa-solid fa-envelope text-3xl mb-4 text-secondary-500"></i>
-                    <h4 class="font-semibold mb-2">Service support</h4>
-                    <p class="text-gray-400 text-sm">support@educconnect.com</p>
+                <div
+                    class="rounded-2xl border border-white/[0.05] bg-[#0f1523]/60 p-5 text-center transition-all hover:border-sky-500/20">
+                    <div
+                        class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400">
+                        <x-lucide-mail class="h-5 w-5" />
+                    </div>
+                    <h4 class="text-sm font-semibold text-white">Support</h4>
+                    <p class="mt-1 text-xs text-slate-500">support@educconnect.com</p>
                 </div>
-                <div class="glass p-6 rounded-xl hover:bg-gray-900/20 transition-all">
-                    <i class="fa-solid fa-location-dot text-3xl mb-4 text-accent-500"></i>
-                    <h4 class="font-semibold mb-2">Visiter notre siège</h4>
-                    <p class="text-gray-400 text-sm">COTONOU, BENIN</p>
+                <div
+                    class="rounded-2xl border border-white/[0.05] bg-[#0f1523]/60 p-5 text-center transition-all hover:border-amber-500/20">
+                    <div
+                        class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
+                        <x-lucide-map-pin class="h-5 w-5" />
+                    </div>
+                    <h4 class="text-sm font-semibold text-white">Siège</h4>
+                    <p class="mt-1 text-xs text-slate-500">Cotonou, Bénin</p>
                 </div>
             </div>
         </section>
     @endif
-
 </div>
-
