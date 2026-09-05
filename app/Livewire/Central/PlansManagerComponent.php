@@ -63,21 +63,32 @@ class PlansManagerComponent extends Component
         $this->showForm = true;
     }
 
-    public function editPlan(int $planId): void
+    public function editPlan(int $planId)
     {
         $plan = Plan::findOrFail($planId);
 
-        $this->editingPlanId = $plan->id;
-        $this->name = $plan->name;
-        $this->slug = $plan->slug;
-        $this->description = $plan->description ?? '';
-        $this->price = $plan->price;
-        $this->days_count = $plan->days_count;
-        $this->pack = $plan->pack;
-        $this->is_active = $plan->is_active;
-        $this->order = $plan->order;
+        if(!$plan){
 
-        $this->showForm = true;
+            $this->notification()->error('Plan ou pack introuvable', "Le pack ou le plan n'existe pas ou a été retiré.");
+
+            return;
+
+        }
+
+        if($plan->isEditable()){
+
+            $this->editingPlanId = $plan->id;
+            $this->name = $plan->name;
+            $this->slug = $plan->slug;
+            $this->description = $plan->description ?? '';
+            $this->price = $plan->price;
+            $this->days_count = $plan->days_count;
+            $this->pack = $plan->pack;
+            $this->is_active = $plan->is_active;
+            $this->order = $plan->order;
+
+            $this->showForm = true;
+        }
     }
 
     public function save(): void
@@ -129,9 +140,17 @@ class PlansManagerComponent extends Component
         );
     }
 
-    public function confirmDelete(int $planId): void
+    public function confirmDelete(int $planId)
     {
         $plan = Plan::findOrFail($planId);
+
+        if(!$plan){
+
+            $this->notification()->error('Plan ou pack introuvable', "Le pack ou le plan n'existe pas ou a été retiré.");
+
+            return;
+
+        }
 
         $this->dispatch('swal', [
             'title' => 'Supprimer ce plan ?',

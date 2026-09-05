@@ -91,10 +91,12 @@
                             </a>
                         </div>
                     </div>
-                    <a wire:navigate data-sidebar-item href="{{ route('tenant.accounts') }}"
-                        class="s-link {{ request()->routeIs('tenant.accounts') ? 'active' : '' }}">
-                        <div class="s-icon">📦</div><span class="s-label">Les comptes</span>
-                    </a>
+                    @if (tenancy()->tenant->hasActiveSchoolYear())
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.accounts') }}"
+                            class="s-link {{ request()->routeIs('tenant.accounts') ? 'active' : '' }}">
+                            <div class="s-icon">📦</div><span class="s-label">Les comptes</span>
+                        </a>
+                    @endif
                 </div>
 
                 @if (tenancy()->tenant->hasActiveSchoolYear())

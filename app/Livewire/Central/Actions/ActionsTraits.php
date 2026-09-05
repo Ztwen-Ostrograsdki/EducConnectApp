@@ -21,6 +21,8 @@ trait ActionsTraits{
 
 	public function sendCredentialsToTenant(string $domain)
     {
+        //$domain === tenant_id domain or domain_name is the $tenant->id
+
         $req = RequestToCreateNewTenant::firstWhere('domain_name', $domain);
 
         if($req && $req->validated){

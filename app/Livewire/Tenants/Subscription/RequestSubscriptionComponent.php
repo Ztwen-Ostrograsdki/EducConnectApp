@@ -31,7 +31,7 @@ class RequestSubscriptionComponent extends Component
     // Modal "J'ai payé"
     public bool $showClaimModal = false;
     public ?int $claimingRequestId = null;
-    public string $transactionId = '';
+    public ?string $transactionId = '';
 
 
 

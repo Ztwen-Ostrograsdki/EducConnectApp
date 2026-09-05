@@ -89,11 +89,6 @@ class ManageSchoolYearComponent extends Component
         ], $this->periodsRules());
     }
 
-    public function render()
-    {
-        return view('livewire.tenants.schoolyears.manage-school-year-component');
-    }
-
     public function update(): void
     {
         $this->validate();
@@ -122,5 +117,10 @@ class ManageSchoolYearComponent extends Component
                 description: 'Erreur : ' . cutter($th->getMessage(), 150),
             );
         }
+    }
+
+    public function render()
+    {
+        return view('livewire.tenants.schoolyears.manage-school-year-component');
     }
 }

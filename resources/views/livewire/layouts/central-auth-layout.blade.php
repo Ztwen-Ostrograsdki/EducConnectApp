@@ -69,7 +69,7 @@
 
                 {{-- ===================== DASHBOARD ===================== --}}
                 <div class="s-section">
-                    <a data-sidebar-item href="{{ route('central.dashboard') }}"
+                    <a wire:navigate data-sidebar-item href="{{ route('central.dashboard') }}"
                         class="s-link {{ request()->routeIs('central.dashboard') ? 'active' : '' }}">
                         <div class="s-icon">📊</div>
                         <span class="s-label">Dashboard - Accueil</span>
@@ -81,7 +81,7 @@
                     <div class="s-section-label">Les demandes d'espace école</div>
 
                     {{-- En attente --}}
-                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'tout']) }}"
+                    <a wire:navigate href="{{ route('central.requests.school.space.portal', ['status' => 'tout']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'tout' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3.5 h-3.5 text-amber-400" />
@@ -91,7 +91,7 @@
                     </a>
 
                     {{-- Approuvées --}}
-                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'active']) }}"
+                    <a wire:navigate href="{{ route('central.requests.school.space.portal', ['status' => 'active']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-circle-check-big class="w-3.5 h-3.5 text-emerald-400" />
@@ -101,7 +101,8 @@
                     </a>
 
                     {{-- Rejetées --}}
-                    <a href="{{ route('central.requests.school.space.portal', ['status' => 'suspended']) }}"
+                    <a wire:navigate
+                        href="{{ route('central.requests.school.space.portal', ['status' => 'suspended']) }}"
                         class="s-link {{ request()->routeIs('central.requests.school.space.portal') && request()->route('status') === 'suspended' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-circle-x class="w-3.5 h-3.5 text-rose-400" />
@@ -116,7 +117,7 @@
                     <div class="s-section-label">Les demandes d'abonnement</div>
 
                     {{-- En attente --}}
-                    <a href="{{ route('central.subscriptions.requests.portal') }}"
+                    <a wire:navigate href="{{ route('central.subscriptions.requests.portal') }}"
                         class="s-link {{ request()->routeIs('central.subscriptions.requests.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-sync class="w-3.5 h-3.5 text-amber-400" />
@@ -132,7 +133,7 @@
                     <div class="s-section-label">Les écoles</div>
 
                     {{-- Actives --}}
-                    <a href="{{ route('central.schools.portal', ['status' => 'active']) }}"
+                    <a wire:navigate href="{{ route('central.schools.portal', ['status' => 'active']) }}"
                         class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'active' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-school class="w-3.5 h-3.5 text-emerald-400" />
@@ -142,7 +143,7 @@
                     </a>
 
                     {{-- Inactives / Corbeille --}}
-                    <a href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}"
+                    <a wire:navigate href="{{ route('central.schools.portal', ['status' => 'corbeille']) }}"
                         class="s-link {{ request()->routeIs('central.schools.portal') && request()->route('status') === 'corbeille' ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-trash-2 class="w-3.5 h-3.5 text-rose-400" />
@@ -164,7 +165,7 @@
                         </div>
 
                         <div class="s-acc-content">
-                            <a href="{{ route('central.schools.portal') }}"
+                            <a wire:navigate href="{{ route('central.schools.portal') }}"
                                 class="s-link {{ request()->routeIs('central.schools.portal') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
@@ -174,7 +175,7 @@
                             </a>
 
                             @foreach (getTenants() as $ten)
-                                <a href="{{ route('central.school.profil', ['school' => $ten->id]) }}"
+                                <a wire:navigate href="{{ route('central.school.profil', ['school' => $ten->id]) }}"
                                     class="s-link {{ request()->routeIs('central.school.profil') ? 'active' : '' }}"
                                     style="font-size:.78rem;">
                                     <div class="s-icon" style="font-size:.72rem;">
@@ -195,7 +196,7 @@
                     <div class="s-section-label">Les abonnements validés</div>
 
                     {{-- Actifs --}}
-                    <a href="{{ route('central.validateds.subscriptions.portal') }}"
+                    <a wire:navigate href="{{ route('central.validateds.subscriptions.portal') }}"
                         class="s-link {{ request()->routeIs('central.validateds.subscriptions.portal') ? 'active' : '' }}">
                         <div class="s-icon">
                             <x-lucide-calendar-check-2 class="w-3.5 h-3.5 text-indigo-400" />

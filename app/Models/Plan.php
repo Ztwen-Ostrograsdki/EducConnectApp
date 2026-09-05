@@ -67,6 +67,28 @@ class Plan extends Model
         ];
     }
 
+    public function isEditable() : bool
+    {
+        if(count($this->subscriptions) || count($this->subscriptionRequests)){
+
+            return false;
+
+        }
+
+        return true;
+    }
+
+    public function isDeletable() : bool
+    {
+        if(count($this->subscriptions) > 0 || count($this->subscriptionRequests) > 0){
+
+            return false;
+
+        }
+
+        return true;
+    }
+
     public function packLabel(): string
     {
         return self::packLabels()[$this->pack] ?? ucfirst($this->pack);

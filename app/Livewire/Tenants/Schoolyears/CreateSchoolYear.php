@@ -128,11 +128,6 @@ class CreateSchoolYear extends Component
         ], $this->periodsRules());
     }
 
-    public function render()
-    {
-        return view('livewire.tenants.schoolyears.create-school-year');
-    }
-
     /*
     |--------------------------------------------------------------------
     | Création
@@ -161,7 +156,6 @@ class CreateSchoolYear extends Component
 
                 broadcast(new NewSchoolYearCreated(tenant('id'), $done->slug));
 
-                $this->redirect(route('tenant.school-years.index'), navigate: true);
             }
 
         } catch (\Throwable $th) {
@@ -170,5 +164,10 @@ class CreateSchoolYear extends Component
                 description: 'Erreur : ' . cutter($th->getMessage(), 150),
             );
         }
+    }
+
+    public function render()
+    {
+        return view('livewire.tenants.schoolyears.create-school-year');
     }
 }

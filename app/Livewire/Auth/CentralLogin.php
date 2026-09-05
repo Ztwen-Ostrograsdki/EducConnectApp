@@ -8,9 +8,11 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('livewire.layouts.guest-central')]
+#[Title("Connexion centrale")]
 class CentralLogin extends Component
 {
     #[Rule('required|email')]
@@ -55,7 +57,7 @@ class CentralLogin extends Component
 
         session()->regenerate();
 
-        return redirect()->route('central.dashboard');
+        return $this->redirectIntended(route('central.dashboard'), navigate: true);
 
     }
 

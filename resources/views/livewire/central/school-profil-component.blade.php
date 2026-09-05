@@ -313,10 +313,20 @@
             </div>
 
             <div class="mt-6">
-                <button type="button"
-                    class="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition-all hover:bg-indigo-500 shadow-lg shadow-indigo-900/30">
-                    <x-lucide-send class="h-4 w-4" />
-                    Notifier
+                <button wire:click="sendCredentialsToTenant('{{ $this->tenant->id }}')" wire:loading.attr="disabled"
+                    class="h-11 rounded-2xl w-full flex items-center justify-center cursor-pointer bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 ">
+                    <span wire:loading.remove class="flex items-center gap-1.5"
+                        wire:target="sendCredentialsToTenant('{{ $this->tenant->id }}')">
+                        <x-lucide-message-square class="w-4 h-4" />
+                        Envoyer données de connexion
+                    </span>
+                    <span wire:loading.flex wire:target="sendCredentialsToTenant('{{ $this->tenant->id }}')"
+                        class="items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1">
+                            <x-lucide-refresh-ccw class="w-5 h-5 animate-spin" />
+                            <span>En cours...</span>
+                        </span>
+                    </span>
                 </button>
             </div>
         </div>
@@ -401,3 +411,4 @@
     @endif
 
 </div>
+

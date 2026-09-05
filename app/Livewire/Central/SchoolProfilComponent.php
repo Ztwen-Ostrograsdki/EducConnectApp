@@ -20,13 +20,13 @@ class SchoolProfilComponent extends Component
 {
     public ?string $school;
 
+    use WireUiActions, ActionsTraits;
+
     
     // ─── État du formulaire d'octroi gratuit ───────────────────────────
     public bool $showGrantFreeModal = false;
     public ?int $grantPlanId = null;
     public int $grantDaysCount = 30;
-
-    use WireUiActions, ActionsTraits;
 
     public function mount(?string $school)
     {
