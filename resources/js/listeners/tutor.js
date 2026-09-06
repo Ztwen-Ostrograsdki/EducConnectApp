@@ -21,6 +21,9 @@ export function registerTutorListeners(tenantId, userId) {
                 icon: mapTypeToIcon("info"),
             });
         })
+        .listen("TenantModulesAccessesUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        })
         .listen("DataUpdatedEvent", (e) => {
             Livewire.dispatch("DataUpdatedEventLiveEvent");
         });

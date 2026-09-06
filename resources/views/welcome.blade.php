@@ -29,9 +29,9 @@
             <li><a href="#roles">Accès</a></li>
             <li><a href="#contact">Contact</a></li>
             @guest('central')
-                <li><a wire:navigate href="/login" class="nav-cta">Connexion →</a></li>
+                <li><a href="/login" class="nav-cta">Connexion →</a></li>
             @else
-                <li><a wire:navigate href="{{ route('central.dashboard') }}" class="nav-cta">Contrôle</a></li>
+                <li><a href="{{ route('central.dashboard') }}" class="nav-cta">Contrôle</a></li>
             @endguest
         </ul>
         <button type="button" class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false"
@@ -422,8 +422,7 @@
         </div>
         @guest
             <div class="how-cta">
-                <a data-animate='card' wire:navigate href="{{ route('central.request.to.create.tenant') }}"
-                    class="cta-btn">
+                <a data-animate='card' href="{{ route('central.request.to.create.tenant') }}" class="cta-btn">
                     ✦ Créer mon école maintenant
                 </a>
             </div>
@@ -489,8 +488,8 @@
                 Démarrez gratuitement, évoluez à votre rythme.
             </p>
             @guest
-                <a data-animate='card' wire:navigate href="{{ route('central.request.to.create.tenant') }}"
-                    class="cta-btn" id="ctaBtn">
+                <a data-animate='card' href="{{ route('central.request.to.create.tenant') }}" class="cta-btn"
+                    id="ctaBtn">
                     ✦ Créer mon école maintenant
                 </a>
             @endguest

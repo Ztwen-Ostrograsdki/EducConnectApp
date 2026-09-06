@@ -145,7 +145,10 @@
                                         class="font-medium text-slate-400">{{ number_format($request->plan->price, 0, ',', ' ') }}
                                         FCFA</span>
                                     <span class="mx-1.5 text-slate-700">·</span>
-                                    {{ $request->created_at->format('d/m/Y H:i') }}
+                                    {{ __formatDateTime($request->created_at) }}
+                                </p>
+                                <p class="text-xs font-medium text-lime-500/70">
+                                    Demande N° #{{ $request->key }}
                                 </p>
                             </div>
 
@@ -162,9 +165,13 @@
                                 @endif
 
                                 @if ($request->payment_reminder_sent_at)
-                                    <p class="mt-1.5 flex items-center gap-1 text-[10px] text-amber-400/80">
-                                        <x-lucide-bell class="h-3 w-3" />
-                                        Relancé {{ $request->payment_reminder_sent_at->diffForHumans() }}
+                                    <p
+                                        class="mt-1.5 flex items-center gap-1 text-[10px] break-normal text-amber-400/80">
+                                        <x-lucide-bell class="h-3 w-3 " />
+                                        <span class="inline-flex flex-col gap-1">
+                                            <span> Demande de payement</span>
+                                            <span>reclamé{{ $request->payment_reminder_sent_at->diffForHumans() }}</span>
+                                        </span>
                                     </p>
                                 @endif
                             </div>

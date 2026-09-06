@@ -5,9 +5,13 @@ namespace App\Models;
 use App\Models\Plan;
 use App\Models\SubscriptionRequest;
 use App\Models\Tenant;
+use App\Models\TenantModuleAccess;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
+use Override;
 
 class Subscription extends Model
 {
@@ -18,6 +22,7 @@ class Subscription extends Model
         'started_at',
         'expire_at',
         'status',
+        'key',
         'is_free',
     ];
 
@@ -25,11 +30,22 @@ class Subscription extends Model
         'started_at' => 'datetime',
         'expire_at' => 'datetime',
         'is_free' => 'boolean',
+        'key' => 'string',
     ];
 
     protected $connection = 'central';
 
     protected $table = 'subscriptions';
+
+    #[Override]
+    protected static function booted()
+    {
+        static::creating(function($model){
+
+            $model->key = (string) str()->upper(Str::random(10));
+
+        });
+    }
 
     public function tenant(): BelongsTo
     {
@@ -44,6 +60,11 @@ class Subscription extends Model
     public function subscriptionRequest(): BelongsTo
     {
         return $this->belongsTo(SubscriptionRequest::class);
+    }
+
+    public function moduleAccess(): HasOne
+    {
+        return $this->hasOne(TenantModuleAccess::class);
     }
 
     public function scopeActive(Builder $query): Builder

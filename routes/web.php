@@ -4,6 +4,7 @@ use App\Livewire\Actions\RequestPage;
 use App\Livewire\Auth\CentralLogin;
 use App\Livewire\Central\CentralDashboard;
 use App\Livewire\Central\CentralNotificationsComponent;
+use App\Livewire\Central\ManageSubscriptionModules;
 use App\Livewire\Central\PlansManagerComponent;
 use App\Livewire\Central\SchoolProfilComponent;
 use App\Livewire\Central\SchoolsComponent;
@@ -51,6 +52,9 @@ Route::middleware(['auth:central'])->prefix('administration/central')->name('cen
 
     // Gestion des plans d'abonnement
     Route::get('/plans/gestion', PlansManagerComponent::class)->name('plans.portal');
+
+    Route::get('/gestion-abonnement-utilisateur/{subscriptionId}/modules', ManageSubscriptionModules::class)
+    ->name('manage.subscription.modules');
 
     // Gestion des demandes d'espace ecole
     Route::get('/les-demandes-espace/gestion/{status?}', SchoolSpaceRequestsManageComponent::class)->name('requests.school.space.portal');

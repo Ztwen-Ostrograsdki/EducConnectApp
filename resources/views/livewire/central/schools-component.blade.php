@@ -247,7 +247,11 @@
                                     <p
                                         class="mt-1 text-sm font-black
                                        text-emerald-400">
-                                        {{ $activeSubscription->daysRemaining() }} jours restants
+                                        <span class="inline-flex gap-2 flex-col">
+                                            <span class="text-slate-600">Abonnement N°
+                                                {{ $activeSubscription->key }}</span>
+                                            <span>{{ $activeSubscription->daysRemaining() }} jours restants</span>
+                                        </span>
                                     </p>
                                 @else
                                     <p
@@ -392,6 +396,10 @@
                                             {{ $activeSubscription->plan->name }}
 
                                         </p>
+                                        <span class="text-slate-400">
+                                            Abonnement N°
+                                            {{ $activeSubscription->key }}
+                                        </span>
 
                                     </div>
 

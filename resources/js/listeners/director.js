@@ -20,6 +20,10 @@ export function registerDirectorListeners(tenantId) {
             Livewire.dispatch("DataUpdatedEventLiveEvent");
         })
 
+        .listen("TenantModulesAccessesUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        })
+
         .listen("TenantDirectorDataUpdatedEvent", (e) => {
             Livewire.dispatch("TenantDirectorDataUpdatedLiveEvent");
         })

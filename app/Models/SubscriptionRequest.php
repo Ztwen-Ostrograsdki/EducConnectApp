@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+use Override;
 
 class SubscriptionRequest extends Model
 {
@@ -20,6 +22,7 @@ class SubscriptionRequest extends Model
     protected $fillable = [
         'tenant_id',
         'plan_id',
+        'key',
         'transaction_id',
         'status',
         'reject_reason',
@@ -31,11 +34,23 @@ class SubscriptionRequest extends Model
     protected $casts = [
         'payment_reminder_sent_at' => 'datetime',
         'treated_at' => 'datetime',
+        'key' => 'string',
     ];
 
     protected $connection = 'central';
 
     protected $table = 'subscription_requests';
+
+
+    #[Override]
+    protected static function booted()
+    {
+        static::creating(function($model){
+
+            $model->key = (string) str()->upper(Str::random(10));
+
+        });
+    }
 
 
     // ─── Relations ────────────────────────────────────────────────────

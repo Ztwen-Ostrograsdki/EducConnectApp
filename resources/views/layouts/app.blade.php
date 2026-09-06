@@ -58,6 +58,9 @@
             </div>
 
             @auth('tenant')
+                @php
+                    $currentTenant = tenant();
+                @endphp
                 <nav class="s-nav">
                     {{-- ─── GÉNÉRAL ──────────────────────────────────────── --}}
                     <div class="s-section">
@@ -81,7 +84,7 @@
                     </div>
 
                     {{-- ─── ESPACE ENSEIGNANT ────────────────────────────── --}}
-                    @if (auth('tenant')->user()->hasRole('enseignant'))
+                    @if (auth('tenant')->user()->hasRole('enseignant') && ($currentTenant?->teacherPortalAble() ?? false))
                         <div class="s-section">
                             <div class="s-section-label">Mon espace enseignant</div>
 
@@ -119,10 +122,12 @@
                                 @endforeach
                             @endif
 
-                            <a data-sidebar-item href="#" class="s-link">
-                                <div class="s-icon">🗓️</div>
-                                <span class="s-label">Mon Emploi du temps</span>
-                            </a>
+                            @if ($currentTenant?->timetableAble())
+                                <a data-sidebar-item href="#" class="s-link">
+                                    <div class="s-icon">🗓️</div>
+                                    <span class="s-label">Mon Emploi du temps</span>
+                                </a>
+                            @endif
 
                             <a data-sidebar-item href="{{ route('tenant.subjects.coefs.manage') }}"
                                 class="s-link {{ request()->routeIs('tenant.subjects.coefs.manage') ? 'active' : '' }}">
@@ -174,7 +179,7 @@
                     @endif
 
                     {{-- ─── ESPACE PARENT ────────────────────────────────── --}}
-                    @if (auth('tenant')->user()->hasRole('tuteur'))
+                    @if (auth('tenant')->user()->hasRole('tuteur') && ($currentTenant?->parentPortalAble() ?? false))
                         @php
                             $children = auth('tenant')->user()->tutor->myChildren;
                         @endphp
@@ -223,24 +228,26 @@
                             @endforeach
                         </div> --}}
 
-                        <div class="s-section">
-                            <div class="s-section-label">Les bulletins</div>
-                            @foreach ($children as $child_rel)
-                                <a wire:navigate data-sidebar-item
-                                    href="{{ route('tenant.parent.space.bulletin', ['student_uuid' => $child_rel->student->uuid]) }}"
-                                    class="s-link {{ request()->routeIs('tenant.parent.space.bulletin') &&
-                                    request()->route('student_uuid') === $child_rel->student->uuid
-                                        ? 'active'
-                                        : '' }}">
-                                    <div class="s-icon">
-                                        <x-lucide-file class="h-3 w-3 text-amber-500" />
-                                    </div>
-                                    <span class="s-label truncate">
-                                        Bulletin de {{ $child_rel->student->getFullName() }}
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
+                        @if ($currentTenant?->pdfBulletinsAble())
+                            <div class="s-section">
+                                <div class="s-section-label">Les bulletins</div>
+                                @foreach ($children as $child_rel)
+                                    <a wire:navigate data-sidebar-item
+                                        href="{{ route('tenant.parent.space.bulletin', ['student_uuid' => $child_rel->student->uuid]) }}"
+                                        class="s-link {{ request()->routeIs('tenant.parent.space.bulletin') &&
+                                        request()->route('student_uuid') === $child_rel->student->uuid
+                                            ? 'active'
+                                            : '' }}">
+                                        <div class="s-icon">
+                                            <x-lucide-file class="h-3 w-3 text-amber-500" />
+                                        </div>
+                                        <span class="s-label truncate">
+                                            Bulletin de {{ $child_rel->student->getFullName() }}
+                                        </span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     @endif
                 </nav>
 

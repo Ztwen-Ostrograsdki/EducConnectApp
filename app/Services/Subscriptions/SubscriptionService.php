@@ -59,7 +59,7 @@ class SubscriptionService
         try {
                 $request->update([
                 'transaction_id' => $transactionId,
-                'statut' => 'payment_claimed',
+                'status' => 'payment_claimed',
             ]);
 
 
@@ -138,13 +138,13 @@ class SubscriptionService
                 'treated_at' => now(),
             ]);
 
-            $moduleAccess = TenantModuleAccess::firstOrCreate(
-                ['tenant_id' => $request->tenant_id],
+            // Modules liés à cette subscription (pas uniquement au tenant)
+            $moduleAccess = TenantModuleAccess::createForSubscription(
+                tenantId: $request->tenant_id,
+                subscriptionId: $subscription->id,
+                pack: $plan->pack ?? 'starter',
+                expiresAt: $subscription->expire_at,
             );
-
-            $moduleAccess->applyPack($plan->pack);
-            
-            $moduleAccess->update(['pack_expires_at' => $subscription->expire_at]);
 
             DB::afterCommit(function () use ($request, $plan) {
 
@@ -328,15 +328,16 @@ class SubscriptionService
 
         try {
             
-            DB::transaction(function() use ($request){
-
-                if($request->subscription){
+            DB::transaction(function () use ($request) {
+                if ($request->subscription) {
+                    TenantModuleAccess::query()
+                        ->where('subscription_id', $request->subscription->id)
+                        ->delete();
 
                     $request->subscription->forceDelete();
                 }
 
                 $request->forceDelete();
-
             });
 
 
@@ -412,9 +413,13 @@ class SubscriptionService
                     'is_free' => true,
                 ]);
 
-                $moduleAccess = TenantModuleAccess::firstOrCreate(['tenant_id' => $tenant->id]);
-                $moduleAccess->applyPack($plan->pack);
-                $moduleAccess->update(['pack_expires_at' => $subscription->expire_at]);
+                // Modules liés à cette subscription (pas uniquement au tenant)
+                TenantModuleAccess::createForSubscription(
+                    tenantId: $tenant->id,
+                    subscriptionId: $subscription->id,
+                    pack: $plan->pack ?? 'starter',
+                    expiresAt: $subscription->expire_at,
+                );
 
                 DB::afterCommit(function () use ($tenant, $plan, $subscription, $daysCount) {
                     

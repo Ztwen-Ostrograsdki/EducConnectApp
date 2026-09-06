@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ChecksTenantModulesAble;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-
 class TenantModuleAccess extends Model
 {
+    use ChecksTenantModulesAble;
+
+    protected $connection = 'central';
+
     protected $table = 'tenant_module_accesses';
 
     protected $fillable = [
         'tenant_id',
+        'subscription_id',
         'pack',
         'pack_started_at',
         'pack_expires_at',
@@ -27,6 +32,15 @@ class TenantModuleAccess extends Model
         'bulletin_email_send',
         'bulletin_whatsapp_send',
         'bulletin_sms_send',
+
+        // Notes & classements
+        'marks_management',
+        'rankings',
+        'marks_reports',
+
+        // Impressions & documents
+        'custom_prints',
+        'printable_docs',
 
         // Statistiques
         'semester_statistics',
@@ -73,6 +87,13 @@ class TenantModuleAccess extends Model
         'bulletin_whatsapp_send' => 'boolean',
         'bulletin_sms_send' => 'boolean',
 
+        'marks_management' => 'boolean',
+        'rankings' => 'boolean',
+        'marks_reports' => 'boolean',
+
+        'custom_prints' => 'boolean',
+        'printable_docs' => 'boolean',
+
         'semester_statistics' => 'boolean',
         'annual_statistics' => 'boolean',
         'attendance_reports' => 'boolean',
@@ -111,6 +132,7 @@ class TenantModuleAccess extends Model
             'starter' => [
                 'email_notifications' => true,
                 'pdf_bulletins' => true,
+                'marks_management' => true,
                 'payment_receipts' => true,
                 'excel_import' => true,
                 'parent_portal' => true,
@@ -123,6 +145,11 @@ class TenantModuleAccess extends Model
                 'pdf_bulletins' => true,
                 'bulletin_email_send' => true,
                 'bulletin_whatsapp_send' => true,
+                'marks_management' => true,
+                'rankings' => true,
+                'marks_reports' => true,
+                'custom_prints' => true,
+                'printable_docs' => true,
                 'semester_statistics' => true,
                 'attendance_reports' => true,
                 'payment_reports' => true,
@@ -146,6 +173,11 @@ class TenantModuleAccess extends Model
                 'bulletin_email_send' => true,
                 'bulletin_whatsapp_send' => true,
                 'bulletin_sms_send' => true,
+                'marks_management' => true,
+                'rankings' => true,
+                'marks_reports' => true,
+                'custom_prints' => true,
+                'printable_docs' => true,
                 'semester_statistics' => true,
                 'annual_statistics' => true,
                 'attendance_reports' => true,
@@ -190,6 +222,15 @@ class TenantModuleAccess extends Model
             'bulletin_whatsapp_send' => ['label' => 'Bulletins WhatsApp', 'description' => 'Envoi des bulletins par WhatsApp', 'category' => 'Bulletins'],
             'bulletin_sms_send' => ['label' => 'Bulletins par SMS', 'description' => 'Envoi des bulletins par SMS', 'category' => 'Bulletins'],
 
+            // Notes & classements
+            'marks_management' => ['label' => 'Gestion des notes', 'description' => 'Saisie et suivi des notes', 'category' => 'Notes'],
+            'rankings' => ['label' => 'Classements', 'description' => 'Meilleurs et plus faibles élèves', 'category' => 'Notes'],
+            'marks_reports' => ['label' => 'Rapports de notes', 'description' => 'Rapports des notes renseignées', 'category' => 'Notes'],
+
+            // Impressions & documents
+            'custom_prints' => ['label' => 'Impressions personnalisées', 'description' => 'Configuration d’impression personnalisée', 'category' => 'Documents'],
+            'printable_docs' => ['label' => 'Fichiers imprimables', 'description' => 'Génération de documents imprimables', 'category' => 'Documents'],
+
             // Statistiques
             'semester_statistics' => ['label' => 'Stats semestrielles', 'description' => 'Statistiques par semestre/trimestre', 'category' => 'Statistiques'],
             'annual_statistics' => ['label' => 'Stats annuelles', 'description' => 'Bilan statistique annuel complet', 'category' => 'Statistiques'],
@@ -223,26 +264,36 @@ class TenantModuleAccess extends Model
 
     // ─── Relations ────────────────────────────────────────────────────
 
-    /**
-     * Get the tenant this module access belongs to.
-     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
 
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+
     // ─── Scopes ───────────────────────────────────────────────────────
 
-    /**
-     * Scope to filter by pack.
-     */
     public function scopeByPack(Builder $query, string $pack): Builder
     {
         return $query->where('pack', $pack);
     }
 
     /**
-     * Scope to get only active (non-expired) module accesses.
+     * Accès liés à une subscription encore active (non expirée).
+     */
+    public function scopeWithActiveSubscription(Builder $query): Builder
+    {
+        return $query->whereHas('subscription', function (Builder $q) {
+            $q->where('status', 'active')
+                ->where('expire_at', '>', now());
+        });
+    }
+
+    /**
+     * Scope historique : pack non expiré (pack_expires_at).
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -254,9 +305,6 @@ class TenantModuleAccess extends Model
 
     // ─── Helpers ──────────────────────────────────────────────────────
 
-    /**
-     * Check if a specific module is enabled.
-     */
     public function hasModule(string $module): bool
     {
         if (! isset($this->casts[$module])) {
@@ -267,24 +315,33 @@ class TenantModuleAccess extends Model
     }
 
     /**
-     * Check if the pack is still valid (not expired).
+     * Éditable uniquement si la subscription liée est active et non expirée.
      */
+    public function isEditable(): bool
+    {
+        $subscription = $this->subscription;
+
+        if (! $subscription) {
+            return false;
+        }
+
+        return $subscription->status === 'active'
+            && $subscription->expire_at
+            && $subscription->expire_at->isFuture();
+    }
+
     public function isValid(): bool
     {
         return ! $this->pack_expires_at || $this->pack_expires_at->isFuture();
     }
 
-    /**
-     * Check if the pack is expired.
-     */
     public function isExpired(): bool
     {
         return $this->pack_expires_at && $this->pack_expires_at->isPast();
     }
 
     /**
-     * Apply a predefined pack to this tenant.
-     * Resets all modules then applies pack defaults.
+     * Applique un pack prédéfini (réinitialise puis active les modules du pack).
      */
     public function applyPack(string $packName): void
     {
@@ -294,11 +351,8 @@ class TenantModuleAccess extends Model
             return;
         }
 
-        // Reset all modules to false
         $allModules = array_keys(self::moduleLabels());
         $reset = array_fill_keys($allModules, false);
-
-        // Apply pack modules
         $packModules = $packs[$packName];
 
         $this->update(array_merge($reset, $packModules, [
@@ -307,42 +361,37 @@ class TenantModuleAccess extends Model
         ]));
     }
 
-    /**
-     * Enable a specific module.
-     */
     public function enableModule(string $module): bool
     {
         if (! isset($this->casts[$module])) {
             return false;
         }
+
         $this->update([$module => true, 'pack' => 'custom']);
 
         return true;
     }
 
-    /**
-     * Disable a specific module.
-     */
     public function disableModule(string $module): bool
     {
         if (! isset($this->casts[$module])) {
             return false;
         }
+
         $this->update([$module => false, 'pack' => 'custom']);
 
         return true;
     }
 
     /**
-     * Toggle a specific module on/off.
-     *
-     * @return bool — new state
+     * @return bool nouvel état du module
      */
     public function toggleModule(string $module): bool
     {
         if (! isset($this->casts[$module])) {
             return false;
         }
+
         $newState = ! $this->$module;
         $this->update([$module => $newState, 'pack' => 'custom']);
 
@@ -350,20 +399,16 @@ class TenantModuleAccess extends Model
     }
 
     /**
-     * Get all enabled modules.
-     *
      * @return array<string>
      */
     public function enabledModules(): array
     {
         $modules = array_keys(self::moduleLabels());
 
-        return array_filter($modules, fn ($m) => $this->hasModule($m));
+        return array_values(array_filter($modules, fn ($m) => $this->hasModule($m)));
     }
 
     /**
-     * Get modules grouped by category.
-     *
      * @return array<string, array>
      */
     public function modulesByCategory(): array
@@ -384,7 +429,29 @@ class TenantModuleAccess extends Model
     }
 
     /**
-     * Create a default starter module access for a new tenant.
+     * Crée un TenantModuleAccess lié à un tenant + une subscription.
+     */
+    public static function createForSubscription(
+        string $tenantId,
+        int|string $subscriptionId,
+        string $pack = 'starter',
+        ?\DateTimeInterface $expiresAt = null
+    ): static {
+        $packs = self::packs();
+        $modules = array_fill_keys(array_keys(self::moduleLabels()), false);
+        $packModules = $packs[$pack] ?? [];
+
+        return static::create(array_merge($modules, $packModules, [
+            'tenant_id' => $tenantId,
+            'subscription_id' => $subscriptionId,
+            'pack' => $pack,
+            'pack_started_at' => now(),
+            'pack_expires_at' => $expiresAt,
+        ]));
+    }
+
+    /**
+     * @deprecated Préférer createForSubscription()
      */
     public static function createForTenant(string $tenantId, string $pack = 'starter'): static
     {

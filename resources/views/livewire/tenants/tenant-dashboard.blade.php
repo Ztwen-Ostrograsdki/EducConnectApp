@@ -18,7 +18,7 @@
                     </div>
 
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                        Bonjour,
+                        {{ __greatingMessager() }},
                         <span class="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
                             {{ Auth::guard('tenant')->user()?->getFullName() ?? 'Directeur' }}
                         </span>

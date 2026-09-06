@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('subscription_requests', function (Blueprint $table) {
             $table->id();
+            $table->string('key', 10)->unique();
             $table->string('tenant_id');
             $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
             $table->foreignId('plan_id')->constrained('plans')->restrictOnDelete();

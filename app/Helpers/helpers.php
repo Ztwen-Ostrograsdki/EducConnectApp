@@ -494,7 +494,7 @@ if(!function_exists('getSpace_requests')){
 
 if(!function_exists('__greatingMessager')){
 
-    function __greatingMessager($name)
+    function __greatingMessager($name = null)
     {
         $hour = date('G');
         

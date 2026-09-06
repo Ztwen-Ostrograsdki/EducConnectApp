@@ -14,6 +14,7 @@ use App\Models\Subscription;
 use App\Models\SubscriptionRequest;
 use App\Models\TenantModuleAccess;
 use App\Models\TenantStatistic;
+use App\Models\Traits\ChecksTenantModulesAble;
 use App\Models\User;
 use App\Observers\ObserveTenant;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -31,7 +32,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 #[ObservedBy(ObserveTenant::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
-    use HasDatabase, HasDomains, SoftDeletes;
+    use ChecksTenantModulesAble, HasDatabase, HasDomains, SoftDeletes;
 
 
     protected $connection = 'central';
@@ -257,9 +258,25 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $school_year->usesTrimestres();
     }
 
+    /**
+     * Historique des accès modules (un par subscription).
+     */
+    public function moduleAccesses(): HasMany
+    {
+        return $this->hasMany(TenantModuleAccess::class, 'tenant_id');
+    }
+
+    /**
+     * Accès modules lié à la subscription active courante.
+     */
     public function moduleAccess(): HasOne
     {
-        return $this->hasOne(TenantModuleAccess::class, 'tenant_id');
+        return $this->hasOne(TenantModuleAccess::class, 'tenant_id')
+            ->whereHas('subscription', function (Builder $q) {
+                $q->where('status', 'active')
+                    ->where('expire_at', '>', now());
+            })
+            ->latestOfMany();
     }
 
     public function statistics(): HasOne

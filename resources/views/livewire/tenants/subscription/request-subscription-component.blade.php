@@ -19,7 +19,7 @@
         {{-- ════════════════ ABONNEMENT ACTIF ════════════════ --}}
         @if ($this->activeSubscription)
             <div
-                class="relative rounded-2xl overflow-hidden border border-emerald-500/25 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent p-5 sm:p-6">
+                class="relative rounded-2xl overflow-hidden border border-emerald-500/25 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent p-5 sm:p-6 font-mono">
                 <div
                     class="absolute top-0 right-0 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3">
                 </div>
@@ -29,24 +29,29 @@
                         <x-lucide-shield-check class="w-6 h-6 text-emerald-400" />
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-400/80 mb-0.5">
-                            Abonnement actif
+                        <p class="text-[11px] uppercase tracking-wider text-emerald-400/80 mb-0.5">
+                            <span>Abonnement actif N°</span>
+                            <span class="py-1 px-3 rounded-xl bg-lime-400/35 text-lime-400">
+                                #{{ $this->activeSubscription->key }}
+                            </span>
                         </p>
-                        <h2 class="text-lg font-bold text-white">
+                        <h2 class="text-lg text-white">
                             {{ $this->activeSubscription->plan->name }}
                         </h2>
                         <p class="mt-1 text-sm text-slate-400">
                             Expire le
                             <span
-                                class="text-slate-200 font-medium">{{ $this->activeSubscription->expire_at->format('d/m/Y') }}</span>
+                                class="text-slate-200">{{ __formatDateTime($this->activeSubscription->expire_at) }}</span>
                             ·
-                            <span
-                                class="text-emerald-300 font-semibold tabular-nums">{{ $this->activeSubscription->daysRemaining() }}
+                            <span class="text-emerald-300 tabular-nums">{{ $this->activeSubscription->daysRemaining() }}
                                 jours</span>
                             restants
                         </p>
                     </div>
-                    <div class="shrink-0">
+                    <div class="shrink-0 inline-flex items-center gap-2 flex-col">
+                        <span class="py-1 px-3 rounded-2xl bg-amber-400/35 text-amber-400">
+                            #{{ $this->activeSubscription->key }}
+                        </span>
                         <div class="h-2 w-full sm:w-32 rounded-full bg-emerald-950/80 overflow-hidden">
                             @php
                                 $pct = min(
@@ -111,9 +116,45 @@
                                     <x-lucide-package class="w-4 h-4 text-indigo-400" />
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-white truncate">{{ $demande->plan->name }}</p>
+                                    <p class="text-sm font-mono text-white truncate">
+                                        <span class=" inline-flex items-center gap-x-2">
+                                            <span> {{ $demande->plan->name }}</span>
+                                            @if ($this->activeSubscription && $this->activeSubscription->id === $demande->subscription?->id)
+                                                <span
+                                                    class="text-xs rounded-lg px-3 py-1 bg-lime-500/35 text-lime-400/80 flex items-center gap-1 animate-pulse">
+                                                    <x-lucide-check class="w-3 h-3" />
+                                                    Abonnement actif
+                                                </span>
+                                            @elseif($demande->isApproved() && $demande->subscription && $demande->subscription->isExpired())
+                                                <span
+                                                    class="text-xs rounded-lg px-3 py-1 bg-red-500/35 text-red-400/80 flex items-center gap-1 animate-pulse">
+                                                    <x-lucide-check class="w-3 h-3" />
+                                                    Abonnement déjà expiré
+                                                </span>
+                                            @endif
+                                        </span>
+
+                                    </p>
                                     <p class="text-[11px] text-slate-500 mt-0.5">
-                                        {{ $demande->created_at->format('d/m/Y H:i') }}
+                                        <span class="inline-flex flex-col gap-2">
+                                            <span>{{ __formatDateTime($demande->created_at) }}</span>
+                                            <span class="inline-flex gap-2">
+                                                <span>
+                                                    Demande N° :
+                                                    <span class="py-1 px-2 text-amber-400">
+                                                        #{{ $demande->key }}
+                                                    </span>
+                                                </span>
+                                                @if ($demande->subscription)
+                                                    <span>
+                                                        Abonnement N° :
+                                                        <span class="py-1 px-2 text-sky-400">
+                                                            #{{ $demande->subscription->key }}
+                                                        </span>
+                                                    </span>
+                                                @endif
+                                            </span>
+                                        </span>
                                     </p>
                                 </div>
                             </div>
