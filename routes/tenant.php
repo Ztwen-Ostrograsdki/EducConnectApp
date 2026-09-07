@@ -226,7 +226,6 @@ Route::middleware([
             Route::get('/series/{serial_slug}/edition', ManageSerialComponent::class)->name('serial.edit');
 
 
-
             // LES CLASSES
             Route::get('/classes/portail-classses', ClassesPortal::class)->name('classes.portal');
 
@@ -242,52 +241,61 @@ Route::middleware([
 
             Route::get('/classes/{classe_slug}/gestion-enseignant-par-matiere', ManageYearlyClasseSubjectsTeacherComponent::class)->name('classe.manage.subjects.teacher');
 
-            Route::get('/classes/impression', ClassesPrintableListComponent::class)->name('classes.print.list');
+            // Classes — impressions / docs (modules documents)
+            Route::middleware('tenant.module:custom_prints')->group(function () {
+                Route::get('/classes/impression', ClassesPrintableListComponent::class)->name('classes.print.list');
+                Route::get('/classes/gestion-impression/configuration', ClassesPrintsManagerComponent::class)->name('classes.print.configuration');
+            });
 
-            Route::get('/classes/gestion-impression/configuration', ClassesPrintsManagerComponent::class)->name('classes.print.configuration');
+            Route::middleware('tenant.module:printable_docs')->group(function () {
+                Route::get('/classes/documents/imprimable/{filiar_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
+            });
 
-            Route::get('/classes/documents/imprimable/{filiar_slug?}', ClassesPrintableDocumentsPage::class)->name('classes.docs');
+            // NOTES (marks_management + impressions)
+            Route::middleware('tenant.module:marks_management')->group(function () {
+                Route::middleware('tenant.module:custom_prints')->group(function () {
+                    Route::get('/notes/gestion-impression/configuration/{classe_slug?}', MarksPrintsManagerComponent::class)->name('notes.print.configuration');
+                });
 
-            //NOTES
-            Route::get('/notes/gestion-impression/configuration/{classe_slug?}', MarksPrintsManagerComponent::class)->name('notes.print.configuration');
+                Route::middleware('tenant.module:printable_docs')->group(function () {
+                    Route::get('/notes/impression/previsualisation', MarksPrintableListComponent::class)->name('notes.print.preview');
+                    Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
+                });
+            });
 
-            Route::get('/notes/impression/previsualisation', MarksPrintableListComponent::class)->name('notes.print.preview');
+            // LES MEILLEURS - FAIBLES APPRENANTS
+            Route::middleware('tenant.module:rankings')->group(function () {
+                Route::middleware('tenant.module:custom_prints')->group(function () {
+                    Route::get('/apprenants-remarquables/gestion-impression/configuration/{classe_slug?}', MarkRankingPrintsManagerComponent::class)->name('students.bests.weaks.print.configuration');
+                });
 
-            Route::get('/notes/documents/imprimable/{classe_slug?}', MarksPrintableDocumentsPage::class)->name('notes.docs');
+                Route::middleware('tenant.module:printable_docs')->group(function () {
+                    Route::get('/apprenants-remarquables/impression/previsualisation', MarkRankingPrintableListComponent::class)->name('students.bests.weaks.print.preview');
+                    Route::get('/apprenants-remarquables/documents/imprimable/{classe_slug?}', MarksRankingPrintableDocumentsPage::class)->name('students.bests.weaks.docs');
+                });
+            });
 
+            // RAPPORTS NOTES EFFECTUEES PAR ENSEIGNANTS
+            Route::middleware('tenant.module:marks_reports')->group(function () {
+                Route::get('/rapport-notes/gestion-impression/configuration/{classe_slug?}', MarksDiagnosticManagerComponent::class)->name('marks.reports.print.configuration');
+                Route::get('/rapport-notes/impression/previsualisation', MarksDiagnosticPrintableListComponent::class)->name('marks.reports.print.preview');
+                Route::get('/rapport-notes/documents/imprimable/{classe_slug?}', MarksDiagnosticForTeachersPrintableDocumentsPage::class)->name('marks.reports.docs');
+            });
 
-            //LES MEILLEURS - FAIBLES APPRENANTS
-            Route::get('/apprenants-remarquables/gestion-impression/configuration/{classe_slug?}', MarkRankingPrintsManagerComponent::class)->name('students.bests.weaks.print.configuration');
+            // GESTION DES BULLETINS
+            Route::middleware('tenant.module:pdf_bulletins')->group(function () {
+                Route::get('/bulletins/gestion-impression/configuration/{classe_slug?}', BulletinsPrintsManagerComponent::class)->name('bulletins.print.configuration');
+                Route::get('/bulletins/impression/previsualisation', BulletinsPrintableListComponent::class)->name('bulletins.print.preview');
+                Route::get('/bulletins/documents/imprimable/{classe_slug?}', BulletinsPrintableDocumentsPage::class)->name('bulletins.docs');
+            });
 
-            Route::get('/apprenants-remarquables/impression/previsualisation', MarkRankingPrintableListComponent::class)->name('students.bests.weaks.print.preview');
-
-            Route::get('/apprenants-remarquables/documents/imprimable/{classe_slug?}', MarksRankingPrintableDocumentsPage::class)->name('students.bests.weaks.docs');
-
-
-            //RAPPORTS NOTES EFFECTUEES PAR ENSEIGNANTS
-            Route::get('/rapport-notes/gestion-impression/configuration/{classe_slug?}', MarksDiagnosticManagerComponent::class)->name('marks.reports.print.configuration');
-
-            Route::get('/rapport-notes/impression/previsualisation', MarksDiagnosticPrintableListComponent::class)->name('marks.reports.print.preview');
-
-            Route::get('/rapport-notes/documents/imprimable/{classe_slug?}', MarksDiagnosticForTeachersPrintableDocumentsPage::class)->name('marks.reports.docs');
-
-
-            //GESTION DES BULLETINS
-            Route::get('/bulletins/gestion-impression/configuration/{classe_slug?}', BulletinsPrintsManagerComponent::class)->name('bulletins.print.configuration');
-
-            Route::get('/bulletins/impression/previsualisation', BulletinsPrintableListComponent::class)->name('bulletins.print.preview');
-
-            Route::get('/bulletins/documents/imprimable/{classe_slug?}', BulletinsPrintableDocumentsPage::class)->name('bulletins.docs');
-
-
-
-            //GESTION DES STATS
-            Route::get('/statistiques/gestion-impression/configuration/{classe_slug?}', MoyenneIntervalStatsManagerComponent::class)->name('stats.print.configuration');
-
-            Route::get('/statistiques/impression/previsualisation', MoyenneIntervalStatsPrintableListComponent::class)->name('stats.print.preview');
-
-            Route::get('/statistiques/documents/imprimable/{classe_slug?}', MoyenneIntervalStatsPrintableDocumentPage::class)->name('stats.docs');
-
+            // GESTION DES STATS (semestrielles OU annuelles)
+            Route::middleware('tenant.module:semester_statistics,annual_statistics')->group(function () {
+                Route::get('/statistiques/gestion-impression/configuration/{classe_slug?}', MoyenneIntervalStatsManagerComponent::class)->name('stats.print.configuration');
+                Route::get('/statistiques/impression/previsualisation', MoyenneIntervalStatsPrintableListComponent::class)->name('stats.print.preview');
+                Route::get('/statistiques/documents/imprimable/{classe_slug?}', MoyenneIntervalStatsPrintableDocumentPage::class)->name('stats.docs');
+                Route::get('/statistiques-semestrielles', PeriodicalStatistiqueComponent::class)->name('stats.general');
+            });
 
             // LES ENSEIGNANTS
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');
@@ -298,18 +306,18 @@ Route::middleware([
 
             Route::get('/details/enseignant/profil/{teacher_uuid}', TeacherProfilPage::class)->name('teacher.profil');
 
-            Route::get('/enseignants/impression', TeachersPrintableListComponent::class)->name('teachers.print.list');
-            
             Route::get('/enseignants/gestion-des-matieres/{teacher_uuid?}', ManageTeacherSubjectsComponent::class)->name('teacher.manage.subjects');
 
             Route::get('/enseignants/{teacher_uuid}/gestion-classes', ManageTeacherYearlyClassesAssignmentComponent::class)->name('teacher.manage.classes');
 
-            Route::get('/enseignants/gestion-impression/configuration/{classe_slug?}', TeachersPrintsManagerComponent::class)->name('teachers.print.configuration');
+            Route::middleware('tenant.module:custom_prints')->group(function () {
+                Route::get('/enseignants/impression', TeachersPrintableListComponent::class)->name('teachers.print.list');
+                Route::get('/enseignants/gestion-impression/configuration/{classe_slug?}', TeachersPrintsManagerComponent::class)->name('teachers.print.configuration');
+            });
 
-            Route::get('/enseignants/documents/imprimable/{classe_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
-
-
-
+            Route::middleware('tenant.module:printable_docs')->group(function () {
+                Route::get('/enseignants/documents/imprimable/{classe_slug?}', TeachersPrintableDocumentsPage::class)->name('teachers.docs');
+            });
 
             // LES ELEVES
             Route::get('/apprenants/portail-apprenants', StudentsPortal::class)->name('students.portal');
@@ -318,11 +326,14 @@ Route::middleware([
 
             Route::get('/apprenants/status-des-ajouts', StudentsCreationMonitorComponent::class)->name('students.crud.tasks');
 
-            Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
+            Route::middleware('tenant.module:custom_prints')->group(function () {
+                Route::get('/apprenants/vue-page-impression', StudentsPrintableListComponent::class)->name('students.print.list');
+                Route::get('/apprenants/gestion-impression/configuration/{classe_slug?}', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
+            });
 
-            Route::get('/apprenants/documents/imprimable/{classe_slug?}', StudentsPrintableDocumentsPage::class)->name('students.docs');
-
-            Route::get('/apprenants/gestion-impression/configuration/{classe_slug?}', StudentsPrintsManagerComponent::class)->name('students.print.configuration');
+            Route::middleware('tenant.module:printable_docs')->group(function () {
+                Route::get('/apprenants/documents/imprimable/{classe_slug?}', StudentsPrintableDocumentsPage::class)->name('students.docs');
+            });
 
             Route::get('/apprenant/gestion-de-classe-actuelle/{student_uuid}', ManageStudentClassroomComponent::class)->name('student.manage.classe');
 
@@ -330,10 +341,9 @@ Route::middleware([
 
             Route::get('/apprenant/editions-des-relations-parents-apprenants/{student_uuid}', ManageStudentParentsRelationComponent::class)->name('student.manage.relations');
 
-            
-
-
-
+            Route::middleware('tenant.module:marks_management')->group(function () {
+                Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('student.marks');
+            });
 
             // LES PARENTS
             Route::get('/parents-tuteurs/portail-parents-des-apprenants', ParentsPortal::class)->name('parents.portal');
@@ -344,12 +354,7 @@ Route::middleware([
 
             Route::get('/parents-tuteurs/editions-des-relations-parents-apprenants/{parent_uuid}', ManageParentsStudentsRelationComponent::class)->name('parents.manage.relations');
 
-            Route::get("/statistiques-semestrielles", PeriodicalStatistiqueComponent::class)->name('stats.general');
-
             Route::get('/details/parent-des-apprenants/profil/{parent_uuid}', ParentProfil::class)->name('parent.profil');
-
-            Route::get('/details/apprenant/les-notes/{student_uuid}', StudentMarksComponent::class)->name('student.marks');
-
 
             Route::get('/mise-a-jour-photo-de-profil-utilisateur/{target}/{modelUuid}', ProfilPhotoManagerByDirectorComponent::class)->name('director.manage.profil.photo');
             
@@ -359,58 +364,66 @@ Route::middleware([
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
 
-        
-
-
-        Route::middleware(['tenant.has.active.subscription', 'tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function(){
+        Route::middleware(['tenant.has.active.subscription', 'tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function () {
 
             Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
 
             Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
-            //ESPACE ENSEIGNANT
-            Route::middleware(['role:enseignant', 'teacher.not.blocked', 'has.valid.access'])->name('tenant.teacher.')->group(function () {
+            // ESPACE ENSEIGNANT
+            Route::middleware([
+                'role:enseignant',
+                'teacher.not.blocked',
+                'has.valid.access',
+                'tenant.module:teacher_portal',
+            ])->name('tenant.teacher.')->group(function () {
                 
                 Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('my.dashboard');
                 
-                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/les-notes', TeacherClasseMarksViewer::class)->name('classe.marks');
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/les-notes', TeacherClasseMarksViewer::class)
+                    ->name('classe.marks')
+                    ->middleware('tenant.module:marks_management');
                 
-                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)->name('classe.marks.manager')->middleware('tenant.classe.is.active.and.not.locked');
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/insertion-notes', TeacherClasseMarksManagerComponent::class)
+                    ->name('classe.marks.manager')
+                    ->middleware(['tenant.classe.is.active.and.not.locked', 'tenant.module:marks_management']);
                 
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
 
                 // ── ESPACE PP ─────────────────────────────────────────────────────
                 Route::middleware('teacher.is.classe.principal')->prefix('espace-pp')->group(function () {
                     
-                    Route::get('/{classe_slug}/les-notes-de-classes', PrincipalClasseStudentsMarksComponent::class)->name('pp.students.marks');
+                    Route::get('/{classe_slug}/les-notes-de-classes', PrincipalClasseStudentsMarksComponent::class)
+                        ->name('pp.students.marks')
+                        ->middleware('tenant.module:marks_management');
                     
                     Route::get('/{classe_slug}/liste-des-profs-de-la-classe', PrincipalClasseTeachersComponent::class)->name('pp.classe.teachers.list');
                     
                     Route::get('/{classe_slug}/liste-des-parents-de-la-classe', PrincipalClasseTutorsComponent::class)->name('pp.classe.tutors.list');
                 });
-
-
-
-                
             });
 
-
-            Route::get('configurations/matieres/gestion-des-coefiscients/{subject_slug?}/{uuid?}', ManagePromotionSpecialityCoefComponent::class)->name('tenant.subjects.coefs.manage')->middleware(['role:directeur|enseignant']);
+            Route::get('configurations/matieres/gestion-des-coefiscients/{subject_slug?}/{uuid?}', ManagePromotionSpecialityCoefComponent::class)
+                ->name('tenant.subjects.coefs.manage')
+                ->middleware(['role:directeur|enseignant']);
 
             // ── Tuteur ────────────────────────────────────────────────────
-            Route::middleware(['role:tuteur', 'parent.is.active'])->group(function () {
-                // sera rempli au fur et à mesure
-
+            Route::middleware(['role:tuteur', 'parent.is.active', 'tenant.module:parent_portal'])->group(function () {
                 Route::get('/mon-espace-parent', ParentDashboard::class)->name('tenant.parent.space');
 
-                Route::get('/mon-espace-parent/{student_uuid}/notes-enfant', ParentStudentsMarksViewer::class)->name('tenant.parent.space.marks');
-                Route::get('/mon-espace-parent/{student_uuid}/bulletin-de-notes-enfant', ParentStudentsBulletinViewer::class)->name('tenant.parent.space.bulletin');
+                Route::get('/mon-espace-parent/{student_uuid}/notes-enfant', ParentStudentsMarksViewer::class)
+                    ->name('tenant.parent.space.marks')
+                    ->middleware('tenant.module:marks_management');
+
+                Route::get('/mon-espace-parent/{student_uuid}/bulletin-de-notes-enfant', ParentStudentsBulletinViewer::class)
+                    ->name('tenant.parent.space.bulletin')
+                    ->middleware('tenant.module:pdf_bulletins');
             });
 
             // ── Élève ─────────────────────────────────────────────────────
-            Route::middleware('role:eleve')->prefix('student')->name('student.')->group(function () {
+            Route::middleware(['role:eleve', 'tenant.module:student_portal'])->prefix('student')->name('student.')->group(function () {
                 // sera rempli au fur et à mesure
-            }); 
+            });
 
         });
         
