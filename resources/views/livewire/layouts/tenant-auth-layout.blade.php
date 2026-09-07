@@ -381,7 +381,7 @@
                         </div>
 
                         {{-- FICHES DE NOTES --}}
-                        @if ($currentTenant?->marksManagementAble())
+                        @if ($currentTenant?->marksManagementAble() && $currentTenant?->printableDocsAble())
                             <div class="s-section">
                                 <div class="s-section-label">Gestion des notes </div>
                                 @if ($currentTenant?->customPrintsAble())
@@ -410,7 +410,7 @@
                         @endif
 
                         {{-- MEILLEURS / FAIBLES --}}
-                        @if ($currentTenant?->rankingsAble())
+                        @if ($currentTenant?->rankingsAble() && $currentTenant?->printableDocsAble())
                             <div class="s-section">
                                 <div class="s-section-label">Meilleurs/Faibles</div>
                                 @if ($currentTenant?->customPrintsAble())

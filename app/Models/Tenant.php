@@ -169,33 +169,35 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasMany(Subscription::class);
     }
     
-    public function hasActiveSubscription() : bool
+    /**
+     * Au moins un abonnement actif non expiré (en cours ou en file d'attente).
+     */
+    public function hasActiveSubscription(): bool
     {
         return $this->subscriptions()
-        ->where('status', 'active')
-        ->where('expire_at', '>', now())
-        ->exists();
-
+            ->where('status', 'active')
+            ->where('expire_at', '>', now())
+            ->exists();
     }
 
-
-    public function activeSubscription() : HasOne
+    /**
+     * Abonnement actuellement en cours d'utilisation (démarré, non expiré, non suspendu).
+     */
+    public function activeSubscription(): HasOne
     {
         return $this->hasOne(Subscription::class)
-        ->where('status', 'active')
-        ->where('expire_at', '>', now())
-        ->latestOfMany('started_at');
-
+            ->where('status', 'active')
+            ->where('started_at', '<=', now())
+            ->where('expire_at', '>', now())
+            ->latestOfMany('started_at');
     }
 
-
-    public function currentSubscription() : HasOne
+    /**
+     * Alias de activeSubscription().
+     */
+    public function currentSubscription(): HasOne
     {
-        return $this->hasOne(Subscription::class)
-        ->where('status', 'active')
-        ->where('expire_at', '>', now())
-        ->latestOfMany('started_at');
-
+        return $this->activeSubscription();
     }
 
     // ─── Scopes ───────────────────────────────────────────────────────

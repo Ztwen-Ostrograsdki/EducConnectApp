@@ -111,6 +111,87 @@ class SubscriptionsComponent extends Component
         $this->notification()->success('Abonnement supprimé', "L'abonnement a été supprimé.");
     }
 
+    
+
+    /**
+     * À coller dans le composant Livewire Central qui liste les abonnements
+     * (celui qui utilise approved-subscriptions.blade.php).
+     *
+     * Prérequis :
+     *  - use Livewire\Attributes\On;
+     *  - use WireUi\Traits\WireUiActions; (déjà présent en général)
+     *  - use App\Services\Subscriptions\SubscriptionService;
+     *  - use App\Models\Subscription;
+     */
+
+    public function toggleSubscriptionStatus(int $subscriptionId): void
+    {
+        $subscription = Subscription::find($subscriptionId);
+
+        if (! $subscription || $subscription->isExpired()) {
+            $this->notification()->send([
+                'icon' => 'error',
+                'title' => 'Action impossible',
+                'description' => 'Abonnement introuvable ou déjà expiré.',
+            ]);
+
+            return;
+        }
+
+        $willSuspend = $subscription->status === 'active';
+
+        $this->dispatch('swal', [
+            'title' => $willSuspend
+                ? 'Suspendre cet abonnement ?'
+                : 'Réactiver cet abonnement ?',
+            'text' => $willSuspend
+                ? "L'abonnement #{$subscription->key} sera temporairement désactivé. Les modules liés ne seront plus utilisables tant qu'il reste suspendu."
+                : "L'abonnement #{$subscription->key} sera de nouveau actif selon ses dates de validité.",
+            'icon' => 'warning',
+            'showCancelButton' => true,
+            'confirmButtonText' => $willSuspend ? 'Oui, suspendre' : 'Oui, activer',
+            'cancelButtonText' => 'Annuler',
+            'confirmButtonColor' => '#f97316',
+            'cancelButtonColor' => '#475569',
+            'onConfirmed' => 'ConfirmToggleSubscriptionStatus',
+            'onConfirmedParams' => ['subscriptionId' => $subscriptionId],
+        ]);
+    }
+
+    #[On('ConfirmToggleSubscriptionStatus')]
+    public function onConfirmToggleSubscriptionStatus(int $subscriptionId): void
+    {
+        $subscription = Subscription::find($subscriptionId);
+
+        if (! $subscription) {
+            $this->notification()->send([
+                'icon' => 'error',
+                'title' => 'Introuvable',
+                'description' => "L'abonnement n'existe pas.",
+            ]);
+
+            return;
+        }
+
+        try {
+            $updated = app(SubscriptionService::class)->toggleStatus($subscription);
+
+            $this->notification()->send([
+                'icon' => 'success',
+                'title' => $updated->status === 'active' ? 'Abonnement activé' : 'Abonnement suspendu',
+                'description' => $updated->status === 'active'
+                    ? "L'abonnement #{$updated->key} est de nouveau actif."
+                    : "L'abonnement #{$updated->key} a été suspendu.",
+            ]);
+        } catch (\Throwable $th) {
+            $this->notification()->send([
+                'icon' => 'error',
+                'title' => 'Échec',
+                'description' => cutter($th->getMessage(), 2000),
+            ]);
+        }
+    }
+
     public function render()
     {
         return view('livewire.central.subscriptions-component');

@@ -188,7 +188,13 @@
 
                             {{-- Statut --}}
                             <div class="shrink-0">
-                                @if ($isCurrent)
+                                @if ($subscription->isSuspended() && !$isExpired)
+                                    <span
+                                        class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-300">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                                        Suspendu
+                                    </span>
+                                @elseif ($isCurrent)
                                     <span
                                         class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
                                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
@@ -198,7 +204,7 @@
                                     <span
                                         class="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-1 text-[11px] font-medium text-sky-300">
                                         <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
-                                        Pas encore utilisé
+                                        En file d’attente
                                     </span>
                                 @elseif ($isExpired)
                                     <span
@@ -214,14 +220,32 @@
                                 class="flex shrink-0 flex-wrap items-center gap-1.5 lg:border-l lg:border-white/5 lg:pl-3">
 
                                 {{-- Modules --}}
-                                <a wire:navigate
-                                    href="{{ route('central.manage.subscription.modules', $subscription->id) }}"
+                                <a href="{{ route('central.manage.subscription.modules', $subscription->id) }}"
                                     title="Gérer les modules"
                                     class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/10 px-3 text-xs font-medium text-indigo-300 transition-all hover:bg-indigo-500/20 hover:text-indigo-200
                                         {{ $isExpired ? 'opacity-60' : '' }}">
                                     <x-lucide-puzzle class="h-3.5 w-3.5" />
                                     Modules
                                 </a>
+
+                                {{-- Activer / Suspendre --}}
+                                @if (!$isExpired)
+                                    <button wire:click="toggleSubscriptionStatus({{ $subscription->id }})"
+                                        type="button"
+                                        title="{{ $subscription->isSuspended() ? 'Réactiver' : 'Suspendre temporairement' }}"
+                                        class="inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-all
+                                            {{ $subscription->isSuspended()
+                                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                                : 'border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20' }}">
+                                        @if ($subscription->isSuspended())
+                                            <x-lucide-play class="h-3.5 w-3.5" />
+                                            Activer
+                                        @else
+                                            <x-lucide-pause class="h-3.5 w-3.5" />
+                                            Suspendre
+                                        @endif
+                                    </button>
+                                @endif
 
                                 {{-- Supprimer --}}
                                 <button wire:click="deleteSubscription({{ $subscription->id }})" type="button"

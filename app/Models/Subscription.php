@@ -82,6 +82,39 @@ class Subscription extends Model
         return $this->expire_at->isPast();
     }
 
+    public function isSuspended(): bool
+    {
+        return $this->status === 'suspended';
+    }
+
+    public function isActiveStatus(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Abonnement utilisable maintenant (status active, période en cours).
+     */
+    public function isCurrentlyRunning(): bool
+    {
+        return $this->status === 'active'
+            && $this->started_at
+            && $this->started_at->lte(now())
+            && $this->expire_at
+            && $this->expire_at->isFuture();
+    }
+
+    /**
+     * Abonnement en file d'attente (pas encore démarré).
+     */
+    public function isQueued(): bool
+    {
+        return in_array($this->status, ['active', 'suspended'], true)
+            && $this->started_at
+            && $this->started_at->isFuture()
+            && ! $this->isExpired();
+    }
+
     public function daysRemaining(): int
     {
         return max(0, now()->diffInDays($this->expire_at, false));

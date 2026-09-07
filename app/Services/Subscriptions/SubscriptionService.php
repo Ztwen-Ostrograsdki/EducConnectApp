@@ -123,12 +123,17 @@ class SubscriptionService
             
             $plan = $request->plan;
 
+            [$startedAt, $expireAt] = $this->resolveQueueDates(
+                $request->tenant_id,
+                (int) $plan->days_count
+            );
+
             $subscription = Subscription::create([
                 'tenant_id' => $request->tenant_id,
                 'plan_id' => $plan->id,
                 'subscription_request_id' => $request->id,
-                'started_at' => now(),
-                'expire_at' => now()->addDays($plan->days_count),
+                'started_at' => $startedAt,
+                'expire_at' => $expireAt,
                 'status' => 'active',
             ]);
 
@@ -373,6 +378,74 @@ class SubscriptionService
 		}
 	}
 
+    /**
+     * Calcule started_at / expire_at en bout de file des abonnements
+     * non expirés du tenant (actifs ou suspendus).
+     *
+     * - S'il existe déjà des abonnements avec expire_at > now :
+     *   started_at = max(expire_at), expire_at = started_at + daysCount
+     * - Sinon : started_at = now, expire_at = now + daysCount
+     *
+     * @return array{0: \Illuminate\Support\Carbon, 1: \Illuminate\Support\Carbon}
+     */
+    protected function resolveQueueDates(string $tenantId, int $daysCount): array
+    {
+        $lastExpireAt = Subscription::query()
+            ->where('tenant_id', $tenantId)
+            ->where('expire_at', '>', now())
+            ->whereIn('status', ['active', 'suspended'])
+            ->orderByDesc('expire_at')
+            ->value('expire_at');
+
+        $startedAt = $lastExpireAt
+            ? \Illuminate\Support\Carbon::parse($lastExpireAt)
+            : now();
+
+        if ($startedAt->lessThanOrEqualTo(now())) {
+            $startedAt = now();
+        }
+
+        $expireAt = $startedAt->copy()->addDays(max(1, $daysCount));
+
+        return [$startedAt, $expireAt];
+    }
+
+    /**
+     * Active ou suspend temporairement un abonnement non expiré.
+     * status : active ↔ suspended
+     */
+    public function toggleStatus(Subscription $subscription): Subscription
+    {
+        if ($subscription->isExpired()) {
+            throw new SubscriptionRequestActionException(
+                'Impossible de modifier le statut d’un abonnement expiré.'
+            );
+        }
+
+        $newStatus = $subscription->status === 'active' ? 'suspended' : 'active';
+
+        $subscription->update(['status' => $newStatus]);
+
+        $tenantId = $subscription->tenant_id;
+
+        DB::afterCommit(function () use ($tenantId, $subscription, $newStatus) {
+            $central = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+                title: $newStatus === 'active' ? 'ABONNEMENT RÉACTIVÉ' : 'ABONNEMENT SUSPENDU',
+                message: $newStatus === 'active'
+                    ? "L'abonnement #{$subscription->key} a été réactivé."
+                    : "L'abonnement #{$subscription->key} a été suspendu temporairement.",
+                type: 'success',
+            ));
+
+            broadcast(new CentralDataUpdatedEvent());
+            broadcast(new TenantDirectorDataUpdatedEvent($tenantId));
+        });
+
+        return $subscription->fresh();
+    }
+
 
    /**
      * Le central offre un abonnement gratuit à un tenant, sans passer
@@ -402,13 +475,18 @@ class SubscriptionService
         try {
             
             return DB::transaction(function () use ($tenant, $plan, $daysCount) {
+
+                [$startedAt, $expireAt] = $this->resolveQueueDates(
+                    $tenant->id,
+                    (int) $daysCount
+                );
                 
                 $subscription = Subscription::create([
                     'tenant_id' => $tenant->id,
                     'plan_id' => $plan->id,
                     'subscription_request_id' => null,
-                    'started_at' => now(),
-                    'expire_at' => now()->addDays($daysCount),
+                    'started_at' => $startedAt,
+                    'expire_at' => $expireAt,
                     'status' => 'active',
                     'is_free' => true,
                 ]);

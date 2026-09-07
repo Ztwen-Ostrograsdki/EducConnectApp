@@ -1,5 +1,4 @@
 <?php
-// app/Livewire/Tenants/Subscription/RequestSubscriptionComponent.php
 
 namespace App\Livewire\Tenants\Subscription;
 
@@ -14,15 +13,16 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
-
 
 #[Title("Page de demande d'abonnement")]
 #[Layout('livewire.layouts.tenant-auth-layout')]
 class RequestSubscriptionComponent extends Component
 {
-    use WireUiActions;
+    use WireUiActions, WithPagination;
 
     public ?int $selectedPlanId = null;
 
@@ -30,15 +30,27 @@ class RequestSubscriptionComponent extends Component
 
     // Modal "J'ai payé"
     public bool $showClaimModal = false;
+
     public ?int $claimingRequestId = null;
+
     public ?string $transactionId = '';
 
+    /**
+     * Filtre liste abonnements : all | actifs | expires | desactives
+     */
+    #[Url]
+    public string $subsFilter = 'actifs';
 
+    public function updatingSubsFilter(): void
+    {
+        $this->resetPage('subsPage');
+    }
 
     #[On('TenantDirectorDataUpdatedLiveEvent')]
     public function relaodData(): void
     {
         $this->counter++;
+        unset($this->activeSubscription, $this->demandes, $this->plans, $this->subscriptions);
     }
 
     public function selectPlan(int $planId): void
@@ -74,7 +86,10 @@ class RequestSubscriptionComponent extends Component
         $service->createRequest(tenant('id'), $planId);
 
         $this->selectedPlanId = null;
-        $this->notification()->success('Demande envoyée', 'Votre demande a été transmise. Vous recevrez une notification dès son traitement.');
+        $this->notification()->success(
+            'Demande envoyée',
+            'Votre demande a été transmise. Vous recevrez une notification dès son traitement.'
+        );
     }
 
     // ─── Signaler un paiement ───────────────────────────────────────
@@ -111,10 +126,9 @@ class RequestSubscriptionComponent extends Component
             $this->notification()->success('Paiement signalé', 'Le central va vérifier votre paiement sous peu.');
             $this->closeClaimModal();
         } catch (SubscriptionRequestActionException $e) {
-            $this->notification()->error('Action impossible', cutter( $e->getMessage(), 2000));
+            $this->notification()->error('Action impossible', cutter($e->getMessage(), 2000));
         }
     }
-
 
     public function confirmDelete(int $requestId): void
     {
@@ -134,20 +148,18 @@ class RequestSubscriptionComponent extends Component
     public function deleteRequest(int $requestId, SubscriptionService $service): void
     {
         $request = SubscriptionRequest::findOrFail($requestId);
-        
+
         $service->deleteRequest($request);
 
         $this->notification()->success('Demande supprimée', 'Votre demande a bien été supprimée.');
 
         broadcast(new CentralDataUpdatedEvent());
-
         broadcast(new TenantDirectorDataUpdatedEvent(tenant('id')));
     }
 
-
-    public function resetSelectedPlan()
+    public function resetSelectedPlan(): void
     {
-        return $this->selectedPlanId = null;
+        $this->selectedPlanId = null;
     }
 
     protected function formatPrice(int $price): string
@@ -155,12 +167,13 @@ class RequestSubscriptionComponent extends Component
         return number_format($price, 0, ',', ' ') . ' FCFA';
     }
 
+    // ─── Computed ───────────────────────────────────────────────────
+
     #[Computed]
     public function activeSubscription()
     {
-        return tenancy()->tenant->activeSubscription;
+        return tenancy()->tenant?->activeSubscription;
     }
-
 
     #[Computed]
     public function plans()
@@ -171,17 +184,77 @@ class RequestSubscriptionComponent extends Component
     #[Computed]
     public function demandes()
     {
-        $tenantId = tenant('id');
-
-        return SubscriptionRequest::with('plan')
-                ->forTenant($tenantId)
-                ->latest()
-                ->get();
+        return SubscriptionRequest::with(['plan', 'subscription'])
+            ->forTenant(tenant('id'))
+            ->latest()
+            ->get();
     }
 
+    /**
+     * Liste paginée des abonnements du tenant selon le filtre.
+     */
+    public function getSubscriptionsProperty()
+    {
+        $query = Subscription::query()
+            ->with(['plan', 'subscriptionRequest'])
+            ->forTenant(tenant('id'))
+            ->latest('started_at');
+
+        return match ($this->subsFilter) {
+            'actifs' => $query
+                ->where('status', 'active')
+                ->where('expire_at', '>', now())
+                ->paginate(8, pageName: 'subsPage'),
+            'expires' => $query
+                ->where(function ($q) {
+                    $q->where('expire_at', '<=', now())
+                        ->orWhere('status', 'expired');
+                })
+                ->paginate(8, pageName: 'subsPage'),
+            'desactives' => $query
+                ->where('status', 'suspended')
+                ->where('expire_at', '>', now())
+                ->paginate(8, pageName: 'subsPage'),
+            default => $query->paginate(8, pageName: 'subsPage'),
+        };
+    }
+
+    /**
+     * État affiché pour un abonnement.
+     *
+     * @return array{key: string, label: string, color: string}
+     */
+    public function subscriptionState(Subscription $subscription): array
+    {
+        if ($subscription->status === 'suspended' && ! $subscription->isExpired()) {
+            return ['key' => 'suspended', 'label' => 'Désactivé', 'color' => 'amber'];
+        }
+
+        if ($subscription->isExpired()) {
+            return ['key' => 'expired', 'label' => 'Expiré', 'color' => 'rose'];
+        }
+
+        $active = $this->activeSubscription;
+
+        if ($active && $active->id === $subscription->id) {
+            return ['key' => 'running', 'label' => 'En cours', 'color' => 'emerald'];
+        }
+
+        if ($subscription->status === 'active' && $subscription->started_at?->isFuture()) {
+            return ['key' => 'queued', 'label' => 'En attente (pas encore utilisé)', 'color' => 'sky'];
+        }
+
+        if ($subscription->status === 'active') {
+            return ['key' => 'queued', 'label' => 'En attente (pas encore utilisé)', 'color' => 'sky'];
+        }
+
+        return ['key' => 'other', 'label' => ucfirst($subscription->status), 'color' => 'slate'];
+    }
 
     public function render()
     {
-        return view('livewire.tenants.subscription.request-subscription-component');
+        return view('livewire.tenants.subscription.request-subscription-component', [
+            'subscriptions' => $this->subscriptions,
+        ]);
     }
 }
