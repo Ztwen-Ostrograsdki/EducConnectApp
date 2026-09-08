@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Central;
 
-use App\Events\TenantAccessWasUpdatedEvent;
 use App\Livewire\Central\Actions\ActionsTraits;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;

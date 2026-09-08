@@ -33,7 +33,7 @@ class CentralLogin extends Component
         // Rate limiting — max 5 tentatives par minute
         $key = 'central.login.'.Str::lower($this->email).'.'.request()->ip();
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
+        if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
             $this->errorMessage = "Trop de tentatives. Réessayez dans {$seconds} secondes.";
 

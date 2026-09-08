@@ -15,7 +15,7 @@
                 class="pointer-events-none absolute inset-0 bg-gradient-to-br from-indigo-500/[0.07] via-transparent to-emerald-500/[0.04]">
             </div>
 
-            <div class="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div class="relative flex flex-col gap-5 ">
                 <div class="space-y-1.5">
                     <div
                         class="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-indigo-300">
@@ -30,11 +30,11 @@
                     </p>
                 </div>
 
-                <div class="relative w-full shrink-0 sm:w-72">
+                <div class="relative w-full shrink-0">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
                         <x-lucide-search class="h-4 w-4" />
                     </span>
-                    <input type="text" wire:model.live.debounce.400ms="search" placeholder="Rechercher une école…"
+                    <input type="text" wire:model.live.debounce.400ms="search" placeholder="Rechercher…"
                         class="h-11 w-full rounded-xl border border-white/10 bg-[#070b14]/80 pl-10 pr-10 text-sm text-slate-200 placeholder:text-slate-600 backdrop-blur-sm transition-all focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
                     @if ($search)
                         <button wire:click="$set('search', '')" type="button"
@@ -104,7 +104,7 @@
                         x-init="setTimeout(() => show = true, {{ $loop->index * 35 }})" x-show="show" x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 translate-y-3"
                         x-transition:enter-end="opacity-100 translate-y-0"
-                        class="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f1523] shadow-lg shadow-black/10 transition-all duration-300 hover:border-indigo-500/25 hover:shadow-indigo-500/5">
+                        class="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f1523] shadow-lg shadow-black/10 transition-all duration-300 hover:border-indigo-500/25 hover:shadow-indigo-500/5 font-mono">
 
                         {{-- Barre d’accent --}}
                         <div
@@ -112,7 +112,7 @@
                                 {{ $isExpired ? 'bg-red-400' : ($isCurrent ? 'bg-emerald-400' : 'bg-sky-400') }}">
                         </div>
 
-                        <div class="flex flex-col gap-4 p-4 pl-5 sm:p-5 lg:flex-row lg:items-center">
+                        <div class="flex flex-col gap-4 p-4 pl-5 sm:p-5 2xl:flex-row 2xl:items-center">
 
                             {{-- École --}}
                             <div class="flex min-w-0 items-center gap-3 lg:w-[240px] lg:shrink-0">
@@ -120,8 +120,9 @@
                                     class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-500/20 bg-indigo-500/15 text-indigo-300 transition-transform group-hover:scale-105">
                                     <x-lucide-school class="h-5 w-5" />
                                 </div>
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-semibold text-white">
+                                <a wire:navigate
+                                    href="{{ route('central.school.profil', ['school' => $subscription->tenant->id]) }}"class="min-w-0 group underline-offset-2 hover:underline hover:text-sky-600">
+                                    <p class="truncate text-sm font-semibold text-white group-hover:text-sky-600">
                                         {{ $subscription->tenant?->school_name ?? '—' }}
                                         @if ($subscription->tenant?->simple_name)
                                             <span class="text-[11px] font-medium text-slate-500">
@@ -129,13 +130,13 @@
                                             </span>
                                         @endif
                                     </p>
-                                    <p class="truncate text-[11px] text-slate-500">
+                                    <p class="truncate text-[11px] text-slate-500 group-hover:text-sky-800">
                                         {{ $subscription->tenant?->getFullName() ?? $subscription->tenant_id }}
                                     </p>
-                                    <p class="truncate text-[11px] text-amber-400/90">
+                                    <p class="truncate text-[11px] text-amber-400/90 group-hover:text-sky-800">
                                         {{ $subscription->tenant?->email ?? '—' }}
                                     </p>
-                                </div>
+                                </a>
                             </div>
 
                             {{-- Plan + dates --}}
@@ -147,26 +148,41 @@
                                             #{{ $subscription->key }}
                                         </span>
                                     @endif
+
+                                    @if ($subscription->is_free)
+                                        <span
+                                            class="text-lime-500 m-1 inline-flex gap-x-1 items-center animate-pulse font-mono bg-lime-500/30 p-0.5 px-5 rounded-lg">
+                                            <x-lucide-gift class="h-3 w-3" />
+                                            <small>Offert</small>
+                                        </span>
+                                    @endif
                                 </p>
                                 <p class="mt-0.5 text-[11px] text-slate-500">
                                     <span class="font-medium text-slate-400">
                                         {{ number_format($subscription->plan?->price ?? 0, 0, ',', ' ') }} FCFA
                                     </span>
-                                    <span class="mx-1.5 text-slate-700">·</span>
-                                    {{ __formatDateTime($subscription->created_at) }}
+                                    <span class="mx-0.5 text-slate-700">·</span>
+                                    Debut : {{ $subscription->started_at->format('d/m/Y à H:i:s') }}
                                 </p>
                                 <p class="mt-1 inline-flex flex-wrap items-center gap-x-2 text-xs text-slate-400">
                                     <span>
                                         Expire le
                                         <span class="font-medium text-slate-300">
-                                            {{ __formatDateTime($subscription->expire_at) }}
+                                            {{ $subscription->expire_at->format('d/m/Y à H:i:s') }}
                                         </span>
                                     </span>
                                     <span class="text-slate-600">·</span>
+
                                     <span
                                         class="font-semibold tabular-nums
                                             {{ $isExpired ? 'text-red-400' : ($subscription->daysRemaining() < 15 ? 'text-amber-400' : 'text-emerald-400') }}">
-                                        {{ $isExpired ? 'Expiré' : $subscription->daysRemaining() . ' jours restants' }}
+                                        <span class="inline-flex gap-2 items-center">
+                                            <x-lucide-clock-3 class="h-3 w-3" />
+                                            {{ $isExpired ? 'Expiré' : $subscription->daysRemaining() }}
+                                            jours @if ($subscription->id == $subscription->tenant->activeSubscription?->id)
+                                                restants
+                                            @endif
+                                        </span>
                                     </span>
                                 </p>
                             </div>
@@ -217,7 +233,7 @@
 
                             {{-- Actions --}}
                             <div
-                                class="flex shrink-0 flex-wrap items-center gap-1.5 lg:border-l lg:border-white/5 lg:pl-3">
+                                class="flex shrink-0 flex-wrap items-center border-t py-2 border-t-slate-800 2xl:border-t-0 gap-1.5 2xl:border-l 2xl:border-white/5 2xl:pl-3 justify-end">
 
                                 {{-- Modules --}}
                                 <a href="{{ route('central.manage.subscription.modules', $subscription->id) }}"

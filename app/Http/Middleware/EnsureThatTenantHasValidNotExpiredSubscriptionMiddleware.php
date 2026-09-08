@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureThatTenantHasValidNotExpiredSubscriptionMiddleware
@@ -23,10 +25,40 @@ class EnsureThatTenantHasValidNotExpiredSubscriptionMiddleware
 
         }
 
-
         if(!$tenant->hasActiveSubscription()){
 
-            return to_route('tenant.subscription.request');
+            /**@var \App\Models\User */
+            $user = auth('tenant')->user();
+
+            if($user){
+
+                if($user->hasRole('directeur')){
+
+                    return to_route('tenant.subscription.request');
+                    
+                }
+                else{
+
+                    Auth::guard('tenant')->logout();
+
+                    session()->invalidate();
+
+                    session()->regenerate();
+
+                    if(Route::currentRouteName() !== 'login'){
+
+                        return redirect()->route('login');
+                    }
+                }
+
+            }
+
+            if(Route::currentRouteName() !== 'login'){
+                
+                return redirect()->route('login');
+            }
+
+            
         }
 
         return $next($request);

@@ -119,4 +119,17 @@ class Subscription extends Model
     {
         return max(0, now()->diffInDays($this->expire_at, false));
     }
+    
+    public function progress(): float
+    {
+        $startedAt = $this->started_at;
+
+        $daysCount = ceil($startedAt->diffInDays($this->expire_at, false));
+
+        $remainingDays = $this->daysRemaining();
+
+        $progress = ($remainingDays / $daysCount) * 100;
+
+        return ceil($progress);
+    }
 }

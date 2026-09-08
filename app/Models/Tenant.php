@@ -187,9 +187,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return $this->hasOne(Subscription::class)
             ->where('status', 'active')
-            ->where('started_at', '<=', now())
-            ->where('expire_at', '>', now())
-            ->latestOfMany('started_at');
+            // ->where('started_at', '<=', now())
+            ->where('expire_at', '>', now());
     }
 
     /**

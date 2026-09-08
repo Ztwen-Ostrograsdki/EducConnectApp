@@ -76,15 +76,7 @@
                             <div
                                 class="h-2 w-full sm:w-32 rounded-full bg-emerald-950/80 overflow-hidden mt-1 ring-1 ring-emerald-500/20">
                                 @php
-                                    $pct = min(
-                                        100,
-                                        max(
-                                            0,
-                                            ($this->activeSubscription->daysRemaining() /
-                                                max(1, $this->activeSubscription->plan?->days_count ?? 1)) *
-                                                100,
-                                        ),
-                                    );
+                                    $pct = $this->activeSubscription->progress();
                                 @endphp
                                 <div class="h-full rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)] transition-all duration-500"
                                     style="width: {{ $pct }}%"></div>
@@ -151,7 +143,7 @@
                 </div>
 
                 <div class="space-y-3 relative z-10">
-                    @forelse ($subscriptions as $subscription)
+                    @forelse ($this->subscriptions as $subscription)
                         @php $state = $this->subscriptionState($subscription); @endphp
                         <article wire:key="sub-{{ $subscription->id }}"
                             class="group rounded-2xl bg-[#111827] border border-white/5 hover:border-white/15 hover:bg-[#151f32] transition-all duration-300 overflow-hidden">
@@ -231,9 +223,9 @@
                         </div>
                     @endforelse
 
-                    @if ($subscriptions->hasPages())
+                    @if ($this->subscriptions->hasPages())
                         <div class="pt-4 flex justify-end">
-                            {{ $subscriptions->links() }}
+                            {{ $this->subscriptions->links() }}
                         </div>
                     @endif
                 </div>
@@ -526,3 +518,4 @@
 
     </div>
 </div>
+

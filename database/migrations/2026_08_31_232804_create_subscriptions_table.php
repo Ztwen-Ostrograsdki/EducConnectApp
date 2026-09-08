@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('started_at');
             $table->timestamp('expire_at');
             $table->boolean('is_free')->default(false);
-            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
+            $table->string('status')->default('active');
 
             $table->timestamps();
 

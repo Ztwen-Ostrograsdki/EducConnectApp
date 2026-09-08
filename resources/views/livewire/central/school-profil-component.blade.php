@@ -18,13 +18,13 @@
             <div class="absolute top-4 right-4 sm:top-5 sm:right-5 flex flex-wrap justify-end gap-2">
                 @if ($this->tenant->isActive())
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/20 px-3 py-1.5 text-xs font-semibold text-emerald-200 backdrop-blur-md">
+                        class="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/20 px-3 py-1.5 text-xs  text-emerald-200 backdrop-blur-md">
                         <x-lucide-badge-check class="h-3.5 w-3.5" />
                         École active
                     </span>
                 @else
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-rose-400/30 bg-rose-500/20 px-3 py-1.5 text-xs font-semibold text-rose-200 backdrop-blur-md">
+                        class="inline-flex items-center gap-1.5 rounded-full border border-rose-400/30 bg-rose-500/20 px-3 py-1.5 text-xs  text-rose-200 backdrop-blur-md">
                         <x-lucide-lock class="h-3.5 w-3.5" />
                         Non active
                     </span>
@@ -32,7 +32,7 @@
 
                 @if ($this->activeSubscription)
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-indigo-300/40 bg-indigo-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-900/40 backdrop-blur-md">
+                        class="inline-flex items-center gap-1.5 rounded-full border border-indigo-300/40 bg-indigo-500/90 px-3 py-1.5 text-xs  text-white shadow-lg shadow-indigo-900/40 backdrop-blur-md">
                         <x-lucide-crown class="h-3.5 w-3.5" />
                         {{ $this->activeSubscription->plan?->name }}
                     </span>
@@ -59,12 +59,12 @@
                             <h1 class="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
                                 {{ $this->tenant->school_name }}
                                 @if ($this->tenant->simple_name)
-                                    <span class="font-semibold text-slate-400">· {{ $this->tenant->simple_name }}</span>
+                                    <span class=" text-slate-400">· {{ $this->tenant->simple_name }}</span>
                                 @endif
                             </h1>
 
                             <span
-                                class="inline-flex items-center gap-1.5 rounded-full border border-sky-500/25 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-300">
+                                class="inline-flex items-center gap-1.5 rounded-full border border-sky-500/25 bg-sky-500/10 px-3 py-1 text-xs  text-sky-300">
                                 <x-lucide-graduation-cap class="h-3.5 w-3.5" />
                                 {{ $this->tenant->enseignement_type }}
                             </span>
@@ -99,6 +99,52 @@
             </div>
         </div>
     </section>
+    {{-- ===================================================== --}}
+    {{-- ACTIONS --}}
+    {{-- ===================================================== --}}
+    <section class="flex flex-wrap items-center justify-end gap-2.5">
+        <button wire:click="openGrantFreeModal" type="button"
+            class="inline-flex h-11 items-center gap-2 rounded-xl border border-fuchsia-500/25 bg-fuchsia-500/10 px-4 text-sm  text-fuchsia-300 transition-all hover:bg-fuchsia-500/20 hover:border-fuchsia-500/40">
+            <x-lucide-gift class="h-4 w-4" />
+            Offrir un abonnement
+        </button>
+
+        <button type="button"
+            class="inline-flex h-11 items-center gap-2 rounded-xl border border-sky-500/25 bg-sky-500/10 px-4 text-sm  text-sky-300 transition-all hover:bg-sky-500/20 hover:border-sky-500/40">
+            <x-lucide-send class="h-4 w-4" />
+            Notifier
+        </button>
+
+        @if (!$this->tenant->domain_blocked)
+            <button title="Bloquer l'accès au domaine de l'école {{ $this->tenant->school_name }}"
+                wire:click="blockDomain('{{ $this->tenant->id }}')" wire:loading.attr="disabled"
+                wire:target="blockDomain"
+                class="inline-flex h-11 items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 text-sm  text-rose-300 transition-all hover:bg-rose-500/20 disabled:opacity-60">
+                <span wire:loading.remove wire:target="blockDomain" class="inline-flex items-center gap-2">
+                    <x-lucide-ban class="h-4 w-4" />
+                    Bloquer accès
+                </span>
+                <span wire:loading wire:target="blockDomain" class="inline-flex items-center gap-2">
+                    <x-lucide-loader-2 class="h-4 w-4 animate-spin" />
+                    En cours…
+                </span>
+            </button>
+        @else
+            <button title="Débloquer et re-accorder l'accès au domaine de l'école {{ $this->tenant->school_name }}"
+                wire:click="unblockDomain('{{ $this->tenant->id }}')" wire:loading.attr="disabled"
+                wire:target="unblockDomain"
+                class="inline-flex h-11 items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 text-sm  text-emerald-300 transition-all hover:bg-emerald-500/20 disabled:opacity-60">
+                <span wire:loading.remove wire:target="unblockDomain" class="inline-flex items-center gap-2">
+                    <x-lucide-unlock class="h-4 w-4" />
+                    Accorder accès
+                </span>
+                <span wire:loading wire:target="unblockDomain" class="inline-flex items-center gap-2">
+                    <x-lucide-loader-2 class="h-4 w-4 animate-spin" />
+                    En cours…
+                </span>
+            </button>
+        @endif
+    </section>
 
     {{-- ===================================================== --}}
     {{-- ABONNEMENT STATUS --}}
@@ -116,18 +162,26 @@
                     </div>
 
                     <div class="min-w-0 flex-1">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-400/80">
+                        <p class="text-[11px]  uppercase tracking-wider text-emerald-400/80">
                             Abonnement actif
                         </p>
                         <h2 class="mt-0.5 text-lg font-bold text-white">
                             {{ $this->activeSubscription->plan->name }}
+                            @if ($this->activeSubscription->is_free)
+                                <span
+                                    class="text-lime-500 inline-flex gap-x-1 items-center animate-pulse font-mono bg-lime-500/30 p-0.5 px-3 rounded-lg mx-2">
+                                    <x-lucide-gift class="h-3 w-3" />
+                                    <small>Offert</small>
+                                </span>
+                            @endif
                         </h2>
+
                         <p class="mt-1 text-sm text-slate-400">
                             Expire le
                             <span
-                                class="font-medium text-slate-200">{{ $this->activeSubscription->expire_at->format('d/m/Y') }}</span>
-                            <span class="mx-1.5 text-slate-600">·</span>
-                            <span class="font-semibold tabular-nums text-emerald-300">
+                                class=" text-slate-200">{{ $this->activeSubscription->expire_at->format('d/m/Y à H:i:s') }}</span>
+                            <span class="mx-0.5 text-slate-600">·</span>
+                            <span class=" tabular-nums text-emerald-300">
                                 {{ $this->activeSubscription->daysRemaining() }} jours
                             </span>
                             restants
@@ -147,7 +201,7 @@
                     </div>
 
                     <div class="min-w-0 flex-1">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-rose-400/80">
+                        <p class="text-[11px]  uppercase tracking-wider text-rose-400/80">
                             Aucun abonnement actif
                         </p>
                         <p class="mt-1 text-sm text-slate-300">
@@ -159,51 +213,136 @@
         @endif
     </section>
 
-    {{-- ===================================================== --}}
-    {{-- ACTIONS --}}
-    {{-- ===================================================== --}}
-    <section class="flex flex-wrap items-center justify-end gap-2.5">
-        <button wire:click="openGrantFreeModal" type="button"
-            class="inline-flex h-11 items-center gap-2 rounded-xl border border-fuchsia-500/25 bg-fuchsia-500/10 px-4 text-sm font-medium text-fuchsia-300 transition-all hover:bg-fuchsia-500/20 hover:border-fuchsia-500/40">
-            <x-lucide-gift class="h-4 w-4" />
-            Offrir un abonnement
-        </button>
+    <section class="border border-white/5 rounded-3xl bg-[#0b1121] p-4 sm:p-6 shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 left-20 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none">
+        </div>
 
-        <button type="button"
-            class="inline-flex h-11 items-center gap-2 rounded-xl border border-sky-500/25 bg-sky-500/10 px-4 text-sm font-medium text-sky-300 transition-all hover:bg-sky-500/20 hover:border-sky-500/40">
-            <x-lucide-send class="h-4 w-4" />
-            Notifier
-        </button>
+        <div
+            class="relative z-10 mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-white/[0.05] pb-4">
+            <div>
+                <h2 class="text-lg font-bold text-white tracking-wide">Historique des abonnements</h2>
+                <p class="text-xs text-slate-400 mt-1">Consultez l'état de vos souscriptions passées et présentes
+                </p>
+            </div>
 
-        @if (!$this->tenant->domain_blocked)
-            <button title="Bloquer l'accès au domaine de l'école {{ $this->tenant->school_name }}"
-                wire:click="blockDomain('{{ $this->tenant->id }}')" wire:loading.attr="disabled"
-                wire:target="blockDomain"
-                class="inline-flex h-11 items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 text-sm font-medium text-rose-300 transition-all hover:bg-rose-500/20 disabled:opacity-60">
-                <span wire:loading.remove wire:target="blockDomain" class="inline-flex items-center gap-2">
-                    <x-lucide-ban class="h-4 w-4" />
-                    Bloquer accès
-                </span>
-                <span wire:loading wire:target="blockDomain" class="inline-flex items-center gap-2">
-                    <x-lucide-loader-2 class="h-4 w-4 animate-spin" />
-                    En cours…
-                </span>
-            </button>
-        @else
-            <button title="Débloquer et re-accorder l'accès au domaine de l'école {{ $this->tenant->school_name }}"
-                wire:click="unblockDomain('{{ $this->tenant->id }}')" wire:loading.attr="disabled"
-                wire:target="unblockDomain"
-                class="inline-flex h-11 items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-300 transition-all hover:bg-emerald-500/20 disabled:opacity-60">
-                <span wire:loading.remove wire:target="unblockDomain" class="inline-flex items-center gap-2">
-                    <x-lucide-unlock class="h-4 w-4" />
-                    Accorder accès
-                </span>
-                <span wire:loading wire:target="unblockDomain" class="inline-flex items-center gap-2">
-                    <x-lucide-loader-2 class="h-4 w-4 animate-spin" />
-                    En cours…
-                </span>
-            </button>
-        @endif
+            {{-- Filtres avec effet glow actif --}}
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                @foreach (['actifs' => 'Actifs', 'desactives' => 'Désactivés', 'expires' => 'Expirés', 'all' => 'Tout'] as $key => $label)
+                    <button wire:click="$set('subsFilter', '{{ $key }}')" type="button"
+                        class="h-9 shrink-0 rounded-xl px-4 text-xs  transition-all duration-300
+                                {{ $subsFilter === $key
+                                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-[0_0_12px_rgba(99,102,241,0.3)]'
+                                    : 'bg-white/5 text-slate-400 border border-transparent hover:bg-white/10 hover:text-slate-200' }}">
+                        {{ $label }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="relative min-h-[150px]">
+            <div wire:loading.flex wire:target="subsFilter, gotoPage"
+                class="absolute inset-0 z-20 items-center justify-center bg-[#0b1121]/80 backdrop-blur-sm rounded-xl">
+                <x-lucide-loader
+                    class="w-8 h-8 text-indigo-400 animate-spin drop-shadow-[0_0_10px_rgba(99,102,241,0.8)]" />
+            </div>
+
+            <div class="space-y-3 relative z-10">
+                @forelse ($this->subscriptions as $subscription)
+                    @php $state = $this->subscriptionState($subscription); @endphp
+                    <article wire:key="sub-{{ $subscription->id }}"
+                        class="group rounded-2xl bg-[#111827] border border-white/5 hover:border-white/15 hover:bg-[#151f32] transition-all duration-300 overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4">
+                            <div class="flex items-center gap-4 min-w-0 flex-1">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                    <x-lucide-credit-card
+                                        class="w-5 h-5 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h4 class="text-sm  text-slate-100 truncate">
+                                            {{ $subscription->plan?->name ?? '—' }}
+                                        </h4>
+                                        <span
+                                            class="text-[10px] px-2 py-0.5 rounded bg-white/5 text-slate-400 font-mono border border-white/10">
+                                            #{{ $subscription->key }}
+                                        </span>
+                                        @if ($subscription->is_free)
+                                            <span
+                                                class="text-lime-500 inline-flex gap-x-1 items-center animate-pulse font-mono bg-lime-500/30 p-0.5 px-3 rounded-lg">
+                                                <x-lucide-gift class="h-3 w-3" />
+                                                <small>Offert</small>
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-500 flex items-center gap-2">
+                                        Du <span
+                                            class="text-slate-300">{{ __formatDateTime($subscription->started_at) }}</span>
+                                        au <span
+                                            class="text-slate-300">{{ __formatDateTime($subscription->expire_at) }}</span>
+
+                                        @if (!$subscription->isExpired() && $subscription->status === 'active')
+                                            <span class="w-1 h-1 rounded-full bg-slate-600"></span>
+                                            <span
+                                                class="text-emerald-400  tracking-wide drop-shadow-[0_0_2px_rgba(52,211,153,0.5)]">
+                                                {{ $subscription->daysRemaining() }} jours @if ($subscription->id == $this->activeSubscription?->id)
+                                                    restants
+                                                @endif
+                                            </span>
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="shrink-0">
+                                <span @class([
+                                    'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider border',
+                                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]' =>
+                                        $state['color'] === 'emerald',
+                                    'bg-sky-500/10 text-sky-400 border-sky-500/30 shadow-[0_0_10px_rgba(14,165,233,0.1)]' =>
+                                        $state['color'] === 'sky',
+                                    'bg-amber-500/10 text-amber-400 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]' =>
+                                        $state['color'] === 'amber',
+                                    'bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]' =>
+                                        $state['color'] === 'rose',
+                                    'bg-slate-800 text-slate-400 border-slate-700' =>
+                                        $state['color'] === 'slate',
+                                ])>
+                                    <span @class([
+                                        'w-1.5 h-1.5 rounded-full animate-pulse',
+                                        'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)]' =>
+                                            $state['color'] === 'emerald',
+                                        'bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.8)]' =>
+                                            $state['color'] === 'sky',
+                                        'bg-amber-400 shadow-[0_0_5px_rgba(251,191,36,0.8)]' =>
+                                            $state['color'] === 'amber',
+                                        'bg-rose-400 shadow-[0_0_5px_rgba(251,113,133,0.8)]' =>
+                                            $state['color'] === 'rose',
+                                        'bg-slate-400' => $state['color'] === 'slate',
+                                    ])></span>
+                                    {{ $state['label'] }}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div
+                        class="rounded-2xl border border-dashed border-white/10 py-16 text-center bg-[#0b1121]/50 backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 mx-auto rounded-full bg-white/5 border border-white/5 flex items-center justify-center mb-4">
+                            <x-lucide-history class="w-6 h-6 text-slate-500" />
+                        </div>
+                        <p class="text-base  text-slate-300">Aucun abonnement trouvé</p>
+                        <p class="mt-1 text-sm text-slate-500">Essayez de modifier vos filtres.</p>
+                    </div>
+                @endforelse
+
+                @if ($this->subscriptions->hasPages())
+                    <div class="pt-4 flex justify-end">
+                        {{ $this->subscriptions->links() }}
+                    </div>
+                @endif
+            </div>
+        </div>
     </section>
 
     {{-- ===================================================== --}}
@@ -259,10 +398,10 @@
                             @endswitch
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                            <p class="text-[11px]  uppercase tracking-wider text-slate-500">
                                 {{ $info[0] }}
                             </p>
-                            <p class="mt-0.5 truncate font-semibold text-slate-100">
+                            <p class="mt-0.5 truncate  text-slate-100">
                                 {{ $info[1] }}
                             </p>
                         </div>
@@ -290,7 +429,7 @@
                 </h3>
 
                 <span
-                    class="mt-2 inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/25 px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
+                    class="mt-2 inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/25 px-3.5 py-1 text-xs  uppercase tracking-wide text-emerald-300">
                     Directeur
                 </span>
             </div>
@@ -351,15 +490,14 @@
                         <x-lucide-gift class="h-5 w-5 text-fuchsia-400" />
                     </div>
                     <div>
-                        <h2 class="text-base font-semibold text-white">Offrir un abonnement</h2>
+                        <h2 class="text-base  text-white">Offrir un abonnement</h2>
                         <p class="text-xs text-slate-500">Pour « {{ $this->tenant->school_name }} »</p>
                     </div>
                 </div>
 
                 <div class="space-y-4 p-5">
                     <div>
-                        <label
-                            class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">Plan</label>
+                        <label class="mb-1.5 block text-xs  uppercase tracking-wider text-slate-400">Plan</label>
                         <select wire:model="grantPlanId"
                             class="w-full rounded-xl border border-white/10 bg-[#070b14] px-3.5 py-2.5 text-sm text-slate-200 focus:border-fuchsia-500/50 focus:outline-none focus:ring-1 focus:ring-fuchsia-500/30">
                             <option value="">-- Choisir un plan --</option>
@@ -375,7 +513,7 @@
                     </div>
 
                     <div>
-                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">Nombre
+                        <label class="mb-1.5 block text-xs  uppercase tracking-wider text-slate-400">Nombre
                             de jours</label>
                         <input type="number" wire:model="grantDaysCount" min="1"
                             class="w-full rounded-xl border border-white/10 bg-[#070b14] px-3.5 py-2.5 text-sm text-slate-200 focus:border-fuchsia-500/50 focus:outline-none focus:ring-1 focus:ring-fuchsia-500/30">
@@ -393,7 +531,7 @@
 
                     <button wire:click="confirmGrantFreeSubscription" wire:loading.attr="disabled"
                         wire:target="confirmGrantFreeSubscription" type="button"
-                        class="inline-flex h-10 items-center gap-2 rounded-xl bg-fuchsia-600 px-5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-900/30 transition-all hover:bg-fuchsia-500 disabled:opacity-60">
+                        class="inline-flex h-10 items-center gap-2 rounded-xl bg-fuchsia-600 px-5 text-sm  text-white shadow-lg shadow-fuchsia-900/30 transition-all hover:bg-fuchsia-500 disabled:opacity-60">
                         <span wire:loading.remove wire:target="confirmGrantFreeSubscription"
                             class="inline-flex items-center gap-2">
                             <x-lucide-gift class="h-4 w-4" />

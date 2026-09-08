@@ -78,6 +78,17 @@ class SubscriptionsComponent extends Component
                 $q->whereHas('tenant', function ($tq) {
                     $tq->where('name', 'like', "%{$this->search}%")
                         ->orWhere('email', 'like', "%{$this->search}%");
+                })
+                ->orWhere('key', 'like', "%{$this->search}%")
+                ->orWhere(function($q){
+                    $q->whereHas('subscriptionRequest', function ($rq) {
+                        $rq->where('key', 'like', "%{$this->search}%");
+                    });
+                })
+                ->orWhere(function($q){
+                    $q->whereHas('plan', function ($pq) {
+                        $pq->where('name', 'like', "%{$this->search}%");
+                    });
                 });
             })
             ->latest()->paginate(10);
@@ -104,7 +115,7 @@ class SubscriptionsComponent extends Component
     #[On('OnConfirmToDeleteSubscription')]
     public function confirmDeleteSubscription(int $requestId, SubscriptionService $service): void
     {
-        $request = SubscriptionRequest::findOrFail($requestId);
+        $request = Subscription::findOrFail($requestId);
         
         $service->deleteSubscription($request);
 

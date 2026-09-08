@@ -14,6 +14,7 @@ use App\Models\TenantModuleAccess;
 use App\Models\User;
 use App\Notifications\CentralRealTimeNotification;
 use App\Notifications\RealTimeNotification;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -325,24 +326,18 @@ class SubscriptionService
 
 
      /**
-     * Suppression (soft delete) d'une demande par le central.
+     * Suppression (soft delete) d'un abonnement par le central.
      */
-    public function deleteSubscription(SubscriptionRequest $request): void
+    public function deleteSubscription(Subscription $subscription): void
     {
-        $tenantId = $request->tenant_id;
+        $tenantId = $subscription->tenant_id;
 
         try {
             
-            DB::transaction(function () use ($request) {
-                if ($request->subscription) {
-                    TenantModuleAccess::query()
-                        ->where('subscription_id', $request->subscription->id)
-                        ->delete();
+            DB::transaction(function () use ($subscription, $tenantId) {
 
-                    $request->subscription->forceDelete();
-                }
-
-                $request->forceDelete();
+                self::resolveNextActiveDatesSubscriptionWhenDeletingAnActiveSubscription($tenantId, $subscription->id);
+                
             });
 
 
@@ -410,6 +405,102 @@ class SubscriptionService
         return [$startedAt, $expireAt];
     }
 
+
+    protected function resolveNextActiveDatesSubscriptionWhenDeletingAnActiveSubscription(string $tenantId, int $deletingSubscriptionId)
+    {
+        try {
+
+            DB::transaction(function() use($tenantId, $deletingSubscriptionId){
+
+                $deletingSubscription = Subscription::query()
+                    ->where('tenant_id', $tenantId)
+                    ->where('id', $deletingSubscriptionId)
+                    ->where('expire_at', '>', now())
+                    ->first();
+
+                if(!$deletingSubscription) return ;
+
+                $nextActivesSubscriptions = Subscription::query()
+                    ->where('tenant_id', $tenantId)
+                    ->where('id', '<>', $deletingSubscriptionId)
+                    ->where('expire_at', '>', now())
+                    ->whereIn('status', ['active', 'suspended'])
+                    ->orderByDesc('expire_at')->get();
+
+                $last_expired_date = now();
+
+                $tables = [];
+
+                $updatedsSub = [];
+                
+                if(count($nextActivesSubscriptions)){
+
+                    foreach($nextActivesSubscriptions as $next){
+
+                        $tables[] = $next;
+
+                    }
+
+                    for ($i = 0; $i < count($tables); $i++) { 
+
+                        $sub = $tables[$i];
+
+                        $daysCount = $sub->daysRemaining();
+
+                        $startedAt = now();
+
+                        $last_expired_date = null;
+
+                        if(count($updatedsSub) && isset($updatedsSub[$i - 1])){
+
+                            $last_expired_date = $updatedsSub[$i - 1]->expire_at;
+
+                            $startedAt = $last_expired_date;
+
+                        }
+
+                        if(count($updatedsSub) < 1 || !$last_expired_date){
+
+                            $startedAt = now();
+
+                        }
+                        
+                        $sub->update(['started_at' => $startedAt, 
+                            'expire_at' => Carbon::parse($startedAt)->addDays($daysCount), 
+                            'status' => 'active'
+                        ]);
+
+                        $updatedsSub[$i] = $sub;
+
+                    }
+                }
+
+
+                TenantModuleAccess::query()->where('subscription_id', $deletingSubscription->id)->delete();
+
+                if ($deletingSubscription->subscriptionRequest) {
+                    
+                    $deletingSubscription->subscriptionRequest->forceDelete();
+                }
+
+                $deletingSubscription->forceDelete();
+
+            });
+
+        } catch (\Throwable $th) {
+
+            $central  = CentralUser::first();
+
+            $central?->notify(new CentralRealTimeNotification(
+				title:             "ECHEC DE SUPPRESSION ABONNEMENT",
+				message:           "La suppression de l'abonnement a échoué! : " . cutter($th->getMessage(), 2000),
+				type:              'error',
+			));
+        }
+
+
+    }
+
     /**
      * Active ou suspend temporairement un abonnement non expiré.
      * status : active ↔ suspended
@@ -459,7 +550,6 @@ class SubscriptionService
 
         if(!$tenant || !$plan){
 
-
             $central  = CentralUser::first();
 
             $central?->notify(new CentralRealTimeNotification(
@@ -505,7 +595,7 @@ class SubscriptionService
 
                     $central?->notify(new CentralRealTimeNotification(
                         title:             "ABONNEMENT OFFERT",
-                        message:           "Vous avez offert un abonnement {$plan->name} à {$tenant->getFullName()} pour une durée de {$daysCount}",
+                        message:           "Vous avez offert un abonnement {$plan->name} à {$tenant->getFullName()} pour une durée de {$daysCount} jours",
                         type:              'success',
                     ));
                     

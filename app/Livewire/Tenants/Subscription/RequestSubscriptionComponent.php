@@ -193,12 +193,13 @@ class RequestSubscriptionComponent extends Component
     /**
      * Liste paginée des abonnements du tenant selon le filtre.
      */
-    public function getSubscriptionsProperty()
+    #[Computed]
+    public function subscriptions()
     {
         $query = Subscription::query()
             ->with(['plan', 'subscriptionRequest'])
             ->forTenant(tenant('id'))
-            ->latest('started_at');
+            ->orderBy('started_at');
 
         return match ($this->subsFilter) {
             'actifs' => $query
@@ -253,8 +254,6 @@ class RequestSubscriptionComponent extends Component
 
     public function render()
     {
-        return view('livewire.tenants.subscription.request-subscription-component', [
-            'subscriptions' => $this->subscriptions,
-        ]);
+        return view('livewire.tenants.subscription.request-subscription-component');
     }
 }

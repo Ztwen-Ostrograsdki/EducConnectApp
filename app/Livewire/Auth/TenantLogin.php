@@ -10,11 +10,14 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.guest')]
 #[Title('Page de connexion')]
 class TenantLogin extends Component
 {
+    use WireUiActions;
+
     #[Rule('required|email')]
     public string $email = '';
 
@@ -114,6 +117,8 @@ class TenantLogin extends Component
 
                     $this->errorMessage = "Cet espace n'est pas accessible! Contacter votre directeur";
 
+                    $this->notification()->error("ESPACE INACESSIBLE", "Cet espace ou domaine est temporairement inacessible, contacter votre directeur");
+
                     Auth::guard('tenant')->logout();
 
                     session()->invalidate();
@@ -128,6 +133,8 @@ class TenantLogin extends Component
                     if($user->teacher->hasValidAccessForYear()){
 
                         $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
+
+                        $this->notification()->error("ACCES NON AUTHORISE", $this->errorMessage);
 
                         Auth::guard('tenant')->logout();
 

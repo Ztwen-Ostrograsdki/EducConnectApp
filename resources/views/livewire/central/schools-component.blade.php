@@ -335,46 +335,6 @@
                         </div>
 
                         @if ($activeSubscription)
-                            <div class="mt-5 grid grid-cols-2 gap-4">
-
-                                <div
-                                    class="rounded-2xl border border-slate-800
-                                   bg-slate-950/40 p-4">
-
-                                    <p class="text-xs text-slate-500">
-
-                                        Début
-
-                                    </p>
-
-                                    <p class="mt-2 font-bold text-xs">
-
-                                        {{ __formatDateTime($activeSubscription->started_at) }}
-
-                                    </p>
-
-                                </div>
-
-                                <div
-                                    class="rounded-2xl border border-slate-800
-                                   bg-slate-950/40 p-4">
-
-                                    <p class="text-xs text-slate-500">
-
-                                        Expiration
-
-                                    </p>
-
-                                    <p class="mt-2 font-bold text-rose-400 text-xs">
-
-                                        {{ __formatDateTime($activeSubscription->expire_at) }}
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
                             <div
                                 class="mt-5 rounded-2xl
                                border border-sky-500/20
@@ -384,22 +344,41 @@
 
                                     <div>
 
-                                        <p class="text-xs text-slate-500">
+                                        <p class="text-xs text-slate-500 inline-flex items-center gap-2">
 
-                                            Pack souscrit
+                                            <span>
+                                                Abonnement actif
+                                            </span>
+                                            <span class="text-amber-600">
+                                                N°
+                                                {{ $activeSubscription->key }}
+                                            </span>
+                                            @if ($activeSubscription->is_free)
+                                                <span
+                                                    class="text-xs py-1 bg-lime-500/50 text-lime-400 inline-flex items-center gap-1 px-5 rounded-md">
+                                                    <x-lucide-gift class="w-3 h-3" />
+                                                    <span>Offert</span>
+                                                </span>
+                                            @endif
 
                                         </p>
 
-                                        <p class="mt-1 text-lg
+                                        <p class="mt-1 text-sm
                                            text-sky-400">
 
                                             {{ $activeSubscription->plan->name }}
 
                                         </p>
-                                        <span class="text-slate-400">
-                                            Abonnement N°
-                                            {{ $activeSubscription->key }}
-                                        </span>
+                                        <p class="inline-flex flex-col gap-2 text-xs text-slate-500">
+                                            <span class="inline-flex items-center gap-1">
+                                                <span>Début : </span>
+                                                <span>{{ $activeSubscription->started_at->format('d/m/Y à H:i:s') }}</span>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1">
+                                                <span>Fin : </span>
+                                                <span>{{ $activeSubscription->expire_at->format('d/m/Y à H:i:s') }}</span>
+                                            </span>
+                                        </p>
 
                                     </div>
 

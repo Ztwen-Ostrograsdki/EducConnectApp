@@ -4,6 +4,7 @@ namespace App\Livewire\Central;
 
 use App\Livewire\Central\Actions\ActionsTraits;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\SubscriptionRequest;
 use App\Models\Tenant;
 use App\Services\Subscriptions\SubscriptionService;
@@ -11,18 +12,23 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.central-auth-layout')]
 #[Title("Profil école")]
 class SchoolProfilComponent extends Component
 {
+    use WireUiActions, WithPagination, ActionsTraits;
+
+    public ?int $selectedPlanId = null;
+
+    public int $counter = 0;
+
     public ?string $school;
 
-    use WireUiActions, ActionsTraits;
-
-    
     // ─── État du formulaire d'octroi gratuit ───────────────────────────
     public bool $showGrantFreeModal = false;
     public ?int $grantPlanId = null;
@@ -32,6 +38,24 @@ class SchoolProfilComponent extends Component
     {
         $this->school = $school;
 
+    }
+
+    /**
+     * Filtre liste abonnements : all | actifs | expires | desactives
+     */
+    #[Url]
+    public string $subsFilter = 'actifs';
+
+    public function updatingSubsFilter(): void
+    {
+        $this->resetPage('subsPage');
+    }
+
+    #[On('CentralDataUpdatedLiveEvent')]
+    public function relaodData(): void
+    {
+        $this->counter++;
+        unset($this->activeSubscription, $this->subscriptions);
     }
 
 
@@ -145,6 +169,70 @@ class SchoolProfilComponent extends Component
         return $this->tenant->activeSubscription;
     }
 
+    /**
+     * Liste paginée des abonnements du tenant selon le filtre.
+     */
+    #[Computed]
+    public function subscriptions()
+    {
+        $query = Subscription::query()
+            ->with(['plan', 'subscriptionRequest'])
+            ->forTenant($this->tenant->id)
+            ->orderBy('started_at');
+
+        return match ($this->subsFilter) {
+            'actifs' => $query
+                ->where('status', 'active')
+                ->where('expire_at', '>', now())
+                ->paginate(8, pageName: 'subsPage'),
+            'expires' => $query
+                ->where(function ($q) {
+                    $q->where('expire_at', '<=', now())
+                        ->orWhere('status', 'expired');
+                })
+                ->paginate(8, pageName: 'subsPage'),
+            'desactives' => $query
+                ->where('status', 'suspended')
+                ->where('expire_at', '>', now())
+                ->paginate(8, pageName: 'subsPage'),
+            default => $query->paginate(8, pageName: 'subsPage'),
+        };
+    }
+
+
+    /**
+     * État affiché pour un abonnement.
+     *
+     * @return array{key: string, label: string, color: string}
+     */
+    public function subscriptionState(Subscription $subscription): array
+    {
+        if ($subscription->status === 'suspended' && ! $subscription->isExpired()) {
+            return ['key' => 'suspended', 'label' => 'Désactivé', 'color' => 'amber'];
+        }
+
+        if ($subscription->isExpired()) {
+            return ['key' => 'expired', 'label' => 'Expiré', 'color' => 'rose'];
+        }
+
+        $active = $this->activeSubscription;
+
+        if ($active && $active->id === $subscription->id) {
+            return ['key' => 'running', 'label' => 'En cours', 'color' => 'emerald'];
+        }
+
+        if ($subscription->status === 'active' && $subscription->started_at?->isFuture()) {
+            return ['key' => 'queued', 'label' => 'En attente (pas encore utilisé)', 'color' => 'sky'];
+        }
+
+        if ($subscription->status === 'active') {
+            return ['key' => 'queued', 'label' => 'En attente (pas encore utilisé)', 'color' => 'sky'];
+        }
+
+        return ['key' => 'other', 'label' => ucfirst($subscription->status), 'color' => 'slate'];
+    }
+
+
 
     #[Computed]
     public function plans()
@@ -163,6 +251,8 @@ class SchoolProfilComponent extends Component
                 ->latest()
                 ->get();
     }
+
+
 
     
     public function render()
