@@ -332,6 +332,127 @@
             </div>
         </div>
     </section>
+    {{-- ===================== ÉQUIPE / PERSONNEL ===================== --}}
+    <section id="equipe" class="py-20 sm:py-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 sm:mb-16">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Équipe</p>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+                    Les personnels de l’école
+                </h2>
+                <p class="mt-4 text-slate-500 max-w-md mx-auto text-sm sm:text-base">
+                    Des professionnels passionnés au service de la réussite de chaque élève
+                </p>
+            </div>
+        </div>
+
+        {{-- Carrousel auto + infini --}}
+        <div class="relative" x-data="{
+            speed: 0.6, // vitesse (px par frame) → augmente pour aller plus vite
+            isPaused: false,
+            init() {
+                // Duplique le contenu pour le loop seamless
+                const track = this.$refs.track;
+                track.innerHTML += track.innerHTML;
+        
+                let animationId;
+        
+                const animate = () => {
+                    if (!this.isPaused) {
+                        track.scrollLeft += this.speed;
+        
+                        // Quand on a scrollé la moitié (le contenu original), on reset
+                        if (track.scrollLeft >= track.scrollWidth / 2) {
+                            track.scrollLeft = 0;
+                        }
+                    }
+                    animationId = requestAnimationFrame(animate);
+                };
+        
+                animationId = requestAnimationFrame(animate);
+        
+                // Pause au survol
+                track.addEventListener('mouseenter', () => this.isPaused = true);
+                track.addEventListener('mouseleave', () => this.isPaused = false);
+        
+                // Pause au touch (mobile)
+                track.addEventListener('touchstart', () => this.isPaused = true, { passive: true });
+                track.addEventListener('touchend', () => this.isPaused = false, { passive: true });
+            }
+        }">
+
+            {{-- Track --}}
+            <div x-ref="track" class="flex gap-5 sm:gap-6 overflow-x-hidden pb-6 px-4 sm:px-6 select-none">
+
+                @foreach ([
+        [
+            'photo' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
+            'name' => 'Dr. Amadou Koffi',
+            'title' => 'Directeur Général',
+            'quote' => 'L’excellence n’est pas un acte, c’est une habitude que nous cultivons chaque jour.',
+        ],
+        [
+            'photo' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
+            'name' => 'Mme. Aïcha Diallo',
+            'title' => 'Directrice des Études',
+            'quote' => 'Chaque élève a un potentiel unique. Notre mission est de le révéler.',
+        ],
+        [
+            'photo' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+            'name' => 'M. Jean-Baptiste Mensah',
+            'title' => 'Responsable Pédagogique',
+            'quote' => 'La discipline et la bienveillance forment les leaders de demain.',
+        ],
+        [
+            'photo' => 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face',
+            'name' => 'Mme. Fatoumata Sow',
+            'title' => 'Conseillère d’Orientation',
+            'quote' => 'Accompagner un jeune dans ses choix, c’est construire son avenir.',
+        ],
+        [
+            'photo' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face',
+            'name' => 'M. Ibrahim Touré',
+            'title' => 'Chef de Département Informatique',
+            'quote' => 'La technologie n’a de valeur que si elle sert l’humain.',
+        ],
+        [
+            'photo' => 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop&crop=face',
+            'name' => 'Mme. Sophie Agbo',
+            'title' => 'Responsable Vie Scolaire',
+            'quote' => 'Un climat serein et exigeant est le socle de toute réussite.',
+        ],
+    ] as $member)
+                    <div class="flex-none w-[280px] sm:w-[320px]">
+                        <div
+                            class="h-full rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden
+                                hover:border-indigo-500/30 transition-all duration-300 shadow-xl shadow-black/20">
+
+                            {{-- Photo --}}
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="{{ $member['photo'] }}" alt="{{ $member['name'] }}"
+                                    class="w-full h-full object-cover" loading="lazy">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-[#0f1523] via-transparent to-transparent">
+                                </div>
+                            </div>
+
+                            {{-- Contenu --}}
+                            <div class="p-5 sm:p-6 -mt-8 relative">
+                                <div class="mb-4">
+                                    <h3 class="text-lg font-bold text-white leading-tight">{{ $member['name'] }}</h3>
+                                    <p class="text-sm text-indigo-400 font-medium mt-0.5">{{ $member['title'] }}</p>
+                                </div>
+
+                                <p class="text-sm text-slate-400 leading-relaxed italic">
+                                    « {{ $member['quote'] }} »
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
     {{-- ===================== CTA ===================== --}}
     <section class="py-16 sm:py-20 px-4 sm:px-6">

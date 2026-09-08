@@ -34,6 +34,8 @@ use App\Livewire\Tenants\Parents\ManageParentsStudentsRelationComponent;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Parents\TutorsCreationMonitorComponent;
+use App\Livewire\Tenants\Personnels\PersonnelFormComponent;
+use App\Livewire\Tenants\Personnels\PersonnelsPage;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\CreatePromotionComponent;
 use App\Livewire\Tenants\Promotions\ManagePromotionComponent;
@@ -132,6 +134,8 @@ Route::middleware([
 
     Route::get('/', HomePage::class)->name('tenants.home');
 
+    Route::get('/les-personnels', PersonnelsPage::class)->name('tenant.personnels.page');
+
 
     Route::get('/deconnexion-force', LogoutComponent::class)->name('tenant.logout.force')->middleware('web');
 
@@ -174,6 +178,8 @@ Route::middleware([
             Route::get('/', TenantDashboard::class)->name('dashboard');
 
             Route::get('/settings', SettingsComponent::class)->name('settings');
+
+            Route::get('/gestion-personnels', PersonnelFormComponent::class)->name('personnels.manage');
 
             // LES COMPTES
             Route::get('/enseignants/les-comptes', AccountsDashboard::class)->name('accounts');

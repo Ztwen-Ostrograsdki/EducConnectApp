@@ -81,6 +81,35 @@
                             <div class="s-icon">📊</div><span class="s-label cursor-not-allowed">Dashboard</span>
                         </span>
                     @endif
+                    <div class="s-acc" id="acc-personnels">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-personnels')">
+                            <div class="s-icon">🎯</div>
+                            <span class="s-label">Personnels</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a wire:navigate href="{{ route('tenant.personnels.page') }}"
+                                class="s-link {{ request()->routeIs('tenant.personnels.page') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">👥</div>
+                                <span class="s-label">Page des personnels
+                                    <span class="ml-3 text-sky-600"></span>
+                                </span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.personnels.manage') }}"
+                                class="s-link {{ request()->routeIs('tenant.personnels.manage') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">👥</div>
+                                <span class="s-label">Gestion du pers.</span>
+                            </a>
+                            {{-- <a wire:navigate href="{{ route('tenant.filiar.create') }}"
+                                class="s-link {{ request()->routeIs('tenant.filiar.create') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">➕</div>
+                                <span class="s-label">Nouvelle filière</span>
+                            </a> --}}
+                        </div>
+                    </div>
                     <div class="s-acc" id="acc-schoolyears">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-schoolyears')">
                             <div class="s-icon">
