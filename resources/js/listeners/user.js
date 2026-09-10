@@ -55,9 +55,8 @@ export function registerUserListeners(tenantId, userId) {
             window.location.href = "/deconnexion-force";
         });
 
-    window.Echo.private(`tenant.${tenantId}`).listen(
-        "TenantSpaceWasBlockedEvent",
-        (e) => {
+    window.Echo.private(`tenant.${tenantId}`)
+        .listen("TenantSpaceWasBlockedEvent", (e) => {
             $wireui.notify({
                 title: "ESPACE ECOLE BLOQUE",
                 timeout: 0,
@@ -66,8 +65,10 @@ export function registerUserListeners(tenantId, userId) {
             });
 
             window.location.href = "/deconnexion-force";
-        },
-    );
+        })
+        .listen("DataUpdatedEvent", (e) => {
+            Livewire.dispatch("DataUpdatedEventLiveEvent");
+        });
 }
 
 export function unregisterUserListeners(tenantId, userId) {

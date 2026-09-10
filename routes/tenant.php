@@ -34,6 +34,9 @@ use App\Livewire\Tenants\Parents\ManageParentsStudentsRelationComponent;
 use App\Livewire\Tenants\Parents\ParentProfil;
 use App\Livewire\Tenants\Parents\ParentsPortal;
 use App\Livewire\Tenants\Parents\TutorsCreationMonitorComponent;
+use App\Livewire\Tenants\Personnels\CreatePersonnels;
+use App\Livewire\Tenants\Personnels\EditPersonnel;
+use App\Livewire\Tenants\Personnels\ManagePersonnelProfilPhotoComponent;
 use App\Livewire\Tenants\Personnels\PersonnelFormComponent;
 use App\Livewire\Tenants\Personnels\PersonnelsPage;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
@@ -134,12 +137,7 @@ Route::middleware([
 
     Route::get('/', HomePage::class)->name('tenants.home');
 
-    Route::get('/les-personnels', PersonnelsPage::class)->name('tenant.personnels.page');
-
-
     Route::get('/deconnexion-force', LogoutComponent::class)->name('tenant.logout.force')->middleware('web');
-
-
 
     Route::post('/logout', function () {
 
@@ -179,7 +177,14 @@ Route::middleware([
 
             Route::get('/settings', SettingsComponent::class)->name('settings');
 
-            Route::get('/gestion-personnels', PersonnelFormComponent::class)->name('personnels.manage');
+            //PERSONNELS
+            Route::get('/personnels/ajout', CreatePersonnels::class)->name('personnels.create');
+
+            Route::get('/personnels/{personnel}/edition', EditPersonnel::class)->name('personnels.edit');
+
+            Route::get('/personnels/page', PersonnelsPage::class)->name('personnels.page');
+
+            Route::get('/personnels/edition-photo-profil/{personnel}', ManagePersonnelProfilPhotoComponent::class)->name('personnels.manage.profil.photo');
 
             // LES COMPTES
             Route::get('/enseignants/les-comptes', AccountsDashboard::class)->name('accounts');

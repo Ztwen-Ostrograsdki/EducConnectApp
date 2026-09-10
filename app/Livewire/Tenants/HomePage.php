@@ -2,8 +2,12 @@
 
 namespace App\Livewire\Tenants;
 
+use App\Models\Personnel;
+use App\Models\SchoolYear;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -11,10 +15,27 @@ use Livewire\Component;
 #[Title("Page d'acceuil")]
 class HomePage extends Component
 {
-    
-    public function render()
+
+    public int $counter = 0;
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
     {
-        return view('livewire.tenants.home-page');
+        $this->counter++;
+
+        unset($this->personnels);
+    }
+    
+    #[Computed]
+    public function activeYear()
+    {
+        return SchoolYear::current()?->first();
+    }
+
+    #[Computed]
+    public function personnels()
+    {
+        return Personnel::query()->where('school_year_id', $this->activeYear->id)->active()->visible()->orderBy('name')->get();
     }
 
 
@@ -31,5 +52,10 @@ class HomePage extends Component
 
         $this->redirect(route('login'), navigate: false);
 
+    }
+
+    public function render()
+    {
+        return view('livewire.tenants.home-page');
     }
 }

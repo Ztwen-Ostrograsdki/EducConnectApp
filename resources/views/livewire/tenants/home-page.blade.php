@@ -346,24 +346,45 @@
             </div>
         </div>
 
-        {{-- Carrousel auto + infini --}}
+        {{-- Carrousel auto + infini + manuel --}}
         <div class="relative" x-data="{
-            speed: 0.6, // vitesse (px par frame) → augmente pour aller plus vite
+            speed: 0.55,
             isPaused: false,
+            isDragging: false,
+            startX: 0,
+            scrollStart: 0,
+        
             init() {
-                // Duplique le contenu pour le loop seamless
                 const track = this.$refs.track;
-                track.innerHTML += track.innerHTML;
+                const items = Array.from(track.children);
+        
+                // Si trop peu d'éléments, on clone plusieurs fois pour avoir un vrai loop
+                // (minimum ~8-10 cartes pour que le défilement soit fluide)
+                const minCards = 8;
+                let clonesNeeded = 1;
+        
+                if (items.length > 0 && items.length < minCards) {
+                    clonesNeeded = Math.ceil(minCards / items.length);
+                }
+        
+                // On clone le contenu original (clonesNeeded fois)
+                const originalHTML = track.innerHTML;
+                for (let i = 0; i < clonesNeeded; i++) {
+                    track.innerHTML += originalHTML;
+                }
+        
+                // Largeur d'un set original (pour le reset seamless)
+                this.originalWidth = track.scrollWidth / (clonesNeeded + 1);
         
                 let animationId;
         
                 const animate = () => {
-                    if (!this.isPaused) {
+                    if (!this.isPaused && !this.isDragging) {
                         track.scrollLeft += this.speed;
         
-                        // Quand on a scrollé la moitié (le contenu original), on reset
-                        if (track.scrollLeft >= track.scrollWidth / 2) {
-                            track.scrollLeft = 0;
+                        // Reset seamless
+                        if (track.scrollLeft >= this.originalWidth) {
+                            track.scrollLeft -= this.originalWidth;
                         }
                     }
                     animationId = requestAnimationFrame(animate);
@@ -373,63 +394,90 @@
         
                 // Pause au survol
                 track.addEventListener('mouseenter', () => this.isPaused = true);
-                track.addEventListener('mouseleave', () => this.isPaused = false);
+                track.addEventListener('mouseleave', () => {
+                    if (!this.isDragging) this.isPaused = false;
+                });
         
-                // Pause au touch (mobile)
-                track.addEventListener('touchstart', () => this.isPaused = true, { passive: true });
-                track.addEventListener('touchend', () => this.isPaused = false, { passive: true });
+                // Support drag (souris)
+                track.addEventListener('mousedown', (e) => {
+                    this.isDragging = true;
+                    this.isPaused = true;
+                    this.startX = e.pageX - track.offsetLeft;
+                    this.scrollStart = track.scrollLeft;
+                    track.style.cursor = 'grabbing';
+                    track.style.userSelect = 'none';
+                });
+        
+                window.addEventListener('mouseup', () => {
+                    if (this.isDragging) {
+                        this.isDragging = false;
+                        track.style.cursor = 'grab';
+                        track.style.userSelect = '';
+                        // On reprend l'auto-scroll après un petit délai
+                        setTimeout(() => this.isPaused = false, 800);
+                    }
+                });
+        
+                window.addEventListener('mousemove', (e) => {
+                    if (!this.isDragging) return;
+                    e.preventDefault();
+                    const x = e.pageX - track.offsetLeft;
+                    const walk = (x - this.startX) * 1.4;
+                    track.scrollLeft = this.scrollStart - walk;
+                });
+        
+                // Touch (mobile)
+                track.addEventListener('touchstart', () => {
+                    this.isPaused = true;
+                }, { passive: true });
+        
+                track.addEventListener('touchend', () => {
+                    setTimeout(() => this.isPaused = false, 1000);
+                }, { passive: true });
+            },
+        
+            scrollBy(amount) {
+                this.$refs.track.scrollBy({ left: amount, behavior: 'smooth' });
+                this.isPaused = true;
+                setTimeout(() => this.isPaused = false, 1200);
             }
         }">
 
-            {{-- Track --}}
-            <div x-ref="track" class="flex gap-5 sm:gap-6 overflow-x-hidden pb-6 px-4 sm:px-6 select-none">
+            {{-- Boutons de navigation --}}
+            <div
+                class="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 right-3 z-20 justify-between pointer-events-none">
+                <button @click="scrollBy(-340)"
+                    class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
+                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
+                       transition shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button @click="scrollBy(340)"
+                    class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
+                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
+                       transition shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
 
-                @foreach ([
-        [
-            'photo' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
-            'name' => 'Dr. Amadou Koffi',
-            'title' => 'Directeur Général',
-            'quote' => 'L’excellence n’est pas un acte, c’est une habitude que nous cultivons chaque jour.',
-        ],
-        [
-            'photo' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
-            'name' => 'Mme. Aïcha Diallo',
-            'title' => 'Directrice des Études',
-            'quote' => 'Chaque élève a un potentiel unique. Notre mission est de le révéler.',
-        ],
-        [
-            'photo' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
-            'name' => 'M. Jean-Baptiste Mensah',
-            'title' => 'Responsable Pédagogique',
-            'quote' => 'La discipline et la bienveillance forment les leaders de demain.',
-        ],
-        [
-            'photo' => 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face',
-            'name' => 'Mme. Fatoumata Sow',
-            'title' => 'Conseillère d’Orientation',
-            'quote' => 'Accompagner un jeune dans ses choix, c’est construire son avenir.',
-        ],
-        [
-            'photo' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face',
-            'name' => 'M. Ibrahim Touré',
-            'title' => 'Chef de Département Informatique',
-            'quote' => 'La technologie n’a de valeur que si elle sert l’humain.',
-        ],
-        [
-            'photo' => 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop&crop=face',
-            'name' => 'Mme. Sophie Agbo',
-            'title' => 'Responsable Vie Scolaire',
-            'quote' => 'Un climat serein et exigeant est le socle de toute réussite.',
-        ],
-    ] as $member)
-                    <div class="flex-none w-[280px] sm:w-[320px]">
+            {{-- Track --}}
+            <div x-ref="track"
+                class="flex gap-5 sm:gap-6 overflow-x-auto pb-6 px-4 sm:px-6 select-none cursor-grab
+                    [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+                @foreach ($this->personnels as $member)
+                    <div class="flex-none w-[300px] sm:w-[320px]">
                         <div
                             class="h-full rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden
                                 hover:border-indigo-500/30 transition-all duration-300 shadow-xl shadow-black/20">
 
                             {{-- Photo --}}
                             <div class="relative aspect-[4/3] overflow-hidden">
-                                <img src="{{ $member['photo'] }}" alt="{{ $member['name'] }}"
+                                <img src="{{ $member->profil_photo_url }}" alt="{{ $member->full_name }}"
                                     class="w-full h-full object-cover" loading="lazy">
                                 <div
                                     class="absolute inset-0 bg-gradient-to-t from-[#0f1523] via-transparent to-transparent">
@@ -439,12 +487,13 @@
                             {{-- Contenu --}}
                             <div class="p-5 sm:p-6 -mt-8 relative">
                                 <div class="mb-4">
-                                    <h3 class="text-lg font-bold text-white leading-tight">{{ $member['name'] }}</h3>
-                                    <p class="text-sm text-indigo-400 font-medium mt-0.5">{{ $member['title'] }}</p>
+                                    <h3 class="text-lg font-bold text-white leading-tight">{{ $member->full_name }}
+                                    </h3>
+                                    <p class="text-sm text-indigo-400 font-medium mt-0.5">{{ $member->title }}</p>
                                 </div>
 
                                 <p class="text-sm text-slate-400 leading-relaxed italic">
-                                    « {{ $member['quote'] }} »
+                                    « {{ $member->description ?? __getCitation() }} »
                                 </p>
                             </div>
                         </div>
@@ -468,13 +517,13 @@
             <div class="relative mt-8 flex flex-wrap justify-center gap-3">
                 @guest('tenant')
                     <a href="{{ route('login') }}"
-                        class="h-12 px-7 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm shadow-xl shadow-indigo-900/40 transition">
-                        Se connecter
+                        class="py-3 inline-flex items-center px-7 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm shadow-xl shadow-indigo-900/40 transition">
+                        <span>Se connecter</span>
                     </a>
                 @endguest
                 <a href="#contact"
-                    class="h-12 px-7 rounded-xl border border-white/15 hover:bg-white/5 font-semibold text-white text-sm transition">
-                    Nous contacter
+                    class="px-7 py-4 rounded-xl border border-white/15 hover:bg-white/5 font-semibold text-white text-sm transition inline-flex items-center">
+                    <span>Nous contacter</span>
                 </a>
             </div>
         </div>

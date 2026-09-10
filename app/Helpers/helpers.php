@@ -1116,6 +1116,15 @@ if(!function_exists('deleteFileIfExists')){
 
 }
 
+if(!function_exists('__getCitation')){
+
+    function __getCitation(?string $category = null)
+    {
+        return collect(config('citations.citations'))->random()['text'];
+    }
+
+}
+
 
 
 if(!function_exists('rankFormat')){

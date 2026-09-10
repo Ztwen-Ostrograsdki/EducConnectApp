@@ -92,15 +92,17 @@
                                 class="s-link {{ request()->routeIs('tenant.personnels.page') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">👥</div>
-                                <span class="s-label">Page des personnels
+                                <span class="s-label">Gestion des personnels
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
-                            <a wire:navigate href="{{ route('tenant.personnels.manage') }}"
-                                class="s-link {{ request()->routeIs('tenant.personnels.manage') ? 'active' : '' }}"
+                            <a wire:navigate href="{{ route('tenant.personnels.create') }}"
+                                class="s-link {{ request()->routeIs('tenant.personnels.create') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">👥</div>
-                                <span class="s-label">Gestion du pers.</span>
+                                <div class="s-icon" style="font-size:.72rem;">
+                                    <x-lucide-user-plus class="w-3 h-3" />
+                                </div>
+                                <span class="s-label">Ajouter</span>
                             </a>
                             {{-- <a wire:navigate href="{{ route('tenant.filiar.create') }}"
                                 class="s-link {{ request()->routeIs('tenant.filiar.create') ? 'active' : '' }}"
