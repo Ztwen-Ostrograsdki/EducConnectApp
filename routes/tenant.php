@@ -27,6 +27,8 @@ use App\Livewire\Tenants\Filiars\FiliarStudentsListComponent;
 use App\Livewire\Tenants\Filiars\FiliarTeachersListComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarChiefsComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
+use App\Livewire\Tenants\Galleries\CreateGalleryComponent;
+use App\Livewire\Tenants\Galleries\ManageGalleriesComponent;
 use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\CreateTutors;
@@ -98,6 +100,8 @@ use App\Livewire\Tenants\Teachers\TeachersPrintableDocumentsPage;
 use App\Livewire\Tenants\Teachers\TeachersPrintableListComponent;
 use App\Livewire\Tenants\Teachers\TeachersPrintsManagerComponent;
 use App\Livewire\Tenants\TenantDashboard;
+use App\Livewire\Tenants\Testimonials\CreateTestimonialComponent;
+use App\Livewire\Tenants\Testimonials\ManageTestimonialsComponent;
 use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
@@ -153,6 +157,11 @@ Route::middleware([
 
         Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
+        //TESTIMONIALS
+        Route::get('/opinions', ManageTestimonialsComponent::class)->name('tenant.testimonials.index')->middleware(['tenant.has.active.schoolYear', 'tenant.has.active.subscription']);
+
+        Route::get('/opinions/ajout', CreateTestimonialComponent::class)->name('tenant.testimonials.create')->middleware(['tenant.has.active.schoolYear', 'tenant.has.active.subscription']);
+
         // ── Directeur ─────────────────────────────────────────────────
 
         Route::middleware(['role:directeur'])->prefix('administration')->name('tenant.')->group(function () {
@@ -166,7 +175,13 @@ Route::middleware([
 
             Route::get('/annees-scolaires/creation-nouvelle-annee', CreateSchoolYear::class)->name('schoolYears.create');
 
-            Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit');
+            
+            Route::get('/annees-scolaires/{school_year}/edition', ManageSchoolYearComponent::class)->name('schoolYears.edit')->middleware(['tenant.has.active.subscription']);
+
+            //GALLERY
+            Route::get('/galleries/ajout', CreateGalleryComponent::class)->name('galleries.create')->middleware(['tenant.has.active.subscription']);
+            
+            Route::get('/galleries', ManageGalleriesComponent::class)->name('galleries.index')->middleware(['tenant.has.active.subscription']);
 
         });
 

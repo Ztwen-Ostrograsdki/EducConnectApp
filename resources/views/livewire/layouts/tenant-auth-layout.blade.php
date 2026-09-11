@@ -83,7 +83,9 @@
                     @endif
                     <div class="s-acc" id="acc-personnels">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-personnels')">
-                            <div class="s-icon">🎯</div>
+                            <div class="s-icon">
+                                <x-lucide-users class="w-3 h-3" />
+                            </div>
                             <span class="s-label">Personnels</span>
                             <span class="s-acc-arrow">▶</span>
                         </div>
@@ -104,12 +106,33 @@
                                 </div>
                                 <span class="s-label">Ajouter</span>
                             </a>
-                            {{-- <a wire:navigate href="{{ route('tenant.filiar.create') }}"
-                                class="s-link {{ request()->routeIs('tenant.filiar.create') ? 'active' : '' }}"
+                        </div>
+                    </div>
+                    <div class="s-acc" id="acc-gallery">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-gallery')">
+                            <div class="s-icon">
+                                <x-lucide-image class="w-3 h-3" />
+                            </div>
+                            <span class="s-label">Gallery</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a wire:navigate href="{{ route('tenant.galleries.index') }}"
+                                class="s-link {{ request()->routeIs('tenant.galleries.index') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
-                                <div class="s-icon" style="font-size:.72rem;">➕</div>
-                                <span class="s-label">Nouvelle filière</span>
-                            </a> --}}
+                                <div class="s-icon" style="font-size:.72rem;">👥</div>
+                                <span class="s-label">Gestion de la gallerie
+                                    <span class="ml-3 text-sky-600"></span>
+                                </span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.galleries.create') }}"
+                                class="s-link {{ request()->routeIs('tenant.galleries.create') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">
+                                    <x-lucide-image class="w-3 h-3" />
+                                </div>
+                                <span class="s-label">Ajouter</span>
+                            </a>
                         </div>
                     </div>
                     <div class="s-acc" id="acc-schoolyears">
