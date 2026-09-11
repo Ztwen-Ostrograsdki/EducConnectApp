@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6">
+<div class="max-w-6xl mx-auto py-8 px-4 sm:px-6">
     {{-- Header --}}
     <div class="mb-10">
         <div class="flex items-center gap-3 mb-2">
@@ -126,7 +126,7 @@
                 </div>
 
                 {{-- Title + Description grid --}}
-                <div class="grid sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-400 mb-1.5">Titre <span
                                 class="text-slate-600">(optionnel)</span></label>

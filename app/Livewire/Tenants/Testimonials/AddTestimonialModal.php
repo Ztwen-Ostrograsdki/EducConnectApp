@@ -5,19 +5,47 @@ namespace App\Livewire\Tenants\Testimonials;
 use App\Events\DataUpdatedEvent;
 use App\Models\Testimonial;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Title;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
-#[Title("Ajouter un témoignage")]
-class CreateTestimonialComponent extends Component
+class AddTestimonialModal extends Component
 {
     use WireUiActions;
 
+    public bool $show = false;
+
     public string $content = '';
+
+    #[On('open-add-testimonial-modal')]
+    public function open(): void
+    {
+        if (! auth('tenant')->check()) {
+            return;
+        }
+
+        $this->resetValidation();
+        $this->reset('content');
+        $this->show = true;
+    }
+
+    public function close(): void
+    {
+        $this->show = false;
+        $this->resetValidation();
+        $this->reset('content');
+    }
 
     public function save(): void
     {
+        if (! auth('tenant')->check()) {
+            $this->notification()->error(
+                title: 'Non autorisé',
+                description: 'Vous devez être connecté pour laisser un témoignage.',
+            );
+            return;
+        }
+
         $this->validate([
             'content' => ['required', 'string', 'min:10', 'max:2000'],
         ], [
@@ -25,8 +53,6 @@ class CreateTestimonialComponent extends Component
             'content.min'      => 'Le témoignage doit contenir au moins 10 caractères.',
             'content.max'      => 'Le témoignage ne peut pas dépasser 2000 caractères.',
         ]);
-
-
 
         try {
 
@@ -41,17 +67,20 @@ class CreateTestimonialComponent extends Component
             ]);
 
             $this->notification()->success(
-                title: "Témoignage ajouté",
-                description: "Votre témoignage a été enregistré avec succès.",
+                title: 'Témoignage ajouté',
+                description: 'Votre témoignage a été enregistré avec succès.',
             );
 
             broadcast(new DataUpdatedEvent(tenant('id')));
 
-            $this->reset('content');
+            $this->close();
+
+            // Notifie les autres composants (ex: listing) de se rafraîchir
+            $this->dispatch('testimonial-created');
 
         } catch (\Throwable $th) {
             $this->notification()->error(
-                title: "Erreur",
+                title: 'Erreur',
                 description: cutter($th->getMessage(), 2000),
             );
         }
@@ -59,9 +88,6 @@ class CreateTestimonialComponent extends Component
 
     public function render()
     {
-        /** @var \App\Models\User $user **/
-        $user = auth('tenant')->user();
-        
-        return view('livewire.tenants.testimonials.create-testimonial-component')->layout($user->getDashboardLayout());
+        return view('livewire.tenants.testimonials.add-testimonial-modal');
     }
 }

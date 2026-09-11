@@ -6,6 +6,7 @@ use App\Models\Filiar;
 use App\Models\Personnel;
 use App\Models\SchoolYear;
 use App\Models\Serial;
+use App\Models\Testimonial;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -25,7 +26,7 @@ class HomePage extends Component
     {
         $this->counter++;
 
-        unset($this->personnels);
+        unset($this->personnels, $this->testimonials, $this->serials, $this->filiars);
     }
     
     #[Computed]
@@ -51,6 +52,18 @@ class HomePage extends Component
     public function serials()
     {
         return Serial::active()->orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function testimonials()
+    {
+        return Testimonial::where('hidden', false)->orderBy('created_at')->get();
+    }
+
+
+    public function openTestimonialModal()
+    {
+        $this->dispatch('open-add-testimonial-modal');
     }
 
 

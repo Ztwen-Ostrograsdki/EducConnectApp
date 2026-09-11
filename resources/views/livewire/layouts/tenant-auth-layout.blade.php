@@ -28,7 +28,6 @@
 
         <x-notifications />
         <x-dialog />
-
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
         <aside class="sidebar" id="sidebar">
@@ -127,6 +126,33 @@
                             </a>
                             <a wire:navigate href="{{ route('tenant.galleries.create') }}"
                                 class="s-link {{ request()->routeIs('tenant.galleries.create') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">
+                                    <x-lucide-image class="w-3 h-3" />
+                                </div>
+                                <span class="s-label">Ajouter</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="s-acc" id="acc-testimonials">
+                        <div class="s-acc-trigger" onclick="toggleAcc('acc-testimonials')">
+                            <div class="s-icon">
+                                <x-lucide-octagon-alert class="w-3 h-3" />
+                            </div>
+                            <span class="s-label">Temoignages</span>
+                            <span class="s-acc-arrow">▶</span>
+                        </div>
+                        <div class="s-acc-content">
+                            <a wire:navigate href="{{ route('tenant.testimonials.index') }}"
+                                class="s-link {{ request()->routeIs('tenant.testimonials.index') ? 'active' : '' }}"
+                                style="font-size:.78rem;">
+                                <div class="s-icon" style="font-size:.72rem;">👥</div>
+                                <span class="s-label">Gestion de la gallerie
+                                    <span class="ml-3 text-sky-600"></span>
+                                </span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.testimonials.create') }}"
+                                class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">
                                     <x-lucide-image class="w-3 h-3" />

@@ -157,19 +157,15 @@ Route::middleware([
 
         Route::get('/changer-mot-de-passe', PasswordUpdatePage::class)->name('tenant.update.password');
 
-        //TESTIMONIALS
-        Route::get('/opinions', ManageTestimonialsComponent::class)->name('tenant.testimonials.index')->middleware(['tenant.has.active.schoolYear', 'tenant.has.active.subscription']);
-
-        Route::get('/opinions/ajout', CreateTestimonialComponent::class)->name('tenant.testimonials.create')->middleware(['tenant.has.active.schoolYear', 'tenant.has.active.subscription']);
-
         // ── Directeur ─────────────────────────────────────────────────
-
         Route::middleware(['role:directeur'])->prefix('administration')->name('tenant.')->group(function () {
             
             // ANNEES SCOLAIRES
             Route::get('/annees-scolaires/portail', SchoolYearsPortal::class)->name('schoolyears.portal');
 
             Route::get('/abonnement', RequestSubscriptionComponent::class)->name('subscription.request');
+
+            Route::get('/opinions', ManageTestimonialsComponent::class)->name('testimonials.index')->middleware(['tenant.has.active.schoolYear', 'tenant.has.active.subscription']);
 
             Route::get('/annees-scolaires/details-annee-scolaire/{school_year}', SchoolYearProfil::class)->name('schoolyear.profil');
 
@@ -389,6 +385,9 @@ Route::middleware([
         });
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
+
+        //TESTIMONIALS
+        Route::get('/opinions/ajout', CreateTestimonialComponent::class)->name('tenant.testimonials.create')->middleware(['tenant.has.active.subscription']);
 
         Route::middleware(['tenant.has.active.subscription', 'tenant.domain.open.for.others.too', 'user.not.blocked'])->group(function () {
 

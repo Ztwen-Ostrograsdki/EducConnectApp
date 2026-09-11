@@ -383,36 +383,186 @@
     </section>
 
     {{-- ===================== TÉMOIGNAGES ===================== --}}
-    <section id="temoignages" class="py-20 sm:py-28">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="text-center mb-12 sm:mb-16">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Communauté</p>
-                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                    Ce qu’ils disent de nous
-                </h2>
+
+    @if (count($this->testimonials))
+        <section id="temoignages" class="py-20 sm:py-28 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12 sm:mb-16">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Communauté</p>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+                        Ce qu’ils disent de nous
+                    </h2>
+                    @auth('tenant')
+                        <a wire:navigate href="{{ route('tenant.testimonials.create') }}"
+                            class="py-4 px-7 rounded-2xl bg-lime-600/20 my-3 hover:bg-lime-800 font-semibold text-lime-400 text-sm transition gap-3 inline-flex items-center">
+                            <span>
+                                Publier votre avis
+                            </span>
+                            <x-lucide-pen-line class="w-3 h-3" />
+                        </a>
+                    @endauth
+                </div>
             </div>
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                @foreach ([['quote' => "Cette école m'a donné bien plus que des connaissances : elle m'a appris à croire en moi.", 'name' => 'Jean Dupont', 'role' => 'Promotion 2024 · Informatique'], ['quote' => 'Les enseignants sont passionnés et disponibles. Une véritable famille.', 'name' => 'Marie Konan', 'role' => 'Promotion 2023 · Gestion'], ['quote' => "Grâce à cette formation, j'ai pu intégrer une grande entreprise dès ma sortie.", 'name' => 'Alain Traoré', 'role' => 'Promotion 2025 · Génie Technique']] as $t)
-                    <div class="rounded-2xl bg-[#0f1523] border border-white/[0.06] p-6 sm:p-8 flex flex-col">
-                        <div class="text-3xl text-indigo-500/40 mb-4">"</div>
-                        <p class="text-sm sm:text-base text-slate-300 leading-relaxed flex-1 italic">
-                            {{ $t['quote'] }}</p>
-                        <div class="mt-6 pt-5 border-t border-white/5 flex items-center gap-3">
+            {{-- Carrousel auto + infini + manuel --}}
+            <div class="relative" x-data="{
+                speed: 0.5,
+                isPaused: false,
+                isDragging: false,
+                startX: 0,
+                scrollStart: 0,
+            
+                init() {
+                    const track = this.$refs.track;
+                    const items = Array.from(track.children);
+            
+                    // Clone intelligent si peu de témoignages
+                    const minCards = 8;
+                    let clonesNeeded = 1;
+            
+                    if (items.length > 0 && items.length < minCards) {
+                        clonesNeeded = Math.ceil(minCards / items.length);
+                    }
+            
+                    const originalHTML = track.innerHTML;
+                    for (let i = 0; i < clonesNeeded; i++) {
+                        track.innerHTML += originalHTML;
+                    }
+            
+                    this.originalWidth = track.scrollWidth / (clonesNeeded + 1);
+            
+                    const animate = () => {
+                        if (!this.isPaused && !this.isDragging) {
+                            track.scrollLeft += this.speed;
+            
+                            if (track.scrollLeft >= this.originalWidth) {
+                                track.scrollLeft -= this.originalWidth;
+                            }
+                        }
+                        requestAnimationFrame(animate);
+                    };
+            
+                    requestAnimationFrame(animate);
+            
+                    // Pause au survol
+                    track.addEventListener('mouseenter', () => this.isPaused = true);
+                    track.addEventListener('mouseleave', () => {
+                        if (!this.isDragging) this.isPaused = false;
+                    });
+            
+                    // Drag souris
+                    track.addEventListener('mousedown', (e) => {
+                        this.isDragging = true;
+                        this.isPaused = true;
+                        this.startX = e.pageX - track.offsetLeft;
+                        this.scrollStart = track.scrollLeft;
+                        track.style.cursor = 'grabbing';
+                        track.style.userSelect = 'none';
+                    });
+            
+                    window.addEventListener('mouseup', () => {
+                        if (this.isDragging) {
+                            this.isDragging = false;
+                            track.style.cursor = 'grab';
+                            track.style.userSelect = '';
+                            setTimeout(() => this.isPaused = false, 800);
+                        }
+                    });
+            
+                    window.addEventListener('mousemove', (e) => {
+                        if (!this.isDragging) return;
+                        e.preventDefault();
+                        const x = e.pageX - track.offsetLeft;
+                        const walk = (x - this.startX) * 1.4;
+                        track.scrollLeft = this.scrollStart - walk;
+                    });
+            
+                    // Touch mobile
+                    track.addEventListener('touchstart', () => this.isPaused = true, { passive: true });
+                    track.addEventListener('touchend', () => {
+                        setTimeout(() => this.isPaused = false, 1000);
+                    }, { passive: true });
+                },
+            
+                scrollBy(amount) {
+                    this.$refs.track.scrollBy({ left: amount, behavior: 'smooth' });
+                    this.isPaused = true;
+                    setTimeout(() => this.isPaused = false, 1200);
+                }
+            }">
+
+                {{-- Boutons navigation --}}
+                <div
+                    class="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 right-3 z-20 justify-between pointer-events-none">
+                    <button @click="scrollBy(-360)"
+                        class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
+                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
+                       transition shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button @click="scrollBy(360)"
+                        class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
+                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
+                       transition shadow-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Track --}}
+                <div x-ref="track"
+                    class="flex gap-5 sm:gap-6 overflow-x-auto pb-6 px-4 sm:px-6 select-none cursor-grab
+                    [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+                    @foreach ($this->testimonials as $testimonial)
+                        @php
+                            $author = $testimonial->user;
+                            $authorName = $author?->getFullName() ?? 'Anonyme';
+                            $authorPhoto = $author?->profil_photo_url ?? ($author?->profile_photo_url ?? null);
+                            $initial = strtoupper(mb_substr($authorName, 0, 1));
+                        @endphp
+
+                        <div class="flex-none w-[300px] sm:w-[340px]">
                             <div
-                                class="h-10 w-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-sm font-bold text-indigo-300">
-                                {{ str()->substr($t['name'], 0, 1) }}
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-white">{{ $t['name'] }}</p>
-                                <p class="text-[11px] text-slate-500">{{ $t['role'] }}</p>
+                                class="h-full rounded-2xl bg-[#0f1523] border border-white/[0.06] p-6 sm:p-7 flex flex-col
+                                hover:border-indigo-500/30 transition-all duration-300 shadow-xl shadow-black/20">
+
+                                <div class="text-3xl text-indigo-500/40 mb-2 leading-none">"</div>
+
+                                <p class="text-sm sm:text-base text-slate-300 leading-relaxed flex-1 italic">
+                                    {{ $testimonial->content }}
+                                </p>
+
+                                <div class="mt-5 pt-4 border-t border-white/5 flex items-center gap-3">
+                                    @if ($authorPhoto)
+                                        <img src="{{ $authorPhoto }}" alt="{{ $authorName }}"
+                                            class="h-10 w-10 rounded-xl object-cover ring-2 ring-white/10">
+                                    @else
+                                        <div
+                                            class="h-10 w-10 rounded-xl bg-indigo-500/20 border border-indigo-500/20
+                                            flex items-center justify-center text-sm font-bold text-indigo-300">
+                                            {{ $initial }}
+                                        </div>
+                                    @endif
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-white">{{ $authorName }}</p>
+                                        <p class="text-[11px] text-slate-500">
+                                            {{ implode(' - ', $testimonial->user->roles->pluck('name')->toArray()) }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     @if (count($this->personnels))
         {{-- ===================== ÉQUIPE / PERSONNEL ===================== --}}

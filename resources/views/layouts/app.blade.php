@@ -32,7 +32,6 @@
         {{-- @livewire('app-guard') --}}
 
         <x-notifications />
-
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
         {{-- SIDEBAR --}}
@@ -354,20 +353,42 @@
                     @endauth
                 </div>
             </header>
-            <main class="flex-1 min-w-0 w-full max-w-full overflow-x-hidden p-3" id="content">
-                <div class="mx-auto w-full max-w-[1900px]">
-                    <div class="flex flex-wrap items-center gap-3 p-3 bg-slate-950 rounded-lg my-1.5">
-                        <h1 class="text-lg font-bold">
-                            Mon epace
-                        </h1>
-                        <div class="flex items-center text-sky-400 font-mono">
-                            <h4>
-                                {{ auth('tenant')->user()?->getFullName() }}
-                            </h4>
+            <main class="flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-[#070b14]" id="content">
+                <div class="mx-auto w-full max-w-[1900px] px-3 sm:px-4 lg:px-6">
+
+                    {{-- Breadcrumb / espace perso --}}
+                    <div class="py-3 sm:py-4">
+                        <div
+                            class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#0f1523] border border-white/[0.06] px-4 sm:px-5 py-3 shadow-lg shadow-black/10">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center shrink-0">
+                                    <x-lucide-layout-dashboard class="w-4 h-4 text-sky-400" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                        Espace personnel
+                                    </p>
+                                    <h1 class="text-sm sm:text-base font-semibold text-white truncate">
+                                        Mon espace
+                                        <span class="text-slate-600 font-normal mx-1.5">·</span>
+                                        <span class="text-sky-400 font-mono font-medium">
+                                            {{ auth('tenant')->user()?->getFullName() }}
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+
+                            <div
+                                class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span class="text-[10px] font-medium text-emerald-400">Connecté</span>
+                            </div>
                         </div>
                     </div>
+
+                    {{ $slot }}
                 </div>
-                {{ $slot }}
             </main>
         </div>
     </div>

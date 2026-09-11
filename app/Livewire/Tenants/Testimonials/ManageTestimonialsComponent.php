@@ -5,6 +5,7 @@ namespace App\Livewire\Tenants\Testimonials;
 use App\Livewire\Tenants\ActionsTraits\TestimonialActions;
 use App\Models\Testimonial;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -24,6 +25,14 @@ class ManageTestimonialsComponent extends Component
     public string $status = 'all'; // all | visible | hidden
 
     public int $perPage = 15;
+
+    public int $counter = 0;
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
 
     public function updatedSearch(): void
     {
