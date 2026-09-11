@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Tenants;
 
+use App\Models\Filiar;
 use App\Models\Personnel;
 use App\Models\SchoolYear;
+use App\Models\Serial;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -36,6 +38,19 @@ class HomePage extends Component
     public function personnels()
     {
         return Personnel::query()->where('school_year_id', $this->activeYear->id)->active()->visible()->orderBy('name')->get();
+    }
+    
+    #[Computed]
+    public function filiars()
+    {
+        return Filiar::active()->orderBy('name')->get();
+    }
+
+    
+    #[Computed]
+    public function serials()
+    {
+        return Serial::active()->orderBy('name')->get();
     }
 
 
