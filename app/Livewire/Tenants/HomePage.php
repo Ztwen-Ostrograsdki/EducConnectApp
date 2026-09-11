@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants;
 
 use App\Models\Filiar;
+use App\Models\Gallery;
 use App\Models\Personnel;
 use App\Models\SchoolYear;
 use App\Models\Serial;
@@ -39,6 +40,13 @@ class HomePage extends Component
     public function personnels()
     {
         return Personnel::query()->where('school_year_id', $this->activeYear->id)->active()->visible()->orderBy('name')->get();
+    }
+
+
+    #[Computed]
+    public function galleries()
+    {
+        return Gallery::query()->visible()->orderBy('created_at')->get();
     }
     
     #[Computed]

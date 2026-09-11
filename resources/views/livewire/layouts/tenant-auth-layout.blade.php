@@ -74,6 +74,13 @@
                             class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                             <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                         </a>
+                        <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                            class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-info class="h-3 w-3" />
+                            </div>
+                            <span class="s-label">Laiser un comm.</span>
+                        </a>
                     @else
                         <span title="Vous ne pouvez pas accéder à cette page car vous n'avez aucun abonnement actf"
                             data-sidebar-item class="s-link cursor-not-allowed opacity-20">
@@ -147,7 +154,7 @@
                                 class="s-link {{ request()->routeIs('tenant.testimonials.index') ? 'active' : '' }}"
                                 style="font-size:.78rem;">
                                 <div class="s-icon" style="font-size:.72rem;">👥</div>
-                                <span class="s-label">Gestion de la gallerie
+                                <span class="s-label">Gestion des avis
                                     <span class="ml-3 text-sky-600"></span>
                                 </span>
                             </a>
@@ -699,6 +706,13 @@
                             </div>
                             <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon
                                 profil</a>
+                            <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                                class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-info class="h-3 w-3" />
+                                </div>
+                                <span class="s-label">Laisser un Commentaire</span>
+                            </a>
                             <a href="#" class="dd-item">⚙️ Paramètres du compte</a>
                             <a href="#" class="dd-item">❓ Support</a>
                             <div class="dd-sep"></div>
@@ -725,6 +739,7 @@
         </div>
     </div>
 
+    @livewire('tenants.testimonials.add-testimonial-modal')
     @livewireScripts
 </body>
 

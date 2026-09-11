@@ -5,6 +5,7 @@ namespace App\Livewire\Tenants\Galleries;
 use App\Livewire\Tenants\ActionsTraits\GalleryActions;
 use App\Models\Gallery;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -24,6 +25,14 @@ class ManageGalleriesComponent extends Component
     public string $status = 'all'; // all | visible | hidden
 
     public int $perPage = 12;
+
+    public int $counter = 0;
+
+    #[On('DataUpdatedEventLiveEvent')]
+    public function reloaddata()
+    {
+        $this->counter++;
+    }
 
     public function updatedSearch(): void
     {

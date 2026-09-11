@@ -358,29 +358,91 @@
     @endif
 
     {{-- ===================== GALERIE ===================== --}}
-    <section id="galerie" class="py-20 sm:py-28 bg-[#0a0e17]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="text-center mb-12 sm:mb-16">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Nostalgie</p>
-                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                    La vie à {{ tenant('school_name') }}
-                </h2>
+    @if (count($this->galleries))
+        <section id="galerie" class="relative py-20 sm:py-28 overflow-hidden">
+            {{-- Fond --}}
+            <div class="absolute inset-0 bg-[#0a0e17]"></div>
+            <div
+                class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent">
+            </div>
+            <div
+                class="absolute -top-32 left-1/4 w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none">
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                @for ($i = 7; $i <= randomNumber(11, 18); $i++)
-                    <div class="aspect-square overflow-hidden rounded-2xl group relative">
-                        <img src="{{ asset('images/school' . $i . '.jpg') }}" alt=""
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            loading="lazy">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                    </div>
-                @endfor
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+
+                {{-- En-tête --}}
+                <div class="text-center mb-12 sm:mb-16">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">
+                        Nostalgie
+                    </p>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
+                        La vie à
+                        <span
+                            class="bg-gradient-to-r from-indigo-400 via-violet-400 to-sky-400 bg-clip-text text-transparent">
+                            {{ tenant('school_name') }}
+                        </span>
+                    </h2>
+                    <p class="mt-4 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+                        Moments, souvenirs et scènes du quotidien de notre établissement
+                    </p>
+                </div>
+
+                {{-- Grille --}}
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    @foreach ($this->galleries as $gallery)
+                        <article
+                            class="group relative aspect-square overflow-hidden rounded-2xl bg-[#0f1523] border border-white/[0.04] shadow-lg shadow-black/20">
+
+                            <img src="{{ $gallery->path_url }}" alt="{{ $gallery->title ?? 'Image galerie' }}"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                loading="lazy">
+
+                            {{-- Overlay dégradé permanent (bas) --}}
+                            <div
+                                class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none">
+                            </div>
+
+                            {{-- Overlay hover --}}
+                            <div
+                                class="absolute inset-0 bg-indigo-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            </div>
+
+                            {{-- Détails --}}
+                            <div
+                                class="absolute inset-x-0 bottom-0 p-3 sm:p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+                                <h3 class="text-xs sm:text-sm font-semibold text-white truncate drop-shadow-sm">
+                                    {{ $gallery->title ?: 'Sans titre' }}
+                                </h3>
+
+                                @if ($gallery->description)
+                                    <p
+                                        class="mt-1 text-[10px] sm:text-xs text-slate-300/90 line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                                        {{ $gallery->description }}
+                                    </p>
+                                @endif
+
+                                @if ($gallery->created_at)
+                                    <p
+                                        class="mt-1.5 text-[9px] sm:text-[10px] font-mono text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                        {{ $gallery->created_at->format('d M Y') }}
+                                    </p>
+                                @endif
+                            </div>
+
+                            {{-- Liseré hover --}}
+                            <div
+                                class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/0 group-hover:ring-indigo-400/30 transition-all duration-300 pointer-events-none">
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ===================== TÉMOIGNAGES ===================== --}}
 
@@ -393,13 +455,10 @@
                         Ce qu’ils disent de nous
                     </h2>
                     @auth('tenant')
-                        <a wire:navigate href="{{ route('tenant.testimonials.create') }}"
-                            class="py-4 px-7 rounded-2xl bg-lime-600/20 my-3 hover:bg-lime-800 font-semibold text-lime-400 text-sm transition gap-3 inline-flex items-center">
-                            <span>
-                                Publier votre avis
-                            </span>
-                            <x-lucide-pen-line class="w-3 h-3" />
-                        </a>
+                        <button class="py-4 px-12 my-5 rounded-2xl bg-lime-600 hover:bg-lime-800 text-lime-200"
+                            onclick="Livewire.dispatch('open-testimonial-modal')">
+                            Laisser un témoignage | Commentaire
+                        </button>
                     @endauth
                 </div>
             </div>
@@ -571,7 +630,7 @@
                 <div class="text-center mb-12 sm:mb-16">
                     <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Équipe</p>
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                        Les personnels de l’école
+                        Le personnel administratif
                     </h2>
                     <p class="mt-4 text-slate-500 max-w-md mx-auto text-sm sm:text-base">
                         Des professionnels passionnés au service de la réussite de chaque élève
@@ -795,6 +854,12 @@
                                     class="hover:text-white transition">Mon profil</a></li>
                             <li><a href="{{ route('tenant.notifications.center') }}"
                                     class="hover:text-white transition">Notifications</a></li>
+                            <li>
+                                <button class="text-lime-700 hover:text-lime-400"
+                                    onclick="Livewire.dispatch('open-testimonial-modal')">
+                                    Laisser un témoignage | Commentaire
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 @endauth

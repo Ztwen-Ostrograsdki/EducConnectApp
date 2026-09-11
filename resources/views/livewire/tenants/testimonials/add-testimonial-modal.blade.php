@@ -1,128 +1,92 @@
 <div>
-    @if ($show)
-        {{-- Backdrop + modal (Livewire only, pas de dépendance Alpine pour l'affichage) --}}
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6" wire:key="testimonial-modal-open"
-            x-data x-init="$el.querySelector('textarea')?.focus()">
+    <div x-data x-show="$wire.show" x-cloak x-transition.opacity @keydown.escape.window="$wire.close()"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
 
-            {{-- Overlay --}}
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300" wire:click="close"
-                wire:loading.class="pointer-events-none" wire:target="save,close">
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-[#070b14]/80 backdrop-blur-md" @click="$wire.close()"></div>
+
+        {{-- Panel --}}
+        <div x-show="$wire.show" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-1" @click.stop
+            class="relative z-10 w-full max-w-lg rounded-2xl bg-[#0f1523] border border-white/[0.08] shadow-2xl shadow-black/50 overflow-hidden">
+
+            {{-- Lueur décorative --}}
+            <div
+                class="pointer-events-none absolute -top-20 -right-20 w-40 h-40 rounded-full bg-indigo-500/15 blur-3xl">
             </div>
 
-            {{-- Panel --}}
-            <div class="relative w-full max-w-lg rounded-2xl bg-[#0f1523] border border-white/10
-                        shadow-2xl shadow-black/50 overflow-hidden
-                        animate-[modalIn_0.25s_ease-out]"
-                role="dialog" aria-modal="true" aria-labelledby="testimonial-modal-title" @click.stop
-                @keydown.escape.window="$wire.close()">
-
-                {{-- Header --}}
-                <div class="flex items-center justify-between gap-3 px-5 sm:px-6 py-4 border-b border-white/[0.06]">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div
-                            class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <h2 id="testimonial-modal-title" class="text-base sm:text-lg font-bold text-white truncate">
-                                Laisser un témoignage
-                            </h2>
-                            <p class="text-[11px] text-slate-500 truncate">Partagez votre expérience</p>
-                        </div>
+            {{-- Header --}}
+            <div
+                class="relative flex items-center justify-between gap-3 px-5 sm:px-6 py-4 border-b border-white/[0.06]">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0">
+                        <x-lucide-message-square-quote class="w-4 h-4 text-indigo-400" />
                     </div>
+                    <div class="min-w-0">
+                        <h3 class="text-sm font-semibold text-white">Ajouter un témoignage</h3>
+                        <p class="text-[11px] text-slate-500">Partagez votre expérience</p>
+                    </div>
+                </div>
+                <button type="button" wire:click="close"
+                    class="w-8 h-8 rounded-lg hover:bg-white/5 text-slate-500 hover:text-slate-300 transition-all flex items-center justify-center shrink-0">
+                    <x-lucide-x class="w-4 h-4" />
+                </button>
+            </div>
 
-                    <button type="button" wire:click="close"
-                        class="shrink-0 rounded-lg p-2 text-slate-400 hover:text-white hover:bg-white/5 transition-colors duration-200"
-                        aria-label="Fermer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+            {{-- Body --}}
+            <div class="relative px-5 sm:px-6 py-5 space-y-3">
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Votre message
+                </label>
+
+                <div class="relative">
+                    <textarea wire:model="content" rows="6" placeholder="Ce que vous avez apprécié, vécu, recommandé…"
+                        class="w-full rounded-xl bg-[#070b14] border border-white/10 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600
+                                     focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all resize-none leading-relaxed
+                                     @error('content') border-rose-500/50 @enderror"></textarea>
+
+                    {{-- Compteur discret --}}
+                    <div class="absolute bottom-2.5 right-3 text-[10px] font-mono text-slate-600 pointer-events-none">
+                        10 – 2000
+                    </div>
                 </div>
 
-                {{-- Body --}}
-                <form wire:submit="save" class="px-5 sm:px-6 py-5 space-y-4">
-                    <div>
-                        <label for="testimonial-content" class="block text-xs font-medium text-slate-400 mb-1.5">
-                            Votre témoignage <span class="text-rose-400">*</span>
-                        </label>
-                        <textarea id="testimonial-content" wire:model="content" rows="5" placeholder="Écrivez votre témoignage ici..."
-                            class="w-full rounded-xl bg-slate-900/50 border border-white/10 px-3.5 py-2.5 text-sm text-white
-                                         placeholder-slate-600 resize-none
-                                         focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 focus:bg-slate-900/80
-                                         outline-none transition-all duration-200"></textarea>
-                        @error('content')
-                            <p class="mt-1.5 text-xs text-rose-400 flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                        <p class="mt-1.5 text-[11px] text-slate-600">Minimum 10 caractères — Maximum 2000 caractères</p>
-                    </div>
+                @error('content')
+                    <p class="text-xs text-rose-400 flex items-center gap-1.5">
+                        <x-lucide-circle-alert class="w-3.5 h-3.5 shrink-0" />
+                        {{ $message }}
+                    </p>
+                @enderror
+            </div>
 
-                    <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 pt-1">
-                        <button type="button" wire:click="close" wire:loading.attr="disabled"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10
-                                       bg-transparent px-4 py-2.5 text-sm font-medium text-slate-300
-                                       hover:bg-white/5 hover:text-white transition-all duration-200">
-                            Annuler
-                        </button>
+            {{-- Footer --}}
+            <div
+                class="relative flex items-center justify-end gap-2.5 px-5 sm:px-6 py-4 border-t border-white/[0.06] bg-[#0a0e18]/50">
+                <button type="button" wire:click="close"
+                    class="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-slate-400 hover:text-slate-200 transition-all">
+                    Annuler
+                </button>
 
-                        <button type="submit" wire:loading.attr="disabled" wire:target="save"
-                            class="relative inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600
-                                       px-5 py-2.5 text-sm font-semibold text-white
-                                       hover:bg-indigo-500 active:scale-[0.98]
-                                       disabled:opacity-70 disabled:cursor-not-allowed
-                                       transition-all duration-200
-                                       shadow-lg shadow-indigo-600/20 hover:shadow-indigo-500/30">
-
-                            <span wire:loading wire:target="save"
-                                class="absolute inset-0 rounded-xl bg-indigo-400/30 blur-md animate-pulse pointer-events-none"></span>
-
-                            <span class="relative flex items-center gap-2">
-                                <svg wire:loading.remove wire:target="save" class="w-4 h-4" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                                <svg wire:loading wire:target="save" class="w-4 h-4 animate-spin" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                                <span wire:loading.remove wire:target="save">Publier</span>
-                                <span wire:loading wire:target="save">Publication...</span>
-                            </span>
-                        </button>
-                    </div>
-                </form>
+                <button type="button" wire:click="save" wire:loading.attr="disabled" wire:target="save"
+                    class="h-10 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold text-white shadow-lg shadow-indigo-900/30 transition-all disabled:opacity-50 inline-flex items-center gap-2">
+                    <span wire:loading.remove wire:target="save" class="inline-flex items-center gap-2">
+                        <x-lucide-send class="w-4 h-4" />
+                        Publier
+                    </span>
+                    <span wire:loading wire:target="save" class="inline-flex items-center gap-2">
+                        <span class="relative flex h-4 w-4">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/40"></span>
+                            <x-lucide-loader-2 class="relative w-4 h-4 animate-spin" />
+                        </span>
+                        Envoi…
+                    </span>
+                </button>
             </div>
         </div>
-
-        <style>
-            @keyframes modalIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95) translateY(12px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
-                }
-            }
-        </style>
-    @endif
+    </div>
 </div>
-

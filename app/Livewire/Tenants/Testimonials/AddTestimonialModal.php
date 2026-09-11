@@ -17,35 +17,23 @@ class AddTestimonialModal extends Component
 
     public string $content = '';
 
-    #[On('open-add-testimonial-modal')]
+    #[On('open-testimonial-modal')]
     public function open(): void
     {
-        if (! auth('tenant')->check()) {
-            return;
-        }
-
-        $this->resetValidation();
         $this->reset('content');
+        $this->resetErrorBag();
         $this->show = true;
     }
 
     public function close(): void
     {
-        $this->show = false;
-        $this->resetValidation();
         $this->reset('content');
+        $this->resetErrorBag();
+        $this->show = false;
     }
 
     public function save(): void
     {
-        if (! auth('tenant')->check()) {
-            $this->notification()->error(
-                title: 'Non autorisé',
-                description: 'Vous devez être connecté pour laisser un témoignage.',
-            );
-            return;
-        }
-
         $this->validate([
             'content' => ['required', 'string', 'min:10', 'max:2000'],
         ], [
@@ -55,7 +43,6 @@ class AddTestimonialModal extends Component
         ]);
 
         try {
-
             /** @var \App\Models\User $user **/
             $user = auth('tenant')->user();
 
@@ -67,20 +54,17 @@ class AddTestimonialModal extends Component
             ]);
 
             $this->notification()->success(
-                title: 'Témoignage ajouté',
-                description: 'Votre témoignage a été enregistré avec succès.',
+                title: "Témoignage ajouté",
+                description: "Votre témoignage a été enregistré avec succès.",
             );
 
             broadcast(new DataUpdatedEvent(tenant('id')));
 
             $this->close();
 
-            // Notifie les autres composants (ex: listing) de se rafraîchir
-            $this->dispatch('testimonial-created');
-
         } catch (\Throwable $th) {
             $this->notification()->error(
-                title: 'Erreur',
+                title: "Erreur",
                 description: cutter($th->getMessage(), 2000),
             );
         }

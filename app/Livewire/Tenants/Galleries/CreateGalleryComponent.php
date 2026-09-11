@@ -82,6 +82,7 @@ class CreateGalleryComponent extends Component
 
         try {
             foreach ($this->items as $item) {
+                
                 $path = TenantStorage::store($item['image'], 'galleries');
 
                 $prepared[] = [

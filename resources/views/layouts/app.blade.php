@@ -80,6 +80,13 @@
                             </div>
                             <span class="s-label">Mon profil</span>
                         </a>
+                        <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                            class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-info class="h-3 w-3" />
+                            </div>
+                            <span class="s-label">Donner son avis</span>
+                        </a>
                     </div>
 
                     {{-- ─── ESPACE ENSEIGNANT ────────────────────────────── --}}
@@ -339,7 +346,8 @@
                                     <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                                 </div>
                                 <a href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
-                                <a href="{{ route('tenant.my.profil') }}" class="dd-item">⚙️ Paramètres du compte</a>
+                                <a href="{{ route('tenant.testimonials.create') }}" class="dd-item">
+                                    📢 Donner un avis</a>
                                 <div class="dd-sep"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -393,6 +401,7 @@
         </div>
     </div>
     @livewireScripts
+    @livewire('tenants.testimonials.add-testimonial-modal')
 </body>
 
 </html>
