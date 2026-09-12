@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants;
 
 use App\Events\DataUpdatedEvent;
+use App\Helpers\Support\TenantStorage;
 use App\Livewire\Tenants\ActionsTraits\SchoolYearsActions;
 use App\Models\SchoolYear;
 use App\Tools\BeninData;
@@ -11,13 +12,14 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title('PAGE DES PARAMETRES')]
 class SettingsComponent extends Component
 {
-    use WireUiActions, SchoolYearsActions;
+    use WireUiActions, SchoolYearsActions, WithFileUploads;
 
     public $cities = [];
 
@@ -66,6 +68,8 @@ class SettingsComponent extends Component
         $this->initGeneral();
 
         $this->initSecurity();
+
+        $this->initHomePage();
     }
 
     #[Computed]
@@ -288,6 +292,121 @@ class SettingsComponent extends Component
 
         $this->notification()->success(
             title: 'Paramètres de sécurité mis à jour',
+            description: 'Les modifications ont été enregistrées avec succès.',
+        );
+    }
+
+
+    public bool $hide_personnels_on_home_page = false;
+    public bool $hide_testimonials_on_home_page = false;
+    public bool $hide_galleries_on_home_page = false;
+    public bool $hide_serials_on_home_page = false;
+    public bool $hide_filiars_on_home_page = false;
+    public $background_image;
+    public ?string $current_background_image = null;
+
+    public function initHomePage()
+    {
+        $tenant = tenancy()->tenant;
+
+        if ($tenant) {
+            $this->hide_personnels_on_home_page = $tenant->hide_personnels_on_home_page;
+            $this->hide_testimonials_on_home_page = $tenant->hide_testimonials_on_home_page;
+            $this->hide_galleries_on_home_page = $tenant->hide_galleries_on_home_page;
+            $this->hide_serials_on_home_page = $tenant->hide_serials_on_home_page;
+            $this->hide_filiars_on_home_page = $tenant->hide_filiars_on_home_page;
+            $this->current_background_image = $tenant->background_image;
+        }
+    }
+
+    public function removeBackgroundImage(): void
+    {
+        $tenant = tenancy()->tenant;
+
+        if (! $tenant) {
+            return;
+        }
+
+        try {
+            if ($tenant->background_image) {
+                TenantStorage::delete($tenant->background_image);
+            }
+
+            $tenant->update(['background_image' => null]);
+
+            $this->current_background_image = null;
+
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
+            $this->notification()->success(
+                title: 'Photo de couverture supprimée',
+                description: "La photo de couverture a été retirée.",
+            );
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'Suppression échouée',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+        }
+    }
+
+    public function saveHomePage(): void
+    {
+        $validated = $this->validate([
+            'hide_personnels_on_home_page'   => 'boolean',
+            'hide_testimonials_on_home_page' => 'boolean',
+            'hide_galleries_on_home_page'    => 'boolean',
+            'hide_serials_on_home_page'      => 'boolean',
+            'hide_filiars_on_home_page'      => 'boolean',
+            'background_image'               => 'nullable|image|max:2048',
+        ]);
+
+        unset($validated['background_image']);
+
+        $tenant = tenancy()->tenant;
+
+        if (! $tenant) {
+            $this->addError('hide_personnels_on_home_page', "Le tenant courant est introuvable.");
+            return;
+        }
+
+        if ($this->background_image) {
+            try {
+                if ($tenant->background_image) {
+                    TenantStorage::delete($tenant->background_image);
+                }
+
+                $path = TenantStorage::store($this->background_image, 'profiles');
+
+                $tenant->update(['background_image' => $path]);
+
+
+                $this->current_background_image = $path;
+                $this->background_image = null;
+
+            } catch (\Throwable $th) {
+                $this->notification()->error(
+                    title: 'Photo de couverture non mise à jour',
+                    description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+                );
+                return;
+            }
+        }
+
+        $tenant->update([
+            'hide_personnels_on_home_page'   => $this->hide_personnels_on_home_page,
+            'hide_testimonials_on_home_page' => $this->hide_testimonials_on_home_page,
+            'hide_galleries_on_home_page'    => $this->hide_galleries_on_home_page,
+            'hide_serials_on_home_page'      => $this->hide_serials_on_home_page,
+            'hide_filiars_on_home_page'      => $this->hide_filiars_on_home_page,
+        ]);
+
+        
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+
+        $this->notification()->success(
+            title: "Paramètres de la page d'accueil mis à jour",
             description: 'Les modifications ont été enregistrées avec succès.',
         );
     }

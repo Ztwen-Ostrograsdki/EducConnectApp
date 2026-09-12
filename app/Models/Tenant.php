@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\TenantForceDeleted;
 use App\Helpers\ClasseHelpers;
+use App\Helpers\Support\TenantStorage;
 use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\RequestToCreateNewTenant;
@@ -84,6 +85,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'pp_can_edit_coef',
             'ae_can_edit_coef',
             'ca_can_edit_coef',
+
+            'hide_testimonials_on_home_page',
+            'hide_galleries_on_home_page',
+            'hide_serials_on_home_page',
+            'hide_filiars_on_home_page',
+            'hide_personnels_on_home_page',
+            'background_image',
         ];
     }
 
@@ -106,6 +114,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'pp_can_edit_coef'=> false,
         'ae_can_edit_coef'=> false,
         'ca_can_edit_coef'=> false,
+        'hide_testimonials_on_home_page' => false,
+        'hide_galleries_on_home_page' => false,
+        'hide_serials_on_home_page' => false,
+        'hide_filiars_on_home_page' => false,
+        'hide_personnels_on_home_page' => false,
+        'background_image' => null,
     ];
 
     /**
@@ -122,6 +136,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'pp_can_edit_coef'=> 'boolean',
         'ae_can_edit_coef'=> 'boolean',
         'ca_can_edit_coef'=> 'boolean',
+        
+        'hide_testimonials_on_home_page' => 'boolean',
+        'hide_galleries_on_home_page' => 'boolean',
+        'hide_serials_on_home_page' => 'boolean',
+        'hide_filiars_on_home_page' => 'boolean',
+        'hide_personnels_on_home_page' => 'boolean',
     ];
 
     /**
@@ -548,6 +568,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      
         return SchoolYear::current()->exists();
     
+    }
+
+    public function getBackgroundImageUrlAttribute(): ?string
+    {
+       if($this->background_image)  return TenantStorage::url( $this->background_image);
+
+       else return asset('images/default-avatar.jpg') ;
     }
 
 

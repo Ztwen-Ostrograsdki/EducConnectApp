@@ -65,6 +65,13 @@ class CreateTenantsTable extends Migration
             $table->boolean('pp_can_edit_coef')->default(false);
             $table->boolean('force_2fa')->default(false);
 
+            $table->string('background_image')->nullable()->default(null);
+            $table->boolean('hide_testimonials_on_home_page')->default(false);
+            $table->boolean('hide_galleries_on_home_page')->default(false);
+            $table->boolean('hide_serials_on_home_page')->default(false);
+            $table->boolean('hide_filiars_on_home_page')->default(false);
+            $table->boolean('hide_personnels_on_home_page')->default(false);
+
             $table->softDeletes();
 
             $table->timestamps();

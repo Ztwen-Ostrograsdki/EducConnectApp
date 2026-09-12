@@ -20,7 +20,7 @@
 
             {{-- Sidebar tabs --}}
             <nav class="lg:w-56 shrink-0 space-y-1">
-                @foreach ([['general', 'Général', 'building-2'], ['academic', 'Académique', 'graduation-cap'], ['notifications', 'Notifications', 'bell'], ['security', 'Sécurité', 'shield']] as [$key, $label, $icon])
+                @foreach ([['general', 'Général', 'building-2'], ['academic', 'Académique', 'graduation-cap'], ['notifications', 'Notifications', 'bell'], ['home-page', "Page d'acceuil", 'image'], ['security', 'Sécurité', 'shield']] as [$key, $label, $icon])
                     <button wire:click="setTab('{{ $key }}')"
                         class="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all
                                    {{ $activeTab === $key
@@ -41,6 +41,10 @@
 
                             @case('shield')
                                 <x-lucide-shield class="w-4 h-4 shrink-0" />
+                            @break
+
+                            @case('image')
+                                <x-lucide-image class="w-4 h-4 shrink-0" />
                             @break
                         @endswitch
                         {{ $label }}
@@ -494,6 +498,211 @@
                                         Enregistrer
                                     </span>
                                     <span wire:loading wire:target="saveNotifications"
+                                        class="inline-flex items-center gap-2">
+                                        <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
+                                        Enregistrement…
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+                @endif
+
+                {{-- ═══ PAGE D'ACCUEIL ═══ --}}
+                @if ($activeTab === 'home-page')
+                    <section
+                        class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+                        <div class="px-5 sm:px-6 py-4 border-b border-white/[0.05] flex items-center gap-3">
+                            <div
+                                class="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center">
+                                <x-lucide-image class="w-4 h-4 text-violet-400" />
+                            </div>
+                            <div>
+                                <h2 class="text-sm font-semibold text-white">Page d'accueil</h2>
+                                <p class="text-[11px] text-slate-500">Visibilité des sections et image de couverture
+                                </p>
+                            </div>
+                        </div>
+
+                        <form wire:submit="saveHomePage" class="p-5 sm:p-6 space-y-5">
+
+                            {{-- Image de couverture --}}
+                            <div>
+                                <label
+                                    class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                    Photo de couverture
+                                </label>
+
+                                <div class="rounded-xl bg-[#070b14] border border-white/[0.05] p-4 space-y-3">
+                                    <div
+                                        class="w-full max-w-xs mx-auto sm:mx-0 aspect-video rounded-lg overflow-hidden bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
+                                        @if ($background_image)
+                                            <img src="{{ $background_image->temporaryUrl() }}" alt="Aperçu"
+                                                class="w-full h-full object-cover">
+                                        @elseif (tenancy()->tenant->background_image)
+                                            <img src="{{ tenancy()->tenant->background_image_url }}"
+                                                alt="Photo de couverture actuelle" class="w-full h-full object-cover">
+                                        @else
+                                            <div class="flex flex-col items-center gap-1.5 text-slate-600">
+                                                <x-lucide-image-off class="w-6 h-6" />
+                                                <p class="text-[11px]">Aucune image</p>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-3">
+                                        <label
+                                            class="inline-flex items-center gap-2 text-xs font-semibold px-3.5 py-2 rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-colors cursor-pointer">
+                                            <x-lucide-upload class="w-4 h-4" />
+                                            <span>Choisir une image</span>
+                                            <input type="file" wire:model="background_image" accept="image/*"
+                                                class="hidden">
+                                        </label>
+
+                                        @if ($current_background_image && !$background_image)
+                                            <button type="button" wire:click="removeBackgroundImage"
+                                                wire:confirm="Supprimer la photo de couverture actuelle ?"
+                                                class="text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition-colors">
+                                                Supprimer
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    <div wire:loading wire:target="background_image"
+                                        class="flex items-center gap-2 text-xs text-slate-500">
+                                        <x-lucide-loader class="w-3.5 h-3.5 animate-spin" />
+                                        Chargement de l'image…
+                                    </div>
+
+                                    <p class="text-[11px] text-slate-500">Format recommandé : 16:9, JPG/PNG, 2 Mo
+                                        maximum.</p>
+
+                                    @error('background_image')
+                                        <p class="text-[11px] text-rose-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Visibilité des sections --}}
+                            <div>
+                                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                    Sections visibles sur la page d'accueil
+                                </p>
+                                <div class="space-y-3">
+
+                                    <div x-data="{ hidden: $wire.entangle('hide_personnels_on_home_page') }"
+                                        class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                        @click="hidden = !hidden">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <x-lucide-users class="w-4 h-4 text-violet-400 shrink-0" />
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-200">Équipe pédagogique</p>
+                                                <p class="text-[11px] text-slate-500">Afficher la section personnels
+                                                    sur la page d'accueil</p>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                            :class="!hidden ? 'bg-violet-500' : 'bg-slate-700'">
+                                            <span
+                                                class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                                :class="!hidden ? 'translate-x-5' : 'translate-x-0'"></span>
+                                        </span>
+                                    </div>
+
+                                    <div x-data="{ hidden: $wire.entangle('hide_testimonials_on_home_page') }"
+                                        class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                        @click="hidden = !hidden">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <x-lucide-message-square-quote class="w-4 h-4 text-violet-400 shrink-0" />
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-200">Témoignages</p>
+                                                <p class="text-[11px] text-slate-500">Afficher la section témoignages
+                                                    sur la page d'accueil</p>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                            :class="!hidden ? 'bg-violet-500' : 'bg-slate-700'">
+                                            <span
+                                                class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                                :class="!hidden ? 'translate-x-5' : 'translate-x-0'"></span>
+                                        </span>
+                                    </div>
+
+                                    <div x-data="{ hidden: $wire.entangle('hide_galleries_on_home_page') }"
+                                        class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                        @click="hidden = !hidden">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <x-lucide-images class="w-4 h-4 text-violet-400 shrink-0" />
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-200">Galerie photos</p>
+                                                <p class="text-[11px] text-slate-500">Afficher la section galerie sur
+                                                    la page d'accueil</p>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                            :class="!hidden ? 'bg-violet-500' : 'bg-slate-700'">
+                                            <span
+                                                class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                                :class="!hidden ? 'translate-x-5' : 'translate-x-0'"></span>
+                                        </span>
+                                    </div>
+
+                                    <div x-data="{ hidden: $wire.entangle('hide_serials_on_home_page') }"
+                                        class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                        @click="hidden = !hidden">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <x-lucide-list-tree class="w-4 h-4 text-violet-400 shrink-0" />
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-200">Séries</p>
+                                                <p class="text-[11px] text-slate-500">Afficher la section séries sur la
+                                                    page d'accueil</p>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                            :class="!hidden ? 'bg-violet-500' : 'bg-slate-700'">
+                                            <span
+                                                class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                                :class="!hidden ? 'translate-x-5' : 'translate-x-0'"></span>
+                                        </span>
+                                    </div>
+
+                                    <div x-data="{ hidden: $wire.entangle('hide_filiars_on_home_page') }"
+                                        class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                        @click="hidden = !hidden">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <x-lucide-git-branch class="w-4 h-4 text-violet-400 shrink-0" />
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-200">Filières</p>
+                                                <p class="text-[11px] text-slate-500">Afficher la section filières sur
+                                                    la page d'accueil</p>
+                                            </div>
+                                        </div>
+                                        <span
+                                            class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                            :class="!hidden ? 'bg-violet-500' : 'bg-slate-700'">
+                                            <span
+                                                class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                                :class="!hidden ? 'translate-x-5' : 'translate-x-0'"></span>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="pt-2 flex justify-end">
+                                <button type="submit" wire:loading.attr="disabled"
+                                    wire:target="saveHomePage,background_image"
+                                    class="h-11 px-5 rounded-xl bg-violet-600 hover:bg-violet-500 text-sm font-semibold text-white transition-all disabled:opacity-50 inline-flex items-center gap-2">
+                                    <span wire:loading.remove wire:target="saveHomePage"
+                                        class="inline-flex items-center gap-2">
+                                        <x-lucide-save class="w-4 h-4" />
+                                        Enregistrer
+                                    </span>
+                                    <span wire:loading wire:target="saveHomePage"
                                         class="inline-flex items-center gap-2">
                                         <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
                                         Enregistrement…
