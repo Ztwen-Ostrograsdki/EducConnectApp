@@ -27,6 +27,7 @@ class CreateTenantsTable extends Migration
             $table->string('domain_name')->unique();
             $table->string('school_slug')->nullable();
             $table->string('school_devise')->nullable();
+            $table->text('school_vision');
 
             // USER
             $table->string('role')->nullable();

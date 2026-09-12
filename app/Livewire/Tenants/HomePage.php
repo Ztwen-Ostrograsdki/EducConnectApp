@@ -39,19 +39,31 @@ class HomePage extends Component
     #[Computed]
     public function personnels()
     {
+        if(tenancy()->tenant->hide_personnels_on_home_page) return [];
+
         return Personnel::query()->where('school_year_id', $this->activeYear->id)->active()->visible()->orderBy('name')->get();
+    } 
+    
+    #[Computed]
+    public function background_image()
+    {
+        return tenancy()->tenant->background_image_url;
     }
 
 
     #[Computed]
     public function galleries()
     {
+        if(tenancy()->tenant->hide_galleries_on_home_page) return [];
+
         return Gallery::query()->visible()->orderBy('created_at')->get();
     }
     
     #[Computed]
     public function filiars()
     {
+        if(tenancy()->tenant->hide_filiars_on_home_page) return [];
+
         return Filiar::active()->orderBy('name')->get();
     }
 
@@ -59,12 +71,16 @@ class HomePage extends Component
     #[Computed]
     public function serials()
     {
+        if(tenancy()->tenant->hide_serials_on_home_page) return [];
+
         return Serial::active()->orderBy('name')->get();
     }
 
     #[Computed]
     public function testimonials()
     {
+        if(tenancy()->tenant->hide_testimonials_on_home_page) return [];
+
         return Testimonial::where('hidden', false)->orderBy('created_at')->get();
     }
 

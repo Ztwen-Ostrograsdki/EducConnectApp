@@ -1,4 +1,67 @@
-<div class="w-full overflow-x-hidden bg-[#05080f] text-slate-100 antialiased">
+<div class="w-full overflow-x-hidden bg-[#05080f] text-slate-100 antialiased" x-data="{ pageLoaded: false }"
+    x-init="const hideLoader = () => {
+        pageLoaded = true;
+        document.body.classList.remove('overflow-hidden');
+    };
+    if (document.readyState === 'complete') {
+        setTimeout(hideLoader, 300);
+    } else {
+        window.addEventListener('load', () => setTimeout(hideLoader, 400));
+    }
+    // Sécurité : cache le loader au bout de 8s max
+    setTimeout(hideLoader, 8000);">
+
+    {{-- ===================== PAGE LOADER ===================== --}}
+    <div x-show="!pageLoaded" x-transition:leave="transition ease-out duration-500" x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#05080f]" style="display: flex;"
+        x-cloak>
+
+        {{-- Logo / icône --}}
+        <div class="relative mb-8">
+            <div
+                class="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl sm:text-4xl shadow-2xl shadow-indigo-900/50">
+                🎓
+            </div>
+            {{-- Anneau animé --}}
+            <div
+                class="absolute -inset-2 rounded-2xl border-2 border-transparent border-t-indigo-400 border-r-violet-400 animate-spin">
+            </div>
+        </div>
+
+        {{-- Nom de l'école --}}
+        <p class="text-sm sm:text-base font-semibold text-white tracking-tight mb-1">
+            {{ tenant()?->school_name ?? 'Chargement...' }}
+        </p>
+        <p class="text-xs text-slate-500 mb-6">{{ tenant()?->school_devise }}</p>
+
+        {{-- Barre de progression indéterminée --}}
+        <div class="w-40 sm:w-48 h-1 rounded-full bg-white/10 overflow-hidden">
+            <div
+                class="h-full w-1/2 rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400 animate-[loader-slide_1.4s_ease-in-out_infinite]">
+            </div>
+        </div>
+    </div>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        @keyframes loader-slide {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            50% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(200%);
+            }
+        }
+    </style>
 
     {{-- ===================== HEADER ===================== --}}
     <header x-data="{
@@ -168,8 +231,7 @@
     <section class="relative min-h-[100svh] flex items-center overflow-hidden">
         {{-- BG --}}
         <div class="absolute inset-0">
-            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2070&auto=format&fit=crop"
-                alt="" class="w-full h-full object-cover">
+            <img src="{{ $this->background_image }}" alt="" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-[#05080f]/85"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-[#05080f] via-transparent to-[#05080f]/60"></div>
             {{-- Decorative orbs --}}
@@ -193,9 +255,16 @@
                     de demain
                 </h1>
 
-                <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
-                    Une éducation d’excellence qui allie discipline, innovation et valeurs humaines pour bâtir l’avenir.
-                </p>
+                @if (tenant('school_vision'))
+                    <p class="mt-6 text-base sm:text-lg text-slate-500 max-w-xl leading-relaxed font-mono">
+                        {{ tenant('school_vision') }}
+                    </p>
+                @else
+                    <p class="mt-6 text-base sm:text-lg text-slate-500 max-w-xl leading-relaxed">
+                        Une éducation d’excellence qui allie discipline, innovation et valeurs humaines pour bâtir
+                        l’avenir.
+                    </p>
+                @endif
 
                 <div class="mt-10 flex flex-wrap gap-3">
                     @guest('tenant')
@@ -245,7 +314,9 @@
     </section>
 
     {{-- ===================== FILIÈRES ===================== --}}
-    @if ($this->filiars->isNotEmpty() || $this->serials->isNotEmpty())
+    @if (
+        (!tenancy()->tenant->hide_filiars_on_home_page || !tenancy()->tenant->hide_serials_on_home_page) &&
+            ($this->filiars->isNotEmpty() || $this->serials->isNotEmpty()))
         <section id="filieres" class="py-16 sm:py-24">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-10 sm:mb-14">
@@ -263,7 +334,7 @@
                     $colors = ['indigo', 'cyan', 'violet', 'emerald', 'amber', 'rose', 'sky', 'fuchsia'];
                 @endphp
 
-                @if ($this->filiars->isNotEmpty())
+                @if (!tenancy()->tenant->hide_filiars_on_home_page && $this->filiars->isNotEmpty())
                     <div class="mb-10">
                         <h3
                             class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-5 flex items-center gap-2">
@@ -306,7 +377,7 @@
                 @endif
 
                 {{-- Séries --}}
-                @if ($this->serials->isNotEmpty())
+                @if (!tenancy()->tenant->hide_serials_on_home_page && $this->serials->isNotEmpty())
                     <div>
                         <h3
                             class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-5 flex items-center gap-2">
@@ -358,7 +429,7 @@
     @endif
 
     {{-- ===================== GALERIE ===================== --}}
-    @if (count($this->galleries))
+    @if (!tenancy()->tenant->hide_galleries_on_home_page && count($this->galleries))
         <section id="galerie" class="relative py-20 sm:py-28 overflow-hidden">
             {{-- Fond --}}
             <div class="absolute inset-0 bg-[#0a0e17]"></div>
@@ -446,7 +517,7 @@
 
     {{-- ===================== TÉMOIGNAGES ===================== --}}
 
-    @if (count($this->testimonials))
+    @if (!tenancy()->tenant->hide_testimonials_on_home_page && count($this->testimonials))
         <section id="temoignages" class="py-20 sm:py-28 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-12 sm:mb-16">
@@ -623,7 +694,7 @@
         </section>
     @endif
 
-    @if (count($this->personnels))
+    @if (!tenancy()->tenant->hide_personnels_on_home_page && count($this->personnels))
         {{-- ===================== ÉQUIPE / PERSONNEL ===================== --}}
         <section id="equipe" class="py-20 sm:py-28 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -874,10 +945,18 @@
 
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Notre vision</h4>
-                    <p class="text-sm text-slate-500 leading-relaxed italic">
-                        Promouvoir l’excellence et contribuer à l’insertion professionnelle de nos apprenants pour le
-                        développement national.
-                    </p>
+
+                    @if (tenant('school_vision'))
+                        <p class="text-sm text-slate-500 leading-relaxed italic">
+                            {{ tenant('school_vision') }}
+                        </p>
+                    @else
+                        <p class="text-sm text-slate-500 leading-relaxed italic">
+                            Promouvoir l’excellence et contribuer à l’insertion professionnelle de nos apprenants pour
+                            le
+                            développement national.
+                        </p>
+                    @endif
                 </div>
             </div>
 

@@ -90,6 +90,20 @@
                                         class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Devise</label>
                                     <input type="text" wire:model="school_devise"
                                         class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all">
+                                    @error('school_devise')
+                                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label
+                                        class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Vision
+                                        de votre école</label>
+                                    <textarea wire:model="school_vision" rows="5" placeholder="Dicter la vision de votre école ..."
+                                        class="w-full font-mono rounded-xl py-2 bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 transition-all  placeholder-slate-500  focus:ring-2 focus:ring-indigo-500/20 outline-none  resize-none shadow-inner"></textarea>
+                                    @error('school_vision')
+                                        <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div>
@@ -104,16 +118,13 @@
                                     </div>
                                 </div>
 
-                                <div>
+                                <div class="hidden">
                                     <label
                                         class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                                         Date de naissance
                                     </label>
                                     <input type="date" wire:model="birth_date"
                                         class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-rose-500/50 transition-all font-mono">
-                                    @error('birth_date')
-                                        <p class="mt-1 text-[11px] text-rose-400">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
                                 <div>
@@ -200,7 +211,8 @@
                                         <x-lucide-save class="w-4 h-4" />
                                         Enregistrer
                                     </span>
-                                    <span wire:loading wire:target="saveGeneral" class="inline-flex items-center gap-2">
+                                    <span wire:loading wire:target="saveGeneral"
+                                        class="inline-flex items-center gap-2">
                                         <x-lucide-loader-2 class="w-4 h-4 animate-spin" />
                                         Enregistrement…
                                     </span>

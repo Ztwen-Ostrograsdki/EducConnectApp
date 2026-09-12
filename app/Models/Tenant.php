@@ -64,6 +64,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'logo',                    // Chemin du logo
             'date_expiration_abonnement',
             'school_devise',
+            'school_vision',
             'devoirs_type', //devoir1-devoir2 ou devoir-compo
             'school_type', //Privé ou public
             'domain_blocked',
@@ -103,7 +104,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'enseignement_type' => 'general',
         'school_type' => 'prive',
         'periode_type' => 'semestre',
-        'school_devise' => 'Votre dévise',
+        'school_devise' => 'Votre dévise ...',
+        'school_vision' => "Votre vision ...",
         'country' => 'Bénin',
         'city' => 'Cotonou',
         'role' => 'directeur',
@@ -574,7 +576,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
        if($this->background_image)  return TenantStorage::url( $this->background_image);
 
-       else return asset('images/default-avatar.jpg') ;
+       else return asset('images/ruler-5146195.jpg');
     }
 
 

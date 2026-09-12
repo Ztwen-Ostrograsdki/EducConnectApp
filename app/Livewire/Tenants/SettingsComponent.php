@@ -32,6 +32,8 @@ class SettingsComponent extends Component
     #[Validate('nullable|string|max:255')]
     public string $school_devise = '';
 
+    public string $school_vision = '';
+
     #[Validate('nullable|string|max:50')]
     public string $contacts = '';
 
@@ -208,21 +210,6 @@ class SettingsComponent extends Component
 
         session()->put('settings_tab', $tab);
     }
-
-    public function saveGeneral(): void
-    {
-        $this->validate(
-            [
-                'school_name' => 'required|string|max:255',
-                'school_devise' => 'nullable|string|max:255',
-                'contacts' => 'nullable|string|max:50',
-                'adresse' => 'nullable|string|max:255',
-            ]
-        );
-
-    }
-
-    
 
     public function saveNotifications(): void
     {
@@ -462,6 +449,8 @@ class SettingsComponent extends Component
 
             $this->school_devise = $tenant?->school_devise ?? '';
 
+            $this->school_vision = $tenant?->school_vision ?? '';
+
             $this->contacts = $tenant?->contacts ?? '';
 
             $this->email = $tenant?->email ?? '';
@@ -484,6 +473,57 @@ class SettingsComponent extends Component
             }
         }
     }
+
+
+    public function saveGeneral(): void
+    {
+        $this->validate(
+            [
+                'school_devise' => 'nullable|string|max:255',
+                'adresse' => 'nullable|string|max:255',
+                'school_vision' => 'nullable|string',
+            ]
+        );
+
+        $tenant = tenancy()->tenant;
+
+        if (! $tenant) {
+            $this->addError('hide_personnels_on_home_page', "Le tenant courant est introuvable.");
+            return;
+        }
+
+
+        try {
+
+
+            $tenant->update([
+                'school_devise' => $this->school_devise,
+                'school_vision' => $this->school_vision,
+                'city' => $this->city,
+                'department' => $this->department,
+                'adresse' => $this->city . ' (' . $this->department .  ')',
+                
+            ]);
+
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
+            $this->notification()->success(
+                title: "Données mises à jour",
+                description: 'Les modifications ont été enregistrées avec succès.',
+            );
+
+
+
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'ECHEC DE LA MISE A JOUR',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+            return;
+        }
+
+    }
+
 
 
     
