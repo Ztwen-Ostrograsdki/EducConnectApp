@@ -578,6 +578,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
        else return asset('images/ruler-5146195.jpg');
     }
+    
+    public function getLogoUrlAttribute(): ?string
+    {
+       if($this->logo)  return TenantStorage::url( $this->logo);
+
+       else return asset('images/logo.jfif');
+    }
 
 
 }

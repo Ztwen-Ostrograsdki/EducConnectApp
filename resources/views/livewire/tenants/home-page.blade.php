@@ -21,7 +21,7 @@
         <div class="relative mb-8">
             <div
                 class="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl sm:text-4xl shadow-2xl shadow-indigo-900/50">
-                🎓
+                <img src="{{ tenancy()->tenant->logo_url }}" alt="Logo de l'école" class="w-full h-full object-cover">
             </div>
             {{-- Anneau animé --}}
             <div
@@ -85,7 +85,8 @@
                     <a href="/" class="flex items-center gap-3 group">
                         <div
                             class="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-900/40 group-hover:scale-105 transition-transform">
-                            🎓
+                            <img src="{{ tenancy()->tenant->logo_url }}" alt="Logo de l'école"
+                                class="w-full h-full object-cover">
                         </div>
                         <div class="hidden sm:block">
                             <p class="font-bold text-white text-sm tracking-tight leading-tight">
@@ -903,7 +904,9 @@
                     <div class="flex items-center gap-2.5 mb-4">
                         <div
                             class="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-lg">
-                            🎓</div>
+                            <img src="{{ tenancy()->tenant->logo_url }}" alt="Logo de l'école"
+                                class="w-full h-full object-cover">
+                        </div>
                         <h3 class="font-bold text-white">{{ tenant('school_name') }}</h3>
                     </div>
                     <p class="text-sm text-slate-500 leading-relaxed">{{ tenant('school_devise') }}</p>

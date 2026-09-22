@@ -290,7 +290,9 @@ class SettingsComponent extends Component
     public bool $hide_serials_on_home_page = false;
     public bool $hide_filiars_on_home_page = false;
     public $background_image;
+    public $logo;
     public ?string $current_background_image = null;
+    public ?string $current_logo = null;
 
     public function initHomePage()
     {
@@ -303,6 +305,7 @@ class SettingsComponent extends Component
             $this->hide_serials_on_home_page = $tenant->hide_serials_on_home_page;
             $this->hide_filiars_on_home_page = $tenant->hide_filiars_on_home_page;
             $this->current_background_image = $tenant->background_image;
+            $this->current_logo = $tenant->logo;
         }
     }
 
@@ -331,7 +334,39 @@ class SettingsComponent extends Component
             );
         } catch (\Throwable $th) {
             $this->notification()->error(
-                title: 'Suppression échouée',
+                title: 'ECHEC DE LA SUPPRESSION DE LA PHOTO DE COUVERTURE',
+                description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+            );
+        }
+    }
+
+
+    public function removeLogo(): void
+    {
+        $tenant = tenancy()->tenant;
+
+        if (! $tenant) {
+            return;
+        }
+
+        try {
+            if ($tenant->logo) {
+                TenantStorage::delete($tenant->logo);
+            }
+
+            $tenant->update(['logo' => null]);
+
+            $this->current_logo = null;
+
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
+            $this->notification()->success(
+                title: 'Logo supprimé',
+                description: "Le logo de l'école a été retiré.",
+            );
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: 'ECHEC DE LA SUPPRESSION DU LOGO',
                 description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
             );
         }
@@ -346,6 +381,7 @@ class SettingsComponent extends Component
             'hide_serials_on_home_page'      => 'boolean',
             'hide_filiars_on_home_page'      => 'boolean',
             'background_image'               => 'nullable|image|max:2048',
+            'logo'                           => 'nullable|image|max:1024',
         ]);
 
         unset($validated['background_image']);
@@ -374,6 +410,29 @@ class SettingsComponent extends Component
             } catch (\Throwable $th) {
                 $this->notification()->error(
                     title: 'Photo de couverture non mise à jour',
+                    description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+                );
+                return;
+            }
+        }
+
+        if ($this->logo) {
+            try {
+                if ($tenant->logo) {
+                    TenantStorage::delete($tenant->logo);
+                }
+
+                $path = TenantStorage::store($this->logo, 'profiles');
+
+                $tenant->update(['logo' => $path]);
+
+
+                $this->current_logo = $path;
+                $this->logo = null;
+
+            } catch (\Throwable $th) {
+                $this->notification()->error(
+                    title: 'Logo non mise à jour',
                     description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
                 );
                 return;

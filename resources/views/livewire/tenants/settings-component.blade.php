@@ -595,6 +595,56 @@
                                 </div>
                             </div>
 
+                            <div>
+                                <label
+                                    class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                    Logo de votre école
+                                </label>
+
+                                <div class="rounded-xl bg-[#070b14] border border-white/[0.05] p-4 space-y-3">
+                                    <div
+                                        class="w-full max-w-xs mx-auto sm:mx-0 aspect-video rounded-lg overflow-hidden bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
+                                        @if ($logo)
+                                            <img src="{{ $logo->temporaryUrl() }}" alt="Aperçu"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <img src="{{ tenancy()->tenant->logo_url }}"
+                                                alt="Logo de l'école actuelle" class="w-full h-full object-cover">
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-3">
+                                        <label
+                                            class="inline-flex items-center gap-2 text-xs font-semibold px-3.5 py-2 rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-colors cursor-pointer">
+                                            <x-lucide-upload class="w-4 h-4" />
+                                            <span>Choisir une image pour le logo de votre école</span>
+                                            <input type="file" wire:model="logo" accept="image/*" class="hidden">
+                                        </label>
+
+                                        @if ($current_logo && !$logo)
+                                            <button type="button" wire:click="removeLogo"
+                                                wire:confirm="Supprimer la photo de couverture actuelle ?"
+                                                class="text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition-colors">
+                                                Supprimer
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    <div wire:loading wire:target="logo"
+                                        class="flex items-center gap-2 text-xs text-slate-500">
+                                        <x-lucide-loader class="w-3.5 h-3.5 animate-spin" />
+                                        Chargement du logo
+                                    </div>
+
+                                    <p class="text-[11px] text-slate-500">Format recommandé : 16:9, JPG/PNG, 1 Mo
+                                        maximum.</p>
+
+                                    @error('logo')
+                                        <p class="text-[11px] text-rose-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
                             {{-- Visibilité des sections --}}
                             <div>
                                 <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
