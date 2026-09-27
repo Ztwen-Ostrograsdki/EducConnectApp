@@ -130,7 +130,7 @@ class TenantLogin extends Component
 
                 if($user->hasRole('enseignant') && !$user->hasRole('tuteur')){
 
-                    if($user->teacher->hasValidAccessForYear()){
+                    if(!$user->teacher->hasValidAccessForYear()){
 
                         $this->errorMessage = "Il semble que n'ayez pas de clé d'accès valide pour cette année scolaire ou qu'elle n'est pas encore été générée!";
 

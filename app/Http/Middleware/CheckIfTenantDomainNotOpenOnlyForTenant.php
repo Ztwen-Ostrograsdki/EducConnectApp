@@ -19,7 +19,9 @@ class CheckIfTenantDomainNotOpenOnlyForTenant
 
         if($tenant->open_only_for_tenant){
 
-            return abort('403', "L'accès à votre espace est temporairement impossible, veuillez contacter votre directeur!");
+            return to_route('tenant.maintenance');
+
+            // return abort('403', "L'accès à votre espace est temporairement impossible, veuillez contacter votre directeur!");
 
         }
         return $next($request);

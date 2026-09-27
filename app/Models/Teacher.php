@@ -410,7 +410,8 @@ class Teacher extends Model
      */
     public function hasValidAccessForYear(?int $schoolYearId = null): bool
     {
-        if(!$schoolYearId) $schoolYearId = SchoolYear::where('is_active', true)->where('is_closed', false)->first()?->id;
+        if(!$schoolYearId) $schoolYearId = SchoolYear::current()->first()?->id;
+        
         return $this->yearlyAccesses()
             ->where('school_year_id', $schoolYearId)
             ->where('status', 'active')

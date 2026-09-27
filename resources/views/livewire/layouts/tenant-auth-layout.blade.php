@@ -776,7 +776,8 @@
                                 </div>
                                 <span class="s-label">Laisser un Commentaire</span>
                             </a>
-                            <a href="#" class="dd-item">⚙️ Paramètres du compte</a>
+                            <a wire:navigate href="{{ route('tenant.settings') }}" class="dd-item">⚙️ Paramètres du
+                                compte</a>
                             <a href="#" class="dd-item">❓ Support</a>
                             <div class="dd-sep"></div>
                             <form method="POST" action="{{ route('logout') }}">

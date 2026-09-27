@@ -22,6 +22,7 @@ use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\LogoutUserWhenInactivityIsTakeLongTimeMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\RedirectIfHasntCurrentActiveSchoolYearMiddleware;
+use App\Http\Middleware\SecureTenantMaintenancePageToAccessOnlyWhenSiteIsInMaintenance;
 use App\Http\Middleware\TenantAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -75,6 +76,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.module'     => EnsureTenantModuleIsEnabledMiddleware::class,
             'tenant.module.all' => EnsureAllTenantModulesAreEnabledMiddleware::class,
             'tenant.domain.open.for.others.too' => CheckIfTenantDomainNotOpenOnlyForTenant::class,
+            'tenant.maintaining' => SecureTenantMaintenancePageToAccessOnlyWhenSiteIsInMaintenance::class,
             'tenant.domain.not.deleted.at' => EnsureTenantNotDeletedAt::class,
             'tenant.has.active.schoolYear' => RedirectIfHasntCurrentActiveSchoolYearMiddleware::class,
             'user.not.blocked' => EnsureThatUserAccountNotBlockedMiddleware::class,

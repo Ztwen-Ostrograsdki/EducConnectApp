@@ -101,7 +101,7 @@ class UpdateProfilePhoto extends Component
 
             broadcast(new DataUpdatedEvent(tenant('id')));
 
-            $this->redirectRoute('tenant.my.profil');
+            $this->redirectRoute(name: 'tenant.my.profil', navigate:true);
         }else{
 
             $this->notification()->send([

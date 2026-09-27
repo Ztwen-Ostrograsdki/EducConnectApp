@@ -22,7 +22,7 @@ class ObserveTenant
     {
         if($tenant->wasChanged('open_only_for_tenant') && $tenant->open_only_for_tenant){
 
-            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent(tenant($tenant->id)));
+            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent($tenant->id));
 
         }
     }
@@ -34,7 +34,7 @@ class ObserveTenant
     {
         if($tenant){
 
-            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent(tenant($tenant->id)));
+            broadcast(new TenantSpaceRestrictedOnlyForDirectorEvent($tenant->id));
 
         }
     }

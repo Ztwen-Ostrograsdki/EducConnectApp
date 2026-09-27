@@ -9,10 +9,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap"
         rel="stylesheet">
-    {{-- <script>
-        window.__APP__ = @json(\App\Helpers\Support\TenantContext::forJs());
-    </script> --}}
-
     <script>
         window.__APP_CONTEXT__ = {
             tenantId: '{{ tenant('id') ?? 'null' }}',
@@ -27,9 +23,68 @@
 </head>
 
 <body>
-    <div class="shell">
+    {{-- ===================== PAGE LOADER ===================== --}}
+    <div id="page-loader"
+        class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a0e17] transition-opacity duration-500">
+        {{-- Spinner --}}
+        <div class="relative mb-6">
+            <div
+                class="h-14 w-14 rounded-full border-[3px] border-white/10 border-t-indigo-500 border-r-violet-500 animate-spin">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div
+                    class="h-6 w-6 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 opacity-80 animate-pulse">
+                </div>
+            </div>
+        </div>
+        <p class="text-sm font-medium text-slate-300 tracking-wide font-mono">Chargement en cours...</p>
+        <div class="mt-5 w-36 h-1 rounded-full bg-white/10 overflow-hidden">
+            <div class="h-full w-1/2 rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"
+                style="animation: loader-slide 1.4s ease-in-out infinite;"></div>
+        </div>
+    </div>
+    <style>
+        @keyframes loader-slide {
+            0% {
+                transform: translateX(-100%);
+            }
 
-        {{-- @livewire('app-guard') --}}
+            50% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(200%);
+            }
+        }
+
+        body.loading-active {
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        (function() {
+            document.body.classList.add('loading-active');
+            const loader = document.getElementById('page-loader');
+            const hide = () => {
+                if (!loader) return;
+                loader.style.opacity = '0';
+                loader.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    loader.remove();
+                    document.body.classList.remove('loading-active');
+                }, 500);
+            };
+            if (document.readyState === 'complete') {
+                setTimeout(hide, 350);
+            } else {
+                window.addEventListener('load', () => setTimeout(hide, 450));
+            }
+            // Sécurité
+            setTimeout(hide, 8000);
+        })();
+    </script>
+    <div class="shell">
 
         <x-notifications />
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
@@ -135,11 +190,13 @@
                                 </a>
                             @endif
 
-                            <a data-sidebar-item href="{{ route('tenant.subjects.coefs.manage') }}"
-                                class="s-link {{ request()->routeIs('tenant.subjects.coefs.manage') ? 'active' : '' }}">
-                                <div class="s-icon">🛠️</div>
-                                <span class="s-label">Gérer les coéf.</span>
-                            </a>
+                            @if (auth('tenant')->user()->canManageCoef(tenant('id')))
+                                <a data-sidebar-item href="{{ route('tenant.subjects.coefs.manage') }}"
+                                    class="s-link {{ request()->routeIs('tenant.subjects.coefs.manage') ? 'active' : '' }}">
+                                    <div class="s-icon">🛠️</div>
+                                    <span class="s-label">Gérer les coéf.</span>
+                                </a>
+                            @endif
                         </div>
                     @endif
 
@@ -329,14 +386,17 @@
                                 <div class="ut-avatar">
                                     @if (auth()->guard('tenant')->user()->profil_photo)
                                         <img src="{{ auth()->guard('tenant')->user()->profil_photo_url }}"
-                                            class="h-10 w-10 rounded-full object-cover">
+                                            class="h-6.5 w-8 rounded-full object-cover">
                                     @else
                                         {{ strtoupper(substr(Auth::guard('tenant')->user()?->name ?? 'U', 0, 1)) }}
                                     @endif
                                 </div>
                                 <div>
                                     <div class="ut-name">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
-                                    <div class="ut-role">Directeur</div>
+                                    <div class="ut-role">
+                                        <span
+                                            class="text-slate-400 capitalize">{{ Auth::guard('tenant')->user()?->user_roles ?? '' }}</span>
+                                    </div>
                                 </div>
                                 <span class="ut-arrow">▾</span>
                             </div>

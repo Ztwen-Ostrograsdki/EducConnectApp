@@ -20,6 +20,7 @@ use App\Livewire\Tenants\Classes\MarkRankingPrintableListComponent;
 use App\Livewire\Tenants\Classes\MarkRankingPrintsManagerComponent;
 use App\Livewire\Tenants\Classes\MarksRankingPrintableDocumentsPage;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
+use App\Livewire\Tenants\Components\MaintenancePage;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
@@ -151,6 +152,8 @@ Route::middleware([
 
         return redirect()->route('login');
     })->name('logout')->middleware('auth:tenant');
+
+    Route::get('/plateforme-en-maintenance', MaintenancePage::class)->name('tenant.maintenance')->middleware(['tenant.maintaining']);
 
     // ─── Pages authentifiées ──────────────────────────────────────────
     Route::middleware(['auth:tenant', 'tenant.domain.open', 'tenant.domain.not.deleted.at', 'logout.when.inactivity.too.long'])->group(function () {

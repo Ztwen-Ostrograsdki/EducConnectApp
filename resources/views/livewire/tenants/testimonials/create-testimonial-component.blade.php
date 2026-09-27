@@ -8,7 +8,8 @@
         <div class="relative z-10">
             <div class="mb-8 pb-6 border-b border-white/5 flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Partagez votre avis</h1>
+                    <h1 class="text-lg tracking-tight text-slate-200 border-b border-slate-500 py-1">Partagez votre avis
+                    </h1>
                     <p class="mt-1 text-sm text-slate-400">Votre expérience compte et aide notre communauté à grandir.
                     </p>
                 </div>

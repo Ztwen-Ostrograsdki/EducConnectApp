@@ -175,6 +175,25 @@ class User extends Authenticatable
         };
     }
 
+    public function canManageCoef(string $tenantId) : bool
+    {
+        $teacher = $this->teacher;
+
+        if(!$teacher) return false; 
+
+        $tenant = Tenant::firstWhere('id', $tenantId);
+
+        if(!$tenant) return false;
+
+        if($teacher->hasCurrentlyCARole()) return (bool)$tenant->ca_can_edit_coef;
+
+        if($teacher->hasCurrentlyAERole()) return (bool)$tenant->ae_can_edit_coef;
+
+        if($teacher->hasCurrentlyPPRole()) return (bool)$tenant->pp_can_edit_coef;
+
+        return false;
+    }
+
 
     public function emailVerified()
     {
@@ -290,7 +309,7 @@ class User extends Authenticatable
     }
 
 
-    public function myRoles()
+    public function myRoles() : ?string
     {
         $roles = [];
 
@@ -305,5 +324,10 @@ class User extends Authenticatable
         }
 
         return null;
+    }
+
+    public function getUserRolesAttribute() : ?string
+    {
+        return $this->myRoles();
     }
 }
