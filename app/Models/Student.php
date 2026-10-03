@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Events\DataUpdatedEvent;
 use App\Exceptions\CouldNotMigrateStudentFromClasseToNewWhenHasMarksInSubjectsThatDoesntExistsInTheNewClasseDuringTheSameSchoolYearException;
 use App\Helpers\Support\TenantStorage;
-use App\Jobs\JobToGeneratePrintableBulletinsDataForThePrintViewComponent;
 use App\Models\Classe;
 use App\Models\Payment;
 use App\Models\Presence;
@@ -17,7 +16,6 @@ use App\Models\YearlyClasseStudent;
 use App\Models\YearlyClasseStudentsLeave;
 use App\ModelsTraits\StudentsRoutesTraits;
 use App\Notifications\RealTimeNotification;
-use App\Services\BulletinsServices\BulletinPrintQuery;
 use App\Traits\InvalidatesDashboardCounters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -140,9 +138,6 @@ class Student extends Model
             Cache::tags(["classe:{$classeId}", 'effectifs'])->flush();
         }
     }
-
-
-
 
     // ─── Relations ────────────────────────────────────────────────────
 

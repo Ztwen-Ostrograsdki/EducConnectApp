@@ -4,6 +4,8 @@ namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
 use App\Jobs\JobBulkerActionsOnModels;
+use App\Jobs\JobToGenerateStudentNotesShareForThePrintViewComponent;
+use App\Models\SchoolYear;
 use App\Models\Student;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
@@ -509,4 +511,33 @@ trait StudentsActions{
     {
         $this->reset('search', 'gender', 'city', 'gender', 'department');
     }
+
+
+    public function shareStudentNotes(int $studentId, ?int $subjectId = null)
+    {
+        $period = $this->period ?? SchoolYear::current()->first()?->active_period;
+
+        if (! $period) {
+            $this->notification()->error(title: "Aucune période active définie.");
+            return;
+        }
+
+        $domain = request()->getSchemeAndHttpHost();
+
+        $space_url = get_tenant_url($domain);
+
+        JobToGenerateStudentNotesShareForThePrintViewComponent::dispatch(
+            tenantId:       tenant('id'),
+            notifiableId:   auth('tenant')->user()->id,
+            student_id:     $studentId,
+            period:         $period,
+            subject_id:     $subjectId,
+            school_year_id: SchoolYear::current()->first()?->id,
+            space_url: $space_url,
+
+        );
+
+        $this->notification()->success(title: 'Chargement des notes... Génération du document...');
+    }
+    
 }

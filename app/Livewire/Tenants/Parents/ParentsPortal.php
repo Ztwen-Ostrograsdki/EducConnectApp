@@ -285,6 +285,12 @@ class ParentsPortal extends Component
         })
         ->when($this->status, function (Builder $query) {
             match($this->status){
+                'onlyHaveStudents' => $query->where(function ($q) {
+                    $q->whereHas('students');
+                }),
+                'onlyDoesntHaveStudents' => $query->where(function ($q) {
+                    $q->whereDoesntHave('students');
+                }),
                 'actives' => $query->where('is_active', true)->whereNull('tutors.deleted_at'),
                 'desactives' => $query->where('is_active', false)->whereNull('tutors.deleted_at'),
                 'corbeille' => $query->whereNotNull('tutors.deleted_at'),

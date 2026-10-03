@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
+use App\Events\InitProcessToShareClasseStudentsNotesEvent;
 use App\Jobs\JobToGeneratePrintableClassesDataForThePrintViewComponent;
 use App\Models\Classe;
 use App\Models\Filiar;
@@ -272,7 +273,7 @@ trait ClassesActions{
     #[On('ConfirmToMoveClasseToTrash')]
     public function onConfirmToMoveClasseToTrash(int $classeId): void
     {
-       $classe = Classe::findOrFail($classeId);
+       $classe = Classe::find($classeId);
 
         if($classe){
 
@@ -331,6 +332,36 @@ trait ClassesActions{
 
         $this->notification()->success(title: 'Génération de la liste des classes en PDF est lancée');
 
+    }
+
+
+    public function shareClasseStudentsNotes(int $classeId, ?int $subjectId = null)
+    {
+        $classe = Classe::find($classeId);
+
+        $period = $this->period ?? SchoolYear::current()->first()?->active_period;
+
+        if (! $period) {
+            $this->notification()->error(title: "Aucune période active définie.");
+            return;
+        }
+
+        $domain = request()->getSchemeAndHttpHost();
+
+        $space_url = get_tenant_url($domain);
+
+        InitProcessToShareClasseStudentsNotesEvent::dispatch(
+            tenantId:       tenant('id'),
+            notifiableId:   auth('tenant')->user()->id,
+            classeId:       $classeId,
+            period:         $period,
+            subjectId:     $subjectId,
+            schoolYearId: SchoolYear::current()->first()?->id,
+            space_url: $space_url,
+
+        );
+
+        $this->notification()->success(title: 'Chargement des notes... Génération du document...');
     }
 
 

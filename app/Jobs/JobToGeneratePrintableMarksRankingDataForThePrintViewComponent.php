@@ -88,7 +88,7 @@ class JobToGeneratePrintableMarksRankingDataForThePrintViewComponent implements 
                 $this->schoolYear = $schoolYear;
                 $this->school_year_id = $schoolYear->id;
             } else {
-                $director = User::firstWhere('tenant_id', $this->tenantId);
+                $director = User::first();
 
                 $director?->notify(new RealTimeNotification(
                     userEmail: $director->email,
@@ -103,9 +103,12 @@ class JobToGeneratePrintableMarksRankingDataForThePrintViewComponent implements 
         }
     }
 
+    
+
     public function factoryBuilder(): void
     {
-        $devoirsType = tenant()->devoirs_type ?? 'devoir1-devoir2';
+        $devoirsType = $this->schoolYear->devoirs_type ?? 'devoir1-devoir2';
+
         $subjectTargeted = (bool) $this->subject_id;
 
         $tableColumns = MarkRankingPrintColumns::resolve($this->config['tableColumns'] ?? null, $subjectTargeted);

@@ -100,6 +100,7 @@ class PDFFactory
         ?string $notification         = null,
         ?array  $docDBInfos           = null,
         bool    $paginable            = true,
+        ?array    $receiverIds = null,
         
     ): void {
 
@@ -129,6 +130,7 @@ class PDFFactory
             notification:   $notification,
             docDBInfos:     $docDBInfos,
             paginable:      $paginable,
+            receiverIds:     $receiverIds,
         )->onQueue('pdf');
     }
 }

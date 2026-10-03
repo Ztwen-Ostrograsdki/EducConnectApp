@@ -226,6 +226,25 @@
                             </span>
                         </button>
                     @endif
+
+                    @if (count($this->parents))
+                        <div>
+                            <button type="button" wire:click="shareStudentNotes({{ $this->student->id }})"
+                                wire:loading.attr="disabled"
+                                wire:target="shareStudentNotes({{ $this->student->id }})"
+                                class="flex items-center gap-2.5 py-3 px-3.5 rounded-xl bg-orange-500/90 hover:bg-orange-500/50 text-black text-xs hover:text-black font-medium transition-all disabled:opacity-50 active:scale-[0.97] animate-pulse">
+                                <span wire:loading.remove wire:target="shareStudentNotes({{ $this->student->id }})"
+                                    class="inline-flex items-center gap-2.5 truncate">
+                                    <x-lucide-send class="w-4 h-4 shrink-0" />
+                                    Envoyer les notes aux parents
+                                </span>
+                                <span wire:loading wire:target="shareStudentNotes({{ $this->student->id }})"
+                                    class="inline-flex items-center gap-2">
+                                    <x-lucide-refresh-ccw class="w-4 h-4 animate-spin" />
+                                </span>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
@@ -316,6 +335,7 @@
                 'classe' => $this->currentClasse,
             ])
         </section>
+
     </div>
 </div>
 

@@ -17,6 +17,11 @@ class CheckIfTenantDomainNotOpenOnlyForTenant
     {
         $tenant = tenant();
 
+        /**@var \App\Models\User */
+        $user = auth('tenant')->user();
+
+        if($user && $user->hasRole('directeur')) return $next($request);
+
         if($tenant->open_only_for_tenant){
 
             return to_route('tenant.maintenance');

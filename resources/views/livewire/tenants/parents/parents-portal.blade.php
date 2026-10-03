@@ -112,6 +112,8 @@
                             <option value="actives">Actifs</option>
                             <option value="desactives">Bloqués</option>
                             <option value="corbeille">Corbeille</option>
+                            <option value="onlyHaveStudents">Ayant d'apprenants</option>
+                            <option value="onlyDoesntHaveStudents">N'ayant pas d'apprenants</option>
                         </select>
                     </div>
                 </div>
@@ -150,7 +152,8 @@
                 </button>
                 <button wire:click="forceDeleteTutors" wire:loading.attr="disabled" wire:target="forceDeleteTutors"
                     class="h-9 px-3.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20 hover:bg-rose-500/20 transition-all disabled:opacity-50">
-                    <span wire:loading.remove wire:target="forceDeleteTutors" class="inline-flex items-center gap-1.5">
+                    <span wire:loading.remove wire:target="forceDeleteTutors"
+                        class="inline-flex items-center gap-1.5">
                         <x-lucide-user-x class="w-3.5 h-3.5" /> Suppr. déf. tous
                     </span>
                     <span wire:loading wire:target="forceDeleteTutors" class="inline-flex items-center gap-1.5">
@@ -430,3 +433,4 @@
 
     </div>
 </div>
+

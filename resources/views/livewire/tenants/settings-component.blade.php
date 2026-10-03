@@ -586,7 +586,7 @@
                                         Chargement de l'image…
                                     </div>
 
-                                    <p class="text-[11px] text-slate-500">Format recommandé : 16:9, JPG/PNG, 2 Mo
+                                    <p class="text-[11px] text-slate-500">Format recommandé : 16:9, JPG/PNG, 5 Mo
                                         maximum.</p>
 
                                     @error('background_image')

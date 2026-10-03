@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\AnyErrorEvent;
 use App\Events\DataUpdatedEvent;
+use App\Jobs\JobToShareDocumentToSomeone;
 use App\Models\GeneratedDocument;
 use App\Models\SchoolYear;
 use App\Models\User;
@@ -50,7 +51,8 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
         public readonly ?array  $docDBInfos      = null,
-        public readonly  bool  $paginable        = true,
+        public readonly  bool   $paginable        = true,
+        public readonly ?array  $receiverIds    = null,
         
     ) {}
 
@@ -257,6 +259,36 @@ class JobToGeneratePdfFromView implements ShouldQueue
             target: $this->data['target'],
             eventName: $this->data['eventName'],
         ));
+
+        if($this->receiverIds){
+
+            if(isset($this->docDBInfos['title_for_sendable_document'])){
+
+                $title = $this->docDBInfos['title_for_sendable_document'];
+            }
+            else{
+
+                $title = basename($this->outputPath);
+            }
+
+            if(isset($this->docDBInfos['space_url'])){
+
+                $space_url = $this->docDBInfos['space_url'];
+            }
+            else{
+
+                $space_url = null;
+            }
+
+            //Send Doc by mail
+            JobToShareDocumentToSomeone::dispatch(
+                tenantId: $this->tenantId,
+                file_path: $this->outputPath,
+                receiverIds: $this->receiverIds,
+                title: $title,
+                space_url: $space_url,
+            );
+        }
 
         broadcast(new DataUpdatedEvent($this->tenantId));
 

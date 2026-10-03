@@ -4,7 +4,7 @@
         <div class="rounded-lg border border-white/5 bg-slate-900/70 backdrop-blur-xl p-6 shadow-xl shadow-black/20">
             <div class="mb-6">
                 <h2 class="text-xl font-semibold text-white">
-                    Bulletin de notes de <span class="text-sky-500">{{ $student->getFullName() }}</span>
+                    Aperçue Sommative de notes de <span class="text-sky-500">{{ $student->getFullName() }}</span>
                     - <span class="text-orange-600">{{ session('school_year_selected') }}</span>
                 </h2>
                 <p class="mt-1.5 text-sm text-slate-400">
@@ -115,7 +115,10 @@
                         <div class="flex flex-col items-center order-1 lg:order-2">
                             <div
                                 class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#070b14] border border-white/10 flex items-center justify-center overflow-hidden">
-                                <span class="text-3xl">🎓</span>
+                                <span class="text-3xl">
+                                    <img src="{{ tenancy()->tenant->logo_url }}" alt="Logo de l'école"
+                                        class="w-full h-full  object-cover">
+                                </span>
                             </div>
                             <h1 class="mt-3 text-xl sm:text-2xl font-bold text-white text-center tracking-tight">
                                 {{ tenant('school_name') }}
@@ -123,10 +126,6 @@
                             <p class="mt-1 text-xs text-slate-500 text-center italic">
                                 {{ tenant('school_devise') }}
                             </p>
-                            <div class="mt-2 text-center text-[11px] text-slate-600 space-y-0.5">
-                                <p>{{ tenant('contacts') }}</p>
-                                <p>{{ tenant('email') }}</p>
-                            </div>
                         </div>
 
                         <div class="text-center lg:text-right order-3">

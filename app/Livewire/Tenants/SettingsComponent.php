@@ -380,7 +380,7 @@ class SettingsComponent extends Component
             'hide_galleries_on_home_page'    => 'boolean',
             'hide_serials_on_home_page'      => 'boolean',
             'hide_filiars_on_home_page'      => 'boolean',
-            'background_image'               => 'nullable|image|max:2048',
+            'background_image'               => 'nullable|image|max:4678',
             'logo'                           => 'nullable|image|max:1024',
         ]);
 

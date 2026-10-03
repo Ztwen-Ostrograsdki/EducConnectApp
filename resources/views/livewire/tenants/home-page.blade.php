@@ -697,174 +697,190 @@
 
     @if (!tenancy()->tenant->hide_personnels_on_home_page && count($this->personnels))
         {{-- ===================== ÉQUIPE / PERSONNEL ===================== --}}
-        <section id="equipe" class="py-20 sm:py-28 overflow-hidden">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                <div class="text-center mb-12 sm:mb-16">
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400 mb-3">Équipe</p>
-                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                        Le personnel administratif
-                    </h2>
-                    <p class="mt-4 text-slate-500 max-w-md mx-auto text-sm sm:text-base">
-                        Des professionnels passionnés au service de la réussite de chaque élève
-                    </p>
-                </div>
+        <section id="equipe" class="relative py-24 sm:py-32 overflow-hidden bg-[#080b12]">
+
+            {{-- Styles pour l'effet électrique --}}
+            <style>
+                @keyframes electric-flow {
+                    0% {
+                        --angle: 0deg;
+                    }
+
+                    100% {
+                        --angle: 360deg;
+                    }
+                }
+
+                .electric-card {
+                    --angle: 0deg;
+                    position: relative;
+                    isolation: isolate;
+                }
+
+                .electric-card::before {
+                    content: "";
+                    position: absolute;
+                    inset: -1px;
+                    border-radius: 2rem;
+                    padding: 1.5px;
+                    background: conic-gradient(from var(--angle),
+                            transparent 0%,
+                            transparent 40%,
+                            rgba(99, 102, 241, 0.15) 50%,
+                            rgba(139, 92, 246, 0.45) 55%,
+                            rgba(99, 102, 241, 0.7) 60%,
+                            rgba(165, 180, 252, 0.9) 62%,
+                            rgba(99, 102, 241, 0.7) 65%,
+                            rgba(139, 92, 246, 0.45) 70%,
+                            transparent 80%,
+                            transparent 100%);
+                    -webkit-mask:
+                        linear-gradient(#fff 0 0) content-box,
+                        linear-gradient(#fff 0 0);
+                    mask:
+                        linear-gradient(#fff 0 0) content-box,
+                        linear-gradient(#fff 0 0);
+                    -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                    animation: electric-flow 4.5s linear infinite;
+                    opacity: 0.55;
+                    transition: opacity 0.4s ease, filter 0.4s ease;
+                    pointer-events: none;
+                    z-index: 2;
+                }
+
+                .electric-card:hover::before {
+                    animation-duration: 1.6s;
+                    opacity: 1;
+                    filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.6)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.4));
+                }
+
+                /* Fallback pour les navigateurs qui ne supportent pas bien @property */
+                @supports not (background: conic-gradient(from var(--angle), red, blue)) {
+                    .electric-card::before {
+                        background: linear-gradient(135deg,
+                                transparent 30%,
+                                rgba(99, 102, 241, 0.5) 50%,
+                                transparent 70%);
+                        background-size: 200% 200%;
+                        animation: electric-fallback 3s linear infinite;
+                    }
+
+                    .electric-card:hover::before {
+                        animation-duration: 3s;
+                    }
+                }
+
+                @keyframes electric-fallback {
+                    0% {
+                        background-position: 0% 0%;
+                    }
+
+                    100% {
+                        background-position: 200% 200%;
+                    }
+                }
+
+                @property --angle {
+                    syntax: "<angle>";
+                    initial-value: 0deg;
+                    inherits: false;
+                }
+            </style>
+
+            {{-- Grille de fond --}}
+            <div class="absolute inset-0 opacity-[0.03]"
+                style="background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+                background-size: 60px 60px;">
             </div>
 
-            {{-- Carrousel auto + infini + manuel --}}
-            <div class="relative" x-data="{
-                speed: 0.55,
-                isPaused: false,
-                isDragging: false,
-                startX: 0,
-                scrollStart: 0,
-            
-                init() {
-                    const track = this.$refs.track;
-                    const items = Array.from(track.children);
-            
-                    // Si trop peu d'éléments, on clone plusieurs fois pour avoir un vrai loop
-                    // (minimum ~8-10 cartes pour que le défilement soit fluide)
-                    const minCards = 8;
-                    let clonesNeeded = 1;
-            
-                    if (items.length > 0 && items.length < minCards) {
-                        clonesNeeded = Math.ceil(minCards / items.length);
-                    }
-            
-                    // On clone le contenu original (clonesNeeded fois)
-                    const originalHTML = track.innerHTML;
-                    for (let i = 0; i < clonesNeeded; i++) {
-                        track.innerHTML += originalHTML;
-                    }
-            
-                    // Largeur d'un set original (pour le reset seamless)
-                    this.originalWidth = track.scrollWidth / (clonesNeeded + 1);
-            
-                    let animationId;
-            
-                    const animate = () => {
-                        if (!this.isPaused && !this.isDragging) {
-                            track.scrollLeft += this.speed;
-            
-                            // Reset seamless
-                            if (track.scrollLeft >= this.originalWidth) {
-                                track.scrollLeft -= this.originalWidth;
-                            }
-                        }
-                        animationId = requestAnimationFrame(animate);
-                    };
-            
-                    animationId = requestAnimationFrame(animate);
-            
-                    // Pause au survol
-                    track.addEventListener('mouseenter', () => this.isPaused = true);
-                    track.addEventListener('mouseleave', () => {
-                        if (!this.isDragging) this.isPaused = false;
-                    });
-            
-                    // Support drag (souris)
-                    track.addEventListener('mousedown', (e) => {
-                        this.isDragging = true;
-                        this.isPaused = true;
-                        this.startX = e.pageX - track.offsetLeft;
-                        this.scrollStart = track.scrollLeft;
-                        track.style.cursor = 'grabbing';
-                        track.style.userSelect = 'none';
-                    });
-            
-                    window.addEventListener('mouseup', () => {
-                        if (this.isDragging) {
-                            this.isDragging = false;
-                            track.style.cursor = 'grab';
-                            track.style.userSelect = '';
-                            // On reprend l'auto-scroll après un petit délai
-                            setTimeout(() => this.isPaused = false, 800);
-                        }
-                    });
-            
-                    window.addEventListener('mousemove', (e) => {
-                        if (!this.isDragging) return;
-                        e.preventDefault();
-                        const x = e.pageX - track.offsetLeft;
-                        const walk = (x - this.startX) * 1.4;
-                        track.scrollLeft = this.scrollStart - walk;
-                    });
-            
-                    // Touch (mobile)
-                    track.addEventListener('touchstart', () => {
-                        this.isPaused = true;
-                    }, { passive: true });
-            
-                    track.addEventListener('touchend', () => {
-                        setTimeout(() => this.isPaused = false, 1000);
-                    }, { passive: true });
-                },
-            
-                scrollBy(amount) {
-                    this.$refs.track.scrollBy({ left: amount, behavior: 'smooth' });
-                    this.isPaused = true;
-                    setTimeout(() => this.isPaused = false, 1200);
-                }
-            }">
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
 
-                {{-- Boutons de navigation --}}
-                <div
-                    class="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 right-3 z-20 justify-between pointer-events-none">
-                    <button @click="scrollBy(-340)"
-                        class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
-                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
-                       transition shadow-xl">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button @click="scrollBy(340)"
-                        class="pointer-events-auto w-11 h-11 rounded-full bg-[#0f1523]/90 border border-white/10 backdrop-blur-md
-                       flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-500
-                       transition shadow-xl">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
+                {{-- Header --}}
+                <div class="text-center mb-16 sm:mb-20">
+                    <div class="inline-flex items-center gap-3 mb-5">
+                        <span class="w-8 h-px bg-indigo-500"></span>
+                        <span class="text-xs font-bold uppercase tracking-[0.3em] text-indigo-400">Équipe</span>
+                        <span class="w-8 h-px bg-indigo-500"></span>
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl lg:text-[3.5rem] font-black text-white tracking-tight">
+                        L’administration
+                    </h2>
                 </div>
 
-                {{-- Track --}}
-                <div x-ref="track"
-                    class="flex gap-5 sm:gap-6 overflow-x-auto pb-6 px-4 sm:px-6 select-none cursor-grab
-                    [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {{-- Grille --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
 
                     @foreach ($this->personnels as $member)
-                        <div class="flex-none w-[300px] sm:w-[320px]">
-                            <div
-                                class="h-full rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden
-                                hover:border-indigo-500/30 transition-all duration-300 shadow-xl shadow-black/20">
+                        <div
+                            class="group relative isolate
+                            {{ $loop->iteration === 1 ? 'md:col-span-2 xl:col-span-1' : '' }}">
 
-                                {{-- Photo --}}
-                                <div class="relative aspect-[4/3] overflow-hidden">
-                                    <img src="{{ $member->profil_photo_url }}" alt="{{ $member->full_name }}"
-                                        class="w-full h-full object-cover" loading="lazy">
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-t from-[#0f1523] via-transparent to-transparent">
-                                    </div>
+                            <div
+                                class="electric-card relative h-full min-h-[380px] sm:min-h-[420px] 
+                                rounded-[2rem] overflow-hidden
+                                border border-white/[0.06]
+                                transition-all duration-500
+                                group-hover:shadow-[0_0_40px_-8px_rgba(99,102,241,0.4)]">
+
+                                {{-- Image --}}
+                                <img src="{{ $member->profil_photo_url }}" alt="{{ $member->full_name }}"
+                                    loading="lazy"
+                                    class="absolute inset-0 w-full h-full object-cover
+                                    transition-transform duration-[800ms] ease-out
+                                    group-hover:scale-110">
+
+                                {{-- Overlay sombre en bas --}}
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t 
+                                    from-black/95 via-black/55 to-black/15">
                                 </div>
 
                                 {{-- Contenu --}}
-                                <div class="p-5 sm:p-6 -mt-8 relative">
-                                    <div class="mb-4">
-                                        <h3 class="text-lg font-bold text-white leading-tight">
-                                            {{ $member->full_name }}
-                                        </h3>
-                                        <p class="text-sm text-indigo-400 font-medium mt-0.5">{{ $member->title }}</p>
-                                    </div>
+                                <div class="absolute inset-x-0 bottom-0 p-6 sm:p-7 z-10">
 
-                                    <p class="text-sm text-slate-400 leading-relaxed italic">
-                                        « {{ $member->description ?? __getCitation() }} »
-                                    </p>
+                                    <span
+                                        class="inline-block mb-3 px-3 py-1 rounded-full text-[11px] font-semibold 
+                                         uppercase tracking-wider
+                                         bg-indigo-500/20 text-indigo-300 border border-indigo-500/30
+                                         backdrop-blur-md
+                                         opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                                        {{ $member->title }}
+                                    </span>
+
+                                    <h3
+                                        class="text-xl sm:text-2xl font-bold text-white leading-tight mb-3
+                                       opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                                        {{ $member->full_name }}
+                                    </h3>
+
+                                    {{-- Description --}}
+                                    <div
+                                        class="grid transition-[grid-template-rows] duration-500 ease-out
+                                        grid-rows-[0fr] group-hover:grid-rows-[1fr]">
+                                        <div class="overflow-hidden">
+                                            <p
+                                                class="text-sm text-slate-300 leading-relaxed italic pt-1
+                                              opacity-0 translate-y-2
+                                              group-hover:opacity-90 group-hover:translate-y-0
+                                              transition-all duration-500 ease-out delay-75">
+                                                « {{ $member->description ?? __getCitation() }} »
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Glow intérieur --}}
+                                <div
+                                    class="absolute -top-10 -right-10 w-40 h-40 
+                                    bg-indigo-500/20 rounded-full blur-3xl
+                                    opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                                 </div>
                             </div>
                         </div>
                     @endforeach
+
                 </div>
             </div>
         </section>

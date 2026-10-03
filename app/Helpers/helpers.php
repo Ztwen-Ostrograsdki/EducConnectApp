@@ -95,38 +95,26 @@ if (! function_exists('formatBirthDate')) {
 if (!function_exists('get_tenant_url')) {
     function get_tenant_url(?string $domain_name = null, string $path = '', ?int $tenantId = null): string
     {
-        if($domain_name){
-
-            $scheme = request()->getScheme() ?? 'http';
-
-            $port   = request()->getPort() && request()->getPort() != 80 && request()->getPort() != 443 
-                    ? ':' . request()->getPort() 
-                    : '';
-
-            $baseUrl = $scheme . '://' . $domain_name . $port;
-
-            return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
-
-
-        }
-        else{
-
-            $tenant = null;
-
-            if($tenantId) $tenant = Tenant::find($tenantId);
+        // Résolution du domaine
+        if (!$domain_name) {
+            $tenant = $tenantId ? Tenant::find($tenantId) : null;
 
             if (!$tenant) return url($path); // fallback central
 
-            $scheme = request()->getScheme() ?? 'http';
-
-            $port   = request()->getPort() && request()->getPort() != 80 && request()->getPort() != 443 
-                    ? ':' . request()->getPort() 
-                    : '';
-
-            $baseUrl = $scheme . '://' . $tenant->getDomainName() . $port;
-
-            return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+            $domain_name = $tenant->getDomainName();
         }
+
+        // Nettoyage : retire un éventuel schéma (http://, https://) et un éventuel port
+        $host = preg_replace('#^https?://#i', '', trim($domain_name));
+        $host = preg_replace('#:\d+$#', '', $host);
+        $host = rtrim($host, '/');
+
+        $request = request();
+        $scheme  = $request->getScheme() ?: 'http';
+        $port    = $request->getPort();
+        $portStr = ($port && !in_array($port, [80, 443])) ? ':' . $port : '';
+
+        return $scheme . '://' . $host . $portStr . '/' . ltrim($path, '/');
     }
 }
 
