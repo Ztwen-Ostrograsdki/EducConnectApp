@@ -376,5 +376,11 @@ class Subject extends Model
     }
 
 
+    public function isConduite() : bool
+    {
+        return str()->lower($this->name) === 'conduite' || str()->lower($this->code) === 'cond';
+    }
+
+
 
 }

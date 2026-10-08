@@ -157,7 +157,7 @@
                 <div class="flex items-center gap-2 mb-3">
                     <div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
                     <p class="text-xs font-medium uppercase tracking-wider text-slate-500">
-                        Matière(s) · Spécialité(s)
+                        Mes Matière(s) · Spécialité(s)
                     </p>
                 </div>
 
@@ -228,14 +228,16 @@
 
                 {{-- CONTENU --}}
                 <div class="p-4 sm:p-6">
-                    @php
-                        $classes = $this->teacher?->getTeacherClassesWithSubjectsForThisSchoolYear();
-                    @endphp
 
-                    @if (count($classes))
+                    @if (count($this->classes))
+
                         {{-- Version Cards (moderne) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                            @foreach ($classes as $kls)
+                            @foreach ($this->classes as $kls)
+                                @php
+                                    $counts = $this->teachersMarksCount[$kls->classe_id] ?? 0;
+
+                                @endphp
                                 <div
                                     class="group relative rounded-2xl border border-white/5 
                                     bg-slate-900/60 hover:bg-slate-800/80 
@@ -286,7 +288,8 @@
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg 
                                                  bg-emerald-500/10 text-emerald-400 text-xs font-medium">
                                                 <x-lucide-check-circle class="w-3.5 h-3.5" />
-                                                86 notes
+                                                {{ __zero($counts && isset($counts[$kls->subject->id]) ? $counts[$kls->subject->id] : 00) }}
+                                                notes
                                             </span>
 
                                             <span

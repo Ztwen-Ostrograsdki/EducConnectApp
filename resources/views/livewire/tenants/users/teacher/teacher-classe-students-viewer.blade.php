@@ -1,171 +1,132 @@
-<div
-    class="min-h-screen bg-slate-950 text-slate-100 w-full
-                max-w-full
-                overflow-x-hidden">
+<div class="min-h-screen bg-[#070a12] text-slate-100">
 
-    <div class="w-full max-w-[100vw] overflow-x-hidden p-3">
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
         @livewire('tenants.Components.classe-header-details', ['classe' => $this->classe, 'subject' => $this->subject])
 
-        <section class="border-b border-slate-800 bg-slate-900 backdrop-blur-xl p-2">
-
-            <div class="px-2 sm:px-3 lg:px-5 py-5">
-
-                <div
-                    class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border-b border-b-slate-800 py-2">
-
-                    {{-- LEFT --}}
-                    <div class="min-w-0 ">
-
-                        <div class="flex flex-wrap items-center gap-3">
-
-                            <h1 class="text-lg sm:text-xl font-bold break-words text-slate-300">
-                                Liste des apprenants de la <span class="text-orange-400 font-mono uppercase">
-                                    {{ $this->classe->code }}
-                                </span>
-                            </h1>
-
-                            <span
-                                class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20
-                                         text-indigo-400 text-xs shrink-0 font-mono uppercase">
-
-                                {{ $this->effectifs['apprenants'] }} élèves
-                            </span>
-                        </div>
-
-                    </div>
-
-                    {{-- ACTIONS --}}
-                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-                        <button
-                            class="w-full sm:w-auto
-                                       px-5 py-3 rounded-2xl
-                                       bg-slate-800
-                                       border border-slate-700
-                                       hover:bg-slate-700
-                                       transition-all duration-300
-                                       text-sm sm:text-base">
-
-                            Exporter liste PDF
-
-                        </button>
-
-                    </div>
-
+        {{-- ========== HEADER ========== --}}
+        <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">
+                        Liste des apprenants
+                        <span class="text-amber-400 font-mono uppercase">{{ $this->classe->code }}</span>
+                    </h1>
+                    <span
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
+                                 bg-indigo-500/15 text-indigo-400 border border-indigo-500/25">
+                        {{ $this->effectifs['apprenants'] }} élève{{ $this->effectifs['apprenants'] > 1 ? 's' : '' }}
+                    </span>
                 </div>
-
             </div>
-
         </section>
 
-        <section class="w-full my-2 mb-24">
-
+        {{-- ========== LISTE ========== --}}
+        <section>
             @if (count($this->students))
-                <div class="border border-slate-800 bg-slate-900 overflow-hidden p-2">
+                <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full min-w-[560px] table-fixed z-table-border ">
-                            <colgroup>
-                                <col class="w-[8%]">
-                                <col class="w-[52%]">
-                                <col class="w-[25%]">
-                                <col class="w-[15%]">
-                            </colgroup>
-                            <thead class="bg-slate-950 border-b border-slate-800 text-center">
-                                <tr>
-                                    <th class="px-2 sm:px-6 py-4 text-xs sm:text-sm font-medium text-slate-400">N°</th>
+                        <table class="w-full text-sm" style="min-width: 560px;">
+                            <thead>
+                                <tr class="border-b border-white/[0.05]">
                                     <th
-                                        class="px-2 sm:px-6 py-4 text-xs sm:text-sm font-medium text-slate-400 text-left">
-                                        Apprenant</th>
-                                    <th class="px-2 sm:px-6 py-4 text-xs sm:text-sm font-medium text-slate-400">
-                                        <span class="flex flex-col">
-                                            <span>Naissance</span>
-                                            <span>Age</span>
-                                        </span>
+                                        class="px-4 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 w-14">
+                                        N°
                                     </th>
                                     <th
-                                        class="text-center px-2 sm:px-6 py-4 text-xs sm:text-sm font-medium text-slate-400">
-                                        Actions</th>
+                                        class="px-4 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                        Apprenant
+                                    </th>
+                                    <th
+                                        class="px-4 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                        Naissance
+                                    </th>
+                                    <th
+                                        class="px-4 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500 w-24">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800">
-                                @forelse ($this->students as $student)
-                                    <tr class="hover:bg-slate-800/40 transition-all"
+
+                            <tbody class="divide-y divide-white/[0.04]">
+                                @foreach ($this->students as $student)
+                                    <tr class="group hover:bg-white/[0.02] transition-colors"
                                         wire:key="student-{{ $student->id }}">
 
-                                        <td
-                                            class="px-2 sm:px-6 py-1.5 truncate text-center font-mono text-slate-400 text-xs sm:text-sm">
+                                        <td class="px-4 py-3 text-center font-mono text-xs text-slate-600">
                                             {{ $loop->iteration }}
                                         </td>
 
-                                        <td class="px-2 sm:px-6 py-1.5 overflow-hidden">
-                                            <div class="flex items-center gap-2 min-w-0 group">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-3 min-w-0">
                                                 <div
-                                                    class="w-9 h-9 sm:w-11 sm:h-11 bg-slate-800 shrink-0 rounded-full border-4 group-hover:border-sky-400">
+                                                    class="w-10 h-10 rounded-full overflow-hidden shrink-0
+                                                            ring-2 ring-white/[0.06]
+                                                            group-hover:ring-sky-500/40 transition-all">
                                                     <img src="{{ $student->profil_photo_url }}"
-                                                        class="w-full h-full object-cover rounded-full">
+                                                        alt="{{ $student->getFullName() }}"
+                                                        class="w-full h-full object-cover" loading="lazy" />
                                                 </div>
-                                                <div class="flex flex-col min-w-0 w-full">
-                                                    <div
-                                                        class="font-medium w-full transition flex justify-between items-center gap-1 min-w-0">
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="flex items-center gap-2">
                                                         <span
-                                                            class="group-hover:underline underline-offset-4 group-hover:text-sky-500 font-mono text-slate-300 text-xs sm:text-sm break-normal">{{ $student->getFullName() }}</span>
+                                                            class="font-medium text-slate-200 truncate
+                                                                   group-hover:text-sky-400 transition-colors">
+                                                            {{ $student->getFullName() }}
+                                                        </span>
                                                         @if ($student->gender)
                                                             <span
-                                                                class="shrink-0 uppercase text-slate-500 font-mono text-xs py-1 px-2 bg-slate-950 shadow-sm shadow-sky-700 group-hover:shadow-orange-500">{{ str()->initials($student->gender) }}</span>
+                                                                class="shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.5 rounded
+                                                                         bg-white/[0.04] text-slate-500 border border-white/[0.06]">
+                                                                {{ str()->initials($student->gender) }}
+                                                            </span>
                                                         @endif
                                                     </div>
-                                                    <p class="text-xs text-slate-500 mt-0.5 truncate">
-                                                        @if ($student->educMaster)
-                                                            <span class="font-mono">{{ $student->educMaster }}</span>
-                                                        @endif
-                                                    </p>
+                                                    @if ($student->educMaster)
+                                                        <p class="text-[11px] text-slate-600 truncate mt-0.5">
+                                                            {{ $student->educMaster }}
+                                                        </p>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
 
-                                        {{-- Date de naissance / Age --}}
-                                        <td class="px-2 sm:px-6 py-1.5 text-xs sm:text-sm text-slate-300 font-mono">
-                                            <div class="flex flex-col gap-y-1 sm:gap-y-2">
-                                                <p class="break-normal">
-                                                    {{ ucwords(__formatDate($student->birth_date)) }}
-                                                </p>
-                                                <p class="text-slate-500">
-                                                    {{ getAge($student->birth_date) }} ans
-                                                </p>
-                                            </div>
+                                        <td class="px-4 py-3 text-center">
+                                            <p class="text-xs text-slate-300 font-mono">
+                                                {{ ucwords(__formatDate($student->birth_date)) }}
+                                            </p>
+                                            <p class="text-[11px] text-slate-600 mt-0.5">
+                                                {{ getAge($student->birth_date) }} ans
+                                            </p>
                                         </td>
 
-                                        {{-- Actions --}}
-                                        <td class="px-2 sm:px-6 py-1.5 text-center">
+                                        <td class="px-4 py-3 text-center">
+                                            {{-- Actions futures --}}
                                         </td>
-
                                     </tr>
-                                @empty
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
             @else
-                <div class="flex justify-center items-center">
-                    <div class="p-5 text-center flex justify-center">
-                        <div class="flex flex-col items-center gap-3">
-                            <span class="text-4xl">👨‍🎓</span>
-                            <p class="text-slate-500 text-lg">Aucun apprenant dans cette classe.</p>
-                            @if ($search || $gender)
-                                <button wire:click="resetFilters"
-                                    class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
-                                    Réinitialiser les filtres
-                                </button>
-                            @endif
-                        </div>
+                <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-16 text-center">
+                    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-500/10 mb-4">
+                        <x-lucide-users class="w-7 h-7 text-indigo-400" />
                     </div>
+                    <p class="text-slate-400 text-sm">Aucun apprenant dans cette classe</p>
+                    @if ($search || $gender)
+                        <button wire:click="resetFilters"
+                            class="mt-4 px-4 py-2 rounded-xl text-sm
+                                       bg-white/[0.04] border border-white/[0.08] text-slate-400
+                                       hover:bg-white/[0.08] hover:text-white transition-all">
+                            Réinitialiser les filtres
+                        </button>
+                    @endif
                 </div>
             @endif
-
         </section>
 
     </div>
-
 </div>
 

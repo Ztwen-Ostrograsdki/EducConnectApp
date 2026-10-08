@@ -1,569 +1,384 @@
-<div class="w-full overflow-x-hidden">
+<div class="min-h-screen bg-[#070a12] text-slate-100">
 
-    <div
-        class="mx-auto
-                w-full
-                max-w-[1900px]
-                px-3 sm:px-4 lg:px-6 xl:px-8">
-        <section class="mb-6">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
 
+        {{-- ========== HEADER ========== --}}
+        <header class="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0c101c]">
             <div
-                class="relative overflow-hidden
-                        rounded-[32px]
-                        border border-slate-800
-                        bg-slate-900">
+                class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent">
+            </div>
 
-                {{-- BG --}}
-                <div
-                    class="absolute inset-0
-                            bg-gradient-to-br
-                            from-indigo-500/10
-                            via-slate-900
-                            to-slate-900">
+            <div class="relative p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-400/80 mb-2">
+                            Gestion académique · {{ $this->activeYear?->slug }}
+                        </p>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            Portail des séries
+                        </h1>
+                        <p class="mt-1.5 text-sm text-slate-500 max-w-md">
+                            Vue globale des séries, performances et gestion des classes
+                        </p>
+
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+                                         bg-white/[0.04] border border-white/[0.08] text-slate-300">
+                                <x-lucide-layers class="w-3.5 h-3.5 text-indigo-400" />
+                                {{ __zero($this->serials->total()) }} séries
+                            </span>
+
+                            @if ($this->unActivesSerials)
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+                                             bg-rose-500/10 border border-rose-500/25 text-rose-400 animate-pulse">
+                                    <x-lucide-power-off class="w-3.5 h-3.5" />
+                                    {{ __zero($this->unActivesSerials) }} désactivées
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {{-- ========== ACTIONS ========== --}}
+        <div class="flex flex-wrap items-center gap-2">
+            <a wire:navigate href="{{ route('tenant.classes.create') }}"
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium
+                      bg-violet-500/15 text-violet-400 border border-violet-500/25
+                      hover:bg-violet-500 hover:text-white hover:border-violet-500 transition-all duration-200">
+                <x-lucide-plus class="w-3.5 h-3.5" />
+                Créer une classe
+            </a>
+
+            <a wire:navigate href="{{ route('tenant.serial.create') }}"
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium
+                      bg-indigo-500/15 text-indigo-400 border border-indigo-500/25
+                      hover:bg-indigo-500 hover:text-white hover:border-indigo-500 transition-all duration-200">
+                <x-lucide-plus class="w-3.5 h-3.5" />
+                Créer une série
+            </a>
+
+            <button
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium
+                           bg-emerald-500/15 text-emerald-400 border border-emerald-500/25
+                           hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all duration-200">
+                <x-lucide-file-down class="w-3.5 h-3.5" />
+                Export PDF
+            </button>
+
+            @if ($this->unActivesSerials)
+                <button wire:click="activateUnactivesserials" wire:loading.attr="disabled"
+                    wire:target="activateUnactivesserials"
+                    title="Réactiver les {{ $this->unActivesSerials }} séries désactivées"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium
+                               bg-amber-500/15 text-amber-400 border border-amber-500/25
+                               hover:bg-amber-500 hover:text-white hover:border-amber-500
+                               transition-all duration-200 disabled:opacity-50">
+                    <span wire:loading.remove wire:target="activateUnactivesserials"
+                        class="inline-flex items-center gap-2">
+                        <x-lucide-power class="w-3.5 h-3.5" />
+                        Réactiver ({{ __zero($this->unActivesSerials) }})
+                    </span>
+                    <span wire:loading wire:target="activateUnactivesserials" class="inline-flex items-center gap-2">
+                        <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                        Activation...
+                    </span>
+                </button>
+            @endif
+
+            @if ($this->trashedsSerials)
+                <button wire:click="restoreTrashedsserials" wire:loading.attr="disabled"
+                    wire:target="restoreTrashedsserials"
+                    title="Restaurer les {{ $this->trashedsSerials }} séries de la corbeille"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium
+                               bg-rose-500/15 text-rose-400 border border-rose-500/25
+                               hover:bg-rose-500 hover:text-white hover:border-rose-500
+                               transition-all duration-200 disabled:opacity-50">
+                    <span wire:loading.remove wire:target="restoreTrashedsserials"
+                        class="inline-flex items-center gap-2">
+                        <x-lucide-trash-2 class="w-3.5 h-3.5" />
+                        Restaurer ({{ __zero($this->trashedsSerials) }})
+                    </span>
+                    <span wire:loading wire:target="restoreTrashedsserials" class="inline-flex items-center gap-2">
+                        <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                        Restauration...
+                    </span>
+                </button>
+            @endif
+        </div>
+
+        {{-- ========== LISTE ========== --}}
+        <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+
+            {{-- Header + filtres --}}
+            <div class="p-5 sm:p-6 border-b border-white/[0.05]">
+                <div class="flex flex-col gap-5">
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">
+                            Liste des séries
+                            @if ($is_active)
+                                <span class="ml-2 text-xs font-mono uppercase tracking-wider text-orange-400/70">
+                                    {{ $is_active }}
+                                </span>
+                            @endif
+                        </h2>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Analyse détaillée des séries
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                        <div class="relative sm:col-span-3">
+                            <x-lucide-search
+                                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                            <input wire:model.live.debounce.600ms="search" type="text"
+                                placeholder="Rechercher une série..."
+                                class="w-full h-11 rounded-xl bg-[#070a12] border border-white/[0.08]
+                                          pl-10 pr-4 text-sm text-white placeholder:text-slate-600
+                                          outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20
+                                          transition-all" />
+                        </div>
+
+                        <select wire:model.live="is_active"
+                            class="h-11 sm:col-span-2 rounded-xl bg-[#070a12] border border-white/[0.08]
+                                       px-3 text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition">
+                            <option value="">
+                                Toutes ({{ __zero($this->activesSerials + $this->unActivesSerials) }})
+                            </option>
+                            <option value="actives">
+                                Actives ({{ __zero($this->activesSerials) }})
+                            </option>
+                            <option value="desactives">
+                                Désactivées ({{ __zero($this->unActivesSerials) }})
+                            </option>
+                            <option value="corbeille">
+                                Corbeille ({{ __zero($this->trashedsSerials) }})
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Contenu --}}
+            <div class="relative p-4 sm:p-5">
+
+                <div wire:loading wire:target="is_active,search,previousPage,nextPage,resetFilters,gotoPage"
+                    class="absolute inset-0 z-20 flex items-center justify-center bg-[#070a12]/60 backdrop-blur-sm rounded-b-2xl">
+                    <div class="flex items-center gap-3 text-slate-400">
+                        <x-lucide-loader-2 class="w-6 h-6 text-indigo-400 animate-spin" />
+                        <span class="text-sm font-medium">Chargement...</span>
+                    </div>
                 </div>
 
-                <div class="relative p-5 sm:p-6 lg:p-8">
+                @if (count($this->serials))
+                    <div class="space-y-3">
+                        @foreach ($this->serials as $serial)
+                            @php
+                                $details = app(\App\Services\SerialsServices\SerialDetailsCacheService::class)->get(
+                                    $serial->id,
+                                );
+                            @endphp
 
-                    <div
-                        class="flex flex-col
-                                xl:flex-row
-                                xl:items-start
-                                xl:justify-between
-                                gap-8">
-
-                        {{-- LEFT --}}
-                        <div class="min-w-0">
-
-                            <div
-                                class="flex flex-wrap
-                                        items-center
-                                        gap-3">
-
-                                <h1 class="text-2xl sm:text-3xl font-bold">
-
-                                    Portail des séries
-
-                                </h1>
-
-                                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs">
-                                    Gestion Académique {{ $this->activeYear?->slug }}
-                                </span>
-
-                            </div>
-
-                            <p class="mt-3 text-slate-400 max-w-3xl">
-
-                                Vue globale des Séries,
-                                performances académiques,
-                                statistiques des apprenants
-                                et gestion des classes.
-
-                            </p>
-
-                            {{-- BADGES --}}
-                            <div class="mt-6 flex flex-wrap gap-3">
+                            <article
+                                class="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02]
+                                            hover:border-indigo-500/25 hover:bg-white/[0.03]
+                                            transition-all duration-300 overflow-hidden
+                                            @if ($serial->deleted_at) opacity-60 @endif"
+                                wire:key="serial-{{ $serial->id }}">
 
                                 <div
-                                    class="px-4 py-2 rounded-2xl
-                                            bg-slate-800 border border-slate-700">
-
-                                    {{ __zero($this->serials->total()) }} Séries
-
+                                    class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-violet-600
+                                            opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
 
-                                @if ($this->unActivesSerials)
-                                    <div
-                                        class="px-4 py-2 rounded-2xl animate-pulse font-mono bg-rose-800/20 border text-rose-400 border-rose-700">
-                                        {{ __zero($this->unActivesSerials) }} séries désactivées
-                                    </div>
-                                @endif
+                                <div class="p-4 sm:p-5">
+                                    <div class="flex flex-col xl:flex-row xl:items-center gap-4">
 
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="my-4 mb-5 flex justify-end border-y border-y-slate-800 py-4">
-            <div class="flex gap-3">
-
-                <a wire:navigate href="{{ route('tenant.classes.create') }}"
-                    class="py-3 px-5 rounded-2xl bg-purple-700 hover:bg-purple-900">
-                    + Créer une classe 🏠
-                </a>
-                <a wire:navigate href="{{ route('tenant.serial.create') }}"
-                    class="py-3 flex justify-center items-center px-5 rounded-2xl bg-blue-500 hover:bg-blue-800  transition">
-
-                    + Créer une série 🛠️
-
-                </a>
-                <button class="py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600">Export PDF</button>
-                @if ($this->unActivesSerials)
-                    <button title="Réactiver les {{ $this->unActivesSerials }} séries désactivées "
-                        wire:click="activateUnactivesserials" wire:loading.attr="disabled"
-                        wire:target="activateUnactivesserials"
-                        class="relative py-3 px-4 text-white  text-xs inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 bg-orange-600/60 hover:bg-orange-600 hover:text-black">
-                        <span wire:loading.remove wire:target="activateSerial, activateUnactivesSerials"
-                            class="inline-flex items-center justify-center gap-3">
-                            <span class="inline-flex items-center justify-center gap-3">
-                                <x-lucide-lock class="w-4 h-4" />
-                                <span>Réactiver les séries
-                                    ({{ __zero($this->unActivesSerials) }})
-                                </span>
-                            </span>
-                        </span>
-
-                        <span wire:loading wire:target="activateUnactivesserials"
-                            class="inline-flex items-center gap-1">
-                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4" />
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                            </svg>
-                        </span>
-                    </button>
-                @endif
-
-                @if ($this->trashedsSerials)
-                    <button title="Restorer les {{ $this->trashedsSerials }} séries de la corbeille "
-                        wire:click="restoreTrashedsserials" wire:loading.attr="disabled"
-                        wire:target="restoreTrashedsserials"
-                        class="relative py-3 px-4 text-white  text-xs inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 bg-rose-600/60 hover:bg-rose-600 hover:text-black">
-                        <span wire:loading.remove wire:target="activateSerial, restoreTrashedsserials"
-                            class="inline-flex items-center justify-center gap-3">
-                            <span class="inline-flex items-center justify-center gap-3">
-                                <x-lucide-trash class="w-4 h-4" />
-                                <span>Restorer les séries
-                                    ({{ __zero($this->trashedsSerials) }})
-                                </span>
-                            </span>
-                        </span>
-
-                        <span wire:loading wire:target="restoreTrashedsSerials" class="inline-flex items-center gap-1">
-                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4" />
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                            </svg>
-                        </span>
-                    </button>
-                @endif
-            </div>
-        </section>
-
-        <section class="mb-28">
-
-            <div
-                class="rounded-tl-2xl rounded-tr-2xl
-                        bg-slate-900
-                        border border-slate-800
-                        overflow-hidden p-2">
-
-                {{-- ===================================================== --}}
-                {{-- HEADER --}}
-                {{-- ===================================================== --}}
-                <div class="p-5 sm:p-6 border-b border-slate-800">
-
-                    <div class="flex flex-col
-                                gap-5">
-
-                        <div class="font-mono">
-
-                            <h2 class="text-xl font-bold">
-                                Liste des séries
-                                <span class="ml-3 text-orange-600/60 uppercase font-mono">{{ $is_active }}</span>
-                            </h2>
-                            <p class="mt-1 text-sm text-slate-400">
-                                Analyse détaillée des séries.
-
-                            </p>
-
-                        </div>
-
-                        <div class="grid grid-cols-7 gap-x-3 font-mono">
-
-                            <div class="relative col-span-4">
-                                <input wire:model.live.debounce.600ms='search' type="text"
-                                    placeholder="Rechercher une serie..."
-                                    class="w-full h-12 rounded-2xl bg-slate-950 border border-slate-800 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-                                    🔍
-                                </div>
-                            </div>
-
-                            <select wire:model.live='is_active'
-                                class="h-12 col-span-3 uppercase font-mono rounded-2xl bg-slate-950 border border-slate-800 px-4 text-sm">
-                                <option value="">
-                                    <span>Toutes les filières</span>
-                                    <span>({{ __zero($this->activesSerials + $this->unActivesSerials) }})</span>
-                                </option>
-                                <option class="text-green-400" value="actives">
-                                    <span>
-                                        <span>Actives</span>
-                                        <span c>({{ __zero($this->activesSerials) }})</span>
-                                    </span>
-                                </option>
-                                <option value="desactives">
-                                    <span>Désactivées</span>
-                                    <span>({{ __zero($this->unActivesSerials) }})</span>
-                                </option>
-                                <option class="text-orange-600" value="corbeille">
-                                    <span>La corbeille</span>
-                                    <span>({{ __zero($this->trashedsSerials) }})</span>
-                                </option>
-
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto relative  mt-1.5 p-2">
-                    <div wire:loading wire:target='is_active,search,previousPage,nextPage,resetFilters, gotoPage'
-                        class="absolute inset-0 flex items-center justify-center bg-slate-800/20 backdrop-blur-sm"
-                        style="z-index: 200 !important;">
-
-                        <div
-                            class="items-center gap-1 text-slate-400 relative top-1/2 mx-auto flex justify-center flex-row">
-                            <svg class="animate-spin w-10 h-10" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4" />
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                            </svg>
-                            <span class="text-2xl font-mono ls-1">Chargement en cours...</span>
-                        </div>
-                    </div>
-
-                    @if (count($this->serials))
-                        <table class="w-full z-table-border">
-                            <thead
-                                class="bg-slate-950
-                                     border-b border-slate-800 font-semibold ls-1 text-sm">
-
-                                <tr class="truncate text-center ">
-
-                                    <th class="px-6 py-4 text-slate-400">
-                                        N°
-                                    </th>
-                                    <th class="px-6 py-4 text-slate-400">
-                                        Série
-                                    </th>
-
-                                    <th class="px-4 py-4 text-center text-slate-400">
-                                        <span class="flex flex-col gap-y-2">
-                                            <span>Effectif</span>
-                                            <span class="text-yellow-600">Classes</span>
-                                            <span class="text-purple-300">Elèves</span>
-                                        </span>
-                                    </th>
-
-                                    <th class="px-6 py-4 text-slate-400">
-                                        Meilleur Élève
-                                    </th>
-
-                                    <th class="px-6 py-4 text-slate-400">
-                                        Plus Faible
-                                    </th>
-
-                                    <th class="px-6 py-4 text-slate-400">
-                                        Plus Jeune
-                                    </th>
-
-                                    <th class="px-6 py-4 text-slate-400">
-                                        Plus Âgé
-                                    </th>
-
-                                    <th class="px-6 py-4 text-center text-slate-400">
-                                        Actions
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-                            {{-- BODY --}}
-                            <tbody class="divide-y divide-slate-800 text-slate-400 font-mono">
-
-                                @foreach ($this->serials as $serial)
-                                    @php
-                                        $details = app(
-                                            \App\Services\SerialsServices\SerialDetailsCacheService::class,
-                                        )->get($serial->id);
-                                    @endphp
-                                    <tr
-                                        class="hover:bg-slate-800/40
-                                       transition-colors duration-200 @if ($serial->deleted_at) trashed-tr trashed-text @endif">
-
-                                        <td class="px-6 py-5 truncate">
-                                            {{ __zero($this->serials->firstItem() + $loop->iteration - 1) }}
-                                        </td>
-
-                                        <td class="px-6 py-5 truncate">
-
-                                            <a wire:navigate
-                                                href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
-                                                class="hover:underline flex underline-offset-2 p-3 rounded-2xl bg-primary-700/20 text-primary-300 text-center justify-center hover:bg-primary-800 hover:text-white">
-
-                                                <h3
-                                                    class="font-semibold text-lg @if ($serial->deleted_at) trashed-text @endif">
-                                                    {{ $serial->name }}
-                                                </h3>
-                                            </a>
-
-                                        </td>
-
-                                        <td class="px-4 py-5 text-center truncate">
-
-                                            <span class="flex flex-col gap-y-1 text-xs font-thin">
-                                                <span class="text-yellow-500">
-                                                    {{ __zero($details['classes_count']) }}
-                                                    classe(s)
-                                                </span>
-                                                <span class="text-purple-300">
-                                                    {{ __zero($details['students_count']) }}
-                                                    apprenant(s)
-                                                </span>
+                                        {{-- Identité --}}
+                                        <div class="flex items-start gap-3 min-w-0 xl:w-[200px] shrink-0">
+                                            <span class="text-xs font-mono text-slate-600 mt-1 shrink-0">
+                                                {{ __zero($this->serials->firstItem() + $loop->iteration - 1) }}
                                             </span>
-
-                                        </td>
-
-                                        {{-- BEST --}}
-                                        <td class="px-6 py-5">
-
-                                            <div class="truncate">
-
-                                                <h3 class="font-medium">
-
-                                                    KOUASSI Sarah
-
-                                                </h3>
-
-                                                <p class="text-sm text-emerald-400">
-
-                                                    (18.92)
-                                                </p>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- WORST --}}
-                                        <td class="px-6 py-5">
-
-                                            <div class="truncate">
-
-                                                <h3 class="font-medium">
-
-                                                    HOUNKPE David
-
-                                                </h3>
-
-                                                <p class="text-sm text-rose-400">
-
-                                                    (03.42)
-
-                                                </p>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- YOUNGEST --}}
-                                        <td class="px-6 py-5">
-
-                                            <div class="truncate">
-
-                                                <h3 class="font-medium">
-
-                                                    ADJOVI Esther
-
-                                                </h3>
-
-                                                <p class="text-sm text-slate-400">
-
-                                                    10 ans
-
-                                                </p>
-
-                                            </div>
-
-                                        </td>
-
-                                        {{-- OLDEST --}}
-                                        <td class="px-6 py-5">
-
-                                            <div class="truncate">
-
-                                                <h3 class="font-medium">
-
-                                                    AKAKPO Jonas
-
-                                                </h3>
-
-                                                <p class="text-sm text-slate-400">
-
-                                                    19 ans
-
-                                                </p>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td class="px-6 py-5">
-
-                                            <div class="flex gap-2 truncate">
+                                            <div class="min-w-0">
                                                 <a wire:navigate
                                                     href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
-                                                    class="p-2.5 rounded-2xl bg-blue-500/20 text-blue-400  hover:bg-blue-500/60 hover:text-black transition-all text-sm inline-block text-center">
-                                                    <span class="flex items-center justify-center gap-x-2">
-                                                        <span class="flex items-center justify-center gap-x-2">
-                                                            <x-lucide-eye class="w-4 h-4" />
-                                                            <span>Voir détails</span>
-                                                        </span>
-                                                    </span>
+                                                    class="block group/link">
+                                                    <h3
+                                                        class="font-semibold text-white truncate
+                                                               group-hover/link:text-indigo-300 transition-colors">
+                                                        {{ $serial->name }}
+                                                    </h3>
                                                 </a>
-
-                                                <button
-                                                    title="{{ $serial->is_active ? 'Fermer ' : 'Activer ' }} cette série "
-                                                    wire:click="{{ $serial->is_active ? 'closeSerial(' . $serial->id . ')' : 'activateSerial(' . $serial->id . ')' }}"
-                                                    wire:loading.attr="disabled"
-                                                    wire:target="activateSerial, closeSerial"
-                                                    class="relative py-3 px-4 rounded-xl text-white {{ !$serial->is_active ? 'bg-lime-600/60 hover:bg-lime-500 hover:text-black' : 'bg-orange-500/60 hover:bg-orange-600/90' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
-                                                    <span wire:loading.remove wire:target="activateSerial, closeSerial"
-                                                        class="inline-flex items-center justify-center gap-3">
-                                                        <span class="inline-flex items-center justify-center gap-3">
-                                                            @if ($serial->is_active)
-                                                                <x-lucide-lock class="w-4 h-4" />
-                                                                <span>Fermer</span>
-                                                            @else
-                                                                <x-lucide-unlock class="w-4 h-4" />
-                                                                <span>Activer</span>
-                                                            @endif
-                                                        </span>
-                                                    </span>
-
-                                                    <span wire:loading wire:target="activateSerial, closeSerial"
-                                                        class="inline-flex items-center gap-1">
-                                                        <svg class="animate-spin w-3 h-3" fill="none"
-                                                            viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12"
-                                                                r="10" stroke="currentColor" stroke-width="4" />
-                                                            <path class="opacity-75" fill="currentColor"
-                                                                d="M4 12a8 8 0 018-8v8z" />
-                                                        </svg>
-                                                    </span>
-                                                </button>
-
-                                                <button
-                                                    title="{{ $serial->deleted_at ? 'Restaurer cette série de la corbeille ' : 'Mettre cette série dans la corbeille ' }} "
-                                                    wire:click="{{ $serial->deleted_at ? 'restoreSerial(' . $serial->id . ')' : 'deleteSerial(' . $serial->id . ')' }}"
-                                                    wire:loading.attr="disabled"
-                                                    wire:target="deleteFiliar, restoreFiliar"
-                                                    class="relative py-3 px-4 rounded-xl text-white {{ $serial->deleted_at ? 'bg-green-600/50 hover:bg-green-800/80' : 'bg-red-500/60 hover:bg-red-600/80' }} text-xs font-medium inline-flex items-center justify-center gap-1.5  rounded-xl transition-all whitespace-nowrap disabled:opacity-50 hover:text-black">
-                                                    <span wire:loading.remove wire:target="deleteFiliar, restoreFiliar"
-                                                        class="inline-flex items-center justify-center gap-3">
-                                                        <span class="inline-flex items-center justify-center gap-3">
-                                                            @if ($serial->deleted_at)
-                                                                <x-lucide-refresh-ccw class="w-4 h-4" />
-                                                                <span>Restaurer</span>
-                                                            @else
-                                                                <x-lucide-trash class="w-4 h-4" />
-                                                                <span>Corbeille</span>
-                                                            @endif
-                                                        </span>
-                                                    </span>
-
-                                                    <span wire:loading wire:target="restoreSerial, deleteSerial"
-                                                        class="inline-flex items-center gap-1">
-                                                        <svg class="animate-spin w-3 h-3" fill="none"
-                                                            viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12"
-                                                                r="10" stroke="currentColor" stroke-width="4" />
-                                                            <path class="opacity-75" fill="currentColor"
-                                                                d="M4 12a8 8 0 018-8v8z" />
-                                                        </svg>
-                                                    </span>
-                                                </button>
-
                                             </div>
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
-                        @if ($this->serials->hasPages())
-                            <section class="py-6 w-full">
-                                <div class="w-full p-4 font-mono">
-                                    <div class="flex flex-col justify-center items-center gap-4">
-                                        <div class="text-sm text-slate-400">
-                                            Affichage {{ $this->serials->firstItem() }} à
-                                            {{ $this->serials->lastItem() }} sur
-                                            {{ $this->serials->total() }} séries
                                         </div>
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            @if (!$this->serials->onFirstPage())
-                                                <button wire:click="previousPage" wire:loading.attr="disabled"
-                                                    wire:target="previousPage"
-                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
-                                                    Précédent
-                                                </button>
-                                            @endif
 
-                                            @foreach ($this->serials->getUrlRange(1, $this->serials->lastPage()) as $page => $url)
-                                                <button @disabled($page === $this->serials->currentPage())
-                                                    wire:click="gotoPage({{ $page }})"
-                                                    class="h-10 px-4 rounded-xl text-sm transition-all {{ $page === $this->serials->currentPage() ? 'bg-indigo-500 text-white' : 'bg-slate-800 hover:bg-slate-700' }}">
-                                                    {{ $page }}
-                                                </button>
-                                            @endforeach
+                                        {{-- Effectifs --}}
+                                        <div class="flex items-center gap-3 xl:w-[140px] shrink-0">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
+                                                         bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                                <x-lucide-school class="w-3 h-3" />
+                                                {{ __zero($details['classes_count']) }}
+                                            </span>
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
+                                                         bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                                                <x-lucide-users class="w-3 h-3" />
+                                                {{ __zero($details['students_count']) }}
+                                            </span>
+                                        </div>
 
-                                            @if ($this->serials->hasMorePages())
-                                                <button wire:click="nextPage" wire:loading.attr="disabled"
-                                                    wire:target="nextPage"
-                                                    class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all text-sm disabled:opacity-50">
-                                                    Suivant
-                                                </button>
-                                            @endif
+                                        {{-- Stats élèves --}}
+                                        <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0">
+                                            <div class="min-w-0">
+                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
+                                                    Meilleur</p>
+                                                <p class="text-xs font-medium text-slate-300 truncate">KOUASSI Sarah</p>
+                                                <p class="text-xs text-emerald-400 font-mono">(18.92)</p>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
+                                                    Plus faible</p>
+                                                <p class="text-xs font-medium text-slate-300 truncate">HOUNKPE David</p>
+                                                <p class="text-xs text-rose-400 font-mono">(03.42)</p>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
+                                                    Plus jeune</p>
+                                                <p class="text-xs font-medium text-slate-300 truncate">ADJOVI Esther</p>
+                                                <p class="text-xs text-slate-500">10 ans</p>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
+                                                    Plus âgé</p>
+                                                <p class="text-xs font-medium text-slate-300 truncate">AKAKPO Jonas</p>
+                                                <p class="text-xs text-slate-500">19 ans</p>
+                                            </div>
+                                        </div>
+
+                                        {{-- Actions --}}
+                                        <div class="flex flex-wrap items-center gap-1.5 xl:justify-end shrink-0">
+                                            <a wire:navigate
+                                                href="{{ route('tenant.serial.profil', ['serial_slug' => $serial->slug]) }}"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium
+                                                      bg-sky-500/15 text-sky-400 border border-sky-500/25
+                                                      hover:bg-sky-500 hover:text-white hover:border-sky-500
+                                                      transition-all duration-200">
+                                                <x-lucide-eye class="w-3.5 h-3.5" />
+                                                Voir
+                                            </a>
+
+                                            <button
+                                                wire:click="{{ $serial->is_active ? 'closeSerial(' . $serial->id . ')' : 'activateSerial(' . $serial->id . ')' }}"
+                                                wire:loading.attr="disabled" wire:target="activateSerial, closeSerial"
+                                                title="{{ $serial->is_active ? 'Fermer' : 'Activer' }} cette série"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium
+                                                           {{ $serial->is_active
+                                                               ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500 hover:text-white hover:border-amber-500'
+                                                               : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white hover:border-emerald-500' }}
+                                                           transition-all duration-200 disabled:opacity-50">
+                                                <span wire:loading.remove wire:target="activateSerial, closeSerial">
+                                                    <x-lucide-power class="w-3.5 h-3.5" />
+                                                </span>
+                                                <span wire:loading wire:target="activateSerial, closeSerial">
+                                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                                </span>
+                                            </button>
+
+                                            <button
+                                                wire:click="{{ $serial->deleted_at ? 'restoreSerial(' . $serial->id . ')' : 'deleteSerial(' . $serial->id . ')' }}"
+                                                wire:loading.attr="disabled" wire:target="deleteSerial, restoreSerial"
+                                                title="{{ $serial->deleted_at ? 'Restaurer' : 'Mettre en corbeille' }}"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium
+                                                           {{ $serial->deleted_at
+                                                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'
+                                                               : 'bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white hover:border-rose-500' }}
+                                                           transition-all duration-200 disabled:opacity-50">
+                                                <span wire:loading.remove wire:target="deleteSerial, restoreSerial">
+                                                    @if ($serial->deleted_at)
+                                                        <x-lucide-refresh-ccw class="w-3.5 h-3.5" />
+                                                    @else
+                                                        <x-lucide-trash-2 class="w-3.5 h-3.5" />
+                                                    @endif
+                                                </span>
+                                                <span wire:loading wire:target="deleteSerial, restoreSerial">
+                                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                                </span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </section>
-                        @endif
-                    @else
-                        <div class="flex w-full itecn justify-center">
-                            <div class="p-6 flex justify-center text-center">
-                                <div class="flex flex-col items-center gap-3">
-                                    <span class="text-4xl">🎯</span>
-                                    <p class="text-slate-500 text-sm">Aucune série trouvée </p>
-                                    @if ($search || $is_active)
-                                        <button wire:click="resetFilters"
-                                            class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm transition">
-                                            Réinitialiser les filtres
+                            </article>
+                        @endforeach
+                    </div>
+
+                    {{-- Pagination --}}
+                    @if ($this->serials->hasPages())
+                        <div class="mt-6 pt-5 border-t border-white/[0.05]">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <p class="text-sm text-slate-500">
+                                    {{ $this->serials->firstItem() }}–{{ $this->serials->lastItem() }}
+                                    sur <span class="text-slate-300 font-medium">{{ $this->serials->total() }}</span>
+                                </p>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    @if (!$this->serials->onFirstPage())
+                                        <button wire:click="previousPage" wire:loading.attr="disabled"
+                                            wire:target="previousPage"
+                                            class="h-9 px-3.5 rounded-lg text-sm text-slate-300
+                                                       bg-white/[0.04] border border-white/[0.06]
+                                                       hover:bg-white/[0.08] hover:text-white
+                                                       transition-all disabled:opacity-50">
+                                            Précédent
+                                        </button>
+                                    @endif
+
+                                    @foreach ($this->serials->getUrlRange(1, $this->serials->lastPage()) as $page => $url)
+                                        <button wire:click="gotoPage({{ $page }})"
+                                            @disabled($page === $this->serials->currentPage())
+                                            class="h-9 w-9 rounded-lg text-sm font-medium transition-all
+                                                       {{ $page === $this->serials->currentPage()
+                                                           ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                                                           : 'bg-white/[0.04] text-slate-400 border border-white/[0.06] hover:bg-white/[0.08] hover:text-white' }}">
+                                            {{ $page }}
+                                        </button>
+                                    @endforeach
+
+                                    @if ($this->serials->hasMorePages())
+                                        <button wire:click="nextPage" wire:loading.attr="disabled"
+                                            wire:target="nextPage"
+                                            class="h-9 px-3.5 rounded-lg text-sm text-slate-300
+                                                       bg-white/[0.04] border border-white/[0.06]
+                                                       hover:bg-white/[0.08] hover:text-white
+                                                       transition-all disabled:opacity-50">
+                                            Suivant
                                         </button>
                                     @endif
                                 </div>
                             </div>
                         </div>
                     @endif
-
-                </div>
-
+                @else
+                    <div class="py-16 text-center">
+                        <div
+                            class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-500/10 mb-4">
+                            <x-lucide-layers class="w-7 h-7 text-indigo-400" />
+                        </div>
+                        <p class="text-slate-400 text-sm">Aucune série trouvée</p>
+                        @if ($search || $is_active)
+                            <button wire:click="resetFilters"
+                                class="mt-4 px-4 py-2 rounded-xl text-sm
+                                           bg-white/[0.04] border border-white/[0.08] text-slate-400
+                                           hover:bg-white/[0.08] hover:text-white transition-all">
+                                Réinitialiser les filtres
+                            </button>
+                        @endif
+                    </div>
+                @endif
             </div>
-
         </section>
 
     </div>
-
 </div>
-

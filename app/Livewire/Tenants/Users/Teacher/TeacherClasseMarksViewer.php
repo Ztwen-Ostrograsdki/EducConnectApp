@@ -134,7 +134,12 @@ class TeacherClasseMarksViewer extends Component
 
         if (!$student) return;
 
-        $currentMarks = $this->marksData[$student_id] ?? [];
+        $currentMarks = [];
+
+        if($this->marksData[$student_id] && $this->marksData[$student_id]['marks']){
+
+            $currentMarks = $this->marksData[$student_id]['marks'];
+        }
 
         $existingTypes = collect($this->markColumns())
             ->keys()
@@ -148,6 +153,7 @@ class TeacherClasseMarksViewer extends Component
                 'title'       => 'Aucune note à modifier',
                 'description' => "{$student->getFullName()} n'a aucune note enregistrée pour cette période.",
             ]);
+
             return;
         }
 
@@ -274,6 +280,7 @@ class TeacherClasseMarksViewer extends Component
             ])
             ->values()
             ->all();
+        
 
         event(new InitProcessToUpdateStudentsMarksEvent(
             tenantId: tenancy()->tenant->id,
@@ -404,86 +411,28 @@ class TeacherClasseMarksViewer extends Component
     #[Computed]
     public function studentsRows(): array
     {
-        $columns = array_keys($this->markColumns());
-        $devoirColumns = array_keys($this->devoirColumns());
+        $marksData = $this->marksData; //classe_id, subject_id, period déjà résolus dans marksData()
 
-        $coefficient = $this->classe->getCoefValueOfSubject($this->subject->id);
+        return $this->students->map(function (Student $student) use ($marksData) {
 
-        $rows = $this->students->map(function (Student $student) use ($columns, $devoirColumns, $coefficient) {
-
-            $studentMarks = $this->marksData[$student->id] ?? [];
-
-            $values = [];
-
-            foreach ($columns as $type) {
-                $values[$type] = $studentMarks[$type]['value'] ?? null;
-            }
-
-            $interroValues = array_filter(
-                array_intersect_key($values, array_flip(self::INTERRO_TYPES)),
-                fn ($v) => !is_null($v)
-            );
-
-            $moyInterro = !empty($interroValues)
-                ? round(array_sum($interroValues) / count($interroValues), 2)
-                : null;
-
-            $devoirValues = array_filter(
-                array_intersect_key($values, array_flip($devoirColumns)),
-                fn ($v) => !is_null($v)
-            );
-
-            $moyDevoirs = !empty($devoirValues)
-                ? round(array_sum($devoirValues) / count($devoirValues), 2)
-                : null;
-
-            if (!is_null($moyInterro) && !is_null($moyDevoirs)) {
-                $moy = round(($moyInterro + $moyDevoirs) / 2, 2);
-            } elseif (!is_null($moyInterro)) {
-                $moy = $moyInterro;
-            } elseif (!is_null($moyDevoirs)) {
-                $moy = $moyDevoirs;
-            } else {
-                $moy = null;
-            }
-
-            $moyCoef = !is_null($moy) ? round($moy * $coefficient, 2) : null;
+            $data = $marksData[$student->id] ?? [
+                'marks' => [], 'moy_interro' => null, 'moy' => null,
+                'moy_coef' => null, 'rank' => null, 'total' => 0,
+            ];
 
             return [
                 'student'     => $student,
-                'marks'       => $values,
-                'moy_interro' => $moyInterro,
-                'moy'         => $moy,
-                'moy_coef'    => $moyCoef,
+                'marks'       => collect(array_keys($this->markColumns))
+                                ->mapWithKeys(fn ($t) => [$t => $data['marks'][$t]['value'] ?? null])->all(),
+                'moy_interro' => $data['moy_interro'],
+                'moy'         => $data['moy'],
+                'moy_coef'    => $data['moy_coef'],
+                'rank'        => $data['rank'],
             ];
-        });
-
-        $ranked = $rows->sortByDesc(fn ($row) => $row['moy'] ?? -1)->values();
-
-        $rank = 0;
-        $lastMoy = null;
-        $position = 0;
-
-        $ranked = $ranked->map(function ($row) use (&$rank, &$lastMoy, &$position) {
-
-            $position++;
-
-            if (is_null($row['moy'])) {
-                $row['rank'] = null;
-                return $row;
-            }
-
-            if ($row['moy'] !== $lastMoy) {
-                $rank = $position;
-                $lastMoy = $row['moy'];
-            }
-
-            $row['rank'] = $rank;
-
-            return $row;
-        });
-
-        return $ranked->sortBy(fn ($row) => $row['student']->name . $row['student']->prenames)->values()->all();
+        })
+        ->sortBy(fn ($row) => $row['student']->name . $row['student']->prenames)
+        ->values()
+        ->all();
     }
 
     #[Computed]

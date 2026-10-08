@@ -218,6 +218,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
         foreach ($this->data as $studentPayload) {
 
             $studentId = (int) ($studentPayload['student_id'] ?? 0);
+
             $editedMarks = $studentPayload['marks'] ?? [];
 
             if (!$studentId || empty($editedMarks)) continue;
@@ -225,7 +226,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
             $student = Student::find($studentId);
 
             if(!$student){
-                
+
             }
 
             try {
@@ -242,7 +243,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
                         ->whereIn('type', $editedTypes)
                         ->lockForUpdate()
                         ->get();
-
+                    
                     // ─── INTERROS : reclassement, jamais de trou avant la dernière valeur ───
                     // array_intersect préserve l'ordre de INTERRO_TYPES : le résultat est
                     // toujours un préfixe contigu (interro1, interro2, ...).
@@ -253,6 +254,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
                         $orderedValues = [];
 
                         foreach ($editedInterroTypes as $type) {
+
                             $value = $editedMarks[$type];
 
                             if (is_null($value)) continue;
@@ -265,9 +267,13 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
                             $value = $orderedValues[$index] ?? null;
 
                             if (is_null($value)) {
+
                                 $this->removeMark($studentId, $schoolYearId, $targetType);
+
                             } else {
+
                                 $this->upsertMark($studentId, $schoolYearId, $targetType, $value);
+
                             }
                         }
                     }
@@ -280,7 +286,9 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
                         $value = $editedMarks[$type];
 
                         if (is_null($value)) {
+
                             $this->removeMark($studentId, $schoolYearId, $type);
+
                         } else {
                             $this->upsertMark($studentId, $schoolYearId, $type, $this->validatedValue($value, $type));
                         }
@@ -331,7 +339,9 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
             ->first();
 
         if ($existing) {
+
             if ($existing->trashed()) {
+
                 $existing->restore();
             }
 
@@ -368,7 +378,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
             ->where('school_year_id', $schoolYearId)
             ->where('period', $this->period)
             ->where('type', $type)
-            ->delete();
+            ->forceDelete();
     }
 
     private function validatedValue(mixed $value, string $type): float

@@ -1,14 +1,13 @@
 <div class="w-full overflow-x-hidden">
-
     {{-- ===================== FILTERS ===================== --}}
     <section class="mb-6">
-        <div class="rounded-2xl bg-slate-950 shadow-xs shadow-sky-900 border border-white/5 p-4 sm:p-5">
+        <div class="rounded-2x shadow-xs shadow-sky-900 border border-white/5 p-4 sm:p-5">
             <div class="flex flex-col gap-4">
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
                         <input wire:model.live.debounce.400ms="search" type="text"
                             placeholder="Rechercher un apprenant…"
-                            class="w-full h-11 rounded-xl bg-[#0b0f19] border border-white/10 pl-11 pr-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
+                            class="w-full h-11 rounded-xl bg-transparent border border-white/10 pl-11 pr-4 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all">
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
                     </div>
                     <button wire:click="resetFilters"
@@ -108,8 +107,8 @@
     {{-- ===================== LIST ===================== --}}
     <section class="relative mb-12">
         <div wire:loading
-            wire:target="gender,classe_id,filiar_id,serial_id,promotionInGroups,resetFilters,search,previousPage,nextPage,gotoPage"
-            class="absolute inset-0 z-20 flex items-center justify-center bg-[#0b0f19]/70 rounded-2xl">
+            wire:target="gender,classe_id,filiar_id,serial_id,promotionInGroups,,search,previousPage,nextPage,gotoPage, resetFilters, search, status"
+            class="absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm bg-[#0b0f19]/70 rounded-2xl">
             <div class="flex flex-col items-center gap-3 text-slate-400">
                 <svg class="animate-spin w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -194,12 +193,14 @@
                                         </p>
                                         <p class="text-xs text-slate-300">
                                             {{ ucwords(__formatDate($student->birth_date)) }}</p>
-                                        <p class="text-[11px] text-slate-500 mt-0.5">{{ getAge($student->birth_date) }}
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ getAge($student->birth_date) }}
                                             ans</p>
                                     </div>
 
                                     <div>
-                                        <p class="text-[11px] uppercase tracking-wider text-slate-500 mb-1">Présence</p>
+                                        <p class="text-[11px] uppercase tracking-wider text-slate-500 mb-1">Présence
+                                        </p>
                                         <span
                                             class="inline-flex px-2 py-0.5 rounded-full bg-white/5 text-slate-500 text-[11px]">
                                             En cours…
@@ -309,7 +310,7 @@
                 </div>
             @endif
         @else
-            <div class="rounded-2xl bg-[#121826] border border-white/5 py-20 text-center">
+            <div class="rounded-2xl bg-transparent border border-white/5 py-20 text-center">
                 <span class="text-4xl mb-4 block">🎓</span>
                 <p class="text-slate-500 text-sm mb-4">Aucun apprenant trouvé</p>
                 <button wire:click="resetFilters"

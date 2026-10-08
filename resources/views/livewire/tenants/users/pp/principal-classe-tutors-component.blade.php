@@ -134,7 +134,7 @@
                                     </div>
 
                                     {{-- Action --}}
-                                    <div class="flex items-center gap-2 lg:shrink-0 lg:pl-2">
+                                    <div class="flex items-center gap-2 lg:shrink-0 lg:pl-2 hidden">
                                         <a href="#"
                                             class="h-9 px-3.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 text-violet-300 text-xs font-medium transition-all inline-flex items-center gap-1.5">
                                             Voir profil

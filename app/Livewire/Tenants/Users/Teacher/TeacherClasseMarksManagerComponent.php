@@ -68,6 +68,16 @@ class TeacherClasseMarksManagerComponent extends Component
         // $this->period = session()->get($this->lastPeriodSessionKey());
 
         if ($this->period) {
+
+            if($this->subject->isConduite()){
+
+                $this->mode = 'manual';
+
+                $this->excelPreviewErrors = [];
+
+                $this->reset('excelFile');
+            }
+
             $this->loadPendingMarksFromSession();
             $this->syncInputsFromPending();
         }
@@ -228,6 +238,18 @@ class TeacherClasseMarksManagerComponent extends Component
 
     public function switchMode(string $mode): void
     {
+        if($this->subject->isConduite()){
+
+            $this->mode = 'manual';
+
+            $this->excelPreviewErrors = [];
+
+            $this->reset('excelFile');
+
+            return;
+        }
+
+
         $this->mode = in_array($mode, ['manual', 'excel'], true) ? $mode : 'manual';
         $this->excelPreviewErrors = [];
 
@@ -498,6 +520,7 @@ class TeacherClasseMarksManagerComponent extends Component
                 'title'       => 'Notes ajoutées',
                 'description' => "Les notes de {$student->getFullName()} ont été ajoutées à la liste en attente.",
             ]);
+
         } catch (\InvalidArgumentException $e) {
             $this->notification()->send([
                 'icon'        => 'error',
@@ -557,6 +580,24 @@ class TeacherClasseMarksManagerComponent extends Component
 
     public function loadExcelFile(): void
     {
+        if($this->subject->isConduite()){
+
+            $this->mode = 'manual';
+
+            $this->excelPreviewErrors = [];
+
+            $this->reset('excelFile');
+
+            $this->notification()->send([
+                'icon'        => 'error',
+                'title'       => 'ERREUR',
+                'description' => "Le mode lecture de fichier n'est pas disponible pour les conduites",
+            ]);
+
+            return;
+        }
+
+
         $this->excelPreviewErrors = [];
 
         try {
@@ -879,7 +920,26 @@ class TeacherClasseMarksManagerComponent extends Component
             return;
         }
 
-        $this->finalMarksPayload = collect($this->pendingMarks)
+        if($this->subject->isConduite()){
+
+            $this->finalMarksPayload = collect($this->pendingMarks)
+                ->map(function (array $marks, $studentId) {
+                    return [
+                        'student_id'     => (int) $studentId,
+                        'classe_id'      => $this->classe->id,
+                        'subject_id'     => $this->subject->id,
+                        'school_year_id' => $this->activeYear->id,
+                        'teacher_id'     => $this->teacher->id,
+                        'period'         => $this->period,
+                        'marks'          => array_merge([], $marks['devoir'] ?? []),
+                    ];
+                })
+                ->values()
+                ->toArray();
+        }
+        else{
+
+            $this->finalMarksPayload = collect($this->pendingMarks)
             ->map(function (array $marks, $studentId) {
                 return [
                     'student_id'     => (int) $studentId,
@@ -893,6 +953,7 @@ class TeacherClasseMarksManagerComponent extends Component
             })
             ->values()
             ->toArray();
+        }
 
         $this->notification()->send([
             'icon'        => 'success',

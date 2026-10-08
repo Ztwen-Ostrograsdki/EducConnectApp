@@ -1,457 +1,353 @@
-<section class=" mb-6">
+<section class="min-h-screen bg-[#070a12] text-slate-100">
 
-    <div class="w-full overflow-x-hidden">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
 
-        <div class="mx-auto w-full max-w-[1900px] bg-slate-950 p-2">
+        {{-- ========== FILTRE PÉRIODE ========== --}}
+        <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div class="flex flex-wrap items-center gap-3">
+                <label class="text-xs font-medium uppercase tracking-wider text-slate-500">
+                    Période
+                </label>
+                <select wire:model.live="period"
+                    class="h-10 rounded-xl bg-[#070a12] border border-white/[0.08] px-3 text-sm
+                               text-slate-300 font-mono uppercase
+                               focus:border-indigo-500/50 focus:outline-none transition min-w-[180px]">
+                    <option disabled value="">
+                        {{ $this->activeYear->periodLabel() }}
+                    </option>
+                    @foreach ($this->periods_types as $pv => $p)
+                        <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
-            <section class="mb-6">
-                <div class="rounded-lg bg-slate-900 border border-slate-800 p-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
+        {{-- ========== NOTES DÉTAILLÉES ========== --}}
+        <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
 
-                        {{-- PERIOD (seul select ici) --}}
-                        <select wire:model.live="period"
-                            class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
-                            <option disabled value="">Sélectionner le {{ $this->activeYear->periodLabel() }}
-                            </option>
-                            @foreach ($this->periods_types as $pv => $p)
-                                <option value="{{ $p['index'] }}">{{ $p['label'] }}</option>
+            <div class="px-5 sm:px-6 py-4 border-b border-white/[0.05]">
+                <h2 class="text-lg font-semibold text-white">
+                    Notes de
+                    <span class="text-amber-400">{{ $student->getFullName() }}</span>
+                </h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    Détail des notes par matière pour la période sélectionnée
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm" style="min-width: 1100px;">
+                    <thead>
+                        <tr class="border-b border-white/[0.05]">
+                            <th
+                                class="sticky left-0 z-10 bg-[#0c101c] px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Matière
+                            </th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Coef.</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Int 1</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Int 2</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Int 3</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Int 4</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-indigo-400">
+                                Moy. Int</th>
+                            @foreach ($this->devoirColumns() as $type => $label)
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    {{ $label }}
+                                </th>
                             @endforeach
-                        </select>
-                    </div>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                Moy.</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                Moy. Coef.</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Rang</th>
+                            <th
+                                class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                Prof</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-white/[0.04]">
+                        @forelse ($this->subjectRows as $row)
+                            <tr class="group hover:bg-white/[0.02] transition-colors"
+                                wire:key="subject-row-{{ $row['subject']->id }}">
+
+                                <td
+                                    class="sticky left-0 z-10 bg-[#0c101c] group-hover:bg-[#0e1320] px-5 py-3 transition-colors">
+                                    <span class="font-medium text-slate-200 uppercase tracking-wide">
+                                        {{ $row['subject']->code }}
+                                    </span>
+                                </td>
+
+                                <td class="px-3 py-3 text-center text-slate-400 font-mono text-xs">
+                                    {{ number_format($row['coefficient'], 2) }}
+                                </td>
+
+                                @foreach (['interro1', 'interro2', 'interro3', 'interro4'] as $type)
+                                    <td class="px-3 py-3 text-center font-mono text-xs">
+                                        @if (!is_null($row['marks'][$type]))
+                                            <span
+                                                class="text-slate-300">{{ number_format($row['marks'][$type], 2) }}</span>
+                                        @else
+                                            <span class="text-slate-700">—</span>
+                                        @endif
+                                    </td>
+                                @endforeach
+
+                                <td
+                                    class="px-3 py-3 text-center font-mono text-xs font-medium
+                                           {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-700' }}">
+                                    {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
+                                </td>
+
+                                @foreach ($this->devoirColumns() as $type => $label)
+                                    <td class="px-3 py-3 text-center font-mono text-xs">
+                                        @if (!is_null($row['marks'][$type]))
+                                            <span
+                                                class="text-slate-300">{{ number_format($row['marks'][$type], 2) }}</span>
+                                        @else
+                                            <span class="text-slate-700">—</span>
+                                        @endif
+                                    </td>
+                                @endforeach
+
+                                <td
+                                    class="px-3 py-3 text-center font-mono text-xs font-semibold
+                                           {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-700' }}">
+                                    {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
+                                </td>
+
+                                <td
+                                    class="px-3 py-3 text-center font-mono text-xs font-semibold
+                                           {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-700' }}">
+                                    {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
+                                </td>
+
+                                <td class="px-3 py-3 text-center">
+                                    @if ($row['rank'])
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-mono
+                                                     bg-white/[0.04] text-slate-300 border border-white/[0.06]">
+                                            #{{ $row['rank'] }}/{{ $row['total'] }}
+                                        </span>
+                                    @else
+                                        <span class="text-slate-700">—</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-3 py-3 text-center text-xs text-slate-500 truncate max-w-[120px]">
+                                    {{ $row['teacher']->getFullName() }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ 10 + count($this->devoirColumns()) }}"
+                                    class="px-6 py-12 text-center text-slate-500 text-sm">
+                                    Aucune matière trouvée pour cette classe.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- ========== MOYENNES + BILAN ========== --}}
+        <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+
+            <div class="px-5 sm:px-6 py-4 border-b border-white/[0.05]">
+                <h2 class="text-lg font-semibold text-white">
+                    Moyennes de
+                    <span class="text-amber-400">{{ $student->getFullName() }}</span>
+                </h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    Synthèse des moyennes par matière et bilan de période
+                </p>
+            </div>
+
+            @if ($this->termAverage)
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" style="min-width: 1000px;">
+                        <thead>
+                            <tr class="border-b border-white/[0.05]">
+                                <th
+                                    class="sticky left-0 z-10 bg-[#0c101c] px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Matière
+                                </th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Coef.</th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-indigo-400">
+                                    Moy. Int</th>
+                                @foreach ($this->devoirColumns() as $type => $label)
+                                    <th
+                                        class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                        {{ $label }}
+                                    </th>
+                                @endforeach
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                    Moy.</th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                    Moy. Coef.</th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Rang</th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Observation</th>
+                                <th
+                                    class="px-3 py-3.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Prof</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-white/[0.04]">
+                            @forelse ($this->subjectRows as $row)
+                                <tr class="group hover:bg-white/[0.02] transition-colors"
+                                    wire:key="avg-row-{{ $row['subject']->id }}">
+
+                                    <td
+                                        class="sticky left-0 z-10 bg-[#0c101c] group-hover:bg-[#0e1320] px-5 py-3 transition-colors">
+                                        <span class="font-medium text-slate-200 uppercase tracking-wide">
+                                            {{ $row['subject']->code }}
+                                        </span>
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center font-mono text-xs"
+                                        @if (is_null($row['moy'])) title="Coef non pris en compte (moyenne absente)" @endif>
+                                        <span
+                                            class="{{ is_null($row['moy']) ? 'line-through decoration-rose-500/60 text-slate-600' : 'text-slate-400' }}">
+                                            {{ number_format($row['coefficient'], 2) }}
+                                        </span>
+                                    </td>
+
+                                    <td
+                                        class="px-3 py-3 text-center font-mono text-xs font-medium
+                                               {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-700' }}">
+                                        {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
+                                    </td>
+
+                                    @foreach ($this->devoirColumns() as $type => $label)
+                                        <td class="px-3 py-3 text-center font-mono text-xs">
+                                            @if (!is_null($row['marks'][$type]))
+                                                <span
+                                                    class="text-slate-300">{{ number_format($row['marks'][$type], 2) }}</span>
+                                            @else
+                                                <span class="text-slate-700">—</span>
+                                            @endif
+                                        </td>
+                                    @endforeach
+
+                                    <td
+                                        class="px-3 py-3 text-center font-mono text-xs font-semibold
+                                               {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-700' }}">
+                                        {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
+                                    </td>
+
+                                    <td
+                                        class="px-3 py-3 text-center font-mono text-xs font-semibold
+                                               {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-700' }}">
+                                        {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center">
+                                        @if ($row['rank'])
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-mono
+                                                         bg-white/[0.04] text-slate-300 border border-white/[0.06]">
+                                                #{{ $row['rank'] }}/{{ $row['total'] }}
+                                            </span>
+                                        @else
+                                            <span class="text-slate-700">—</span>
+                                        @endif
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center text-xs text-slate-400">
+                                        {{ $row['mention'] ?: '—' }}
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center text-xs text-slate-500 truncate max-w-[120px]">
+                                        {{ $row['teacher']->getFullName() }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ 8 + count($this->devoirColumns()) }}"
+                                        class="px-6 py-12 text-center text-slate-500 text-sm">
+                                        Aucune matière trouvée pour cette classe.
+                                    </td>
+                                </tr>
+                            @endforelse
+
+                            {{-- TOTAL --}}
+                            <tr class="bg-sky-500/5 border-t border-sky-500/20">
+                                <td class="sticky left-0 z-10 bg-[#0a1220] px-5 py-3.5">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Total</span>
+                                </td>
+                                <td class="px-3 py-3.5 text-center font-mono text-sm font-semibold text-sky-300">
+                                    {{ isset($this->termAverage['sum_coef']) ? number_format($this->termAverage['sum_coef'], 2) : '—' }}
+                                </td>
+                                <td colspan="{{ 1 + count($this->devoirColumns()) }}"></td>
+                                <td class="px-3 py-3.5 text-center font-mono text-sm font-semibold text-sky-300">
+                                    {{ isset($this->termAverage['sum_moy_coef']) ? number_format($this->termAverage['sum_moy_coef'], 2) : '—' }}
+                                </td>
+                                <td colspan="3"></td>
+                            </tr>
+
+                            {{-- BILAN --}}
+                            <tr class="bg-amber-500/5 border-t border-amber-500/20">
+                                <td class="sticky left-0 z-10 bg-[#12100a] px-5 py-4">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Bilan</span>
+                                </td>
+                                <td colspan="{{ 2 + count($this->devoirColumns()) }}" class="px-3 py-4">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <span class="text-xs uppercase tracking-wider text-slate-500">Moyenne</span>
+                                        <span class="text-2xl font-black text-amber-400 font-mono tabular-nums">
+                                            {{ isset($this->termAverage['moyenne']) ? number_format($this->termAverage['moyenne'], 2) : '—' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td colspan="{{ 3 }}" class="px-3 py-4">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <span class="text-xs uppercase tracking-wider text-slate-500">Rang</span>
+                                        <span class="text-2xl font-black text-amber-400 font-mono tabular-nums">
+                                            {{ $this->termAverage['rank'] ?? '—' }}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </section>
-
-            <section>
-                <div class="grid grid-cols-1 gap-6">
-
-                    <div class="space-y-6 min-w-0">
-
-                        <div class="rounded-lg bg-slate-900 border border-slate-800 overflow-hidden">
-
-                            <div class="p-5 border-b border-slate-800 font-mono">
-                                <h2 class="text-xl font-semibold">
-                                    <span>
-                                        Notes de l'apprenant
-                                    </span>
-                                    <span class="text-yellow-500">
-                                        {{ $student->getFullName() }}
-                                    </span>
-                                </h2>
-                                <p class="mt-1 text-sm text-slate-400">
-                                    Détail des notes par matière pour la période sélectionnée.
-                                </p>
-                            </div>
-
-                            {{-- Même structure d'en-tête que la vue enseignant : Interro 1-4,
-                             Moy. Interro, Devoirs, Moy., Moy. Coef., Rang — seule la
-                             première colonne change (Matière au lieu d'Apprenant). --}}
-                            <div class="overflow-x-auto p-3 font-mono">
-
-                                <table class="w-full border-collapse z-table-border">
-
-                                    <colgroup>
-                                        <col class="w-[220px] min-w-[220px]"> {{-- matière --}}
-                                        <col class="w-[70px] min-w-[70px]"> {{-- coef --}}
-                                        <col class="w-[90px] min-w-[90px]">
-                                        <col class="w-[90px] min-w-[90px]">
-                                        <col class="w-[90px] min-w-[90px]">
-                                        <col class="w-[90px] min-w-[90px]">
-                                        <col class="w-[100px] min-w-[100px]"> {{-- moy interro --}}
-                                        @foreach ($this->devoirColumns() as $type => $label)
-                                            <col class="w-[90px] min-w-[90px]">
-                                        @endforeach
-                                        <col class="w-[100px] min-w-[100px]"> {{-- moy --}}
-                                        <col class="w-[110px] min-w-[110px]"> {{-- moy coef --}}
-                                        <col class="w-[110px] min-w-[110px]"> {{-- rang --}}
-                                        <col class="w-[110px] min-w-[110px]"> {{-- prof --}}
-                                    </colgroup>
-
-                                    <thead class="bg-slate-950 border-b border-slate-800">
-                                        <tr>
-                                            <th
-                                                class="sticky left-0 z-10 bg-slate-950 px-6 py-4 text-left text-sm text-slate-400 whitespace-nowrap">
-                                                Matière
-                                            </th>
-
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Coef.
-                                            </th>
-
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Int 1</th>
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Int 2</th>
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Int 3</th>
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Int 4</th>
-
-                                            <th class="px-2 py-4 text-center text-sm text-indigo-400 whitespace-nowrap">
-                                                Moy. Int
-                                            </th>
-
-                                            @foreach ($this->devoirColumns() as $type => $label)
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                    {{ $label }}
-                                                </th>
-                                            @endforeach
-
-                                            <th
-                                                class="px-2 py-4 text-center text-sm text-emerald-400 whitespace-nowrap">
-                                                Moy.
-                                            </th>
-
-                                            <th
-                                                class="px-2 py-4 text-center text-sm text-emerald-400 whitespace-nowrap">
-                                                Moy. Coef.
-                                            </th>
-
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Rang
-                                            </th>
-                                            <th class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                Prof
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody class="divide-y divide-slate-800">
-
-                                        @forelse ($this->subjectRows as $row)
-
-                                            <tr wire:key="subject-row-{{ $row['subject']->id }}"
-                                                class="hover:bg-slate-800/40">
-
-                                                {{-- MATIERE (sticky) --}}
-                                                <td class="sticky left-0 z-10 bg-slate-900 px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-                                                        {{ $row['subject']->code }}
-                                                    </h3>
-                                                </td>
-
-                                                {{-- COEF --}}
-                                                <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                    {{ number_format($row['coefficient'], 2) }}
-                                                </td>
-
-                                                {{-- INTERROS --}}
-                                                @foreach (['interro1', 'interro2', 'interro3', 'interro4'] as $type)
-                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                        @if (!is_null($row['marks'][$type]))
-                                                            {{ number_format($row['marks'][$type], 2) }}
-                                                        @else
-                                                            <span class="text-slate-600">—</span>
-                                                        @endif
-                                                    </td>
-                                                @endforeach
-
-                                                {{-- MOY. INTERRO --}}
-                                                <td
-                                                    class="px-2 py-2 text-center font-medium whitespace-nowrap {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-600' }}">
-                                                    {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
-                                                </td>
-
-                                                {{-- DEVOIRS --}}
-                                                @foreach ($this->devoirColumns() as $type => $label)
-                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                        @if (!is_null($row['marks'][$type]))
-                                                            {{ number_format($row['marks'][$type], 2) }}
-                                                        @else
-                                                            <span class="text-slate-600">—</span>
-                                                        @endif
-                                                    </td>
-                                                @endforeach
-
-                                                {{-- MOY --}}
-                                                <td
-                                                    class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-600' }}">
-                                                    {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
-                                                </td>
-
-                                                {{-- MOY. COEF --}}
-                                                <td
-                                                    class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-600' }}">
-                                                    {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
-                                                </td>
-
-                                                {{-- RANK --}}
-                                                <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                    {{ $row['rank'] ? '#' . $row['rank'] . ' / ' . $row['total'] : '—' }}
-                                                </td>
-
-                                                <td class="px-2 py-2 text-center whitespace-nowrap text-slate-500">
-                                                    {{ $row['teacher']->getFullName() }}
-                                                </td>
-
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="{{ 8 + count($this->devoirColumns()) }}"
-                                                    class="px-6 py-10 text-center text-slate-500">
-                                                    Aucune matière trouvée pour cette classe.
-                                                </td>
-                                            </tr>
-                                        @endforelse
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        </div>
-
+            @else
+                <div class="py-14 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-800/50 mb-3">
+                        <x-lucide-file-x class="w-6 h-6 text-slate-500" />
                     </div>
-
+                    <p class="text-sm text-slate-500">
+                        Aucune moyenne générale disponible — certaines notes manquent encore.
+                    </p>
                 </div>
-            </section>
-
-            <section class="my-4 mt-10">
-                <div class="grid grid-cols-1 gap-6">
-
-                    <div class="space-y-6 min-w-0">
-
-                        <div
-                            class="rounded-lg bg-slate-950 shadow-xs shadow-sky-700 border border-slate-800 overflow-hidden">
-
-                            <div class="p-5 border-b border-slate-800 font-mono">
-                                <h2 class="text-xl font-semibold">
-                                    <span>
-                                        Moyennes de l'apprenant
-                                    </span>
-                                    <span class="text-yellow-500">
-                                        {{ $student->getFullName() }}
-                                    </span>
-                                </h2>
-                                <p class="mt-1 text-sm text-slate-400">
-                                    Détail des moyenne par matière pour la période sélectionnée.
-                                </p>
-                            </div>
-
-                            @if ($this->termAverage)
-                                <div class="overflow-x-auto p-3 font-mono">
-
-                                    <table class="w-full border-collapse z-table-border">
-
-                                        <colgroup>
-                                            <col class="w-[220px] min-w-[220px]"> {{-- matière --}}
-                                            <col class="w-[70px] min-w-[70px]"> {{-- coef --}}
-                                            <col class="w-[100px] min-w-[100px]"> {{-- moy interro --}}
-                                            @foreach ($this->devoirColumns() as $type => $label)
-                                                <col class="w-[90px] min-w-[90px]">
-                                            @endforeach
-                                            <col class="w-[100px] min-w-[100px]"> {{-- moy --}}
-                                            <col class="w-[110px] min-w-[110px]"> {{-- moy coef --}}
-                                            <col class="w-[110px] min-w-[110px]"> {{-- rang --}}
-                                            <col class="w-[110px] min-w-[110px]"> {{-- obs --}}
-                                            <col class="w-[110px] min-w-[110px]"> {{-- teacher --}}
-                                        </colgroup>
-
-                                        <thead class="bg-slate-950 border-b border-slate-800">
-                                            <tr>
-                                                <th
-                                                    class="sticky left-0 z-10 bg-slate-950 px-6 py-4 text-left text-sm text-slate-400 whitespace-nowrap">
-                                                    Matière
-                                                </th>
-
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                    Coef.
-                                                </th>
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-indigo-400 whitespace-nowrap">
-                                                    Moy. Int
-                                                </th>
-
-                                                @foreach ($this->devoirColumns() as $type => $label)
-                                                    <th
-                                                        class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                        {{ $label }}
-                                                    </th>
-                                                @endforeach
-
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-emerald-400 whitespace-nowrap">
-                                                    Moy.
-                                                </th>
-
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-emerald-400 whitespace-nowrap">
-                                                    Moy. Coef.
-                                                </th>
-
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                    Rang
-                                                </th>
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                    Observation
-                                                </th>
-                                                <th
-                                                    class="px-2 py-4 text-center text-sm text-slate-400 whitespace-nowrap">
-                                                    Prof
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-slate-800">
-
-                                            @forelse ($this->subjectRows as $row)
-                                                <tr wire:key="subject-row-{{ $row['subject']->id }}"
-                                                    class="hover:bg-slate-800/40">
-
-                                                    {{-- MATIERE (sticky) --}}
-                                                    <td class="sticky left-0 z-10 bg-slate-900 px-6 py-2">
-                                                        <h3 class="font-medium truncate uppercase">
-                                                            {{ $row['subject']->code }}
-                                                        </h3>
-                                                    </td>
-
-                                                    {{-- COEF --}}
-                                                    <td @if (is_null($row['moy'])) title="Ce coef n'est pas pris en compte en raison de l'absence des notes ou de l'impossiblité de calculer la moyenne de {{ $row['subject'] ? $row['subject']->name : ' cette matière' }} " @endif
-                                                        class="px-2 py-2 text-center whitespace-nowrap">
-                                                        <span
-                                                            class="@if (is_null($row['moy'])) line-through decoration-red-500 text-slate-500 @endif">
-                                                            {{ number_format($row['coefficient'], 2) }}
-                                                        </span>
-
-                                                    </td>
-
-                                                    {{-- MOY. INTERRO --}}
-                                                    <td
-                                                        class="px-2 py-2 text-center font-medium whitespace-nowrap {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-600' }}">
-                                                        {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
-                                                    </td>
-
-                                                    {{-- DEVOIRS --}}
-                                                    @foreach ($this->devoirColumns() as $type => $label)
-                                                        <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                            @if (!is_null($row['marks'][$type]))
-                                                                {{ number_format($row['marks'][$type], 2) }}
-                                                            @else
-                                                                <span class="text-slate-600">—</span>
-                                                            @endif
-                                                        </td>
-                                                    @endforeach
-
-                                                    {{-- MOY --}}
-                                                    <td
-                                                        class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-600' }}">
-                                                        {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
-                                                    </td>
-
-                                                    {{-- MOY. COEF --}}
-                                                    <td
-                                                        class="px-2 py-2 text-center font-semibold whitespace-nowrap {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-600' }}">
-                                                        {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
-                                                    </td>
-
-                                                    {{-- RANK --}}
-                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                        {{ $row['rank'] ? '#' . $row['rank'] . ' / ' . $row['total'] : '—' }}
-                                                    </td>
-                                                    <td class="px-2 py-2 text-center whitespace-nowrap">
-                                                        {{ $row['mention'] ? $row['mention'] : '—' }}
-                                                    </td>
-                                                    <td class="px-2 py-2 text-center whitespace-nowrap text-slate-400">
-                                                        {{ $row['teacher']->getFullName() }}
-                                                    </td>
-
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="{{ 8 + count($this->devoirColumns()) }}"
-                                                        class="px-6 py-10 text-center text-slate-500">
-                                                        Aucune matière trouvée pour cette classe.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                            <tr class="shadow-xs text-center bg-blue-900/20 text-sky-500 text-lg">
-                                                <td class="sticky left-0 z-10  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-                                                        Total
-                                                    </h3>
-                                                </td>
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-                                                        {{ isset($this->termAverage['sum_coef']) ? number_format($this->termAverage['sum_coef'], 2) : '---' }}
-                                                    </h3>
-                                                </td>
-                                                <td colspan="4" class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-
-                                                    </h3>
-                                                </td>
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-                                                        {{ isset($this->termAverage['sum_moy_coef']) ? number_format($this->termAverage['sum_moy_coef'], 2) : '---' }}
-                                                    </h3>
-                                                </td>
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-
-                                                    </h3>
-                                                </td>
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-
-                                                    </h3>
-                                                </td>
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-
-                                                    </h3>
-                                                </td>
-                                            </tr>
-                                            <tr class="shadow-xs text-center bg-blue-900/20 text-orange-400 text-lg">
-                                                <td class="  px-6 py-2">
-                                                    <h3 class="font-medium truncate uppercase">
-                                                        BILAN
-                                                    </h3>
-                                                </td>
-                                                <td colspan="4" class="  px-6 py-2">
-                                                    <div
-                                                        class="font-medium truncate uppercase flex justify-center text-2xl items-center gap-3">
-                                                        <span>MOYENNE : </span>
-                                                        <span>
-                                                            {{ isset($this->termAverage['moyenne']) ? number_format($this->termAverage['moyenne'], 2) : '--' }}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td colspan="5" class="  px-6 py-2">
-                                                    <h3
-                                                        class="font-medium truncate uppercase flex justify-center text-2xl items-center gap-3">
-                                                        <span>RANG : </span>
-                                                        <span>
-                                                            {{ isset($this->termAverage['rank']) ? $this->termAverage['rank'] : '---' }}
-                                                        </span>
-                                                    </h3>
-                                                </td>
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-                            @else
-                                <h4 class="flex items-center justify-center text-center ">
-                                    Aucune moyenne générale disponible, certaines notes ne sont pas encore
-                                    disponible
-                                </h4>
-                            @endif
-
-                        </div>
-
-                    </div>
-
-                </div>
-            </section>
-
+            @endif
         </div>
 
     </div>
-
 </section>
-
