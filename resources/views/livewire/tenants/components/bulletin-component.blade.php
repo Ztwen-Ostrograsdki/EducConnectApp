@@ -12,7 +12,7 @@
                 </p>
             </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-2 hidden">
                 <select wire:model.live="period"
                     class="h-12 rounded-2xl bg-slate-950 border border-slate-800 px-2 font-mono uppercase transition-colors duration-200">
                     <option value="">Sélectionner le {{ $this->activeYear->periodLabel() }}</option>

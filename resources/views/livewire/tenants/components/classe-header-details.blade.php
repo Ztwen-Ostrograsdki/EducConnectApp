@@ -13,8 +13,9 @@
                         <div
                             class="w-20 h-20 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 
                                     flex items-center justify-center shadow-inner">
-                            <span class="text-indigo-400 font-mono font-bold text-lg tracking-wider">
-                                {{ $classe->code }}
+                            <span
+                                class="text-indigo-400 font-mono font-bold text-lg tracking-wider text-center break-normal">
+                                {{ str_replace('-', ' ', $classe->code) }}
                             </span>
                         </div>
                     </div>
