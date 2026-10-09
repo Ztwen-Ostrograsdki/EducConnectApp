@@ -123,7 +123,7 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,
                 tenantId: $this->tenantId,
-                title:             "NOTES DE CLASSE NON ENREGISTRES",
+                title:             "NOTES DE CLASSE NON ENREGISTREES",
                 message:           "Votre compte est bloqué, vous ne pouvez pas enregistrer de notes!",
                 type:              'error',
             ));
@@ -139,7 +139,7 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,
                 tenantId: $this->tenantId,
-                title:             "NOTES DE CLASSE NON ENREGISTRES",
+                title:             "NOTES DE CLASSE NON ENREGISTREES",
                 message:           "Vous n'avez pas d'accès aux classes cette année ou il a été désactivé!",
                 type:              'error',
             ));
@@ -165,7 +165,7 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,
                 tenantId: $this->tenantId,
-                title:             "NOTES DE CLASSE NON ENREGISTRES",
+                title:             "NOTES DE CLASSE NON ENREGISTREES",
                 message:           $error_message,
                 type:              'error',
             ));
@@ -185,7 +185,7 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,
                 tenantId: $this->tenantId,
-                title:             "NOTES DE CLASSE NON ENREGISTRES",
+                title:             "NOTES DE CLASSE NON ENREGISTREES",
                 message:           "La classe {$this->classe_name} n'est pas active ou a été fermée!",
                 type:              'error',
             ));
@@ -196,12 +196,12 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
 
         }
 
-        if(in_array($this->teacherId, $classe->locked_for_teachers)){
+        if($classe->locked_for_teachers && in_array($this->teacherId, $classe->locked_for_teachers)){
 
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,
                 tenantId: $this->tenantId,
-                title:             "NOTES DE CLASSE NON ENREGISTRES",
+                title:             "NOTES DE CLASSE NON ENREGISTREES",
                 message:           "Votre accès à la classe {$this->classe_name} a été désactivé!",
                 type:              'error',
             ));
@@ -305,7 +305,7 @@ class JobToCreateStudentsMarksIntoDB implements ShouldQueue
                 $teacher->user?->notify(new RealTimeNotification(
                     userEmail: $teacher->user?->email,
                     tenantId: $this->tenantId,
-                    title:             "NOTES NON ENREGISTRES",
+                    title:             "NOTES NON ENREGISTREES",
                     message:           $message,
                     type:              'error',
                 ));

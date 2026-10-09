@@ -147,6 +147,7 @@
                                 <option value="{{ $gk }}">{{ $gdr }}</option>
                             @endforeach
                         </select>
+
                     </div>
                 </div>
             </section>
@@ -161,7 +162,8 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-white">Statut des enseignants</h2>
-                        <p class="text-[11px] text-slate-500">Accès, PP, AE, classes assignées…</p>
+                        <p class="text-[11px] text-slate-500">Accès, PP, AE, Enseignants de nouveaux métiers, classes
+                            assignées…</p>
                     </div>
                 </div>
 
@@ -201,6 +203,13 @@
                             class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-emerald-500/40 transition-all">
                             @foreach ($aeStatuses as $key => $label)
                                 <option value="{{ $key }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+
+                        <select wire:model.live="system"
+                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/40 transition-all">
+                            @foreach ($systems as $sys => $sys_label)
+                                <option value="{{ $sys }}">{{ $sys_label }}</option>
                             @endforeach
                         </select>
                     </div>

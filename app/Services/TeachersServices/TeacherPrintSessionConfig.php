@@ -6,6 +6,7 @@ class TeacherPrintSessionConfig
 {
     protected static array $filterSessionKeys = [
         'print_teachers_trashed_status',
+        'print_teachers_system',
         'print_teachers_access_status',
         'print_teachers_pp_status',
         'print_teachers_ae_status',
@@ -45,6 +46,7 @@ class TeacherPrintSessionConfig
             "trashedConfig"     => session('print_teachers_trashed_status', 'withoutTrashed'),
             "accessesConfig"    => session('print_teachers_access_status'),
             "ppConfig"          => session('print_teachers_pp_status'),
+            "systemConfig"      => session('print_teachers_system'),
             "aeConfig"          => session('print_teachers_ae_status'),
             "hasClassesConfig"  => session('print_teachers_has_classes_status'),
             "classe_id"         => session('print_teachers_classe_selected'),

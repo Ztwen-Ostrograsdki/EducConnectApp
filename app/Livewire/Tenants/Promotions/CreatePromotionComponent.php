@@ -40,6 +40,7 @@ class CreatePromotionComponent extends Component
     public ?int   $filiar_id      = null;
     public ?int   $serial_id      = null;
     public ?string   $suffix      = '';
+    public bool   $is_new_system   = false;
 
     public string $previewSlug = '';
 
@@ -79,6 +80,8 @@ class CreatePromotionComponent extends Component
     public function save(): void
     {
         $this->resetErrorBag();
+
+        $this->level = 'secondaire';
         
         try {
 
@@ -96,6 +99,7 @@ class CreatePromotionComponent extends Component
                 ],
                 'order'     => 'required|integer|min:1',
                 'is_active' => 'boolean',
+                'is_new_system'   => 'boolean',
                 'filiar_id'      => 'nullable|exists:filiars,id',
                 'serial_id'      => 'nullable|exists:serials,id',
             ]);
@@ -148,6 +152,7 @@ class CreatePromotionComponent extends Component
                 'level'     => $this->level,
                 'order'     => $this->order,
                 'is_active' => $this->is_active,
+                'is_new_system' => $this->is_new_system,
                 'filiar_id' => $this->filiar_id,
                 'serial_id' => $this->serial_id,
             ]);

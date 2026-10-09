@@ -26,6 +26,7 @@ trait ClassesActions{
     public string $filiar      = '';
     public string $serial      = '';
     public string $level       = '';
+    public string $system      = '';
     public int    $perPage     = 10;
     public $status             = 'actives';
 
@@ -37,6 +38,7 @@ trait ClassesActions{
 
     // Reset pagination quand un filtre change
     public function updatedSearch(): void    { $this->resetPage(); }
+    public function updatedSystem(): void    { $this->resetPage(); }
     public function updatedPromotion(): void { $this->resetPage(); }
     public function updatedFiliar(): void    { $this->resetPage(); }
     public function updatedSerial(): void    { $this->resetPage(); }
@@ -44,7 +46,7 @@ trait ClassesActions{
 
     public function resetFilters(): void
     {
-        $this->reset(['search', 'promotion', 'filiar', 'serial', 'level', 'status']);
+        $this->reset(['search', 'promotion', 'filiar', 'serial', 'level', 'status', 'system']);
 
         $this->resetPage();
     }
@@ -70,6 +72,11 @@ trait ClassesActions{
     }
 
     public function updatingSerial()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSystem()
     {
         $this->resetPage();
     }

@@ -11,11 +11,12 @@
                     <div class="flex gap-4 sm:gap-5 min-w-0 flex-1">
                         <div class="hidden sm:flex shrink-0">
                             <div
-                                class="w-16 h-16 rounded-xl bg-indigo-500/10 border border-indigo-500/20
-                                        flex items-center justify-center">
-                                <span class="text-indigo-400 font-mono font-bold text-sm tracking-wider">
-                                    {{ $classe->code }}
+                                class="w-16 h-16 rounded-xl border @if (!$classe->is_new_system) bg-indigo-500/10  border-indigo-500/20 text-indigo-400 @else bg-orange-500/10 border-orange-500/20 text-orange-400 @endif
+                                        flex items-center justify-center flex-col">
+                                <span class=" font-mono font-bold text-sm tracking-wider text-center break-normal">
+                                    {{ str_replace('-', ' ', $classe->code) }}
                                 </span>
+
                             </div>
                         </div>
 
@@ -24,6 +25,15 @@
                                 <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
                                     {{ $classe->name }}
                                 </h1>
+
+                                @if ($classe->is_new_system)
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium
+                                                 bg-orange-500/15 text-orange-400 border border-orange-500/20">
+                                        <span class="w-1 h-1 rounded-full bg-orange-400 animate-pulse"></span>
+                                        Nouveau métier
+                                    </span>
+                                @endif
 
                                 @if ($classe->is_active)
                                     <span
@@ -345,3 +355,4 @@
         }
     </style>
 </div>
+

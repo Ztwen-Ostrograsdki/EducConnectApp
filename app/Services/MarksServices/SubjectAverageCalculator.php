@@ -54,6 +54,28 @@ class SubjectAverageCalculator
         return $moyInterro ?? $moyDevoirs ?? null;
     }
 
+    /**
+     * Moyenne de matière : (moyInterro + moyDevoirs) / 2 si les deux existent,
+     * sinon celle qui existe, sinon null.
+     */
+    public static function moyForNewSystem(array $studentMarks, ?array $devoirColumns = null): ?float
+    {
+        $moyInterro = self::moyInterro($studentMarks);
+        $moyDevoirs = self::moyDevoirs($studentMarks, $devoirColumns);
+
+        if (!is_null($moyInterro) && !is_null($moyDevoirs)) {
+
+            $moyInt = config('metier.interro_percentage') * $moyInterro;
+
+            $moyDev = config('metier.dev_percentage') * $moyDevoirs;
+
+            return round(($moyInt + $moyDev), 2);
+        }
+
+        return $moyInterro ?? $moyDevoirs ?? null;
+    }
+
+
     public static function moyCoef(?float $moy, float $coefficient): ?float
     {
         return !is_null($moy) ? round($moy * $coefficient, 2) : null;

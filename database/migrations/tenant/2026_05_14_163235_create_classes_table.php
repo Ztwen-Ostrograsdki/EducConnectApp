@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('name'); 
             $table->string('slug');                                     // ex: Terminale BTP 2
             $table->string('code')->nullable();                         // ex: TLE-BTP-2
+            $table->boolean('is_new_system')->default(false);                
             $table->enum('level', ['primaire', 'secondaire', 'superieur']);
             $table->integer('effectif_max')->default(50);
             $table->foreignId('principal_id')

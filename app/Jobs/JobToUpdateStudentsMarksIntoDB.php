@@ -196,7 +196,7 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
 
         }
 
-        if(in_array($this->teacherId, $classe->locked_for_teachers)){
+        if($classe->locked_for_teachers && in_array($this->teacherId, $classe->locked_for_teachers)){
 
             $teacher->user?->notify(new RealTimeNotification(
                 userEmail: $teacher->user?->email,

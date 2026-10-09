@@ -74,6 +74,17 @@ class ClassesPortal extends Component
                             default => null,
                         };
                     })
+                    ->when($this->system, function ($qs) {
+                        match ($this->system) {
+                            'new_system' => $qs->whereHas('promotion', fn ($q) =>
+                                $q->where('is_new_system', true)
+                            )->orWhere('is_new_system', true), 
+                            'old_system' => $qs->whereHas('promotion', fn ($q) =>
+                                $q->where('is_new_system', false)
+                            )->orWhere('is_new_system', false),
+                            default => null,
+                        };
+                    })
                     ->when($this->filiar,    fn($q) => $q->where('filiar_id', $this->filiar))
                     ->when($this->serial,    fn($q) => $q->where('serial_id', $this->serial))
                     ->orderBy('updated_at')

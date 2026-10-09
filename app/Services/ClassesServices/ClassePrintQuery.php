@@ -2,8 +2,12 @@
 
 namespace App\Services\ClassesServices;
 
+use App\Livewire\Tenants\Classes\ClassesPrintableListComponent;
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
+use App\Models\Filiar;
+use App\Models\Promotion;
+use App\Models\Serial;
 use App\Models\YearlyClasseStudent;
 use App\Models\YearlyClasseStudentsLeave;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +24,15 @@ class ClassePrintQuery
             match ($config['activeConfig']) {
                 'onlyActive'    => $query->where('is_active', true),
                 'onlyInactive'  => $query->where('is_active', false),
+                default         => null,
+            };
+        }
+        
+        if (array_key_exists('systemConfig', $config) && $config['systemConfig']) {
+
+            match ($config['systemConfig']) {
+                'new_system'    => $query->where('is_new_system', true),
+                'old_system'    => $query->where('is_new_system', false),
                 default         => null,
             };
         }
@@ -146,7 +159,7 @@ class ClassePrintQuery
                 'index'  => count($rows) + 1,
                 'cells'  => collect($tableColumns)
                     ->mapWithKeys(fn (array $col) => [
-                        $col['key'] => \App\Livewire\Tenants\Classes\ClassesPrintableListComponent::getData(
+                        $col['key'] => ClassesPrintableListComponent::getData(
                             $classe,
                             $col,
                             [
@@ -212,23 +225,31 @@ class ClassePrintQuery
                 default             => null,
             };
         }
+        
+        if (isset($config['systemConfig'])) {
+            match ($config['systemConfig']) {
+                'new_system'   => $doc_title .= ' de nouveaux métiers',
+                'old_system' => $doc_title .= ' des filières classiques ',
+                default             => null,
+            };
+        }
 
         if (isset($config['level'])) $doc_title .= " de niveau {$config['level']}";
 
         if (isset($config['promotion_id'])) {
-            $promo = \App\Models\Promotion::firstWhere('id', $config['promotion_id']);
+            $promo = Promotion::firstWhere('id', $config['promotion_id']);
             if ($promo) $doc_title .= " de la promotion {$promo->name}";
         }
 
-        if (isset($config['promotionInGroups'])) $doc_title .= " de la promotion {$config['promotionInGroups']}";
+        if (isset($config['promotionInGroups']) && $config['promotionInGroups']) $doc_title .= " de la promotion {$config['promotionInGroups']}";
 
         if (isset($config['filiar_id'])) {
-            $filiar = \App\Models\Filiar::firstWhere('id', $config['filiar_id']);
+            $filiar = Filiar::firstWhere('id', $config['filiar_id']);
             if ($filiar) $doc_title .= " de la filière {$filiar->name}";
         }
 
         if (isset($config['serial_id'])) {
-            $serial = \App\Models\Serial::firstWhere('id', $config['serial_id']);
+            $serial = Serial::firstWhere('id', $config['serial_id']);
             if ($serial) $doc_title .= " de la série {$serial->name}";
         }
 

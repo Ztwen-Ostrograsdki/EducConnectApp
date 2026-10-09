@@ -46,8 +46,8 @@
                                     <div
                                         class="relative w-32 h-32 sm:w-36 sm:h-36 rounded-[1.5rem] bg-slate-950/80 border border-indigo-500/30 flex items-center justify-center">
                                         <span
-                                            class="text-2xl sm:text-3xl font-bold font-mono text-indigo-300 tracking-wider uppercase">
-                                            {{ $promotion->code ?? cutter($promotion->name, 1) }}
+                                            class="text-2xl sm:text-3xl text-center font-bold font-mono text-indigo-300 tracking-wider uppercase  break-normal">
+                                            {{ str_replace('-', ' ', $promotion->code ?? cutter($promotion->name, 1)) }}
                                         </span>
                                     </div>
                                 </div>
@@ -59,13 +59,11 @@
                                     {{ $promotion->name }}
                                     <span class="text-indigo-300">{{ $promotion->specialityModel()?->code }}</span>
                                 </h1>
-
                                 <p class="mt-3 text-slate-400 max-w-xl leading-relaxed">
                                     Tableau global des statistiques et performances de la promotion
                                     <span class="text-slate-300">{{ $promotion->name }}
                                         {{ $promotion->specialityModel()?->code }}</span>.
                                 </p>
-
                                 <div class="mt-5 flex flex-wrap justify-center sm:justify-start gap-3">
                                     <a href="{{ $promotion->toSpecialityProfilRoute() }}"
                                         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-medium
@@ -363,3 +361,4 @@
 
     </div>
 </div>
+

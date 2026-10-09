@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->string('slug');
+            $table->boolean('is_new_system')->default(false); 
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('name');                              // ex: Terminale, Troisième, Sixième
             $table->string('code')->nullable();                 // ex: TLE, 3EME, 6EME

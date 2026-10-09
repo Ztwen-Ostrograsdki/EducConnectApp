@@ -94,6 +94,7 @@ class ClassesPrintableListComponent extends Component
     public function render()
     {
         $schoolYearId = SchoolYear::current()->first()?->id;
+        
         $config = ClassePrintSessionConfig::filterConfig();
 
         $rows = $schoolYearId

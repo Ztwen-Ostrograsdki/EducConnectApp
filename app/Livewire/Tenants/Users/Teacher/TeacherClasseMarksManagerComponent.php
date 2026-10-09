@@ -955,21 +955,31 @@ class TeacherClasseMarksManagerComponent extends Component
             ->toArray();
         }
 
-        $this->notification()->send([
-            'icon'        => 'success',
-            'title'       => 'Notes prêtes à être enregistrées',
-            'description' => count($this->finalMarksPayload) . " apprenant(s) prêt(s) pour l'enregistrement.",
-        ]);
+        try {
 
-        InitProcessToCreateStudentsMarksEvent::dispatch(
-            tenantId:       tenant('id'),
-            teacherId:      $this->teacher->id,
-            classeId:       $this->classe->id,
-            subjectId:      $this->subject->id,
-            period:         $this->period,
-            data:           $this->finalMarksPayload,
-            schoolYearId:   $this->activeYear->id,
-        );
+            InitProcessToCreateStudentsMarksEvent::dispatch(
+                tenantId:       tenant('id'),
+                teacherId:      $this->teacher->id,
+                classeId:       $this->classe->id,
+                subjectId:      $this->subject->id,
+                period:         $this->period,
+                data:           $this->finalMarksPayload,
+                schoolYearId:   $this->activeYear->id,
+            );
+
+            $this->notification()->send([
+                'icon'        => 'success',
+                'title'       => 'Notes prêtes à être enregistrées',
+                'description' => count($this->finalMarksPayload) . " apprenant(s) prêt(s) pour l'enregistrement.",
+            ]);
+
+            $this->resetAllInputs();
+
+            $this->resetAllPendingMarks();
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
    

@@ -112,7 +112,7 @@
                 @endif
             @endif
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full items-center">
             <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">
                     Nom de la classe <span class="text-rose-400">*</span>
@@ -130,6 +130,21 @@
                 <input type="text" wire:model="code" placeholder="ex: TLE-BTP-2"
                     class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none transition" />
                 @error('code')
+                    <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="inline-flex">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
+                        <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-green-600 transition"></div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                        </div>
+                    </div>
+                    <span class="text-sm text-slate-300">Nouveau métier</span>
+                </label>
+                @error('is_new_system')
                     <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                 @enderror
             </div>

@@ -61,10 +61,12 @@ class Classe extends Model
         'is_active',
         'is_locked',
         'locked_for_teachers',
+        'is_new_system',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_new_system' => 'boolean',
         'is_locked' => 'boolean',
         'locked_for_teachers' => 'array',
         'effectif_max' => 'integer',

@@ -45,6 +45,23 @@ class TeacherPrintQuery
             };
         }
 
+        if (array_key_exists('systemConfig', $config) && $config['systemConfig']) {
+
+            match ($config['systemConfig']) {
+                'new_system' => $query->whereHas('classeSubjects', 
+                    fn($q) => $q->where('school_year_id', $schoolYearId)
+                                ->where('is_active', true)
+                                ->whereHas('classe', fn($qc) => $qc->where('is_new_system', true))
+                ),
+                'old_system'    => $query->whereDoesntHave('classeSubjects', 
+                        fn($q) => $q->where('school_year_id', $schoolYearId)
+                                    ->where('is_active', true)
+                                    ->whereHas('classe', fn($qc) => $qc->where('is_new_system', true))
+                    ),
+                default     => null,
+            };
+        }
+
         if (! empty($config['aeConfig'])) {
             match ($config['aeConfig']) {
                 'onlyAE'    => $query->whereHas('subjectsChiefs', fn ($q) =>
@@ -54,7 +71,6 @@ class TeacherPrintQuery
                 default => null,
             };
         }
-
         if (! empty($config['hasClassesConfig'])) {
             match ($config['hasClassesConfig']) {
                 'onlyHasClasses'   => $query->whereHas('classeSubjects', fn ($q) =>
@@ -283,6 +299,14 @@ class TeacherPrintQuery
                 'onlyHasClasses'   => $doc_title .= '',
                 'onlyHasntClasses' => $doc_title .= " sans classe ",
                 default            => null,
+            };
+        }
+
+        if (isset($config['systemConfig'])) {
+            match ($config['systemConfig']) {
+                'new_system'   => $doc_title .= ' de nouveaux métiers',
+                'old_system' => $doc_title .= ' des filières classiques ',
+                default             => null,
             };
         }
 

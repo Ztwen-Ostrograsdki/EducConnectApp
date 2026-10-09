@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-[#070a12] text-slate-100">
-
     {{-- ========== HEADER ========== --}}
     <header class="sticky top-0 z-30 border-b border-white/[0.06] bg-[#070a12]/80 backdrop-blur-xl">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -202,6 +201,14 @@
                         @endforeach
                     </select>
 
+                    <select wire:model.live="system"
+                        class="h-11 px-3 rounded-xl bg-[#070a12] border border-white/[0.08] text-sm text-slate-300
+                                   focus:border-indigo-500/50 focus:outline-none transition">
+                        <option value="">Tout système</option>
+                        <option value="new_system">Nouveaux métiers</option>
+                        <option value="old_system">Filières classiques</option>
+                    </select>
+
                     <select wire:model.live="filiar"
                         class="h-11 px-3 rounded-xl bg-[#070a12] border border-white/[0.08] text-sm text-slate-300
                                    focus:border-indigo-500/50 focus:outline-none transition">
@@ -293,7 +300,14 @@
                                                        group-hover:text-indigo-300 transition-colors">
                                                 {{ str()->replace(['-', '_'], ' ', $classe->name) }}
                                             </h2>
-
+                                            @if ($classe->is_new_system)
+                                                <span
+                                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium
+                                                             bg-orange-500/15 text-orange-400 border border-orange-500/20 animate-pulse">
+                                                    <span class="w-1 h-1 rounded-full bg-orange-400"></span>
+                                                    Nouveau métier
+                                                </span>
+                                            @endif
                                             @if ($classe->is_active)
                                                 <span
                                                     class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium
@@ -529,3 +543,4 @@
 
     </div>
 </div>
+

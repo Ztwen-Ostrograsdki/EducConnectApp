@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('(UUID())'));
             $table->string('slug');
+            $table->boolean('is_new_system')->default(false); 
             $table->string('name');                              // ex: BTP, Informatique
             $table->string('code')->nullable();                 // ex: BTP, INFO
             $table->string('description')->nullable()->default(null);

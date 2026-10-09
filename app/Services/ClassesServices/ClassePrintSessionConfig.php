@@ -7,6 +7,7 @@ class ClassePrintSessionConfig
     protected static array $filterSessionKeys = [
         'print_classes_active_status',
         'print_classes_locked_status',
+        'print_classes_system',
         'print_classes_pp_status',
         'print_classes_has_students_status',
         'print_classes_has_teachers_status',
@@ -32,6 +33,7 @@ class ClassePrintSessionConfig
     {
         return [
             "activeConfig"       => session('print_classes_active_status'),
+            "systemConfig"       => session('print_classes_system'),
             "lockedConfig"       => session('print_classes_locked_status'),
             "ppConfig"           => session('print_classes_pp_status'),
             "hasStudentsConfig"  => session('print_classes_has_students_status'),

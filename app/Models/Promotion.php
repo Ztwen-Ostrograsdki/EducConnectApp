@@ -33,9 +33,11 @@ class Promotion extends Model
         'filiar_id',
         'serial_id',
         'is_active',
+        'is_new_system',
     ];
 
     protected $casts = [
+        'is_new_system' => 'boolean',
         'is_active' => 'boolean',
         'order' => 'integer',
     ];

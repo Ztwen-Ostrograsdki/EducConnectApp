@@ -30,6 +30,7 @@ class Filiar extends Model
         'uuid',
         'slug',
         'name',
+        'is_new_system',
         'code',
         'description',
         'is_active',
@@ -37,6 +38,7 @@ class Filiar extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_new_system' => 'boolean',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────

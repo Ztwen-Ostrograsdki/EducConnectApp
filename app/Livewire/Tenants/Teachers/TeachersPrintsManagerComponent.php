@@ -11,9 +11,7 @@ use App\Models\Serial;
 use App\Models\Subject;
 use App\Services\TeachersServices\TeacherPrintColumns;
 use App\Services\TeachersServices\TeacherPrintQuery;
-use App\Services\TeachersServices\TeacherPrintSessionConfig;
 use App\Tools\BeninData;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -36,6 +34,8 @@ class TeachersPrintsManagerComponent extends Component
     public ?string $accessStatus = null;
 
     public ?string $ppStatus = null;
+
+    public ?string $system = null;
 
     public ?string $aeStatus = null;
 
@@ -60,6 +60,12 @@ class TeachersPrintsManagerComponent extends Component
     public ?int $classe_id = null;
 
     public int $counter = 0;
+
+    public array $systems = [
+        ''             => "Tous les enseignants des deux systèmes",
+        'new_system'   => "Enseignants nouveaux métiers",
+        'old_system'   => "Enseignants classiques",
+    ];
 
     public array $trashedStatuses = [
         'onlyTrashed'     => "Uniquement les enseignants de la corbeille",
@@ -124,6 +130,10 @@ class TeachersPrintsManagerComponent extends Component
         if (session()->has('print_teachers_trashed_status')) {
             $this->trashedStatus = session('print_teachers_trashed_status');
         }
+        if (session()->has('print_teachers_system')) {
+            $this->system = session('print_teachers_system');
+        }
+        
         if (session()->has('print_teachers_access_status')) {
             $this->accessStatus = session('print_teachers_access_status');
         }
@@ -226,6 +236,7 @@ class TeachersPrintsManagerComponent extends Component
     {
         session()->forget([
             'print_teachers_city_selected',
+            'print_teachers_system',
             'print_teachers_department_selected',
             'print_teachers_gender_selected',
             'print_teachers_promotion_selected',
@@ -244,7 +255,7 @@ class TeachersPrintsManagerComponent extends Component
         $this->reset(
             'city', 'gender', 'department', 'classe_id', 'promotion_id',
             'promotionInGroups', 'filiar_id', 'serial_id', 'subject_id',
-            'accessStatus', 'ppStatus', 'aeStatus', 'hasClassesStatus', 'trashedStatus'
+            'accessStatus', 'ppStatus', 'aeStatus', 'hasClassesStatus', 'trashedStatus', 'system'
         );
 
         $this->trashedStatus = 'withoutTrashed';
@@ -318,6 +329,7 @@ class TeachersPrintsManagerComponent extends Component
     {
         return [
             "trashedConfig"     => $this->trashedStatus,
+            "systemConfig"      => $this->system,
             "accessesConfig"    => $this->accessStatus,
             "ppConfig"          => $this->ppStatus,
             "aeConfig"          => $this->aeStatus,
@@ -341,6 +353,9 @@ class TeachersPrintsManagerComponent extends Component
     }
 
     public function updatedDepartment(?string $value): void { session()->put('print_teachers_department_selected', $value); }
+    
+    public function updatedSystem(?string $value): void { session()->put('print_teachers_system', $value); }
+
     public function updatedCity(?string $value): void { session()->put('print_teachers_city_selected', $value); }
     public function updatedGender(?string $value): void { session()->put('print_teachers_gender_selected', $value); }
     public function updatedTrashedStatus(?string $value): void { session()->put('print_teachers_trashed_status', $value); }

@@ -132,17 +132,18 @@
                     <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                 @enderror
             </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">
-                    Niveau <span class="text-rose-400">*</span>
+            <div class="inline-flex">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
+                        <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-green-600 transition"></div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                        </div>
+                    </div>
+                    <span class="text-sm text-slate-300">Nouveau métier</span>
                 </label>
-                <select wire:model="level"
-                    class="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none transition">
-                    <option value="primaire">Primaire</option>
-                    <option value="secondaire">Secondaire</option>
-                    <option value="superieur">Supérieur</option>
-                </select>
-                @error('level')
+                @error('is_new_system')
                     <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                 @enderror
             </div>

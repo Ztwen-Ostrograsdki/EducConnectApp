@@ -32,7 +32,7 @@
                 <x-lucide-school class="w-3.5 h-3.5" />
                 Portail des classes
             </a>
-            <a wire:navigate href="{{ route('tenant.classes.print.list') }}"
+            <a href="{{ route('tenant.classes.print.list') }}"
                 class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
                 <x-lucide-eye class="w-3.5 h-3.5" />
                 Aperçu du document
@@ -101,6 +101,13 @@
                                 @endforeach
                             </select>
                         @endif
+
+                        <select wire:model.live="system"
+                            class="h-11 rounded-xl bg-[#070b14] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/40 transition-all">
+                            @foreach ($systems as $sys => $sys_label)
+                                <option value="{{ $sys }}">{{ $sys_label }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </section>

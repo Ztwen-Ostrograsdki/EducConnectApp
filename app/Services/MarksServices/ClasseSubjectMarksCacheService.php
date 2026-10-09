@@ -88,7 +88,7 @@ class ClasseSubjectMarksCacheService
             ->get()
             ->groupBy('student_id');
 
-        $rows = $studentIds->mapWithKeys(function (int $studentId) use ($rawMarks, $devoirColumns, $coefficient) {
+        $rows = $studentIds->mapWithKeys(function (int $studentId) use ($rawMarks, $devoirColumns, $coefficient, $classe) {
 
             $marksForStudent = ($rawMarks->get($studentId) ?? collect())
                 ->mapWithKeys(fn (Mark $mark) => [
@@ -102,24 +102,35 @@ class ClasseSubjectMarksCacheService
 
             $moyInterro = SubjectAverageCalculator::moyInterro($marksForStudent);
             $moyDevoirs = SubjectAverageCalculator::moyDevoirs($marksForStudent, $devoirColumns);
-            $moy = SubjectAverageCalculator::moy($marksForStudent, $devoirColumns);
-            $moyCoef = SubjectAverageCalculator::moyCoef($moy, $coefficient);
+            
+            if($classe->is_new_system){
+                $moy = SubjectAverageCalculator::moyForNewSystem($marksForStudent, $devoirColumns);
+                $moyCoef = SubjectAverageCalculator::moyCoef($moy, $coefficient);
+            }
+            else{
+
+                $moy = SubjectAverageCalculator::moy($marksForStudent, $devoirColumns);
+                $moyCoef = SubjectAverageCalculator::moyCoef($moy, $coefficient);
+            }
+            
             
             
             $successPercentage = SubjectAverageCalculator::getSuccessPercentage($marksForStudent, $devoirColumns);
             
             $mentionService = app(MentionService::class);
 
+
             return [$studentId => [
-                'marks'       => $marksForStudent,
-                'coefficient' => $coefficient,
-                'moy_interro' => $moyInterro,
-                'moy_devoirs' => $moyDevoirs,
-                'moy'         => $moy,
-                'moy_coef'    => $moyCoef,
-                'mention'      => $mentionService->forValue($moy),
-                'success_percentage'  => $successPercentage, 
-            ]];
+                    'marks'       => $marksForStudent,
+                    'coefficient' => $coefficient,
+                    'moy_interro' => $moyInterro,
+                    'moy_devoirs' => $moyDevoirs,
+                    'moy'         => $moy,
+                    'moy_coef'    => $moyCoef,
+                    'mention'      => $mentionService->forValue($moy),
+                    'success_percentage'  => $successPercentage, 
+                ]
+            ];
         });
 
         return $this->applyRanking($rows, $studentIds->count());

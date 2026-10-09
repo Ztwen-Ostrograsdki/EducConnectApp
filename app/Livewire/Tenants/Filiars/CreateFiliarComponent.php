@@ -22,6 +22,7 @@ class CreateFiliarComponent extends Component
     public string $code        = '';
     public string $description = '';
     public bool   $is_active   = true;
+    public bool   $is_new_system   = false;
     public string $previewSlug = '';
 
     public function updatedName(string $value): void
@@ -40,6 +41,7 @@ class CreateFiliarComponent extends Component
                 'code'        => 'nullable|string|max:20',
                 'description' => 'nullable|string|max:255',
                 'is_active'   => 'boolean',
+                'is_new_system'   => 'boolean',
             ]);
 
             $filiar = Filiar::create([
@@ -49,6 +51,7 @@ class CreateFiliarComponent extends Component
                 'code'        => $this->code ? trim(trim($this->code, '-')) : Str::slug($this->name),
                 'description' => $this->description ?: null,
                 'is_active'   => $this->is_active,
+                'is_new_system'   => $this->is_new_system,
             ]);
 
 

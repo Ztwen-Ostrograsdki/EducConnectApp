@@ -36,6 +36,7 @@ class CreateClasseComponent extends Component
     public int    $effectif_max   = 40;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
+    public bool   $is_new_system  = false;
 
     // Pour le select searchable du prof principal
     public string $teacherSearch = '';
@@ -102,6 +103,7 @@ class CreateClasseComponent extends Component
                 'code'         => 'nullable|string|max:30',
                 'effectif_max' => 'required|integer|min:1|max:200',
                 'is_active'    => 'boolean',
+                'is_new_system'=> 'boolean',
                 'is_locked'    => 'boolean',
             ]);
 
@@ -118,6 +120,7 @@ class CreateClasseComponent extends Component
                 'level'          => tenant('level'),
                 'effectif_max'   => $this->effectif_max,
                 'is_active'      => $this->is_active,
+                'is_new_system'  => $this->is_new_system,
                 'is_locked'      => $this->is_locked,
                 'localization'   => $this->localization,
             ]);

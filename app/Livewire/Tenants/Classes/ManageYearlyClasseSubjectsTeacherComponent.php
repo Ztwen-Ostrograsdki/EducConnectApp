@@ -74,6 +74,9 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
     {
         return Subject::where('is_active', true)
             ->where('level', $this->classe->level)
+            ->where('name', '<>', 'conduite')
+            ->where('name', '<>', 'Conduite')
+            ->where('code', '<>', 'conduite')
             ->when($this->subjectSearch, fn($q) =>
                 $q->where(fn($q) =>
                     $q->where('name', 'like', '%'.$this->subjectSearch.'%')

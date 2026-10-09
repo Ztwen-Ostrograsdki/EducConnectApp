@@ -36,6 +36,7 @@ class EditClasseComponent extends Component
     public int    $effectif_max   = 50;
     public bool   $is_active      = true;
     public bool   $is_locked      = false;
+    public bool   $is_new_system  = false;
 
     public string $teacherSearch = '';
 
@@ -62,6 +63,7 @@ class EditClasseComponent extends Component
         $this->effectif_max    = $classe->effectif_max;
         $this->is_active       = $classe->is_active;
         $this->is_locked       = $classe->is_locked;
+        $this->is_new_system   = $classe->is_new_system;
         $this->school_year     = $classe->school_year->slug;
 
     }
@@ -111,6 +113,7 @@ class EditClasseComponent extends Component
                 'code'         => 'nullable|string|max:30',
                 'effectif_max' => 'required|integer|min:1|max:200',
                 'is_active'    => 'boolean',
+                'is_new_system'=> 'boolean',
                 'is_locked'    => 'boolean',
             ]);
 
@@ -126,6 +129,7 @@ class EditClasseComponent extends Component
                 'effectif_max'   => $this->effectif_max,
                 'is_active'      => $this->is_active,
                 'is_locked'      => $this->is_locked,
+                'is_new_system'  => $this->is_new_system,
                 'localization'   => $this->localization,
             ]);
 

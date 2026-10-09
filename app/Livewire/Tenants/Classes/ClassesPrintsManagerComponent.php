@@ -25,6 +25,8 @@ class ClassesPrintsManagerComponent extends Component
 
     public ?string $lockedStatus = null;
 
+    public ?string $system = null;
+
     public ?string $ppStatus = null;
 
     public ?string $hasStudentsStatus = null;
@@ -45,6 +47,11 @@ class ClassesPrintsManagerComponent extends Component
         ''             => "Toutes les classes actives ou non",
         'onlyActive'   => "Seulement classes actives",
         'onlyInactive' => "Seulement classes non actives",
+    ];
+    public array $systems = [
+        ''             => "Toutes les classes des deux systèmes",
+        'new_system'   => "Classes nouveaux métiers",
+        'old_system'   => "Classes classiques",
     ];
 
     public array $lockedStatuses = [
@@ -115,6 +122,9 @@ class ClassesPrintsManagerComponent extends Component
         if (session()->has('print_classes_promotions_grouped_selected')) {
             $this->promotionInGroups = session('print_classes_promotions_grouped_selected');
         }
+        if (session()->has('print_classes_system')) {
+            $this->system = session('print_classes_system');
+        }
     }
 
     public function restoreSelects(): void
@@ -167,6 +177,7 @@ class ClassesPrintsManagerComponent extends Component
     {
         session()->forget([
             'print_classes_active_status',
+            'print_classes_system',
             'print_classes_locked_status',
             'print_classes_pp_status',
             'print_classes_has_students_status',
@@ -180,7 +191,7 @@ class ClassesPrintsManagerComponent extends Component
         $this->reset(
             'activeStatus', 'lockedStatus', 'ppStatus', 'hasStudentsStatus',
             'hasTeachersStatus', 'filiar_id', 'serial_id', 'promotion_id',
-            'promotionInGroups'
+            'promotionInGroups', 'system'
         );
     }
 
@@ -218,6 +229,7 @@ class ClassesPrintsManagerComponent extends Component
     {
         return [
             "activeConfig"       => $this->activeStatus,
+            "systemConfig"       => $this->system,
             "lockedConfig"       => $this->lockedStatus,
             "ppConfig"           => $this->ppStatus,
             "hasStudentsConfig"  => $this->hasStudentsStatus,
@@ -244,7 +256,10 @@ class ClassesPrintsManagerComponent extends Component
         );
     }
 
+    public function updatedSystem(?string $value): void { session()->put('print_classes_system', $value); }
+    
     public function updatedActiveStatus(?string $value): void { session()->put('print_classes_active_status', $value); }
+
     public function updatedLockedStatus(?string $value): void { session()->put('print_classes_locked_status', $value); }
     public function updatedPpStatus(?string $value): void { session()->put('print_classes_pp_status', $value); }
     public function updatedHasStudentsStatus(?string $value): void { session()->put('print_classes_has_students_status', $value); }

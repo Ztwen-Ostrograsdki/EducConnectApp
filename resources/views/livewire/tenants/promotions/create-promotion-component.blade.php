@@ -94,7 +94,7 @@
         </div>
 
         {{-- Level --}}
-        <div>
+        <div class="hidden">
             <label class="block text-xs font-medium text-slate-400 mb-1.5">Niveau <span
                     class="text-rose-400">*</span></label>
             <div class="flex gap-3">
@@ -135,6 +135,17 @@
                 </div>
             </div>
             <span class="text-sm text-slate-300">Promotion active</span>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer">
+            <div class="relative">
+                <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
+                <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-green-600 transition"></div>
+                <div
+                    class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                </div>
+            </div>
+            <span class="text-sm text-slate-300">Promotion nuveau métier</span>
         </label>
     </div>
 

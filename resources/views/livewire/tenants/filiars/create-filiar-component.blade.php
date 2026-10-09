@@ -55,6 +55,17 @@
             </div>
             <span class="text-sm text-slate-300">Filière active</span>
         </label>
+
+        <label class="flex items-center gap-3 cursor-pointer">
+            <div class="relative">
+                <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
+                <div class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-green-600 transition"></div>
+                <div
+                    class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4">
+                </div>
+            </div>
+            <span class="text-sm text-slate-300">Filière nouveau métier</span>
+        </label>
     </div>
 
     <div class="flex justify-end gap-3">
