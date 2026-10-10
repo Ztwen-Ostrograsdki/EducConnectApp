@@ -103,6 +103,7 @@ use App\Livewire\Tenants\Teachers\TeachersPrintsManagerComponent;
 use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\Testimonials\CreateTestimonialComponent;
 use App\Livewire\Tenants\Testimonials\ManageTestimonialsComponent;
+use App\Livewire\Tenants\Timeplans\TimePlanDashboard;
 use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
@@ -321,6 +322,11 @@ Route::middleware([
                 Route::get('/statistiques/documents/imprimable/{classe_slug?}', MoyenneIntervalStatsPrintableDocumentPage::class)->name('stats.docs');
                 Route::get('/statistiques-semestrielles', PeriodicalStatistiqueComponent::class)->name('stats.general');
             });
+
+
+            // LES EMPLOIS
+            Route::get('/emplois-du-temps/gestion', TimePlanDashboard::class)->name('time.plans.manage');
+
 
             // LES ENSEIGNANTS
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');

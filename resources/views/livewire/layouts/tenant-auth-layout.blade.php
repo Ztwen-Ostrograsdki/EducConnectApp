@@ -414,7 +414,8 @@
                             </div>
 
                             @if ($currentTenant?->timetableAble())
-                                <a data-sidebar-item href="#" class="s-link">
+                                <a wire:navigate data-sidebar-item href="{{ route('tenant.time.plans.manage') }}"
+                                    class="s-link {{ request()->routeIs('tenant.time.plans.manage') ? 'active' : '' }}">
                                     <div class="s-icon">🗓️</div><span class="s-label">Emploi du temps</span>
                                 </a>
                             @endif

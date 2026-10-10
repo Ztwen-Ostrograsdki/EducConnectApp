@@ -114,22 +114,35 @@ class ClasseSubjectOfSchoolYear extends Model
      */
     public function replaceTeacher(int $newTeacherId, string $reason, int $replacedBy): static
     {
-        // Close the current assignment
-        $this->update([
-            'ended_at' => now(),
-            'replaced_by' => $replacedBy,
-        ]);
+        $oldAssignment = static::query()->lockForUpdate()->findOrFail($this->getKey());
 
-        // Create a new assignment for the replacement teacher
-        return static::create([
-            'classe_id' => $this->classe_id,
-            'subject_id' => $this->subject_id,
-            'school_year_id' => $this->school_year_id,
+        if (!$oldAssignment->isCurrent()) {
+            throw new \DomainException('Cette affectation a déjà été clôturée ou remplacée.');
+        }
+
+        $newAssignment = static::query()->create([
+            'classe_id' => $oldAssignment->classe_id,
+            'subject_id' => $oldAssignment->subject_id,
+            'school_year_id' => $oldAssignment->school_year_id,
             'teacher_id' => $newTeacherId,
-            'coefficient' => $this->coefficient,
+            'coefficient' => $oldAssignment->coefficient,
+            'is_active' => true,
             'replacement_reason' => $reason,
             'started_at' => now(),
             'ended_at' => null,
         ]);
+
+
+        \App\Models\TimePlanSlot::query()
+            ->where('classe_subject_of_school_year_id', $oldAssignment->id)
+            ->update(['classe_subject_of_school_year_id' => $newAssignment->id]);
+
+        $oldAssignment->update([
+            'ended_at' => now(),
+            'replaced_by' => $replacedBy,
+            'is_active' => false,
+        ]);
+
+        return $newAssignment;
     }
 }

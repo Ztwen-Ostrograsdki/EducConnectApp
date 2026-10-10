@@ -275,7 +275,7 @@
                     @break
 
                     @case('classe-plan-page')
-                        <livewire:tenants.classes.sections.classe-plan-page :classroom="$classroom" />
+                        @livewire('tenants.classes.sections.classe-plan-page', ['classe' => $classe, 'classe_slug' => $classe->slug])
                     @break
 
                     @case('classe-pupil-bulletin-component')

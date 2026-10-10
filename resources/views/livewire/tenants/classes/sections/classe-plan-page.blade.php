@@ -1,382 +1,260 @@
-<div class="w-full max-w-full overflow-x-hidden">
+<div class="min-h-screen bg-[#070a12] text-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
-    {{-- ===================================================== --}}
-    {{-- HEADER --}}
-    {{-- ===================================================== --}}
-    <section class="mb-6">
+        {{-- ========== HEADER ========== --}}
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/80 mb-1">
+                    Vie scolaire
+                </p>
+                <h2 class="text-xl font-bold tracking-tight text-white">
+                    Emploi du temps
+                    <span class="text-slate-500 font-normal">·</span>
+                    {{ $this->classe->name }}
+                </h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    Consultez les cours prévus pour cette classe
+                </p>
+            </div>
+            @if ($this->timePlan)
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-            {{-- LEFT --}}
-            <div class="min-w-0">
-
-                <div class="flex flex-wrap items-center gap-3">
-
-                    <h1 class="text-2xl sm:text-3xl font-bold break-words">
-                        Emploi du Temps
-                    </h1>
-
-                    <span class="px-3 py-1 rounded-full
-                                 bg-indigo-500/10
-                                 border border-indigo-500/20
-                                 text-indigo-400 text-xs shrink-0">
-
-                        Terminale F2-1
-
+                @if ($this->timePlan->published)
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                             bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                        Publié
                     </span>
+                @elseif($this->timePlan->archived)
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                             bg-red-500/15 text-red-400 border border-red-500/25">
+                        <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>
+                        Archivé
+                    </span>
+                @else
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
+                             bg-orange-500/15 text-orange-400 border border-orange-500/25">
+                        <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
+                        Brouillon
+                    </span>
+                @endif
+            @endif
+        </div>
 
+        @if (!$this->activeYear?->id)
+            {{-- Pas d'année --}}
+            <div class="rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] py-14 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.04] mb-3">
+                    <x-lucide-calendar-days class="w-6 h-6 text-slate-500" />
+                </div>
+                <h3 class="font-semibold text-white">Aucune année scolaire disponible</h3>
+                <p class="mt-1 text-sm text-slate-500 max-w-md mx-auto">
+                    L’emploi du temps apparaîtra ici dès qu’une année scolaire sera associée à la classe.
+                </p>
+            </div>
+        @elseif (!$this->timePlan)
+            {{-- Pas de plan publié --}}
+            <div class="rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] py-14 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-500/10 mb-3">
+                    <x-lucide-calendar-clock class="w-6 h-6 text-emerald-400" />
+                </div>
+                <h3 class="font-semibold text-white">Emploi du temps non disponible</h3>
+                <p class="mt-1 text-sm text-slate-500 max-w-md mx-auto">
+                    Aucun emploi du temps publié pour
+                    <span class="text-slate-300">{{ $this->classe->name }}</span>
+                    sur cette année. Il s’affichera ici après publication par la direction.
+                </p>
+            </div>
+        @else
+            {{-- ========== KPIs ========== --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center gap-3">
+                    <span
+                        class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20
+                                 flex items-center justify-center shrink-0">
+                        <x-lucide-calendar-check class="w-5 h-5 text-emerald-400" />
+                    </span>
+                    <div>
+                        <p class="text-[11px] text-slate-500">Année scolaire</p>
+                        <p class="font-semibold text-white">
+                            {{ $this->timePlan->schoolYear?->slug }}
+                        </p>
+                    </div>
+                </div>
+                <div class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center gap-3">
+                    <span
+                        class="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/20
+                                 flex items-center justify-center shrink-0">
+                        <x-lucide-book-open class="w-5 h-5 text-sky-400" />
+                    </span>
+                    <div>
+                        <p class="text-[11px] text-slate-500">Séances planifiées</p>
+                        <p class="font-semibold text-white">
+                            {{ $this->timePlan->slots->count() }} créneau(x)
+                        </p>
+                    </div>
+                </div>
+                <div class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center gap-3">
+                    <span
+                        class="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/20
+                                 flex items-center justify-center shrink-0">
+                        <x-lucide-users class="w-5 h-5 text-violet-400" />
+                    </span>
+                    <div>
+                        <p class="text-[11px] text-slate-500">Matières distinctes</p>
+                        <p class="font-semibold text-white">
+                            {{ $this->timePlan->slots->pluck('classeSubjectOfSchoolYear.subject_id')->filter()->unique()->count() }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========== GRILLE ========== --}}
+            {{-- ========== GRILLE (scroll horizontal fiable) ========== --}}
+            <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                <div
+                    class="flex flex-col gap-1 border-b border-white/[0.05] px-4 py-3
+                sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">Planning hebdomadaire</h3>
+                        <p class="text-[11px] text-slate-500">
+                            Enseignants issus des affectations pédagogiques actuelles
+                        </p>
+                    </div>
+                    @if ($this->timePlan->title)
+                        <span class="text-xs text-slate-500">{{ $this->timePlan->title }}</span>
+                    @endif
                 </div>
 
-                <p class="mt-2 text-slate-400 text-sm sm:text-base">
-
-                    Gestion des cours, horaires et salles de la classe.
-
-                </p>
-
-            </div>
-
-            {{-- ACTIONS --}}
-            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-indigo-500 hover:bg-indigo-600
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Ajouter Cours
-
-                </button>
-
-                <button
-                    class="w-full sm:w-auto
-                               px-5 py-3 rounded-2xl
-                               bg-slate-800
-                               border border-slate-700
-                               hover:bg-slate-700
-                               transition-all duration-300
-                               text-sm sm:text-base">
-
-                    Exporter PDF
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    {{-- ===================================================== --}}
-    {{-- KPI --}}
-    {{-- ===================================================== --}}
-    <section class="mb-6">
-
-        <div class="grid
-                    grid-cols-1
-                    sm:grid-cols-2
-                    xl:grid-cols-4
-                    gap-4 sm:gap-6">
-
-            {{-- CARD --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Heures / Semaine
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    38h
-                </h2>
-
-            </div>
-
-            {{-- CARD --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Matières
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    12
-                </h2>
-
-            </div>
-
-            {{-- CARD --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Enseignants
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    8
-                </h2>
-
-            </div>
-
-            {{-- CARD --}}
-            <div class="rounded-3xl border border-slate-800 bg-slate-900 p-5">
-
-                <p class="text-sm text-slate-400">
-                    Salles
-                </p>
-
-                <h2 class="mt-3 text-2xl sm:text-3xl xl:text-4xl font-bold">
-                    5
-                </h2>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    {{-- ===================================================== --}}
-    {{-- TOOLBAR --}}
-    {{-- ===================================================== --}}
-    <section class="mb-6">
-
-        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-4 sm:p-5">
-
-            <div class="flex flex-col xl:flex-row gap-4">
-
-                {{-- SEARCH --}}
-                <div class="flex-1 min-w-0">
-
-                    <div class="relative">
-
-                        <input type="text" placeholder="Rechercher un cours ou un enseignant..."
-                            class="w-full h-12
-                                   rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   pl-12 pr-4
-                                   text-sm
-                                   outline-none
-                                   focus:border-indigo-500
-                                   transition-all">
-
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
-
-                            🔍
-
+                {{-- Flex : colonne fixe + zone scroll --}}
+                <div class="flex">
+                    {{-- Colonne HORAIRE (fixe, ne scroll pas) --}}
+                    <div class="shrink-0 w-[5.5rem] sm:w-32 border-r text-center border-white/[0.06] bg-[#0c101c]">
+                        <div
+                            class="h-11 flex items-center px-2 sm:px-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-white/[0.05] text-center">
+                            Horaire
                         </div>
-
+                        @foreach ($this->timeRanges as $range)
+                            <div
+                                class="min-h-[110px] px-2 sm:px-3 py-4 text-sm font-mono font-bold text-slate-400 border-b border-white/[0.05] inline-flex items-center">
+                                <span>
+                                    {{ \Illuminate\Support\Carbon::parse($range[0])->format('H\hi') }}
+                                    <span class="text-slate-600">–</span>
+                                    {{ \Illuminate\Support\Carbon::parse($range[1])->format('H\hi') }}
+                                </span>
+                            </div>
+                        @endforeach
                     </div>
 
-                </div>
-
-                {{-- FILTERS --}}
-                <div class="grid
-                            grid-cols-1
-                            sm:grid-cols-2
-                            lg:grid-cols-3
-                            gap-3">
-
-                    {{-- SEMESTER --}}
-                    <select class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
-                        <option>Semestre 1</option>
-                        <option>Semestre 2</option>
-
-                    </select>
-
-                    {{-- DAY --}}
-                    <select class="h-12 px-4 rounded-2xl
-                                   bg-slate-950
-                                   border border-slate-800
-                                   text-sm">
-
-                        <option>Toute la semaine</option>
-                        <option>Lundi</option>
-                        <option>Mardi</option>
-                        <option>Mercredi</option>
-                        <option>Jeudi</option>
-                        <option>Vendredi</option>
-
-                    </select>
-
-                    {{-- RESET --}}
-                    <button
-                        class="h-12 px-5 rounded-2xl
-                                   bg-slate-800
-                                   border border-slate-700
-                                   hover:bg-slate-700
-                                   transition-all
-                                   text-sm">
-
-                        Réinitialiser
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    {{-- ===================================================== --}}
-    {{-- DESKTOP TIMETABLE --}}
-    {{-- ===================================================== --}}
-    <section class="w-full">
-
-        <div class="flex justify-end flex-wrap gap-3 text-gray-950 p-2">
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-red-500 hover:bg-red-600">
-
-                Vider les emplois
-
-            </button>
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-blue-500 hover:bg-blue-600">
-
-                Imprimer PDF
-
-            </button>
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-emerald-500 hover:bg-emerald-600">
-
-                Emprimer Excel
-
-            </button>
-
-            <button class="px-3 py-2 rounded-2xl
-                                    bg-amber-500 hover:bg-amber-600">
-
-                Imprimer Excel et PDF
-
-            </button>
-
-        </div>
-
-        <div class="rounded-3xl border border-slate-800 bg-slate-900 overflow-hidden">
-
-            <div class="overflow-x-auto">
-
-                <table class="w-full">
-
-                    <thead class="bg-slate-950 border-b border-slate-800 truncate">
-
-                        <tr>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Horaires
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Lundi
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Mardi
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Mercredi
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Jeudi
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Vendredi
-                            </th>
-                            <th class="px-6 py-4 text-center text-sm text-slate-400">
-                                Samedi
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-800">
-
-                        @foreach (['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00', '15:00 - 17:00'] as $time)
-                            <tr class="hover:bg-slate-800/40 transition-all">
-
-                                {{-- TIME --}}
-                                <td class="px-6 py-6 font-medium text-slate-300">
-                                    {{ $time }}
-                                </td>
-
-                                @foreach (range(1, 6) as $day)
-                                    {{-- COURSE --}}
-                                    <td class="px-4 py-5">
-
-                                        <div
-                                            class="rounded-2xl
-                                            border border-indigo-500/20
-                                            bg-indigo-500/10
-                                            p-4 min-w-[180px]">
-
-                                            <div class="flex items-start justify-between gap-3">
-
-                                                <div class="min-w-0">
-
-                                                    <h3 class="font-semibold truncate">
-                                                        Mathématiques
-                                                    </h3>
-
-                                                    <p class="mt-1 text-sm text-indigo-300 truncate">
-                                                        M. HOUNDEKINDO
-                                                    </p>
-
-                                                </div>
-
-                                                <div class="w-3 h-3 rounded-full
-                                                    bg-indigo-400 shrink-0">
-                                                </div>
-
-                                            </div>
-
-                                            <div class="mt-4 flex items-center justify-between gap-3 truncate">
-
-                                                <span class="px-2 py-1 rounded-xl
-                                                     bg-slate-950/50
-                                                     text-xs text-slate-300">
-
-                                                    Salle B12
-
-                                                </span>
-
-                                                <span class="text-xs text-slate-400">
-
-                                                    2h
-
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
+                    {{-- Jours (scroll horizontal uniquement) --}}
+                    <div class="flex-1 min-w-0 overflow-x-auto overscroll-x-contain">
+                        <div class="min-w-[720px]">
+                            {{-- En-têtes jours --}}
+                            <div class="grid border-b border-white/[0.05]"
+                                style="grid-template-columns: repeat({{ count($this->days) }}, minmax(7.9rem, 1fr));">
+                                @foreach ($this->days as $day => $dayName)
+                                    <div
+                                        class="h-11 flex items-center justify-center px-2 text-sm font-semibold text-emerald-400 border-r border-white/[0.05] last:border-r-0">
+                                        {{ $dayName }}
+                                    </div>
                                 @endforeach
+                            </div>
 
-                            </tr>
-                        @endforeach
+                            {{-- Lignes créneaux --}}
+                            @foreach ($this->timeRanges as $range)
+                                <div class="grid border-b border-white/[0.05]"
+                                    style="grid-template-columns: repeat({{ count($this->days) }}, minmax(7.5rem, 1fr));">
+                                    @foreach ($this->days as $day => $dayName)
+                                        @php
+                                            $slot = $this->slotsByDay[$day]->first(
+                                                fn($item) => $item->starts_at === $range[0] &&
+                                                    $item->ends_at === $range[1],
+                                            );
+                                        @endphp
+                                        <div class="min-h-[104px] p-1.5 border-r border-white/[0.05] last:border-r-0">
+                                            @if ($slot)
+                                                @php
+                                                    $subject = $slot->subject;
+                                                    $teacher = $slot->teacher;
+                                                @endphp
+                                                <div
+                                                    class="h-full min-h-[92px] rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5 flex flex-col gap-1.5">
 
-                    </tbody>
+                                                    {{-- Matière --}}
+                                                    <div class="flex items-start gap-1.5">
+                                                        <x-lucide-book-open
+                                                            class="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                                                        <p class="font-semibold leading-5 text-white text-sm">
+                                                            {{ $subject?->code ?? ($slot->label ?? 'Cours') }}
+                                                        </p>
+                                                    </div>
 
-                </table>
+                                                    {{-- Enseignant --}}
+                                                    <div class="flex items-center gap-1.5">
+                                                        <x-lucide-user class="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                                                        <p class="text-xs text-slate-400 truncate">
+                                                            {{ $teacher?->getFullName() ?? 'Enseignant non renseigné' }}
+                                                        </p>
+                                                    </div>
 
+                                                    {{-- Libellé optionnel --}}
+                                                    @if ($slot->label && $subject && $slot->label !== $subject->name)
+                                                        <div class="flex items-center gap-1.5">
+                                                            <x-lucide-tag class="w-3 h-3 text-slate-600 shrink-0" />
+                                                            <p class="text-[11px] text-slate-500 truncate">
+                                                                {{ $slot->label }}</p>
+                                                        </div>
+                                                    @endif
+
+                                                    {{-- Notes --}}
+                                                    @if ($slot->notes)
+                                                        <div class="flex items-start gap-1.5">
+                                                            <x-lucide-sticky-note
+                                                                class="w-3 h-3 text-slate-600 shrink-0 mt-0.5" />
+                                                            <p class="line-clamp-2 text-[11px] text-slate-500">
+                                                                {{ $slot->notes }}</p>
+                                                        </div>
+                                                    @endif
+
+                                                    {{-- Horaires + durée --}}
+                                                    <div class="pt-1 mt-3 space-y-0.5">
+                                                        <div
+                                                            class="flex items-center gap-1.5 font-mono text-xs text-orange-400">
+                                                            <x-lucide-clock class="w-3.5 h-3.5 shrink-0" />
+                                                            <span>{{ $slot->start }}</span>
+                                                            <span class="text-orange-500/50">–</span>
+                                                            <span>{{ $slot->end }}</span>
+                                                        </div>
+                                                        <div
+                                                            class="flex items-center gap-1.5 font-mono text-[11px] text-orange-500/80">
+                                                            <x-lucide-hourglass class="w-3 h-3 shrink-0" />
+                                                            <span>{{ $slot->duration }}H de cours</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="h-full min-h-[92px] rounded-xl bg-white/[0.02]"></div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
 
-        </div>
+            {{-- Note direction --}}
+            @if ($this->timePlan->notes)
+                <div class="rounded-xl border border-sky-500/20 bg-sky-500/10 p-4 text-sm text-sky-200">
+                    <span class="font-semibold text-sky-300">Note de la direction :</span>
+                    {{ $this->timePlan->notes }}
+                </div>
+            @endif
+        @endif
 
-    </section>
-
+    </div>
 </div>
 

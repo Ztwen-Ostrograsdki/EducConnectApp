@@ -54,9 +54,6 @@ class ClasseMarksPage extends Component
         return SchoolYear::current()->first();
     }
 
-    
-
-
     #[Computed]
     public function classe()
     {
