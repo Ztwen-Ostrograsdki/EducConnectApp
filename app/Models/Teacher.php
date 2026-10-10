@@ -459,7 +459,7 @@ class Teacher extends Model
 
     public function giveAccessToTeacherForThisSchoolYear(?string $tenantId = null, ?SchoolYear $school_year = null, ?string $domain = null)
     {
-        if(!$school_year) $school_year = SchoolYear::firstWhere('is_active', true);
+        if(!$school_year) $school_year = SchoolYear::current()->first();
 
         if($school_year) JobToCreateYearlyAccessForTeacher::dispatch($tenantId, $this->id, $school_year->id, $domain);
 
@@ -502,5 +502,54 @@ class Teacher extends Model
 
         } 
 
+    }
+
+
+    /**
+     * Tous les créneaux d’un enseignant sur une année scolaire.
+     */
+    public function teacherSlots(?int $schoolYearId = null)
+    {
+        if(!$schoolYearId) $schoolYearId = SchoolYear::current()->first()?->id;
+
+        return TimePlanSlot::query()
+            ->whereHas('timePlan', fn (Builder $q) => $q->where('school_year_id', $schoolYearId)->where('status', 'published'))
+            ->whereHas(
+                'classeSubjectOfSchoolYear',
+                fn (Builder $q) => $q
+                    ->where('teacher_id', $this->id)
+                    ->whereNull('ended_at')
+                    ->where('is_active', true)
+            )
+            ->with([
+                'timePlan.classe',
+                'classeSubjectOfSchoolYear.subject',
+                'classeSubjectOfSchoolYear.teacher',
+                'classeSubjectOfSchoolYear.classe',
+            ])
+            ->orderBy('day_of_week')
+            ->orderBy('starts_at')
+            ->get();
+    }
+
+
+    /**
+     * Toutes les heures cumulées d’un enseignant sur une année scolaire.
+     */
+    public function teacherExecutingHours(?int $schoolYearId = null)
+    {
+        if(!$schoolYearId) $schoolYearId = SchoolYear::current()->first()?->id;
+
+        $slots = $this->teacherSlots($schoolYearId);
+
+        $hours = 0;
+
+        foreach($slots as $slot){
+
+            $hours += $slot->duration;
+
+        }
+
+        return $hours;
     }
 }

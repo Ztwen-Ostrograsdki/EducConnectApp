@@ -181,11 +181,12 @@
             @else
                 <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     @foreach ($this->plans as $plan)
-                        <article wire:key="plan-{{ $plan->id }}"
-                            class="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5
+                        <article title="Cliquer pour afficher ou masquer {{ $plan->title ?: 'l\'emploi du temps ' }}"
+                            wire:click="openPlan({{ $plan->id }})" wire:key="plan-{{ $plan->id }}"
+                            class="group relative rounded-2xl cursor-pointer border border-white/[0.06] bg-white/[0.02] p-5
                                    hover:border-cyan-500/30 hover:bg-white/[0.03] transition-all">
                             <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0 cursor-pointer" wire:click="openPlan({{ $plan->id }})">
+                                <div class="min-w-0 cursor-pointer">
                                     <h2
                                         class="truncate text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
                                         {{ $plan->classe?->name ?? 'Classe supprimée' }}

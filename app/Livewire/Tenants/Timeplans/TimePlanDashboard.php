@@ -38,15 +38,6 @@ class TimePlanDashboard extends Component
     public string $notes = '';
     public string $status = 'draft';
 
-    // Formulaire créneau (requis par TimePlanActions)
-    public ?int $slotId = null;
-    public ?int $assignment_id = null;
-    public int $day_of_week = 1;
-    public string $starts_at = '08:00';
-    public string $ends_at = '10:00';
-    public string $slot_label = '';
-    public string $slot_notes = '';
-
     #[Url(as: 'q')]
     public string $search = '';
 
@@ -56,9 +47,6 @@ class TimePlanDashboard extends Component
 
     #[Url(as: 'filter_value')]
     public string|int|null $filterValue = null;
-
-    public bool $showPlanForm = false;
-    public bool $showSlotForm = false;
 
     public int $perPage = 12;
 
@@ -324,6 +312,23 @@ class TimePlanDashboard extends Component
 
     public function openPlan(int $id): void
     {
+        if(session('current_time_plan') && $this->currentPlan){
+
+            if(session('current_time_plan') == $id || $this->currentPlan->id == $id){
+
+                session()->forget('current_time_plan');
+
+                $this->reset('timePlanId');
+
+                $this->showSlotForm = false;
+
+                unset($this->currentPlan, $this->assignments);
+
+                return;
+            }
+
+        }
+
         $timePlan = TimePlan::query()->find($id);
 
         if (!$timePlan) {

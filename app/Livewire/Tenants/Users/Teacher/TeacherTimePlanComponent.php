@@ -10,4 +10,8 @@ class TeacherTimePlanComponent extends Component
     {
         return view('livewire.tenants.users.teacher.teacher-time-plan-component');
     }
+
+
+
+    
 }

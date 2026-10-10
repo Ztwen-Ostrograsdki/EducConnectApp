@@ -33,6 +33,19 @@ trait TimePlanActions
 
     public $counter = 0;
 
+    // Formulaire créneau (requis par TimePlanActions)
+    public ?int $slotId = null;
+    public ?int $assignment_id = null;
+    public int $day_of_week = 1;
+    public string $starts_at = '08:00';
+    public string $ends_at = '10:00';
+    public string $slot_label = '';
+    public string $slot_notes = '';
+
+    public bool $showPlanForm = false;
+    public bool $showSlotForm = false;
+    public ?int $slotFormPlanId = null;
+
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata(): void
     {
@@ -333,7 +346,7 @@ trait TimePlanActions
     public function teacherSlotsFor(int $teacherId, int $schoolYearId): Collection
     {
         return TimePlanSlot::query()
-            ->whereHas('timePlan', fn (Builder $q) => $q->where('school_year_id', $schoolYearId))
+            ->whereHas('timePlan', fn (Builder $q) => $q->where('school_year_id', $schoolYearId)->where('status', 'published'))
             ->whereHas(
                 'classeSubjectOfSchoolYear',
                 fn (Builder $q) => $q

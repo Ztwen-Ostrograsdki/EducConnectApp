@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\ObserveTimePlanSlot;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
+#[ObservedBy(ObserveTimePlanSlot::class)]
 class TimePlanSlot extends Model
 {
     protected $connection = 'tenant';
@@ -47,13 +50,13 @@ class TimePlanSlot extends Model
         return config('timeplan.days')[$this->day_of_week] ?? 'Jour inconnu';
     }
 
-    public function getDurationAttribute()
+    public function getDurationAttribute() : int
     {
         $start = Carbon::parse($this->starts_at);
         
         $end = Carbon::parse($this->ends_at);
 
-        return $start->diffInHours($end, true);
+        return (int)$start->diffInHours($end, true);
 
     }
 
