@@ -4,13 +4,11 @@ namespace App\Livewire\Tenants\Timeplans;
 
 use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Models\Classe;
-use App\Models\ClasseSubjectOfSchoolYear;
 use App\Models\Filiar;
 use App\Models\Promotion;
 use App\Models\SchoolYear;
 use App\Models\Serial;
 use App\Models\TimePlan;
-use App\Models\TimePlanSlot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -40,6 +38,7 @@ class TimePlanDashboard extends Component
     public string $notes = '';
     public string $status = 'draft';
 
+    // Formulaire créneau (requis par TimePlanActions)
     public ?int $slotId = null;
     public ?int $assignment_id = null;
     public int $day_of_week = 1;
@@ -51,11 +50,10 @@ class TimePlanDashboard extends Component
     #[Url(as: 'q')]
     public string $search = '';
 
-    /** @var string filtre principal : all|classe|filiar|promotion|serial|is_new_system */
+    /** @var string filtre : all|classe|filiar|promotion|serial|is_new_system */
     #[Url(as: 'filter')]
     public string $filterBy = 'all';
 
-    /** @var string|int|null valeur du filtre (id ou 0/1 pour is_new_system) */
     #[Url(as: 'filter_value')]
     public string|int|null $filterValue = null;
 
@@ -78,7 +76,7 @@ class TimePlanDashboard extends Component
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  COMPUTED
+    //  COMPUTED (spécifiques dashboard)
     // ─────────────────────────────────────────────────────────────
 
     #[Computed]
@@ -177,20 +175,9 @@ class TimePlanDashboard extends Component
     #[Computed]
     public function assignments()
     {
-        if (!$this->currentPlan) {
-            return collect();
-        }
+        $planId = $this->slotFormPlanId ?? $this->timePlanId;
 
-        return ClasseSubjectOfSchoolYear::query()
-            ->where('classe_id', $this->currentPlan->classe_id)
-            ->where('school_year_id', $this->currentPlan->school_year_id)
-            ->whereDoesntHave('subject', fn ($q) => $q->whereIn('name', ['conduite', 'Conduite']))
-            ->current()
-            ->with(['subject', 'teacher'])
-            ->get()
-            ->filter(fn ($assignment) => $assignment->subject && $assignment->teacher)
-            ->sortBy(fn ($assignment) => $assignment->subject->name)
-            ->values();
+        return $planId ? $this->assignmentsFor($planId) : collect();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -223,7 +210,7 @@ class TimePlanDashboard extends Component
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  PLAN CRUD
+    //  PLAN CRUD (spécifique dashboard)
     // ─────────────────────────────────────────────────────────────
 
     public function openCreatePlan(): void
@@ -350,155 +337,6 @@ class TimePlanDashboard extends Component
         unset($this->currentPlan, $this->assignments);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    //  SLOT CRUD
-    // ─────────────────────────────────────────────────────────────
-
-    public function openCreateSlot(): void
-    {
-        abort_unless($this->currentPlan, 404);
-
-        if (!$this->currentPlan->isEditable()) {
-            return;
-        }
-
-        $this->resetSlotForm();
-        $this->showSlotForm = true;
-        unset($this->assignments);
-    }
-
-    public function editSlot(int $id): void
-    {
-        $slot = TimePlanSlot::query()
-            ->where('time_plan_id', $this->timePlanId)
-            ->findOrFail($id);
-
-        if (!$slot->timePlan->isEditable()) {
-            return;
-        }
-
-        $this->slotId = $slot->id;
-        $this->assignment_id = $slot->classe_subject_of_school_year_id;
-        $this->day_of_week = $slot->day_of_week;
-        $this->starts_at = substr((string) $slot->starts_at, 0, 5);
-        $this->ends_at = substr((string) $slot->ends_at, 0, 5);
-        $this->slot_label = $slot->label ?? '';
-        $this->slot_notes = $slot->notes ?? '';
-        $this->showSlotForm = true;
-    }
-
-    public function saveSlot(): void
-    {
-        $plan = $this->currentPlan;
-        abort_unless($plan, 404);
-
-        if (!$plan->isEditable()) {
-            $this->notification()->error(
-                title: 'Action impossible',
-                description: 'Cet emploi du temps est archivé.',
-            );
-            throw ValidationException::withMessages(['starts_at' => 'Cet emploi du temps est archivé.']);
-        }
-
-        $data = $this->validate([
-            'assignment_id' => ['required', 'integer'],
-            'day_of_week'   => ['required', 'integer', 'between:1,7'],
-            'starts_at'     => ['required', 'date_format:H:i'],
-            'ends_at'       => ['required', 'date_format:H:i', 'after:starts_at'],
-            'slot_label'    => ['nullable', 'string', 'max:150'],
-            'slot_notes'    => ['nullable', 'string', 'max:2000'],
-        ]);
-
-        $assignment = ClasseSubjectOfSchoolYear::query()
-            ->whereKey($data['assignment_id'])
-            ->where('classe_id', $plan->classe_id)
-            ->where('school_year_id', $plan->school_year_id)
-            ->current()
-            ->first();
-
-        if (!$assignment) {
-            $this->notification()->error(
-                title: 'Matière indisponible',
-                description: 'Cette matière n’est plus valable pour cette classe et cette année scolaire.',
-            );
-            throw ValidationException::withMessages([
-                'assignment_id' => 'Cette affectation n’est plus active pour cette classe et cette année scolaire.',
-            ]);
-        }
-
-        DB::connection('tenant')->transaction(function () use ($plan, $assignment, $data) {
-            $conflictInClass = TimePlanSlot::query()
-                ->where('time_plan_id', $plan->id)
-                ->where('day_of_week', $data['day_of_week'])
-                ->where('id', '!=', $this->slotId ?? 0)
-                ->where('starts_at', '<', $data['ends_at'])
-                ->where('ends_at', '>', $data['starts_at'])
-                ->exists();
-
-            if ($conflictInClass) {
-                $this->notification()->error(
-                    title: 'Chevauchement horaire',
-                    description: 'Ce créneau chevauche déjà un autre cours de cette classe.',
-                );
-                throw ValidationException::withMessages(['starts_at' => 'Ce créneau chevauche déjà un autre cours de cette classe.']);
-            }
-
-            $teacherId = $assignment->teacher_id;
-
-            $conflictForTeacher = TimePlanSlot::query()
-                ->where('day_of_week', $data['day_of_week'])
-                ->where('id', '!=', $this->slotId ?? 0)
-                ->where('starts_at', '<', $data['ends_at'])
-                ->where('ends_at', '>', $data['starts_at'])
-                ->whereHas('timePlan', fn (Builder $q) => $q->where('school_year_id', $plan->school_year_id))
-                ->whereHas(
-                    'classeSubjectOfSchoolYear',
-                    fn (Builder $q) => $q
-                        ->where('teacher_id', $teacherId)
-                        ->whereNull('ended_at')
-                        ->where('is_active', true)
-                )
-                ->exists();
-
-            if ($conflictForTeacher) {
-                $this->notification()->error(
-                    title: 'Conflit enseignant',
-                    description: 'Cet enseignant a déjà un cours sur ce créneau dans une autre classe.',
-                );
-                throw ValidationException::withMessages([
-                    'assignment_id' => 'Cet enseignant a déjà un cours sur ce créneau dans une autre classe.',
-                ]);
-            }
-
-            $slot = $this->slotId
-                ? TimePlanSlot::query()->where('time_plan_id', $plan->id)->findOrFail($this->slotId)
-                : new TimePlanSlot(['time_plan_id' => $plan->id]);
-
-            $slot->fill([
-                'classe_subject_of_school_year_id' => $assignment->id,
-                'day_of_week'                      => $data['day_of_week'],
-                'starts_at'                        => $data['starts_at'],
-                'ends_at'                          => $data['ends_at'],
-                'label'                            => $data['slot_label'] ?: null,
-                'notes'                            => $data['slot_notes'] ?: null,
-            ]);
-            $slot->save();
-        });
-
-        $this->showSlotForm = false;
-        $this->resetSlotForm();
-        unset($this->currentPlan, $this->assignments, $this->plans);
-
-        $this->notification()->success(
-            title: 'Créneau enregistré',
-            description: 'Le créneau a été enregistré avec succès.',
-        );
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    //  HELPERS PRIVÉS
-    // ─────────────────────────────────────────────────────────────
-
     private function resetPlanForm(): void
     {
         $this->reset('timePlanId', 'classe_id', 'title', 'notes', 'status');
@@ -507,14 +345,6 @@ class TimePlanDashboard extends Component
             ->where('is_active', true)
             ->orderByDesc('id')
             ->value('id');
-    }
-
-    private function resetSlotForm(): void
-    {
-        $this->reset('slotId', 'assignment_id', 'slot_label', 'slot_notes');
-        $this->day_of_week = 1;
-        $this->starts_at = '08:00';
-        $this->ends_at = '10:00';
     }
 
     public function render()

@@ -242,6 +242,16 @@
                             </div>
 
                             <div class="mt-4 flex flex-wrap gap-1.5">
+                                <a wire:navigate
+                                    href="{{ route('tenant.classe.profil', ['classe_slug' => $plan->classe->slug]) }}"
+                                    title="Accéder à la classe {{ $plan->classe->code }}"
+                                    class="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium
+                                   bg-green-500/35 hover:bg-green-600 text-white transition-all disabled:opacity-60">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <x-lucide-school class="w-3.5 h-3.5" /> Aller à la classe
+                                    </span>
+                                </a>
+
                                 <button wire:click="openPlan({{ $plan->id }})" wire:loading.attr="disabled"
                                     wire:target="openPlan({{ $plan->id }})"
                                     class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
@@ -315,25 +325,7 @@
         {{-- ========== PLAN OUVERT + GRILLE HEBDO ========== --}}
         @if ($this->currentPlan)
             @php
-                $weekDays = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
-                $planSlots = $this->currentPlan->slots->sortBy(
-                    fn($slot) => sprintf('%d-%s', $slot->day_of_week, $slot->starts_at),
-                );
-                $periods = $planSlots
-                    ->groupBy(
-                        fn($slot) => substr((string) $slot->starts_at, 0, 5) .
-                            '|' .
-                            substr((string) $slot->ends_at, 0, 5),
-                    )
-                    ->sortKeys();
-                $slotColors = [
-                    'bg-emerald-500/15 border-emerald-500/25 text-emerald-200',
-                    'bg-sky-500/15 border-sky-500/25 text-sky-200',
-                    'bg-violet-500/15 border-violet-500/25 text-violet-200',
-                    'bg-amber-500/15 border-amber-500/25 text-amber-200',
-                    'bg-rose-500/15 border-rose-500/25 text-rose-200',
-                    'bg-cyan-500/15 border-cyan-500/25 text-cyan-200',
-                ];
+                $planSlots = $this->currentPlan->slots;
             @endphp
 
             <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6 space-y-5"
@@ -354,18 +346,29 @@
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-1.5">
-                        <button title="Ajouter un créneau" wire:click="openCreateSlot" wire:loading.attr="disabled"
-                            wire:target="openCreateSlot"
+                        <button title="Ajouter un créneau" wire:click="openCreateSlot({{ $this->currentPlan->id }})"
+                            wire:loading.attr="disabled" wire:target="openCreateSlot({{ $this->currentPlan->id }})"
                             class="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium
                                    bg-indigo-500 hover:bg-indigo-400 text-white transition-all disabled:opacity-60">
-                            <span wire:loading.remove wire:target="openCreateSlot"
+                            <span wire:loading.remove wire:target="openCreateSlot({{ $this->currentPlan->id }})"
                                 class="inline-flex items-center gap-1.5">
                                 <x-lucide-plus class="w-3.5 h-3.5" /> Créneau
                             </span>
-                            <span wire:loading wire:target="openCreateSlot" class="inline-flex items-center gap-1.5">
+                            <span wire:loading wire:target="openCreateSlot({{ $this->currentPlan->id }})"
+                                class="inline-flex items-center gap-1.5">
                                 <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" /> …
                             </span>
                         </button>
+
+                        <a wire:navigate
+                            href="{{ route('tenant.classe.profil', ['classe_slug' => $this->currentPlan->classe->slug]) }}"
+                            title="Accéder à la classe {{ $this->currentPlan->classe->code }}"
+                            class="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-medium
+                                   bg-green-500/25 hover:bg-green-600 text-white transition-all disabled:opacity-60">
+                            <span class="inline-flex items-center gap-1.5">
+                                <x-lucide-school class="w-3.5 h-3.5" /> Aller à la classe
+                            </span>
+                        </a>
 
                         @if (!$this->currentPlan->archived)
                             @if ($this->currentPlan->status !== 'published')
@@ -482,139 +485,255 @@
                     </div>
                 </div>
 
-                {{-- Grille hebdo --}}
-                <div class="rounded-2xl border border-white/[0.06] overflow-hidden">
+                {{-- Grille hebdo fixe 07h–19h --}}
+                @php
+                    $days = $this->weekDays();
+                    $timeColPx = 112; // largeur colonne Horaire
+                    $dayColPx = 168; // largeur fixe de chaque jour (à ajuster)
+                    $tableWidth = $timeColPx + count($days) * $dayColPx;
+                @endphp
+
+                <div class="min-w-0 max-w-full rounded-2xl border border-white/[0.06] overflow-hidden">
                     <div
                         class="flex flex-col gap-2 border-b border-white/[0.05] px-4 py-3
-                                sm:flex-row sm:items-center sm:justify-between">
+                sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h3 class="text-sm font-semibold text-white">Vue hebdomadaire</h3>
-                            <p class="text-[11px] text-slate-500">Modifier / supprimer sur chaque créneau</p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
-                            <span class="inline-flex items-center gap-1.5">
-                                <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Cours
-                            </span>
-                            <span class="inline-flex items-center gap-1.5">
-                                <span class="h-2 w-2 rounded-full bg-sky-400"></span> Sciences
-                            </span>
-                            <span class="inline-flex items-center gap-1.5">
-                                <span class="h-2 w-2 rounded-full bg-violet-400"></span> Autres
-                            </span>
+                            <p class="text-[11px] text-slate-500">
+                                Grille 07h–19h · récréation après 09h–10h · pause déjeuner 13h–14h
+                                · créneau en cours mis en évidence
+                            </p>
                         </div>
                     </div>
 
-                    @if ($planSlots->isEmpty())
-                        <div class="py-14 text-center">
-                            <div
-                                class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-500/10 mb-3">
-                                <x-lucide-calendar-plus class="w-6 h-6 text-cyan-400" />
-                            </div>
-                            <p class="font-semibold text-white">Aucun créneau</p>
-                            <p class="mt-1 text-sm text-slate-500 mb-4">Ajoutez les premières séances</p>
-                            <button wire:click="openCreateSlot" wire:loading.attr="disabled"
-                                wire:target="openCreateSlot"
-                                class="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-medium
-                                       bg-cyan-500 hover:bg-cyan-400 text-white transition-all disabled:opacity-60">
-                                <x-lucide-plus class="w-3.5 h-3.5" /> Ajouter un créneau
-                            </button>
-                        </div>
-                    @else
-                        <div class="overflow-x-auto p-2 sm:p-3">
-                            <table
-                                class="w-full min-w-[1050px] table-fixed border-separate border-spacing-1 text-left text-xs">
-                                <thead>
-                                    <tr>
+                    <div class="overflow-x-auto overscroll-x-contain">
+                        <table class="table-fixed border-collapse text-left text-xs"
+                            style="width: {{ $tableWidth }}px; min-width: {{ $tableWidth }}px;">
+                            <colgroup>
+                                <col style="width: {{ $timeColPx }}px">
+                                @foreach ($days as $day => $dayName)
+                                    <col style="width: {{ $dayColPx }}px">
+                                @endforeach
+                            </colgroup>
+
+                            <thead>
+                                <tr class="border-b border-white/[0.06]">
+                                    <th
+                                        class="sticky left-0 z-20 bg-[#0c101c] px-2 py-3 text-center
+                               text-[11px] font-bold uppercase tracking-wider text-slate-500 border-r border-white/[0.06]">
+                                        Horaire
+                                    </th>
+                                    @foreach ($days as $day => $dayName)
+                                        @php $isTodayColumn = (int) $day === (int) now()->dayOfWeekIso; @endphp
                                         <th
-                                            class="w-28 rounded-lg bg-white/[0.03] px-3 py-3 font-semibold text-cyan-400">
-                                            Horaire
-                                        </th>
-                                        @foreach ($weekDays as $dayName)
-                                            <th
-                                                class="rounded-lg bg-white/[0.03] px-3 py-3 text-center font-semibold text-cyan-400">
+                                            class="px-2 py-3 text-center text-sm font-semibold border-r border-white/[0.05] last:border-r-0
+                                   {{ $isTodayColumn ? 'text-cyan-300 bg-cyan-500/10' : 'text-cyan-400 bg-white/[0.02]' }}">
+                                            <span class="inline-flex items-center justify-center gap-1.5">
                                                 {{ $dayName }}
-                                            </th>
-                                        @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($periods as $period => $slotsInPeriod)
-                                        @php([$periodStart, $periodEnd] = explode('|', $period))
-                                        <tr>
-                                            <th
-                                                class="rounded-lg border border-white/[0.04] bg-white/[0.02] px-3 py-3 text-center">
-                                                <span
-                                                    class="whitespace-nowrap font-mono font-normal text-slate-500 text-center flex items-center justify-center gap-1">
-                                                    {{ \Illuminate\Support\Carbon::parse($periodStart)->format('H\hi') }}
-                                                    <span class="text-slate-600">–</span>
-                                                    {{ \Illuminate\Support\Carbon::parse($periodEnd)->format('H\hi') }}
-                                                </span>
-                                            </th>
-                                            @foreach ($weekDays as $dayNumber => $dayName)
-                                                @php($slot = $slotsInPeriod->firstWhere('day_of_week', $dayNumber))
-                                                <td class="h-28 rounded-lg border border-white/[0.04] p-1 align-top">
-                                                    @if ($slot)
-                                                        @php($colorClass = $slotColors[abs(crc32((string) ($slot->subject?->name ?? $slot->id))) % count($slotColors)])
-                                                        <div wire:key="weekly-slot-{{ $slot->id }}"
-                                                            class="flex h-full min-h-24 flex-col rounded-lg border p-2 {{ $colorClass }}">
-                                                            <div class="flex items-start justify-between gap-1">
-                                                                <p class="line-clamp-2 font-bold leading-4">
-                                                                    {{ $slot->subject?->name ?? 'Affectation indisponible' }}
-                                                                </p>
-                                                                @if (!$this->currentPlan->archived)
-                                                                    <div class="flex shrink-0 items-center gap-0.5">
-                                                                        <button type="button"
-                                                                            wire:click="editSlot({{ $slot->id }})"
-                                                                            wire:loading.attr="disabled"
-                                                                            wire:target="editSlot({{ $slot->id }})"
-                                                                            title="Modifier"
-                                                                            class="rounded p-1 opacity-60 hover:opacity-100 hover:bg-white/10 transition-all disabled:opacity-40">
-                                                                            <span wire:loading.remove
-                                                                                wire:target="editSlot({{ $slot->id }})">
-                                                                                <x-lucide-pencil class="w-3.5 h-3.5" />
-                                                                            </span>
-                                                                            <span wire:loading
-                                                                                wire:target="editSlot({{ $slot->id }})">
-                                                                                <x-lucide-loader-2
-                                                                                    class="w-3.5 h-3.5 animate-spin" />
-                                                                            </span>
-                                                                        </button>
-                                                                        <button type="button"
-                                                                            wire:click="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
-                                                                            wire:loading.attr="disabled"
-                                                                            wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
-                                                                            title="Supprimer"
-                                                                            class="rounded p-1 opacity-60 hover:opacity-100 hover:bg-white/10 hover:text-rose-300 transition-all disabled:opacity-40">
-                                                                            <span wire:loading.remove
-                                                                                wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
-                                                                                <x-lucide-trash-2
-                                                                                    class="w-3.5 h-3.5" />
-                                                                            </span>
-                                                                            <span wire:loading
-                                                                                wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
-                                                                                <x-lucide-loader-2
-                                                                                    class="w-3.5 h-3.5 animate-spin" />
-                                                                            </span>
-                                                                        </button>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                            <p class="mt-1 truncate text-[11px] opacity-80">
-                                                                {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
-                                                            </p>
-                                                            @if ($slot->label)
-                                                                <p class="mt-1 line-clamp-2 text-[11px] opacity-70">
-                                                                    {{ $slot->label }}
-                                                                </p>
-                                                            @endif
-                                                        </div>
-                                                    @endif
+                                                @if ($isTodayColumn)
+                                                    <span
+                                                        class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                                                @endif
+                                            </span>
+                                        </th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach ($this->scheduleRows() as $row)
+                                    @if ($row['type'] === 'break')
+                                        <tr class="border-b border-white/[0.05]">
+                                            {{-- Fond opaque sur le td, teinte dans le div interne --}}
+                                            <td
+                                                class="sticky left-0 z-10 bg-[#0c101c] p-0 border-r border-white/[0.06]">
+                                                <div
+                                                    class="px-2 py-2 text-center {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
+                                                    <span
+                                                        class="inline-flex flex-col items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide
+                                               {{ $row['variant'] === 'lunch' ? 'text-amber-400/90' : 'text-sky-400/90' }}">
+                                                        <x-lucide-coffee class="w-3.5 h-3.5" />
+                                                        {{ $row['label'] }}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            @foreach ($days as $day => $dayName)
+                                                <td
+                                                    class="px-1 py-1.5 border-r border-white/[0.05] last:border-r-0
+                                           {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
+                                                    <div
+                                                        class="h-8 rounded-lg border border-dashed
+                                               {{ $row['variant'] === 'lunch'
+                                                   ? 'border-amber-500/20 bg-amber-500/5 text-amber-500/70'
+                                                   : 'border-sky-500/20 bg-sky-500/5 text-sky-500/70' }}
+                                               flex items-center justify-center text-[10px] font-medium">
+                                                        {{ $row['label'] }}
+                                                    </div>
                                                 </td>
                                             @endforeach
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    @else
+                                        <tr class="border-b border-white/[0.05]"
+                                            wire:key="dash-row-{{ $row['start'] }}">
+                                            <td
+                                                class="sticky left-0 z-10 bg-[#0c101c] px-2 py-2 text-center border-r border-white/[0.06] align-middle">
+                                                <span
+                                                    class="font-mono text-xs font-bold text-slate-400 whitespace-nowrap">
+                                                    {{ \Illuminate\Support\Carbon::parse($row['start'])->format('H\hi') }}
+                                                    <span class="text-slate-600">–</span>
+                                                    {{ \Illuminate\Support\Carbon::parse($row['end'])->format('H\hi') }}
+                                                </span>
+                                            </td>
+
+                                            @foreach ($days as $day => $dayName)
+                                                @php
+                                                    $covered = $this->isCellCoveredBySpan(
+                                                        $this->currentPlan->id,
+                                                        $day,
+                                                        $row['start'],
+                                                    );
+                                                    $slot = $covered
+                                                        ? null
+                                                        : $this->slotFragmentAt(
+                                                            $this->currentPlan->id,
+                                                            $day,
+                                                            $row['start'],
+                                                        );
+                                                    $span = $slot ? $this->slotContiguousSpan($slot, $row['start']) : 1;
+                                                    $isLive = $slot ? $this->isSlotLive($slot) : false;
+                                                @endphp
+
+                                                @if ($covered)
+                                                    {{-- absorbé par rowspan --}}
+                                                @elseif ($slot)
+                                                    @php
+                                                        $minH = max(72, $span * 72);
+                                                    @endphp
+                                                    <td rowspan="{{ $span }}"
+                                                        class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                        wire:key="dash-cell-{{ $day }}-{{ $row['start'] }}-{{ $slot->id }}">
+                                                        <div @class([
+                                                            'relative h-full rounded-xl p-2.5 flex flex-col gap-1.5 transition-all border',
+                                                            'border-cyan-400/80 bg-cyan-500/15 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/30' => $isLive,
+                                                            'border-emerald-500/20 bg-emerald-500/10' => !$isLive,
+                                                        ])
+                                                            style="min-height: {{ $minH }}px;">
+
+                                                            @if ($isLive)
+                                                                <div class="absolute -top-2 right-2 z-10">
+                                                                    <span
+                                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide
+                                                               bg-cyan-500 text-white shadow-md shadow-cyan-500/40 animate-pulse">
+                                                                        <span
+                                                                            class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                                                                        En cours
+                                                                    </span>
+                                                                </div>
+                                                            @endif
+
+                                                            @if (!$this->currentPlan->archived)
+                                                                <div @class([
+                                                                    'absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-70 hover:opacity-100 transition-opacity',
+                                                                    'mt-3' => $isLive,
+                                                                ])>
+                                                                    <button type="button"
+                                                                        wire:click="editSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
+                                                                        wire:loading.attr="disabled"
+                                                                        wire:target="editSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
+                                                                        title="Modifier"
+                                                                        class="rounded p-1 text-slate-400 hover:text-cyan-300 hover:bg-white/10 transition-all disabled:opacity-40">
+                                                                        <span wire:loading.remove
+                                                                            wire:target="editSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
+                                                                            <x-lucide-pencil class="w-3.5 h-3.5" />
+                                                                        </span>
+                                                                        <span wire:loading
+                                                                            wire:target="editSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
+                                                                            <x-lucide-loader-2
+                                                                                class="w-3.5 h-3.5 animate-spin" />
+                                                                        </span>
+                                                                    </button>
+                                                                    <button type="button"
+                                                                        wire:click="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
+                                                                        wire:loading.attr="disabled"
+                                                                        wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})"
+                                                                        title="Supprimer"
+                                                                        class="rounded p-1 text-slate-400 hover:text-rose-300 hover:bg-white/10 transition-all disabled:opacity-40">
+                                                                        <span wire:loading.remove
+                                                                            wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
+                                                                            <x-lucide-trash-2 class="w-3.5 h-3.5" />
+                                                                        </span>
+                                                                        <span wire:loading
+                                                                            wire:target="deleteSlot({{ $slot->id }}, {{ $this->currentPlan->id }})">
+                                                                            <x-lucide-loader-2
+                                                                                class="w-3.5 h-3.5 animate-spin" />
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            @endif
+
+                                                            <div class="flex items-start gap-1.5 pr-6">
+                                                                <x-lucide-book-open @class([
+                                                                    'w-3.5 h-3.5 shrink-0 mt-0.5',
+                                                                    'text-cyan-300' => $isLive,
+                                                                    'text-emerald-400' => !$isLive,
+                                                                ]) />
+                                                                <p class="font-semibold leading-5 text-white text-sm">
+                                                                    {{ $slot->subject?->code ?? ($slot->label ?? 'Cours') }}
+                                                                </p>
+                                                            </div>
+
+                                                            <p class="mt-0.5 truncate text-xs text-slate-400">
+                                                                {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                            </p>
+
+                                                            @if ($slot->label)
+                                                                <p
+                                                                    class="mt-0.5 line-clamp-2 text-[11px] text-slate-500">
+                                                                    {{ $slot->label }}
+                                                                </p>
+                                                            @endif
+
+                                                            <div class="pt-1 mt-auto">
+                                                                <div @class([
+                                                                    'flex items-center gap-1.5 font-mono text-xs',
+                                                                    'text-cyan-300' => $isLive,
+                                                                    'text-orange-400' => !$isLive,
+                                                                ])>
+                                                                    <x-lucide-clock class="w-3.5 h-3.5 shrink-0" />
+                                                                    <span>{{ $slot->start }}</span>
+                                                                    <span class="opacity-50">–</span>
+                                                                    <span>{{ $slot->end }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                @else
+                                                    <td class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                        wire:key="dash-empty-{{ $day }}-{{ $row['start'] }}">
+                                                        <div
+                                                            class="h-[72px] rounded-xl bg-white/[0.015] border border-white/[0.03]">
+                                                        </div>
+                                                    </td>
+                                                @endif
+                                            @endforeach
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if ($planSlots->isEmpty())
+                        <div class="border-t border-white/[0.05] py-8 text-center">
+                            <p class="text-sm text-slate-500 mb-3">Aucun créneau pour le moment</p>
+                            <button wire:click="openCreateSlot({{ $this->currentPlan->id }})"
+                                wire:loading.attr="disabled"
+                                wire:target="openCreateSlot({{ $this->currentPlan->id }})"
+                                class="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-medium
+                       bg-cyan-500 hover:bg-cyan-400 text-white transition-all disabled:opacity-60">
+                                <x-lucide-plus class="w-3.5 h-3.5" /> Ajouter un créneau
+                            </button>
                         </div>
                     @endif
                 </div>

@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenants\Classes\Sections;
 
 use App\Livewire\Tenants\ActionsTraits\ClassesActions;
+use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Models\Classe;
 use App\Models\SchoolYear;
 use App\Models\TimePlan;
@@ -13,23 +14,31 @@ use WireUi\Traits\WireUiActions;
 
 class ClassePlanPage extends Component
 {
-
-
-    use WireUiActions, ClassesActions;
+    use WireUiActions;
+    use ClassesActions;
+    use TimePlanActions;
 
     public ?int $period = null;
-
     public ?string $classe_slug = null;
-
     public $counter = 0;
 
+    // Formulaire créneau (requis par TimePlanActions)
+    public bool $showSlotForm = false;
+    public ?int $slotId = null;
+    public ?int $slotFormPlanId = null;
+    public ?int $assignment_id = null;
+    public int $day_of_week = 1;
+    public string $starts_at = '08:00';
+    public string $ends_at = '10:00';
+    public string $slot_label = '';
+    public string $slot_notes = '';
+
     #[On('DataUpdatedEventLiveEvent')]
-    public function reloaddata()
+    public function reloaddata(): void
     {
         $this->counter++;
+        $this->refreshPlansData();
     }
-
-
 
     #[Computed]
     public function activeYear(): ?SchoolYear
@@ -46,22 +55,23 @@ class ClassePlanPage extends Component
 
         $classe = Classe::firstWhere('slug', $this->classe_slug);
 
-        if(!$classe) return abort(404);
+        if (!$classe) {
+            return abort(404);
+        }
 
         return $classe;
     }
 
-    protected function loadTimetable(): ?TimePlan
+    #[Computed]
+    public function timePlan()
     {
-        if (! $this->activeYear) {
+        if (!$this->activeYear || !$this->classe) {
             return null;
         }
 
-        // Never expose draft/archived plans on the class profile.
         return TimePlan::query()
             ->where('classe_id', $this->classe->id)
             ->where('school_year_id', $this->activeYear->id)
-            // ->where('status', 'published')
             ->with([
                 'schoolYear',
                 'slots' => fn ($query) => $query->orderBy('starts_at'),
@@ -71,39 +81,14 @@ class ClassePlanPage extends Component
             ->first();
     }
 
+    /** Affectations pour le formulaire créneau (plan en cours d’édition). */
     #[Computed]
-    public function days()
+    public function assignments()
     {
-        return [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
-    }
-    
-    #[Computed]
-    public function timePlan()
-    {
-        return $this->loadTimetable();
-    }
-    
-    #[Computed]
-    public function slotsByDay()
-    {
-        return collect($this->days)->mapWithKeys(fn ($label, $day) => [
-            $day => $this->timePlan?->slots->where('day_of_week', $day)->values() ?? collect(),
-        ]);
-    }
+        $planId = $this->slotFormPlanId ?? $this->timePlan?->id;
 
-    #[Computed]
-    public function timeRanges()
-    {
-        
-
-        return $this->timePlan?->slots
-            ->map(fn ($slot) => [$slot->starts_at, $slot->ends_at])
-            ->unique(fn ($range) => $range[0].'|'.$range[1])
-            ->sortBy(fn ($range) => $range[0])
-            ->values() ?? collect();
-
+        return $planId ? $this->assignmentsFor($planId) : collect();
     }
-
 
     public function render()
     {
