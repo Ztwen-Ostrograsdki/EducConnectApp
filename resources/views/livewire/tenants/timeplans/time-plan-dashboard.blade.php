@@ -16,8 +16,7 @@
             </div>
             <button type="button" wire:click="openCreatePlan" wire:loading.attr="disabled" wire:target="openCreatePlan"
                 class="inline-flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium
-                       bg-cyan-500 hover:bg-cyan-400 text-white
-                       shadow-lg shadow-cyan-500/20 transition-all shrink-0 disabled:opacity-60">
+                       bg-cyan-500/30 hover:bg-cyan-600 text-white shadow-lg shadow-cyan-500/20 transition-all shrink-0 disabled:opacity-60">
                 <span wire:loading.remove wire:target="openCreatePlan" class="inline-flex items-center gap-2">
                     <x-lucide-plus class="w-4 h-4" />
                     Nouvel emploi du temps
@@ -489,8 +488,8 @@
                 {{-- Grille hebdo fixe 07h–19h --}}
                 @php
                     $days = $this->weekDays();
-                    $timeColPx = 112; // largeur colonne Horaire
-                    $dayColPx = 168; // largeur fixe de chaque jour (à ajuster)
+                    $timeColPx = 139; // largeur colonne Horaire
+                    $dayColPx = 170; // largeur fixe de chaque jour (à ajuster)
                     $tableWidth = $timeColPx + count($days) * $dayColPx;
                 @endphp
 
@@ -499,8 +498,8 @@
                         class="flex flex-col gap-2 border-b border-white/[0.05] px-4 py-3
                 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h3 class="text-sm font-semibold text-white">Vue hebdomadaire</h3>
-                            <p class="text-[11px] text-slate-500">
+                            <h3 class="text-lg font-semibold text-white">Vue hebdomadaire</h3>
+                            <p class="text-xs text-slate-500 font-mono mt-3">
                                 Grille 07h–19h · récréation après 09h–10h · pause déjeuner 13h–14h
                                 · créneau en cours mis en évidence
                             </p>
@@ -732,7 +731,7 @@
                                 wire:loading.attr="disabled"
                                 wire:target="openCreateSlot({{ $this->currentPlan->id }})"
                                 class="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-medium
-                       bg-cyan-500 hover:bg-cyan-400 text-white transition-all disabled:opacity-60">
+                       bg-cyan-500/35 hover:bg-cyan-700 text-white transition-all disabled:opacity-60">
                                 <x-lucide-plus class="w-3.5 h-3.5" /> Ajouter un créneau
                             </button>
                         </div>
@@ -902,7 +901,7 @@
                             <select wire:model="day_of_week" required
                                 class="w-full h-10 rounded-xl border border-white/[0.08] bg-[#070a12] px-3 text-sm text-white
                                        focus:border-cyan-500/50 focus:outline-none transition-all">
-                                @foreach ([1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 7 => 'Dimanche'] as $num => $label)
+                                @foreach (config('timeplan.days') as $num => $label)
                                     <option value="{{ $num }}">{{ $label }}</option>
                                 @endforeach
                             </select>

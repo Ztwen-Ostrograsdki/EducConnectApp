@@ -203,12 +203,15 @@ class TimePlanDashboard extends Component
 
     public function openCreatePlan(): void
     {
+        $this->resetErrorBag();
         $this->resetPlanForm();
         $this->showPlanForm = true;
     }
 
     public function editPlan(int $id): void
     {
+        $this->resetErrorBag();
+
         $plan = TimePlan::query()->find($id);
 
         if (!$plan) {
@@ -232,6 +235,8 @@ class TimePlanDashboard extends Component
 
     public function savePlan(): void
     {
+        $this->resetErrorBag();
+
         $data = $this->validate([
             'school_year_id' => ['required', 'integer', 'exists:tenant.school_years,id'],
             'classe_id'      => ['required', 'integer', 'exists:tenant.classes,id'],
@@ -344,6 +349,7 @@ class TimePlanDashboard extends Component
 
     private function resetPlanForm(): void
     {
+        $this->resetErrorBag();
         $this->reset('timePlanId', 'classe_id', 'title', 'notes', 'status');
         $this->status = 'draft';
         $this->school_year_id ??= SchoolYear::query()

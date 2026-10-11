@@ -382,5 +382,25 @@ class Subject extends Model
     }
 
 
+    public function ap_times()
+    {
+        return $this->hasMany(SubjectAnimationTime::class);
+    }
+
+    public function ap_time() : ?HasOneThrough
+    {
+        $schoolYear = SchoolYear::current()?->first();
+
+        if(!$schoolYear) return null;
+
+        return $this->hasOneThrough(
+            Subject::class,
+            SubjectAnimationTime::class,
+        )
+        ->where('subject_animation_times.school_year_id', $schoolYear->id)
+        ->where('subject_animation_times.is_active', true);
+    }
+
+
 
 }

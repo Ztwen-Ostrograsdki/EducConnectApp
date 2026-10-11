@@ -5,6 +5,9 @@ namespace App\Livewire\Tenants\Subjects;
 use App\Livewire\Tenants\ActionsTraits\SubjectsActions;
 use App\Models\SchoolYear;
 use App\Models\Subject;
+use App\Models\SubjectAnimationTime;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -122,8 +125,6 @@ class SubjectsPortal extends Component
                         ->orderBy('name')
                         ->paginate($this->perPage);
     }
-
-
 
 
     public function render()

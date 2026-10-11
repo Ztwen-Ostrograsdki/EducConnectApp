@@ -81,6 +81,15 @@
         {{-- ===================== ACTIONS ===================== --}}
         <section class="mb-6">
             <div class="flex flex-wrap gap-2">
+                <a wire:navigate href="{{ route('tenant.subject.manage.aptime') }}"
+                    class="px-3.5 inline-flex items-center rounded-lg text-xs font-medium bg-orange-500/10 text-orange-300 border border-orange-500/20 hover:bg-orange-500/60 transition-all">
+                    <span class="inline-flex items-center">
+                        <span class="inline-flex items-center gap-2">
+                            <x-lucide-calendar-days class="w-4 h-4" />
+                            <span>Gérer les heures AP</span>
+                        </span>
+                    </span>
+                </a>
                 <button
                     class="h-9 px-3.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
                     Imprimer PDF
@@ -364,4 +373,6 @@
         </section>
 
     </div>
+
 </div>
+

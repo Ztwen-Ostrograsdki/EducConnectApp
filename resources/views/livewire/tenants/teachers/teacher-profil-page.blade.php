@@ -485,21 +485,28 @@
                                                 @if ($covered)
                                                     {{-- absorbé par rowspan --}}
                                                 @elseif ($slot)
-                                                    @php $minH = max(72, $span * 72); @endphp
+                                                    @php
+                                                        $minH = max(72, $span * 72);
+                                                        $isAp = (bool) ($slot->is_ap ?? false);
+                                                    @endphp
                                                     <td rowspan="{{ $span }}"
                                                         class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
                                                         wire:key="teacher-slot-{{ $slot->id }}">
                                                         <div @class([
                                                             'relative h-full rounded-xl p-2.5 flex flex-col gap-1.5 transition-all border',
-                                                            'border-cyan-400/80 bg-cyan-500/15 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/30' => $isLive,
-                                                            'border-indigo-500/25 bg-indigo-500/10' => !$isLive,
+                                                            'border-cyan-400/80 bg-cyan-500/15 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/30' =>
+                                                                $isLive && !$isAp,
+                                                            'border-violet-400/80 bg-violet-500/15 shadow-lg shadow-violet-500/20 ring-2 ring-violet-400/30' =>
+                                                                $isLive && $isAp,
+                                                            'border-indigo-500/25 bg-indigo-500/10' => !$isLive && !$isAp,
+                                                            'border-violet-500/30 bg-violet-500/10' => !$isLive && $isAp,
                                                         ])
                                                             style="min-height: {{ $minH }}px;">
 
                                                             @if ($isLive)
                                                                 <div class="absolute -top-2 right-2 z-10">
                                                                     <span
-                                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-cyan-500 text-white shadow-md animate-pulse">
+                                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide {{ $isAp ? 'bg-violet-500' : 'bg-cyan-500' }} text-white shadow-md animate-pulse">
                                                                         <span
                                                                             class="h-1.5 w-1.5 rounded-full bg-white"></span>
                                                                         En cours
@@ -507,7 +514,16 @@
                                                                 </div>
                                                             @endif
 
-                                                            @if ($planId && !$slot->timePlan?->archived)
+                                                            @if ($isAp)
+                                                                <div class="absolute top-1.5 right-1.5">
+                                                                    <span
+                                                                        class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                                                                        AP
+                                                                    </span>
+                                                                </div>
+                                                            @endif
+
+                                                            @if ($planId && !$isAp && !$slot->timePlan?->archived)
                                                                 <div @class([
                                                                     'absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-70 hover:opacity-100',
                                                                     'mt-3' => $isLive,
@@ -547,11 +563,13 @@
                                                                 </div>
                                                             @endif
 
-                                                            <div class="flex items-start gap-1.5 pr-6">
+                                                            <div
+                                                                class="flex items-start gap-1.5 {{ $isAp ? 'pr-10' : 'pr-6' }}">
                                                                 <x-lucide-book-open @class([
                                                                     'w-3.5 h-3.5 shrink-0 mt-0.5',
-                                                                    'text-cyan-300' => $isLive,
-                                                                    'text-indigo-300' => !$isLive,
+                                                                    'text-violet-300' => $isAp,
+                                                                    'text-cyan-300' => $isLive && !$isAp,
+                                                                    'text-indigo-300' => !$isLive && !$isAp,
                                                                 ]) />
                                                                 <p class="font-semibold leading-5 text-white text-sm">
                                                                     {{ $slot->subject?->code ?? ($slot->subject?->name ?? ($slot->label ?? 'Cours')) }}
@@ -559,14 +577,19 @@
                                                             </div>
 
                                                             <p class="text-[11px] text-slate-400 truncate">
-                                                                {{ $slot->timePlan?->classe?->name ?? ($slot->classeSubjectOfSchoolYear?->classe?->name ?? 'Classe') }}
+                                                                @if ($isAp)
+                                                                    {{ $slot->label ?: 'Animation pédagogique' }}
+                                                                @else
+                                                                    {{ $slot->timePlan?->classe?->name ?? ($slot->classeSubjectOfSchoolYear?->classe?->name ?? 'Classe') }}
+                                                                @endif
                                                             </p>
 
                                                             <div class="pt-1 mt-auto">
                                                                 <div @class([
                                                                     'flex items-center gap-1.5 font-mono text-xs',
-                                                                    'text-cyan-300' => $isLive,
-                                                                    'text-orange-400' => !$isLive,
+                                                                    'text-violet-300' => $isAp,
+                                                                    'text-cyan-300' => $isLive && !$isAp,
+                                                                    'text-orange-400' => !$isLive && !$isAp,
                                                                 ])>
                                                                     <x-lucide-clock class="w-3.5 h-3.5 shrink-0" />
                                                                     <span>{{ $slot->start }}</span>

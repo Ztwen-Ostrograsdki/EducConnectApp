@@ -410,14 +410,48 @@
                                             Attribution
                                         </span>
                                     </a>
+                                    <a wire:navigate href="{{ route('tenant.subject.manage.aptime') }}"
+                                        class="s-link {{ request()->routeIs('tenant.subject.manage.aptime') ? 'active' : '' }}"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">
+                                            ⚙️
+                                        </div>
+                                        <span class="s-label">
+                                            Gérer AP
+                                        </span>
+                                    </a>
                                 </div>
                             </div>
 
                             @if ($currentTenant?->timetableAble())
-                                <a wire:navigate data-sidebar-item href="{{ route('tenant.time.plans.manage') }}"
-                                    class="s-link {{ request()->routeIs('tenant.time.plans.manage') ? 'active' : '' }}">
-                                    <div class="s-icon">🗓️</div><span class="s-label">Emploi du temps</span>
-                                </a>
+                                <div class="s-acc" id="acc-timeplans">
+                                    <div class="s-acc-trigger" onclick="toggleAcc('acc-timeplans')">
+                                        <div class="s-icon">🗓️</div>
+                                        <span class="s-label">Les emplois du temps</span>
+                                        <span class="s-acc-arrow">▶</span>
+                                    </div>
+                                    <div class="s-acc-content">
+                                        <a wire:navigate href="{{ route('tenant.timeplans.dashboard') }}"
+                                            class="s-link {{ request()->routeIs('tenant.timeplans.dashboard') ? 'active' : '' }}">
+                                            <div class="s-icon">
+                                                <x-lucide-calendar class="w-3 h-3 text-sky-600" />
+                                            </div><span class="s-label">Dashboard</span>
+                                        </a>
+                                        <a wire:navigate href="{{ route('tenant.timeplans.print.manager') }}"
+                                            class="s-link {{ request()->routeIs('tenant.timeplans.print.manager') ? 'active' : '' }}">
+                                            <div class="s-icon">
+                                                <x-lucide-printer class="w-3 h-3 text-sky-600" />
+                                            </div><span class="s-label">Config. Impression</span>
+                                        </a>
+
+                                        <a wire:navigate href="{{ route('tenant.timeplans.print.preview') }}"
+                                            class="s-link {{ request()->routeIs('tenant.timeplans.print.preview') ? 'active' : '' }}">
+                                            <div class="s-icon">
+                                                <x-lucide-eye class="w-3 h-3 text-sky-600" />
+                                            </div><span class="s-label">Aperçu PDF</span>
+                                        </a>
+                                    </div>
+                                </div>
                             @endif
                         </div>
 

@@ -4,6 +4,7 @@ namespace App\Livewire\Tenants\ActionsTraits;
 
 use App\Events\DataUpdatedEvent;
 use App\Models\ClasseSubjectOfSchoolYear;
+use App\Models\SubjectAnimationTime;
 use App\Models\TimePlan;
 use App\Models\TimePlanSlot;
 use Illuminate\Database\Eloquent\Builder;
@@ -150,7 +151,10 @@ trait TimePlanActions
      * Rowspan à partir d’une ligne horaire : heures contiguës uniquement,
      * s’arrête avant récréation / pause déjeuner.
      */
-    public function slotContiguousSpan(TimePlanSlot $slot, string $fromRowStart): int
+    /**
+     * @param  object  $slot  TimePlanSlot ou créneau d’affichage (AP)
+     */
+    public function slotContiguousSpan(object $slot, string $fromRowStart): int
     {
         $slotStart = $this->normalizeTime((string) $slot->starts_at);
         $slotEnd = $this->normalizeTime((string) $slot->ends_at);
@@ -277,7 +281,10 @@ trait TimePlanActions
         return false;
     }
 
-    public function isSlotLive(TimePlanSlot $slot): bool
+    /**
+     * @param  object  $slot  TimePlanSlot ou créneau d’affichage (AP)
+     */
+    public function isSlotLive(object $slot): bool
     {
         $now = Carbon::now();
 
@@ -341,7 +348,7 @@ trait TimePlanActions
     }
 
     /**
-     * Tous les créneaux d’un enseignant sur une année scolaire.
+     * Tous les créneaux de cours d’un enseignant sur une année scolaire.
      */
     public function teacherSlotsFor(int $teacherId, int $schoolYearId): Collection
     {
@@ -363,6 +370,127 @@ trait TimePlanActions
             ->orderBy('day_of_week')
             ->orderBy('starts_at')
             ->get();
+    }
+
+    /**
+     * Heures d’AP actives des matières enseignées par le prof (année donnée).
+     * En cas de chevauchement AP/AP même jour & même plage, un seul est retenu.
+     */
+    public function teacherApTimesFor(int $teacherId, int $schoolYearId): Collection
+    {
+        $subjectIds = ClasseSubjectOfSchoolYear::query()
+            ->where('teacher_id', $teacherId)
+            ->where('school_year_id', $schoolYearId)
+            ->whereNull('ended_at')
+            ->where('is_active', true)
+            ->whereDoesntHave('subject', fn ($q) => $q->whereIn('name', ['conduite', 'Conduite']))
+            ->pluck('subject_id')
+            ->unique()
+            ->filter()
+            ->values();
+
+        if ($subjectIds->isEmpty()) {
+            return collect();
+        }
+
+        $apTimes = SubjectAnimationTime::query()
+            ->where('school_year_id', $schoolYearId)
+            ->where('is_active', true)
+            ->whereIn('subject_id', $subjectIds)
+            ->with(['subject'])
+            ->orderBy('day_of_week')
+            ->orderBy('starts_at')
+            ->get();
+
+        // Déduplication AP/AP : même jour + chevauchement horaire → on garde le premier
+        $kept = collect();
+
+        foreach ($apTimes as $ap) {
+            $start = $this->normalizeTime((string) $ap->starts_at);
+            $end = $this->normalizeTime((string) $ap->ends_at);
+
+            $overlaps = $kept->contains(function ($existing) use ($ap, $start, $end) {
+                if ((int) $existing->day_of_week !== (int) $ap->day_of_week) {
+                    return false;
+                }
+
+                $eStart = $this->normalizeTime((string) $existing->starts_at);
+                $eEnd = $this->normalizeTime((string) $existing->ends_at);
+
+                return $start < $eEnd && $end > $eStart;
+            });
+
+            if (!$overlaps) {
+                $kept->push($ap);
+            }
+        }
+
+        return $kept->values();
+    }
+
+    /**
+     * Transforme un SubjectAnimationTime en objet d’affichage compatible grille.
+     */
+    public function apTimeToDisplaySlot(SubjectAnimationTime $ap): object
+    {
+        $starts = $this->normalizeTime((string) $ap->starts_at);
+        $ends = $this->normalizeTime((string) $ap->ends_at);
+
+        return (object) [
+            'id' => 'ap-' . $ap->id,
+            'day_of_week' => (int) $ap->day_of_week,
+            'starts_at' => $starts,
+            'ends_at' => $ends,
+            'start' => Carbon::parse($starts)->format('H\hi'),
+            'end' => Carbon::parse($ends)->format('H\hi'),
+            'label' => $ap->label ?: 'AP',
+            'notes' => $ap->notes,
+            'time_plan_id' => null,
+            'timePlan' => null,
+            'classeSubjectOfSchoolYear' => null,
+            'subject' => $ap->subject,
+            'is_ap' => true,
+        ];
+    }
+
+    /**
+     * Créneaux cours + heures d’AP pour l’emploi du temps enseignant.
+     * Les cours priment : un AP qui chevauche un cours existant est ignoré.
+     */
+    public function teacherSlotsWithApFor(int $teacherId, int $schoolYearId): Collection
+    {
+        $courseSlots = $this->teacherSlotsFor($teacherId, $schoolYearId);
+        $apTimes = $this->teacherApTimesFor($teacherId, $schoolYearId);
+
+        $displayAp = collect();
+
+        foreach ($apTimes as $ap) {
+            $start = $this->normalizeTime((string) $ap->starts_at);
+            $end = $this->normalizeTime((string) $ap->ends_at);
+
+            $conflictsWithCourse = $courseSlots->contains(function ($slot) use ($ap, $start, $end) {
+                if ((int) $slot->day_of_week !== (int) $ap->day_of_week) {
+                    return false;
+                }
+
+                $sStart = $this->normalizeTime((string) $slot->starts_at);
+                $sEnd = $this->normalizeTime((string) $slot->ends_at);
+
+                return $start < $sEnd && $end > $sStart;
+            });
+
+            if (!$conflictsWithCourse) {
+                $displayAp->push($this->apTimeToDisplaySlot($ap));
+            }
+        }
+
+        return $courseSlots
+            ->concat($displayAp)
+            ->sortBy([
+                fn ($s) => (int) $s->day_of_week,
+                fn ($s) => $this->normalizeTime((string) $s->starts_at),
+            ])
+            ->values();
     }
 
     /**
@@ -563,6 +691,34 @@ trait TimePlanActions
                 throw ValidationException::withMessages([
                     'assignment_id' => 'Cet enseignant a déjà un cours sur ce créneau dans une autre classe.',
                 ]);
+            }
+
+            // Conflit avec une heure d’AP de la même matière (année + jour + chevauchement horaire)
+            if ($assignment->subject_id) {
+                $conflictWithAp = SubjectAnimationTime::query()
+                    ->where('subject_id', $assignment->subject_id)
+                    ->where('school_year_id', $plan->school_year_id)
+                    ->where('is_active', true)
+                    ->where('day_of_week', $data['day_of_week'])
+                    ->where('starts_at', '<', $data['ends_at'])
+                    ->where('ends_at', '>', $data['starts_at'])
+                    ->exists();
+
+                if ($conflictWithAp) {
+                    $assignment->loadMissing('subject');
+                    $subjectName = $assignment->subject?->name
+                        ?? $assignment->subject?->code
+                        ?? 'cette matière';
+
+                    $this->notification()->error(
+                        title: 'Conflit avec une heure d’AP',
+                        description: "Un créneau d’animation pédagogique existe déjà pour {$subjectName} sur ce jour et cet horaire.",
+                    );
+                    throw ValidationException::withMessages([
+                        'starts_at' => "Ce créneau chevauche une heure d’AP de la matière ({$subjectName}).",
+                        'ends_at'   => "Ce créneau chevauche une heure d’AP de la matière ({$subjectName}).",
+                    ]);
+                }
             }
 
             $slot = $this->slotId

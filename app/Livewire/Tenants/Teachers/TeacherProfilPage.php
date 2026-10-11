@@ -87,7 +87,9 @@ class TeacherProfilPage extends Component
         return $this->teacher->user;
     }
 
-    /** Créneaux de l’enseignant pour l’année active. */
+    /**
+     * Créneaux de l’enseignant pour l’année active (cours + heures d’AP des matières).
+     */
     #[Computed]
     public function teacherSlots(): Collection
     {
@@ -95,7 +97,7 @@ class TeacherProfilPage extends Component
             return collect();
         }
 
-        return $this->teacherSlotsFor($this->teacher->id, $this->activeYear->id);
+        return $this->teacherSlotsWithApFor($this->teacher->id, $this->activeYear->id);
     }
 
     /** Créneaux groupés par jour. */
@@ -119,12 +121,12 @@ class TeacherProfilPage extends Component
         return $this->assignmentsForTeacher($this->teacher->id, $this->activeYear->id);
     }
 
-    public function slotFragmentAtTeacher(int $day, string $rowStart): ?TimePlanSlot
+    public function slotFragmentAtTeacher(int $day, string $rowStart): ?object
     {
         $daySlots = $this->teacherSlotsByDay[$day] ?? collect();
 
         $starting = $daySlots->first(
-            fn (TimePlanSlot $slot) => $this->normalizeTime((string) $slot->starts_at) === $rowStart
+            fn (object $slot) => $this->normalizeTime((string) $slot->starts_at) === $rowStart
         );
 
         if ($starting) {
@@ -142,7 +144,7 @@ class TeacherProfilPage extends Component
             return null;
         }
 
-        return $daySlots->first(function (TimePlanSlot $slot) use ($rowStart) {
+        return $daySlots->first(function (object $slot) use ($rowStart) {
             $slotStart = $this->normalizeTime((string) $slot->starts_at);
             $slotEnd = $this->normalizeTime((string) $slot->ends_at);
 

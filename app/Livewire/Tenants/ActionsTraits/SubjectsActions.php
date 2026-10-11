@@ -6,12 +6,14 @@ use App\Events\DataUpdatedEvent;
 use App\Jobs\JobBulkerActionsOnModels;
 use App\Models\Subject;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use WireUi\Traits\WireUiActions;
 
 trait SubjectsActions{
 
 	use WireUiActions;
+
 
 	public $counter = 0;
 

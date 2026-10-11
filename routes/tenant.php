@@ -86,6 +86,7 @@ use App\Livewire\Tenants\Students\StudentsPrintableListComponent;
 use App\Livewire\Tenants\Students\StudentsPrintsManagerComponent;
 use App\Livewire\Tenants\Subjects\CreateSubjectComponent;
 use App\Livewire\Tenants\Subjects\ManagePromotionSpecialityCoefComponent;
+use App\Livewire\Tenants\Subjects\ManageSubjectAPTimeComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectChiefsComponent;
 use App\Livewire\Tenants\Subjects\ManageSubjectComponent;
 use App\Livewire\Tenants\Subjects\SubjectProfil;
@@ -104,6 +105,8 @@ use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\Testimonials\CreateTestimonialComponent;
 use App\Livewire\Tenants\Testimonials\ManageTestimonialsComponent;
 use App\Livewire\Tenants\Timeplans\TimePlanDashboard;
+use App\Livewire\Tenants\TimePlans\TimePlanPrintableListComponent;
+use App\Livewire\Tenants\TimePlans\TimePlanPrintsManagerComponent;
 use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
@@ -225,6 +228,7 @@ Route::middleware([
             Route::get('/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');
             Route::get('/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');
             Route::get('/matieres/{subject_slug}/AE/edition', ManageSubjectChiefsComponent::class)->name('subject.edit.ae');
+            Route::get('/matieres/les-heures-ap/{subject_slug?}', ManageSubjectAPTimeComponent::class)->name('subject.manage.aptime');
 
             // FILIRES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
@@ -325,7 +329,13 @@ Route::middleware([
 
 
             // LES EMPLOIS
-            Route::get('/emplois-du-temps/gestion', TimePlanDashboard::class)->name('time.plans.manage');
+            Route::get('/emplois-du-temps/gestion', TimePlanDashboard::class)->name('timeplans.dashboard');
+
+            Route::get('emplois-du-temps/impression', TimePlanPrintsManagerComponent::class)
+                ->name('timeplans.print.manager');
+
+            Route::get('emplois-du-temps/impression-apercu', TimePlanPrintableListComponent::class)
+                ->name('timeplans.print.preview');
 
 
             // LES ENSEIGNANTS
