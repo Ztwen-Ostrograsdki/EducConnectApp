@@ -130,7 +130,9 @@ class JobToGeneratePrintableTimePlans implements ShouldQueue
             'pdf_title'     => $pdf_title,
             'context_label' => $context_label,
             'schoolYear'    => $this->schoolYear,
+            'isPdf'         => true,
             'target'        => 'timeplans',
+            'repeatHeader' => false,
             'eventName'     => 'TimePlansPDFCompletedSuccessfullyLiveEvent',
         ];
 
@@ -150,6 +152,7 @@ class JobToGeneratePrintableTimePlans implements ShouldQueue
                 'subject_id'  => $this->config['subject_id'] ?? null,
                 'for_teachers'=> $this->mode !== 'classes',
             ],
+            repeatHeader: false,
         );
     }
 }

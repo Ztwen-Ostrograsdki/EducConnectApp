@@ -3,6 +3,7 @@
 namespace App\Helpers\Support;
 
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 
 class TenantStorage
@@ -46,5 +47,27 @@ class TenantStorage
         }
 
         return Storage::url($file);
+    }
+
+    public static function dataUri(?string $file, ?string $fallback = 'images/doc-header.png'): ?string
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+
+        // 1. Image personnalisée du tenant
+        if ($file && $disk->exists($file)) {
+            $mime = $disk->mimeType($file) ?: 'image/png';
+
+            return 'data:' . $mime . ';base64,' . base64_encode($disk->get($file));
+        }
+
+        // 2. Image par défaut (public/images/doc-header.png)
+        if ($fallback && is_file($path = public_path($fallback))) {
+            $mime = mime_content_type($path) ?: 'image/png';
+
+            return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+        }
+
+        return null;
     }
 }

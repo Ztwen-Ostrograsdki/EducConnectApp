@@ -100,7 +100,8 @@ class PDFFactory
         ?string $notification         = null,
         ?array  $docDBInfos           = null,
         bool    $paginable            = true,
-        ?array    $receiverIds = null,
+        ?array  $receiverIds = null,
+        bool    $repeatHeader = false,
         
     ): void {
 
@@ -130,7 +131,8 @@ class PDFFactory
             notification:   $notification,
             docDBInfos:     $docDBInfos,
             paginable:      $paginable,
-            receiverIds:     $receiverIds,
+            receiverIds:    $receiverIds,
+            repeatHeader:   $repeatHeader
         )->onQueue('pdf');
     }
 }

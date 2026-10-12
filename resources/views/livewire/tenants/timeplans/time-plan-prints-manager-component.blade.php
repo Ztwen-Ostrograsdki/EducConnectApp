@@ -1,14 +1,6 @@
 <div class="min-h-screen bg-[#070b14] text-slate-100">
     <div class="mx-auto max-w-[1100px] px-4 sm:px-6 py-10 relative">
 
-        <div wire:loading.flex wire:target="initPrintProcess, resetFilters, selectAllClasses, selectAllTeachers"
-            class="fixed inset-0 z-[200] items-center justify-center bg-[#070b14]/80 backdrop-blur-sm">
-            <div class="flex flex-col items-center gap-4">
-                <div class="w-14 h-14 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin"></div>
-                <span class="text-sm font-mono text-slate-400 tracking-wide">Chargement…</span>
-            </div>
-        </div>
-
         {{-- Header --}}
         <header class="mb-10 text-center">
             <div
@@ -34,13 +26,21 @@
             <a wire:navigate href="{{ route('tenant.timeplans.dashboard') }}"
                 class="h-9 px-3.5 rounded-lg text-xs font-medium bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/25 transition-all inline-flex items-center gap-1.5">
                 <x-lucide-calendar-range class="w-3.5 h-3.5" />
-                Tableau des EDT
+                Tableau de bord des emplois du temps
             </a>
             <a href="{{ route('tenant.timeplans.print.preview') }}"
                 class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
                 <x-lucide-eye class="w-3.5 h-3.5" />
-                Aperçu du document
+                Aperçu du document à imprimer
             </a>
+        </div>
+        <div wire:loading.flex
+            wire:target="initPrintProcess, resetFilters, selectAllClasses, selectAllTeachers, clearClasses, clearTeachers"
+            class=" items-center justify-center my-3">
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-8 h-8 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin"></div>
+                <span class="text-sm font-mono text-slate-400 tracking-wide">Chargement…</span>
+            </div>
         </div>
 
         <div class="space-y-6">

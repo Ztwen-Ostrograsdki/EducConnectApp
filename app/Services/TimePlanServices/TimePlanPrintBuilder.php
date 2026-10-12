@@ -285,6 +285,10 @@ class TimePlanPrintBuilder
     /**
      * Construit la grille cells[day][rowStart] pour une collection de slots (cours ou AP).
      *
+     * Un créneau qui traverse une pause (récréation / déjeuner) est découpé en
+     * plusieurs fragments : un avant la pause, un à la reprise juste après —
+     * comme sur l’affichage Livewire (slotFragmentAt).
+     *
      * @param  Collection<int, object>  $slots
      */
     public function buildCellsFromSlots(Collection $slots, bool $forClasse = true): array
@@ -301,51 +305,13 @@ class TimePlanPrintBuilder
                 if (($row['type'] ?? '') !== 'hour') {
                     continue;
                 }
-
-                $rowStart = $row['start'];
-                $cells[$day][$rowStart] = null;
+                $cells[$day][$row['start']] = null;
             }
 
-            // Marquer les créneaux qui démarrent sur une ligne + rowspan / covered
             foreach ($daySlots as $slot) {
                 $slotStart = $this->normalizeTime((string) $slot->starts_at);
                 $slotEnd = $this->normalizeTime((string) $slot->ends_at);
 
-                // Ligne de départ : exacte ou première heure couverte
-                $startRow = null;
-                foreach ($rows as $row) {
-                    if (($row['type'] ?? '') !== 'hour') {
-                        continue;
-                    }
-                    if ($row['start'] === $slotStart || ($row['start'] < $slotEnd && $row['end'] > $slotStart && $row['start'] >= $slotStart)) {
-                        $startRow = $row['start'];
-                        break;
-                    }
-                    // reprise après pause si le créneau a commencé avant
-                    if ($row['start'] < $slotEnd && $row['end'] > $slotStart && $slotStart < $row['start']) {
-                        // géré plus bas si aucune cellule exacte
-                    }
-                }
-
-                if ($startRow === null) {
-                    foreach ($rows as $row) {
-                        if (($row['type'] ?? '') === 'hour' && $row['start'] < $slotEnd && $row['end'] > $slotStart) {
-                            $startRow = $row['start'];
-                            break;
-                        }
-                    }
-                }
-
-                if ($startRow === null) {
-                    continue;
-                }
-
-                // Si déjà occupé par un autre créneau qui démarre ici, on ignore
-                if (!empty($cells[$day][$startRow]['label'])) {
-                    continue;
-                }
-
-                $span = $this->slotContiguousSpan($slot, $startRow);
                 $isAp = (bool) ($slot->is_ap ?? false);
 
                 if ($forClasse) {
@@ -366,35 +332,107 @@ class TimePlanPrintBuilder
                             ?? null);
                 }
 
-                $cells[$day][$startRow] = [
+                $cellPayload = [
                     'label'   => $label,
                     'detail'  => $detail,
                     'start'   => Carbon::parse($slotStart)->format('H\hi'),
                     'end'     => Carbon::parse($slotEnd)->format('H\hi'),
-                    'span'    => $span,
                     'is_ap'   => $isAp,
                     'covered' => false,
                 ];
 
-                // Marquer les lignes suivantes comme covered
-                $startIdx = $this->scheduleHourIndex($startRow);
-                $marked = 0;
-                for ($i = $startIdx, $n = count($rows); $i < $n && $marked < $span; $i++) {
-                    $row = $rows[$i];
-                    if (($row['type'] ?? '') !== 'hour') {
-                        break;
-                    }
-                    if ($row['start'] === $startRow) {
-                        $marked++;
+                // Fragments : départ exact + reprises juste après chaque pause
+                $fragmentStarts = $this->slotFragmentStarts($slotStart, $slotEnd, $rows);
+
+                foreach ($fragmentStarts as $fragmentStart) {
+                    // Déjà occupé par un autre créneau → on ignore ce fragment
+                    if (!empty($cells[$day][$fragmentStart]['label'])) {
                         continue;
                     }
-                    $cells[$day][$row['start']] = ['covered' => true];
-                    $marked++;
+                    // Déjà absorbé par un rowspan précédent du même créneau
+                    if (!empty($cells[$day][$fragmentStart]['covered'])) {
+                        continue;
+                    }
+
+                    $span = $this->slotContiguousSpan($slot, $fragmentStart);
+
+                    $cells[$day][$fragmentStart] = array_merge($cellPayload, [
+                        'span' => $span,
+                    ]);
+
+                    // Marquer les lignes horaires suivantes du fragment comme covered
+                    $startIdx = $this->scheduleHourIndex($fragmentStart);
+                    $marked = 0;
+                    for ($i = $startIdx, $n = count($rows); $i < $n && $marked < $span; $i++) {
+                        $row = $rows[$i];
+                        if (($row['type'] ?? '') !== 'hour') {
+                            break;
+                        }
+                        if ($row['start'] === $fragmentStart) {
+                            $marked++;
+                            continue;
+                        }
+                        $cells[$day][$row['start']] = ['covered' => true];
+                        $marked++;
+                    }
                 }
             }
         }
 
         return $cells;
+    }
+
+    /**
+     * Lignes horaires où un fragment de créneau doit commencer :
+     * - la ligne de début exacte du créneau
+     * - chaque ligne horaire qui suit immédiatement une pause, tant que le créneau la couvre
+     *
+     * Ex. 08h00–12h00 → fragments à 08:00 (avant récré) et 10:00 (après récré).
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return list<string>
+     */
+    public function slotFragmentStarts(string $slotStart, string $slotEnd, array $rows): array
+    {
+        $starts = [];
+
+        foreach ($rows as $i => $row) {
+            if (($row['type'] ?? '') !== 'hour') {
+                continue;
+            }
+
+            $rowStart = $row['start'];
+            $rowEnd = $row['end'];
+
+            // La ligne n’intersecte pas le créneau
+            if ($rowStart >= $slotEnd || $rowEnd <= $slotStart) {
+                continue;
+            }
+
+            // Départ exact du créneau
+            if ($rowStart === $slotStart) {
+                $starts[] = $rowStart;
+                continue;
+            }
+
+            // Reprise après une pause : la ligne précédente est un break
+            // et le créneau a commencé avant cette ligne
+            if ($i > 0 && ($rows[$i - 1]['type'] ?? '') === 'break' && $slotStart < $rowStart && $slotEnd > $rowStart) {
+                $starts[] = $rowStart;
+            }
+        }
+
+        // Fallback : première heure couverte si aucun départ trouvé
+        if ($starts === []) {
+            foreach ($rows as $row) {
+                if (($row['type'] ?? '') === 'hour' && $row['start'] < $slotEnd && $row['end'] > $slotStart) {
+                    $starts[] = $row['start'];
+                    break;
+                }
+            }
+        }
+
+        return $starts;
     }
 
     /**

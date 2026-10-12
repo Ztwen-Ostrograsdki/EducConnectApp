@@ -67,6 +67,7 @@ class CreateTenantsTable extends Migration
             $table->boolean('force_2fa')->default(false);
 
             $table->string('background_image')->nullable()->default(null);
+            $table->string('header_image_path')->nullable()->default(null);
             $table->boolean('hide_testimonials_on_home_page')->default(false);
             $table->boolean('hide_galleries_on_home_page')->default(false);
             $table->boolean('hide_serials_on_home_page')->default(false);

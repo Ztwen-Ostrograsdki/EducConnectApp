@@ -1,44 +1,7 @@
-{{--
-    Template d’impression PDF — Emplois du temps (paysage, 1 page / EDT)
-
-    Données attendues :
-    - $schoolYear          : SchoolYear|null
-    - $printed_at          : string
-    - $pdf_title           : string (titre global du document)
-    - $context_label       : string|null  (ex. "Filière Série A" / "Matière Mathématiques")
-    - $plans               : array de créneaux d’affichage, chacun :
-        [
-            'type'        => 'teacher' | 'classe',
-            'title'       => string,          // Nom complet du prof OU nom de la classe
-            'subtitle'    => string|null,     // Ex. code classe, matières, grade…
-            'contacts'    => string|null,     // Téléphone / email
-            'school_year' => string,          // slug / libellé année
-            'total_hours' => int|float,       // heures cumulées
-            'meta_line'   => string|null,     // ligne libre (ex. "2 matières · 4 classes")
-            'days'        => [1 => 'Lundi', … 6 => 'Samedi'],
-            'rows'        => scheduleRows(),  // identique à TimePlanActions::scheduleRows()
-            'cells'       => [
-                // [day][rowStart] => null | [
-                //   'label'   => 'MATH',
-                //   'detail'  => '2nde A' | 'AP',
-                //   'start'   => '08h00',
-                //   'end'     => '10h00',
-                //   'span'    => 2,          // rowspan en lignes horaires contiguës
-                //   'is_ap'   => false,
-                //   'covered' => false,      // true = cellule absorbée par un rowspan précédent
-                // ]
-            ],
-        ]
-
-    Options Browsershot recommandées :
-    - format: 'A4'
-    - landscape: true
-    - margins: 10–12 mm
---}}
-
 @php
-    $days = $days ?? [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
+
     $plans = $plans ?? [];
+
 @endphp
 
 <div class="print-root">
@@ -55,11 +18,12 @@
         <section class="edt-page {{ $loop->last ? 'is-last' : '' }}">
 
             {{-- ══════════ BANDEAU RÉPUBLIQUE ══════════ --}}
+
+            @unless (($repeatHeader ?? false) && ($isPdf ?? false))
+                @include('pdf.partials.header-banner')
+            @endunless
             <div class="official-banner">
                 <div class="official-banner-content">
-                    <span class="official-country">République du Bénin</span>
-                    <span class="official-ministry">Ministère de l'Enseignement Technique et de la Formation
-                        Professionnelle</span>
                     <span class="official-flag">
                         <span class="flag-green"></span>
                         <span class="flag-yellow"></span>
@@ -70,54 +34,17 @@
 
             {{-- ══════════ EN-TÊTE ÉTABLISSEMENT ══════════ --}}
             <header class="doc-header">
-                <div class="header-band">
-                    <div class="school-logo">
-                        <span class="logo-initials">{{ str()->initials(tenancy()->tenant->school_name ?? 'E') }}</span>
-                        <div class="logo-dot"></div>
-                    </div>
-
-                    <div class="school-identity">
-                        <h1 class="school-name">{{ tenancy()->tenant->school_name ?? 'Établissement' }}</h1>
-                        <p class="school-subtitle">
-                            Enseignement {{ tenancy()->tenant->enseignement_type ?? '' }}
-                        </p>
-                        <p class="school-meta">
-                            Année scolaire :
-                            <strong>{{ $plan['school_year'] ?? ($schoolYear->slug ?? ($schoolYear->name ?? '—')) }}</strong>
-                            @if ($context_label ?? null)
-                                &nbsp;•&nbsp; {{ $context_label }}
-                            @endif
-                        </p>
-                    </div>
-
-                    <div class="doc-stamp">
-                        <span class="stamp-label">Emploi du temps</span>
-                        <span class="stamp-type">
-                            {{ $planType === 'teacher' ? 'Enseignant' : 'Classe' }}
-                        </span>
-                        <span class="stamp-date">{{ $printed_at ?? now()->isoFormat('D/MM/YYYY') }}</span>
-                    </div>
-                </div>
-
-                <div class="header-rule">
-                    <div class="rule-navy"></div>
-                    <div class="rule-gold"></div>
-                    <div class="rule-light"></div>
-                </div>
 
                 {{-- Titre de l’EDT --}}
                 <div class="edt-title-block">
                     <h2 class="edt-title">
                         @if ($planType === 'teacher')
-                            {{ $plan['title'] ?? 'Enseignant' }}
+                            EMPLOI DU TEMPS ENSEIGNANT : {{ $plan['title'] ?? 'Enseignant' }}
                         @else
-                            Classe : {{ $plan['title'] ?? '—' }}
+                            EMPLOI DU TEMPS DE CLASSE : {{ $plan['title'] ?? '—' }}
                         @endif
                     </h2>
 
-                    @if (!empty($plan['subtitle']))
-                        <p class="edt-subtitle">{{ $plan['subtitle'] }}</p>
-                    @endif
                 </div>
 
                 {{-- Métadonnées --}}
@@ -149,13 +76,6 @@
                         <span class="meta-label">Volume horaire</span>
                         <span class="meta-value">{{ $totalHours }} h</span>
                     </div>
-
-                    @if (!empty($plan['meta_line']))
-                        <div class="meta-item meta-wide">
-                            <span class="meta-label">Détail</span>
-                            <span class="meta-value">{{ $plan['meta_line'] }}</span>
-                        </div>
-                    @endif
                 </div>
             </header>
 
@@ -180,20 +100,20 @@
                                 @if (($row['type'] ?? '') === 'break')
                                     <tr class="row-break row-break-{{ $row['variant'] ?? 'recreation' }}">
                                         <td class="cell-time cell-break-label">
-                                            {{ $row['label'] ?? 'Pause' }}
+                                            RECREATION
                                         </td>
-                                        @foreach ($planDays as $dayNum => $dayName)
-                                            <td class="cell-break"></td>
-                                        @endforeach
+                                        <td colspan="6" class="cell-break">RECREATION</td>
                                     </tr>
                                 @else
                                     <tr class="row-hour">
                                         <td class="cell-time">
-                                            <span
-                                                class="time-start">{{ \Illuminate\Support\Carbon::parse($row['start'])->format('H\hi') }}</span>
-                                            <span class="time-sep">–</span>
-                                            <span
-                                                class="time-end">{{ \Illuminate\Support\Carbon::parse($row['end'])->format('H\hi') }}</span>
+                                            <span class="cell-time-container">
+                                                <span
+                                                    class="time-start">{{ \Illuminate\Support\Carbon::parse($row['start'])->format('H\hi') }}</span>
+                                                <span class="time-sep">–</span>
+                                                <span
+                                                    class="time-end">{{ \Illuminate\Support\Carbon::parse($row['end'])->format('H\hi') }}</span>
+                                            </span>
                                         </td>
 
                                         @foreach ($planDays as $dayNum => $dayName)
@@ -265,11 +185,16 @@
         </section>
     @empty
         <section class="edt-page">
+            @unless (($repeatHeader ?? false) && ($isPdf ?? false))
+                @include('pdf.partials.header-banner')
+            @endunless
             <div class="official-banner">
                 <div class="official-banner-content">
-                    <span class="official-country">République du Bénin</span>
-                    <span class="official-ministry">Ministère de l'Enseignement Technique et de la Formation
-                        Professionnelle</span>
+                    <span class="official-flag">
+                        <span class="flag-green"></span>
+                        <span class="flag-yellow"></span>
+                        <span class="flag-red"></span>
+                    </span>
                 </div>
             </div>
             <div class="empty-state">
@@ -325,6 +250,21 @@
         line-height: 1.35;
     }
 
+    .doc-banner {
+        width: 100%;
+        margin: 0 0 12px 0;
+    }
+
+    .doc-banner img {
+        display: block;
+        width: 100%;
+        height: auto;
+        /* garde les proportions */
+        max-height: 120px;
+        /* hauteur max du bandeau */
+        object-fit: contain;
+    }
+
     .print-root {
         width: 100%;
     }
@@ -337,7 +277,8 @@
         break-after: page;
         display: flex;
         flex-direction: column;
-        min-height: 190mm;
+        min-height: 150mm;
+        border: solid thin gray;
         /* A4 paysage utile */
     }
 
@@ -375,7 +316,7 @@
     .official-flag {
         display: flex;
         width: 100%;
-        max-width: 220px;
+        /* max-width: 520px; */
         margin-top: 2px;
     }
 
@@ -403,133 +344,20 @@
         margin-bottom: 3mm;
     }
 
-    .header-band {
-        display: flex;
-        align-items: flex-start;
-        gap: 4mm;
-        padding-bottom: 2.5mm;
-    }
-
-    .school-logo {
-        position: relative;
-        width: 48px;
-        height: 48px;
-        flex-shrink: 0;
-    }
-
-    .logo-initials {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 48px;
-        height: 48px;
-        background: var(--navy);
-        border-radius: 50%;
-        color: var(--gold);
-        font-family: var(--font-serif);
-        font-size: 15px;
-        font-weight: 700;
-        border: 2px solid var(--gold);
-    }
-
-    .logo-dot {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 10px;
-        height: 10px;
-        background: var(--gold);
-        border-radius: 50%;
-        border: 2px solid var(--white);
-    }
-
-    .school-identity {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .school-name {
-        font-family: var(--font-serif);
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--navy);
-        line-height: 1.2;
-    }
-
-    .school-subtitle {
-        font-size: 9px;
-        color: var(--slate);
-        margin-top: 1px;
-    }
-
-    .school-meta {
-        font-size: 8.5px;
-        color: var(--text-muted);
-        margin-top: 2px;
-    }
-
-    .doc-stamp {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
-    .stamp-label {
-        display: block;
-        font-size: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--gold);
-        font-weight: 700;
-    }
-
-    .stamp-type {
-        display: block;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--navy);
-        margin-top: 1px;
-    }
-
-    .stamp-date {
-        display: block;
-        font-size: 8px;
-        color: var(--text-muted);
-        margin-top: 2px;
-    }
-
-    .header-rule {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-        margin: 2mm 0 2.5mm;
-    }
-
-    .rule-navy {
-        height: 2.5px;
-        background: var(--navy);
-    }
-
-    .rule-gold {
-        height: 1.5px;
-        background: var(--gold);
-    }
-
-    .rule-light {
-        height: 1px;
-        background: var(--navy-light);
-    }
-
     .edt-title-block {
         text-align: center;
         margin-bottom: 2mm;
     }
 
     .edt-title {
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 700;
         color: var(--navy);
         text-transform: uppercase;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
         letter-spacing: 0.03em;
+        text-decoration: underline;
+        text-decoration-style: double;
     }
 
     .edt-subtitle {
@@ -562,22 +390,27 @@
     }
 
     .meta-label {
-        font-size: 7.5px;
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: var(--text-muted);
+        font-weight: bold;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        color: rgb(37, 37, 37);
         font-weight: 600;
     }
 
     .meta-value {
-        font-size: 10px;
+        font-size: 15px;
         font-weight: 600;
-        color: var(--text);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        color: black;
     }
 
     .meta-hours .meta-value {
-        color: var(--navy);
-        font-size: 11px;
+        font-weight: 600;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        color: black;
+        font-size: 15px;
     }
 
     /* ─── TABLEAU ─── */
@@ -593,15 +426,15 @@
     }
 
     .edt-table thead th {
-        background: var(--navy);
-        color: var(--white);
-        font-weight: 700;
+        background: rgb(206, 205, 205);
+        color: black;
+        font-weight: bolder;
         text-transform: uppercase;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
         letter-spacing: 0.04em;
         padding: 2.5mm 1.5mm;
-        border: 1px solid var(--navy);
         text-align: center;
-        font-size: 8.5px;
+        font-size: 12px;
     }
 
     .col-time {
@@ -614,46 +447,49 @@
 
     .cell-time {
         background: var(--slate-mid);
-        font-family: var(--font-mono);
-        font-weight: 600;
-        font-size: 8px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        font-weight: 800;
+        font-size: 13px;
         text-align: center;
         vertical-align: middle;
-        border: 1px solid var(--border);
         padding: 1.5mm 1mm;
-        color: var(--slate);
+        color: rgb(29, 28, 28);
         white-space: nowrap;
     }
 
+    .cell-time-container {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+        height: 100%;
+    }
+
     .time-sep {
-        color: var(--border);
+        color: black;
         margin: 0 1px;
     }
 
     .row-hour td {
-        height: 11mm;
         vertical-align: top;
     }
 
     .cell-empty {
-        border: 1px solid var(--border-soft);
         background: #FAFBFC;
     }
 
     .cell-slot {
-        border: 1px solid var(--border);
         padding: 1mm;
         vertical-align: top;
     }
 
     .cell-slot.is-course {
         background: var(--course-bg);
-        border-color: #C7D2FE;
+        border: 1px solid var(--navy);
     }
 
     .cell-slot.is-ap {
         background: var(--ap-bg);
-        border-color: #DDD6FE;
+        border-color: #0d0d0e;
     }
 
     .slot-inner {
@@ -666,26 +502,27 @@
     }
 
     .slot-label {
-        font-weight: 700;
-        font-size: 9px;
-        color: var(--navy);
+        font-weight: 900;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        font-size: 15px;
+        color: black;
         line-height: 1.2;
     }
 
     .is-ap .slot-label {
-        color: var(--violet);
+        color: black;
     }
 
     .slot-detail {
-        font-size: 7.5px;
-        color: var(--text-muted);
+        font-size: 9.5px;
+        color: rgb(24, 21, 21);
         line-height: 1.2;
     }
 
     .slot-hours {
-        font-family: var(--font-mono);
-        font-size: 7px;
-        color: var(--slate);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        font-size: 11px;
+        color: black;
         margin-top: auto;
     }
 
@@ -693,37 +530,48 @@
         position: absolute;
         top: 0;
         right: 0;
-        font-size: 6.5px;
+        font-size: 18px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
         font-weight: 700;
         letter-spacing: 0.04em;
-        color: var(--violet);
-        background: #EDE9FE;
-        border: 1px solid #DDD6FE;
+        color: rgb(0, 0, 0);
+        background: #cdcdce;
+        border: 1px solid #000000;
         border-radius: 2px;
         padding: 0 2px;
         line-height: 1.4;
     }
 
+    td,
+    th {
+        border: 1px solid var(--navy);
+    }
+
     /* Pauses */
     .row-break td {
         height: 5.5mm;
-        border: 1px solid var(--border-soft);
+        border: 1px solid var(--navy);
+        font-weight: 600;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
     }
 
     .row-break-recreation td {
-        background: var(--break-bg);
+        background: rgb(184, 183, 183);
     }
 
     .row-break-lunch td {
-        background: var(--lunch-bg);
+        background: rgb(189, 189, 189);
     }
 
     .cell-break-label {
-        font-size: 7px;
+        font-size: 13px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: #B45309;
+        color: black;
         text-align: center;
     }
 
@@ -756,12 +604,14 @@
     }
 
     .sig-role {
-        font-size: 9px;
+        font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: var(--navy);
+        color: black;
         margin-bottom: 1mm;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
+        text-decoration: underline;
     }
 
     .sig-space {

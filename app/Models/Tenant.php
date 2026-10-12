@@ -93,6 +93,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'hide_filiars_on_home_page',
             'hide_personnels_on_home_page',
             'background_image',
+            'header_image_path',
         ];
     }
 
@@ -122,6 +123,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'hide_filiars_on_home_page' => false,
         'hide_personnels_on_home_page' => false,
         'background_image' => null,
+        'header_image_path' => null,
     ];
 
     /**
@@ -584,6 +586,28 @@ class Tenant extends BaseTenant implements TenantWithDatabase
        if($this->logo)  return TenantStorage::url( $this->logo);
 
        else return asset('images/logo.jfif');
+    }
+
+    // URL pour l'affichage web (aperçu dans les paramètres, etc.)
+    public function getHeaderImageUrlAttribute(): string
+    {
+        $path = $this->attributes['header_image_path'] ?? null;
+
+        return $path
+            ? TenantStorage::url($path)
+            : asset('images/doc-header.png');
+    }
+
+    // Data URI pour les PDF Browsershot
+    public function getHeaderImageDataUriAttribute(): ?string
+    {
+        $path = $this->attributes['header_image_path'] ?? null;
+
+        return cache()->remember(
+            'tenant.' . $this->id . '.header_data_uri.' . md5((string) $path),
+            now()->addHours(6),
+            fn () => TenantStorage::dataUri($path)
+        );
     }
 
 

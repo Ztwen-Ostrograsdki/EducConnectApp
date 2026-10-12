@@ -122,8 +122,10 @@ class TimePlanPrintsManagerComponent extends Component
         }
 
         return Teacher::query()
-            ->where('is_active', true)
             ->with('user')
+            ->whereHas('classeSubjects', fn($qcl2) => 
+                $qcl2->where('is_active', true)->where('school_year_id', $this->activeYear->id)->whereNull('ended_at')
+            )
             ->get()
             ->sortBy(fn ($t) => $t->getFullName())
             ->values();
@@ -307,6 +309,7 @@ class TimePlanPrintsManagerComponent extends Component
             school_year_id: $this->activeYear->id,
             docTitle: $this->docTitle,
             config: $this->buildConfig(),
+
         );
 
         $this->notification()->success(

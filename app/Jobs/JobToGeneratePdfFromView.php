@@ -51,8 +51,9 @@ class JobToGeneratePdfFromView implements ShouldQueue
         public readonly ?string $notifiable      = null,
         public readonly ?string $notification    = null,
         public readonly ?array  $docDBInfos      = null,
-        public readonly  bool   $paginable        = true,
-        public readonly ?array  $receiverIds    = null,
+        public readonly  bool   $paginable       = true,
+        public readonly ?array  $receiverIds     = null,
+        public readonly  bool   $repeatHeader    = false,
         
     ) {}
 
@@ -79,13 +80,14 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
             $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimée sur la plateforme ' . $name;
 
-            $headerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:gray;">'
-                . $header_title
-                . '</div>';
+            $banner = ($this->repeatHeader && $this->tenantId)
+                        ? tenant()?->header_image_data_uri
+                        : null;
 
             if($this->paginable){
 
                 $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
+                . $header_title . ' | '
                 . $formattedDate
                 . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
                 . '</div>';
@@ -108,12 +110,25 @@ class JobToGeneratePdfFromView implements ShouldQueue
                 ->emulateMedia('screen')
                 ->margins(15, 15, 15, 15)
                 ->showBrowserHeaderAndFooter()
-                ->headerHtml($headerHtml)
                 ->footerHtml($footerHtml)
                 ->waitUntilNetworkIdle();
 
             if (config('browsershot.no_sandbox')) {
                 $browsershot->noSandbox();
+            }
+
+            if ($this->repeatHeader && $banner) {
+                
+                $bannerHeightMm = 28; // hauteur réservée au bandeau
+
+                $browsershot
+                    ->showBrowserHeaderAndFooter()
+                    ->headerHtml(
+                        '<div style="width:100%;margin:0;padding:0;font-size:0;-webkit-print-color-adjust:exact;">'
+                        . '<img src="' . $banner . '" style="display:block;width:100%;height:auto;max-height:' . $bannerHeightMm . 'mm;">'
+                        . '</div>'
+                    )
+                    ->margins($bannerHeightMm + 8, 10, 10, 10, 'mm'); // haut, droite, bas, gauche
             }
 
             $this->applyOptions($browsershot);
