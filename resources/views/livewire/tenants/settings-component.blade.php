@@ -645,6 +645,70 @@
                                 </div>
                             </div>
 
+                            {{-- En-tête PDF / documents --}}
+                            <div>
+                                <label
+                                    class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                                    Image d'en-tête des documents (PDF)
+                                </label>
+
+                                <div class="rounded-xl bg-[#070b14] border border-white/[0.05] p-4 space-y-3">
+                                    <div
+                                        class="w-full rounded-lg overflow-hidden bg-white/[0.03] border border-white/[0.05] h-[88px]">
+                                        @if ($header_image)
+                                            <img src="{{ $header_image->temporaryUrl() }}" alt="Aperçu en-tête"
+                                                class="w-full h-full object-cover object-top">
+                                        @elseif (tenancy()->tenant->header_image_path)
+                                            <img src="{{ tenancy()->tenant->header_image_url }}"
+                                                alt="En-tête PDF actuelle"
+                                                class="w-full h-full object-cover object-top">
+                                        @else
+                                            <div
+                                                class="flex h-full flex-col items-center justify-center gap-1.5 text-slate-600">
+                                                <x-lucide-panel-top class="w-6 h-6" />
+                                                <p class="text-[11px]">Aucune image d'en-tête</p>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                                        <label
+                                            class="inline-flex items-center gap-2 text-xs font-semibold px-3.5 py-2 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors cursor-pointer">
+                                            <x-lucide-upload class="w-4 h-4" />
+                                            <span>Choisir l'image d'en-tête</span>
+                                            <input type="file" wire:model="header_image" accept="image/*"
+                                                class="hidden">
+                                        </label>
+
+                                        @if ($current_header_image && !$header_image)
+                                            <button type="button" wire:click="removeHeaderImage"
+                                                wire:confirm="Supprimer l'image d'en-tête PDF actuelle ?"
+                                                class="text-[11px] font-semibold px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition-colors">
+                                                Supprimer
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    <div wire:loading wire:target="header_image"
+                                        class="flex items-center gap-2 text-xs text-slate-500">
+                                        <x-lucide-loader class="w-3.5 h-3.5 animate-spin" />
+                                        Chargement de l'en-tête…
+                                    </div>
+
+                                    <p class="text-[11px] text-slate-500">
+                                        Bandeau <strong class="text-slate-400">pleine largeur</strong> pour les PDF,
+                                        image affichée en entier (sans rognage).
+                                        Format idéal : JPG/PNG large (≈ 1800–2000 px de large).
+                                        Si l'image est trop large, elle est <strong class="text-slate-400">réduite
+                                            automatiquement en largeur</strong> (ratio conservé).
+                                    </p>
+
+                                    @error('header_image')
+                                        <p class="text-[11px] text-rose-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
                             {{-- Visibilité des sections --}}
                             <div>
                                 <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">

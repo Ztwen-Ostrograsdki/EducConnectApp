@@ -444,11 +444,17 @@
                                             </div><span class="s-label">Config. Impression</span>
                                         </a>
 
-                                        <a wire:navigate href="{{ route('tenant.timeplans.print.preview') }}"
+                                        <a href="{{ route('tenant.timeplans.print.preview') }}"
                                             class="s-link {{ request()->routeIs('tenant.timeplans.print.preview') ? 'active' : '' }}">
                                             <div class="s-icon">
                                                 <x-lucide-eye class="w-3 h-3 text-sky-600" />
                                             </div><span class="s-label">Aperçu PDF</span>
+                                        </a>
+                                        <a wire:navigate href="{{ route('tenant.timeplans.docs') }}"
+                                            class="s-link {{ request()->routeIs('tenant.timeplans.docs') ? 'active' : '' }}">
+                                            <div class="s-icon">
+                                                <x-lucide-download class="w-3 h-3 text-sky-600" />
+                                            </div><span class="s-label">Téléchargement</span>
                                         </a>
                                     </div>
                                 </div>

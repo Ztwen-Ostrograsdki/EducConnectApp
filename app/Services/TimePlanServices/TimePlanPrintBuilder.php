@@ -13,6 +13,7 @@ use App\Models\TimePlanSlot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Construit la structure $plans attendue par time-plan-printable.blade.php.
@@ -36,7 +37,6 @@ class TimePlanPrintBuilder
             3 => 'Mercredi',
             4 => 'Jeudi',
             5 => 'Vendredi',
-            6 => 'Samedi',
         ]);
     }
 
@@ -265,9 +265,11 @@ class TimePlanPrintBuilder
                 $teacher->user?->email ?? $teacher->email ?? null,
             ])->filter()->implode(' · ');
 
+            $name = $this->getTeacherName($teacher);
+
             $result[] = [
                 'type'        => 'teacher',
-                'title'       => $teacher->getFullName() ?: 'Enseignant',
+                'title'       => $name ?: 'Enseignant',
                 'subtitle'    => $subjects->isNotEmpty() ? $subjects->implode(' · ') : null,
                 'contacts'    => $contacts ?: null,
                 'school_year' => $yearLabel,
@@ -337,9 +339,8 @@ class TimePlanPrintBuilder
                     $label = $slot->subject?->code
                         ?? $slot->subject?->name
                         ?? ($slot->label ?: 'Cours');
-                    $detail = $slot->teacher?->getFullName()
-                        ?? $slot->classeSubjectOfSchoolYear?->teacher?->getFullName()
-                        ?? null;
+
+                    $detail = $this->getTeacherName($slot->classeSubjectOfSchoolYear?->teacher);
                 } else {
                     $label = $slot->subject?->code
                         ?? $slot->subject?->name
@@ -567,15 +568,23 @@ class TimePlanPrintBuilder
     public function resolveDocTitle(string $mode, array $config = []): string
     {
         $year = SchoolYear::query()->find($this->schoolYearId);
-        $yearLabel = $year?->slug ?? $year?->name ?? '';
+        $yearLabel = $year?->slug ?? '';
 
         return match ($mode) {
             'classes' => 'Emplois du temps — Classes' . ($yearLabel ? " ({$yearLabel})" : ''),
             'teachers' => 'Emplois du temps — Enseignants' . ($yearLabel ? " ({$yearLabel})" : ''),
-            'subject' => 'Emplois du temps — Matière'
+            'subject' => 'Emplois du temps — Atelier/Spécialités'
                 . (isset($config['subject_name']) ? ' ' . $config['subject_name'] : '')
                 . ($yearLabel ? " ({$yearLabel})" : ''),
             default => 'Emplois du temps' . ($yearLabel ? " ({$yearLabel})" : ''),
         };
+    }
+
+
+    public function getTeacherName(?Teacher $teacher)
+    {
+        if ($teacher) return "Prof : " . $teacher->user->name . ' ' . Str::upper(str()->substr($teacher->user->prenames, 1, 1)) . '.';
+
+        else return "Enseignant";
     }
 }

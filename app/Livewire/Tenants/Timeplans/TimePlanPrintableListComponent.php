@@ -58,7 +58,7 @@ class TimePlanPrintableListComponent extends Component
             'pdf_title'     => $pdf_title,
             'context_label' => $context_label,
             'schoolYear'    => $schoolYear,
-            'repeatHeader'    => 0,
+            'repeatHeader'  => 0,
             'isPdf'    => 0,
             'days' => config('timeplan.days')
         ]);

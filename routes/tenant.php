@@ -105,6 +105,7 @@ use App\Livewire\Tenants\TenantDashboard;
 use App\Livewire\Tenants\Testimonials\CreateTestimonialComponent;
 use App\Livewire\Tenants\Testimonials\ManageTestimonialsComponent;
 use App\Livewire\Tenants\Timeplans\TimePlanDashboard;
+use App\Livewire\Tenants\TimePlans\TimePlanPrintableDocumentsPage;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintableListComponent;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintsManagerComponent;
 use App\Livewire\Tenants\UpdateProfilePhoto;
@@ -337,6 +338,8 @@ Route::middleware([
             Route::get('emplois-du-temps/impression-apercu', TimePlanPrintableListComponent::class)
                 ->name('timeplans.print.preview');
 
+            Route::get('emplois-du-temps/documents-disponibles-telechargement', TimePlanPrintableDocumentsPage::class)
+                ->name('timeplans.docs');
 
             // LES ENSEIGNANTS
             Route::get('/enseignants/portail-enseignants', TeachersPortal::class)->name('teachers.portal');

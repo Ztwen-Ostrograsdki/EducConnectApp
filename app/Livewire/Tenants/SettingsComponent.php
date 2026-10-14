@@ -7,6 +7,8 @@ use App\Helpers\Support\TenantStorage;
 use App\Livewire\Tenants\ActionsTraits\SchoolYearsActions;
 use App\Models\SchoolYear;
 use App\Tools\BeninData;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -291,8 +293,18 @@ class SettingsComponent extends Component
     public bool $hide_filiars_on_home_page = false;
     public $background_image;
     public $logo;
+    public $header_image;
     public ?string $current_background_image = null;
     public ?string $current_logo = null;
+    public ?string $current_header_image = null;
+
+    /**
+     * Largeur max du bandeau PDF (A4 paysage ≈ 277 mm utiles ≈ 2000 px @ ~180 dpi).
+     * On ne borne plus en hauteur au resize : une contrainte hauteur trop basse
+     * (ex. 220 px) réduisait aussi la largeur et produisait une image minuscule.
+     * La hauteur d’affichage est gérée en CSS (object-fit: cover).
+     */
+    protected int $headerMaxWidth = 2000;
 
     public function initHomePage()
     {
@@ -306,6 +318,7 @@ class SettingsComponent extends Component
             $this->hide_filiars_on_home_page = $tenant->hide_filiars_on_home_page;
             $this->current_background_image = $tenant->background_image;
             $this->current_logo = $tenant->logo;
+            $this->current_header_image = $tenant->header_image_path;
         }
     }
 
@@ -372,6 +385,40 @@ class SettingsComponent extends Component
         }
     }
 
+    public function removeHeaderImage(): void
+    {
+        $tenant = tenancy()->tenant;
+
+        if (! $tenant) {
+            return;
+        }
+
+        try {
+            $oldPath = $tenant->header_image_path;
+
+            if ($oldPath) {
+                TenantStorage::delete($oldPath);
+                $this->forgetHeaderImageCache($tenant->id, $oldPath);
+            }
+
+            $tenant->update(['header_image_path' => null]);
+
+            $this->current_header_image = null;
+
+            broadcast(new DataUpdatedEvent(tenant('id')));
+
+            $this->notification()->success(
+                title: 'En-tête PDF supprimée',
+                description: "L'image d'en-tête des documents a été retirée.",
+            );
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+                title: "ECHEC DE LA SUPPRESSION DE L'EN-TÊTE PDF",
+                description: 'Une erreur est survenue : ' . cutter($th->getMessage(), 2000),
+            );
+        }
+    }
+
     public function saveHomePage(): void
     {
         $validated = $this->validate([
@@ -382,14 +429,15 @@ class SettingsComponent extends Component
             'hide_filiars_on_home_page'      => 'boolean',
             'background_image'               => 'nullable|image|max:4678',
             'logo'                           => 'nullable|image|max:1024',
+            'header_image'                   => 'nullable|image|max:5120',
         ]);
 
-        unset($validated['background_image']);
+        unset($validated['background_image'], $validated['logo'], $validated['header_image']);
 
         $tenant = tenancy()->tenant;
 
         if (! $tenant) {
-            $this->addError('hide_personnels_on_home_page', "Le tenant courant est introuvable.");
+            $this->addError('hide_personnels_on_home_page', 'Le tenant courant est introuvable.');
             return;
         }
 
@@ -403,14 +451,12 @@ class SettingsComponent extends Component
 
                 $tenant->update(['background_image' => $path]);
 
-
                 $this->current_background_image = $path;
                 $this->background_image = null;
-
             } catch (\Throwable $th) {
                 $this->notification()->error(
                     title: 'Photo de couverture non mise à jour',
-                    description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+                    description: 'Une erreur est survenue : ' . cutter($th->getMessage(), 2000),
                 );
                 return;
             }
@@ -426,14 +472,39 @@ class SettingsComponent extends Component
 
                 $tenant->update(['logo' => $path]);
 
-
                 $this->current_logo = $path;
                 $this->logo = null;
-
             } catch (\Throwable $th) {
                 $this->notification()->error(
                     title: 'Logo non mise à jour',
-                    description: "Une erreur est survenue : " . cutter($th->getMessage(), 2000),
+                    description: 'Une erreur est survenue : ' . cutter($th->getMessage(), 2000),
+                );
+                return;
+            }
+        }
+
+        if ($this->header_image) {
+            try {
+                $oldPath = $tenant->header_image_path;
+
+                if ($oldPath) {
+                    TenantStorage::delete($oldPath);
+                    $this->forgetHeaderImageCache($tenant->id, $oldPath);
+                }
+
+                $path = TenantStorage::store($this->header_image, 'headers');
+
+                // Redimensionne uniquement si trop large (garde le ratio, largeur prioritaire)
+                $this->resizeStoredImageIfNeeded($path, $this->headerMaxWidth);
+
+                $tenant->update(['header_image_path' => $path]);
+
+                $this->current_header_image = $path;
+                $this->header_image = null;
+            } catch (\Throwable $th) {
+                $this->notification()->error(
+                    title: 'En-tête PDF non mise à jour',
+                    description: 'Une erreur est survenue : ' . cutter($th->getMessage(), 2000),
                 );
                 return;
             }
@@ -447,14 +518,96 @@ class SettingsComponent extends Component
             'hide_filiars_on_home_page'      => $this->hide_filiars_on_home_page,
         ]);
 
-        
-
         broadcast(new DataUpdatedEvent(tenant('id')));
 
         $this->notification()->success(
             title: "Paramètres de la page d'accueil mis à jour",
             description: 'Les modifications ont été enregistrées avec succès.',
         );
+    }
+
+
+
+    /**
+     * Réduit l’image si elle dépasse maxWidth (largeur prioritaire pour un bandeau pleine page).
+     */
+    protected function resizeStoredImageIfNeeded(string $relativePath, int $maxWidth): void
+    {
+        $absolute = Storage::disk('public')->path($relativePath);
+
+        if (! is_file($absolute)) {
+            return;
+        }
+
+        try {
+            // scaleDown(width only) : ne touche pas aux images déjà plus étroites
+            Image::read($absolute)
+                ->scaleDown(width: $maxWidth)
+                ->save($absolute);
+
+            return;
+        } catch (\Throwable) {
+            // fallback GD
+        }
+
+        $this->resizeWithGd($absolute, $maxWidth);
+    }
+
+    protected function resizeWithGd(string $absolute, int $maxWidth): void
+    {
+        if (! function_exists('imagecreatefromstring')) {
+            return;
+        }
+
+        $binary = @file_get_contents($absolute);
+        if ($binary === false) {
+            return;
+        }
+
+        $src = @imagecreatefromstring($binary);
+        if ($src === false) {
+            return;
+        }
+
+        $width = imagesx($src);
+        $height = imagesy($src);
+
+        if ($width <= $maxWidth) {
+            return;
+        }
+
+        $ratio = $maxWidth / max(1, $width);
+        $newW = max(1, (int) round($width * $ratio));
+        $newH = max(1, (int) round($height * $ratio));
+
+        $dst = imagecreatetruecolor($newW, $newH);
+        if ($dst === false) {
+            return;
+        }
+
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+        imagefilledrectangle($dst, 0, 0, $newW, $newH, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+        imagealphablending($dst, true);
+
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $width, $height);
+
+        $ext = strtolower(pathinfo($absolute, PATHINFO_EXTENSION) ?: '');
+
+        match (true) {
+            in_array($ext, ['jpg', 'jpeg'], true) => imagejpeg($dst, $absolute, 85),
+            $ext === 'webp' && function_exists('imagewebp') => imagewebp($dst, $absolute, 85),
+            default => imagepng($dst, $absolute, 6),
+        };
+    }
+
+    protected function forgetHeaderImageCache(string|int $tenantId, ?string $path): void
+    {
+        if ($path === null || $path === '') {
+            return;
+        }
+
+        cache()->forget('tenant.' . $tenantId . '.header_data_uri.' . md5($path));
     }
 
 

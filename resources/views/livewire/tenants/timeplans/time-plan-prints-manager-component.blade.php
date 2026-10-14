@@ -33,6 +33,11 @@
                 <x-lucide-eye class="w-3.5 h-3.5" />
                 Aperçu du document à imprimer
             </a>
+            <a href="{{ route('tenant.timeplans.docs') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-blue-600/5 text-slate-300 border border-blue-600/40 hover:bg-blue-600/80 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-download class="w-3.5 h-3.5" />
+                Page de téléchargement
+            </a>
         </div>
         <div wire:loading.flex
             wire:target="initPrintProcess, resetFilters, selectAllClasses, selectAllTeachers, clearClasses, clearTeachers"

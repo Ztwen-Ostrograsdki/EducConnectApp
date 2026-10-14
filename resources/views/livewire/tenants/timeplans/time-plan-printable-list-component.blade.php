@@ -20,7 +20,12 @@
             {{-- ══════════ BANDEAU RÉPUBLIQUE ══════════ --}}
 
             @unless (($repeatHeader ?? false) && ($isPdf ?? false))
-                @include('pdf.partials.header-banner')
+                <div class="doc-banner">
+                    <img src="{{ $isPdf ?? false
+                        ? tenancy()->tenant?->header_image_data_uri ?? tenancy()->tenant?->header_image_url
+                        : tenancy()->tenant?->header_image_url ?? tenancy()->tenant?->header_image_data_uri }}"
+                        alt="En-tête établissement">
+                </div>
             @endunless
             <div class="official-banner">
                 <div class="official-banner-content">
@@ -102,7 +107,7 @@
                                         <td class="cell-time cell-break-label">
                                             RECREATION
                                         </td>
-                                        <td colspan="6" class="cell-break">RECREATION</td>
+                                        <td colspan="5" class="cell-break">RECREATION</td>
                                     </tr>
                                 @else
                                     <tr class="row-hour">
@@ -189,7 +194,12 @@
     @empty
         <section class="edt-page">
             @unless (($repeatHeader ?? false) && ($isPdf ?? false))
-                @include('pdf.partials.header-banner')
+                <div class="doc-banner">
+                    <img src="{{ $isPdf ?? false
+                        ? tenancy()->tenant?->header_image_data_uri ?? tenancy()->tenant?->header_image_url
+                        : tenancy()->tenant?->header_image_url ?? tenancy()->tenant?->header_image_data_uri }}"
+                        alt="En-tête établissement">
+                </div>
             @endunless
             <div class="official-banner">
                 <div class="official-banner-content">
@@ -255,17 +265,23 @@
 
     .doc-banner {
         width: 100%;
-        margin: 0 0 12px 0;
+        margin: 0 0 3mm 0;
+        line-height: 0;
+        font-size: 0;
+        text-align: center;
     }
 
     .doc-banner img {
         display: block;
-        width: 100%;
+        width: 100% !important;
+        max-width: 100%;
         height: auto;
-        /* garde les proportions */
-        max-height: 120px;
-        /* hauteur max du bandeau */
+        max-height: 42mm;
         object-fit: contain;
+        /* image entière, sans rognage */
+        object-position: center center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .print-root {

@@ -14,9 +14,12 @@
                     Un emploi du temps par classe et par année scolaire
                 </p>
             </div>
+
+        </div>
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
             <button type="button" wire:click="openCreatePlan" wire:loading.attr="disabled" wire:target="openCreatePlan"
-                class="inline-flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium
-                       bg-cyan-500/30 hover:bg-cyan-600 text-white shadow-lg shadow-cyan-500/20 transition-all shrink-0 disabled:opacity-60">
+                class="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium
+                       bg-indigo-500/30 hover:bg-indigo-600 text-white transition-all shrink-0 disabled:opacity-60">
                 <span wire:loading.remove wire:target="openCreatePlan" class="inline-flex items-center gap-2">
                     <x-lucide-plus class="w-4 h-4" />
                     Nouvel emploi du temps
@@ -26,6 +29,21 @@
                     Chargement…
                 </span>
             </button>
+            <a wire:navigate href="{{ route('tenant.timeplans.print.manager') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/25 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-printer class="w-3.5 h-3.5" />
+                Générer de documents
+            </a>
+            <a wire:navigate href="{{ route('tenant.timeplans.dashboard') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-green-700/5 text-slate-300 border border-green-700/10 hover:bg-green-700/60 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-calendar-range class="w-3.5 h-3.5" />
+                Tableau des Emplois du temps
+            </a>
+            <a href="{{ route('tenant.timeplans.print.preview') }}"
+                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
+                <x-lucide-calendar-range class="w-3.5 h-3.5" />
+                Aperçu des documents
+            </a>
         </div>
 
         {{-- ========== FILTRES ========== --}}
@@ -106,7 +124,8 @@
                                    px-3 text-sm text-white focus:border-cyan-500/50 focus:outline-none transition-all">
                             <option value="">Toutes les promotions</option>
                             @foreach ($this->promotions as $promo)
-                                <option value="{{ $promo->id }}">{{ $promo->name }} ({{ $promo->code }})</option>
+                                <option value="{{ $promo->id }}">{{ $promo->name }} ({{ $promo->code }})
+                                </option>
                             @endforeach
                         </select>
                     @elseif ($filterBy === 'serial')

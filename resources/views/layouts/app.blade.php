@@ -104,7 +104,7 @@
             <div class="s-school">
                 <div class="s-school-inner">
                     <div class="s-school-name">
-                        <a class="hover:text-orange-500" href="{{ route('tenants.home') }}">
+                        <a wire:navigate class="hover:text-orange-500" href="{{ route('tenants.home') }}">
                             {{ tenant()?->school_name ?? 'Mon École' }}
                         </a>
                     </div>
@@ -405,8 +405,8 @@
                                     <div class="dd-title">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                     <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                                 </div>
-                                <a href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
-                                <a href="{{ route('tenant.testimonials.create') }}" class="dd-item">
+                                <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon profil</a>
+                                <a wire:navigate href="{{ route('tenant.testimonials.create') }}" class="dd-item">
                                     📢 Donner un avis</a>
                                 <div class="dd-sep"></div>
                                 <form method="POST" action="{{ route('logout') }}">
