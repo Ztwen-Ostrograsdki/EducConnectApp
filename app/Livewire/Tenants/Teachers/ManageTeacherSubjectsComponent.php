@@ -130,6 +130,10 @@ class ManageTeacherSubjectsComponent extends Component
         $linkedIds = $this->linkedSubjects->pluck('subject_id')->toArray();
 
         return Subject::where('is_active', true)
+            ->where('name', '<>', 'conduite')
+            ->where('name', '<>', 'Conduite')
+            ->where('code', '<>', 'conduite')
+            ->where('code', '<>', 'cond')
             ->when($this->subjectSearch, fn($q) =>
                 $q->where(fn($q) =>
                     $q->where('name', 'like', '%'.$this->subjectSearch.'%')

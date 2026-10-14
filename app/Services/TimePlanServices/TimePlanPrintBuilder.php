@@ -225,15 +225,34 @@ class TimePlanPrintBuilder
 
             $slots = $this->teacherSlotsWithAp($teacherId);
             $cells = $this->buildCellsFromSlots($slots, forClasse: false);
-            $totalHours = $slots->sum(function ($s) {
-                if (isset($s->duration)) {
-                    return (int) $s->duration;
-                }
-                $start = Carbon::parse($this->normalizeTime((string) $s->starts_at));
-                $end = Carbon::parse($this->normalizeTime((string) $s->ends_at));
 
-                return (int) $start->diffInHours($end, true);
-            });
+            // Heures de cours uniquement (hors AP)
+            $courseHours = $slots
+                ->reject(fn ($s) => (bool) ($s->is_ap ?? false))
+                ->sum(function ($s) {
+                    if (isset($s->duration)) {
+                        return (int) $s->duration;
+                    }
+                    $start = Carbon::parse($this->normalizeTime((string) $s->starts_at));
+                    $end = Carbon::parse($this->normalizeTime((string) $s->ends_at));
+
+                    return (int) $start->diffInHours($end, true);
+                });
+
+            // AP : on ne compte que la première APTime renseignée (pas la somme de toutes)
+            $firstAp = $slots->first(fn ($s) => (bool) ($s->is_ap ?? false));
+            $apHours = 0;
+            if ($firstAp) {
+                if (isset($firstAp->duration)) {
+                    $apHours = (int) $firstAp->duration;
+                } else {
+                    $start = Carbon::parse($this->normalizeTime((string) $firstAp->starts_at));
+                    $end = Carbon::parse($this->normalizeTime((string) $firstAp->ends_at));
+                    $apHours = (int) $start->diffInHours($end, true);
+                }
+            }
+
+            $totalHours = (int) $courseHours + (int) $apHours;
 
             $subjects = $slots
                 ->map(fn ($s) => $s->subject?->code ?? $s->subject?->name)
@@ -242,7 +261,7 @@ class TimePlanPrintBuilder
                 ->values();
 
             $contacts = collect([
-                $teacher->user?->phone ?? $teacher->phone ?? null,
+                $teacher->user?->contacts ?? $teacher->contacts ?? null,
                 $teacher->user?->email ?? $teacher->email ?? null,
             ])->filter()->implode(' · ');
 

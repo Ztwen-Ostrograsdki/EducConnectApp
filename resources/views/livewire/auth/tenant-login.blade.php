@@ -229,18 +229,27 @@
 
                         <span
                             class="relative flex items-center justify-center gap-2.5 h-full text-white font-semibold text-sm tracking-wide">
-                            <span wire:loading.remove wire:target="login" class="inline-flex items-center gap-2.5">
-                                Accéder à votre espace
-                                <x-lucide-arrow-right
-                                    class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                            </span>
-                            <span wire:loading wire:target="login" class="inline-flex items-center gap-2.5">
-                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4" />
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                                </svg>
-                                Connexion…
+                            <span class="flex items-center justify-center gap-2.5">
+                                <span wire:loading.remove wire:target="login"
+                                    class="inline-flex items-center gap-2.5">
+                                    <span class="flex items-center justify-center gap-1">
+                                        <span>
+                                            Accéder à votre espace
+                                        </span>
+                                        <x-lucide-arrow-right
+                                            class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                                    </span>
+                                </span>
+                                <span wire:loading wire:target="login" class="inline-flex items-center gap-2.5">
+                                    <span class="flex items-center justify-center gap-1">
+                                        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4" />
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                        </svg>
+                                        <span>Connexion…</span>
+                                    </span>
+                                </span>
                             </span>
                         </span>
                     </button>
@@ -329,3 +338,4 @@
         display: none !important;
     }
 </style>
+

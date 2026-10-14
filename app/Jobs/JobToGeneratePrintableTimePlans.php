@@ -118,11 +118,20 @@ class JobToGeneratePrintableTimePlans implements ShouldQueue
             'subject_name' => $subjectName,
         ]);
 
+        $teacherIds = $this->config['teacher_ids'] ?? [];
         $context_label = match ($this->mode) {
             'subject' => $subjectName ? "Matière : {$subjectName}" : null,
-            'teachers' => 'Enseignants sélectionnés',
+            'teachers' => count($teacherIds) === 1
+                ? ($plans[0]['title'] ?? 'Emploi du temps enseignant')
+                : 'Enseignants sélectionnés',
             default => 'Classes sélectionnées',
         };
+
+        // PDF d’un seul enseignant : titre plus précis
+        if ($this->mode === 'teachers' && count($teacherIds) === 1 && !empty($plans[0]['title'])) {
+            $pdf_title = 'Emploi du temps — ' . $plans[0]['title']
+                . ($this->schoolYear?->slug ? ' (' . $this->schoolYear->slug . ')' : '');
+        }
 
         $viewData = [
             'plans'         => $plans,
@@ -149,8 +158,11 @@ class JobToGeneratePrintableTimePlans implements ShouldQueue
             tenantId: $this->tenantId,
             notifiableId: $this->notifiableId,
             docDBInfos: [
-                'subject_id'  => $this->config['subject_id'] ?? null,
-                'for_teachers'=> $this->mode !== 'classes',
+                'subject_id'     => $this->config['subject_id'] ?? null,
+                'for_teachers'   => $this->mode !== 'classes',
+                'for_teacher_id' => ($this->mode === 'teachers' && count($teacherIds) === 1)
+                    ? (int) $teacherIds[0]
+                    : null,
             ],
             repeatHeader: false,
         );

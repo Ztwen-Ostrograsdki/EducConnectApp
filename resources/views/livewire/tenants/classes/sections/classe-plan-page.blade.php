@@ -388,7 +388,22 @@
                                                             <x-lucide-user
                                                                 class="w-3.5 h-3.5 text-slate-500 shrink-0" />
                                                             <p class="text-xs text-slate-400 truncate">
-                                                                {{ $teacher?->getFullName() ?? 'Enseignant non renseigné' }}
+                                                                @if ($slot->teacher)
+                                                                    <a class="hover:underline hover:underline-offset-2 hover:text-sky-500"
+                                                                        wire:navigate
+                                                                        href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $slot->teacher->uuid]) }}">
+                                                                        {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                                    </a>
+                                                                @else
+                                                                    <a class="text-slate-400" href="#">
+                                                                        Enseignant indisponible
+                                                                    </a>
+                                                                @endif
+                                                                <a class="hover:underline hover:underline-offset-2 hover:text-shadow-sky-500"
+                                                                    wire:navigate
+                                                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $slot->teacher->uuid]) }}">
+                                                                    {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                                </a>
                                                             </p>
                                                         </div>
 

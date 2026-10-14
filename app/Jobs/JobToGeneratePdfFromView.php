@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\AnyErrorEvent;
 use App\Events\DataUpdatedEvent;
+use App\Helpers\Support\ImageHelper;
 use App\Jobs\JobToShareDocumentToSomeone;
 use App\Models\GeneratedDocument;
 use App\Models\SchoolYear;
@@ -68,6 +69,10 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
         try {
             $html = view($this->view, $this->data)->render();
+
+            // Garantit un document HTML UTF-8 complet pour Browsershot / Chromium
+            // (évite le mojibake type "PRÃNOM", "08h00 Ã 10h00")
+            $html = $this->ensureUtf8HtmlDocument($html);
 
             Carbon::setLocale('fr');
             $now = Carbon::now('Africa/Abidjan');
@@ -151,6 +156,42 @@ class JobToGeneratePdfFromView implements ShouldQueue
 
 
      /**
+     * Enveloppe le HTML rendu dans un document complet avec charset UTF-8
+     * si ce n’est pas déjà le cas (les vues Livewire renvoient souvent un fragment).
+     */
+    private function ensureUtf8HtmlDocument(string $html): string
+    {
+        $trimmed = ltrim($html);
+
+        // Déjà un document HTML avec charset déclaré
+        if (
+            str_starts_with(strtolower($trimmed), '<!doctype')
+            || str_starts_with(strtolower($trimmed), '<html')
+        ) {
+            if (! preg_match('/<meta[^>]+charset\s*=/i', $html)) {
+                $html = preg_replace(
+                    '/<head([^>]*)>/i',
+                    '<head$1><meta charset="UTF-8"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">',
+                    $html,
+                    1
+                ) ?? $html;
+            }
+
+            return $html;
+        }
+
+        return '<!DOCTYPE html>'
+            . '<html lang="fr">'
+            . '<head>'
+            . '<meta charset="UTF-8">'
+            . '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
+            . '<title>Document</title>'
+            . '</head>'
+            . '<body>' . $html . '</body>'
+            . '</html>';
+    }
+
+    /**
      * Applique les options Browsershot de manière dynamique.
      * Chaque clé du tableau $options correspond à une méthode de Browsershot.
      *

@@ -35,13 +35,13 @@
             {{-- ══════════ EN-TÊTE ÉTABLISSEMENT ══════════ --}}
             <header class="doc-header">
 
-                {{-- Titre de l’EDT --}}
+                {{-- Titre de l'EDT --}}
                 <div class="edt-title-block">
                     <h2 class="edt-title">
                         @if ($planType === 'teacher')
                             EMPLOI DU TEMPS ENSEIGNANT : {{ $plan['title'] ?? 'Enseignant' }}
                         @else
-                            EMPLOI DU TEMPS DE CLASSE : {{ $plan['title'] ?? '—' }}
+                            EMPLOI DU TEMPS DE CLASSE : {{ $plan['title'] ?? '-' }}
                         @endif
                     </h2>
 
@@ -52,24 +52,24 @@
                     @if ($planType === 'teacher')
                         <div class="meta-item">
                             <span class="meta-label">Nom & Prénom(s)</span>
-                            <span class="meta-value">{{ $plan['title'] ?? '—' }}</span>
+                            <span class="meta-value">{{ $plan['title'] ?? '-' }}</span>
                         </div>
                         @if (!empty($plan['contacts']))
                             <div class="meta-item">
-                                <span class="meta-label">Contacts</span>
+                                <span class="meta-label">Contacts/Email</span>
                                 <span class="meta-value">{{ $plan['contacts'] }}</span>
                             </div>
                         @endif
                     @else
                         <div class="meta-item">
                             <span class="meta-label">Classe</span>
-                            <span class="meta-value">{{ $plan['title'] ?? '—' }}</span>
+                            <span class="meta-value">{{ $plan['title'] ?? '-' }}</span>
                         </div>
                     @endif
 
                     <div class="meta-item">
                         <span class="meta-label">Année scolaire</span>
-                        <span class="meta-value">{{ $plan['school_year'] ?? ($schoolYear->slug ?? '—') }}</span>
+                        <span class="meta-value">{{ $plan['school_year'] ?? ($schoolYear->slug ?? '-') }}</span>
                     </div>
 
                     <div class="meta-item meta-hours">
@@ -110,7 +110,7 @@
                                             <span class="cell-time-container">
                                                 <span
                                                     class="time-start">{{ \Illuminate\Support\Carbon::parse($row['start'])->format('H\hi') }}</span>
-                                                <span class="time-sep">–</span>
+                                                <span class="time-sep">-</span>
                                                 <span
                                                     class="time-end">{{ \Illuminate\Support\Carbon::parse($row['end'])->format('H\hi') }}</span>
                                             </span>
@@ -123,7 +123,7 @@
                                             @endphp
 
                                             @if ($covered)
-                                                {{-- absorbé par rowspan --}}
+                                                {{-- absorbe par rowspan --}}
                                             @elseif (is_array($cell) && !empty($cell['label']))
                                                 @php
                                                     $span = max(1, (int) ($cell['span'] ?? 1));
@@ -132,14 +132,17 @@
                                                 <td class="cell-slot {{ $isAp ? 'is-ap' : 'is-course' }}"
                                                     rowspan="{{ $span }}">
                                                     <div class="slot-inner">
-                                                        <span class="slot-label">{{ $cell['label'] }}</span>
-                                                        @if (!empty($cell['detail']))
-                                                            <span class="slot-detail">{{ $cell['detail'] }}</span>
-                                                        @endif
-                                                        @if (!empty($cell['start']) && !empty($cell['end']))
-                                                            <span class="slot-hours">{{ $cell['start'] }} –
+                                                        <span class="slot-label">
+                                                            <span>{{ $cell['label'] }}</span>
+                                                            @if (!empty($cell['detail']))
+                                                                <span class="slot-detail">{{ $cell['detail'] }}</span>
+                                                            @endif
+                                                        </span>
+
+                                                        {{-- @if (!empty($cell['start']) && !empty($cell['end']))
+                                                            <span class="slot-hours">{{ $cell['start'] }} -
                                                                 {{ $cell['end'] }}</span>
-                                                        @endif
+                                                        @endif --}}
                                                         @if ($isAp)
                                                             <span class="slot-badge-ap">AP</span>
                                                         @endif
@@ -178,7 +181,7 @@
                 </div>
 
                 <div class="sig-date">
-                    <span>Date : ……… / ……… / …………</span>
+                    <span>Date : ......... / ......... / ............</span>
                 </div>
             </footer>
 
@@ -290,7 +293,7 @@
     /* ─── BANDEAU OFFICIEL ─── */
     .official-banner {
         text-align: center;
-        margin-bottom: 4mm;
+        margin-bottom: 2mm;
     }
 
     .official-banner-content {
@@ -350,7 +353,7 @@
     }
 
     .edt-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--navy);
         text-transform: uppercase;
@@ -432,7 +435,7 @@
         text-transform: uppercase;
         font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans';
         letter-spacing: 0.04em;
-        padding: 2.5mm 1.5mm;
+        padding: 1mm 1mm;
         text-align: center;
         font-size: 12px;
     }
@@ -452,7 +455,7 @@
         font-size: 13px;
         text-align: center;
         vertical-align: middle;
-        padding: 1.5mm 1mm;
+        padding: 1mm 1mm;
         color: rgb(29, 28, 28);
         white-space: nowrap;
     }
@@ -470,7 +473,7 @@
     }
 
     .row-hour td {
-        vertical-align: top;
+        vertical-align: middle;
     }
 
     .cell-empty {
@@ -479,7 +482,7 @@
 
     .cell-slot {
         padding: 1mm;
-        vertical-align: top;
+        vertical-align: middle;
     }
 
     .cell-slot.is-course {
@@ -551,9 +554,9 @@
     .row-break td {
         height: 5.5mm;
         border: 1px solid var(--navy);
-        font-weight: 600;
+        font-weight: 400;
         text-align: center;
-        font-size: 14px;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
     }
@@ -567,8 +570,8 @@
     }
 
     .cell-break-label {
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 11px;
+        font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: black;
@@ -604,7 +607,7 @@
     }
 
     .sig-role {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -615,9 +618,8 @@
     }
 
     .sig-space {
-        height: 12mm;
+        height: 3mm;
         /* espace signature manuscrite */
-        line-height: 12mm;
     }
 
     .sig-line {

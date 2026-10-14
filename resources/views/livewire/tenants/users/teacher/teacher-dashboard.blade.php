@@ -383,17 +383,46 @@
                                 Heure(s) cumulée(s)</span>
                         </p>
                     </div>
-                    <button type="button" wire:click="downloadTimePlan" wire:loading.attr="disabled"
-                        wire:target="downloadTimePlan"
-                        class="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
-                        <span wire:loading.remove wire:target="downloadTimePlan"
-                            class="inline-flex items-center gap-1.5">
-                            <x-lucide-download class="w-3.5 h-3.5" /> Télécharger mon emploi du temps
-                        </span>
-                        <span wire:loading wire:target="downloadTimePlan">
-                            <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
-                        </span>
-                    </button>
+                    <div class="inline-flex items-center gap-2 justify-end">
+                        @if (!$this->myTimePlanIsDownloadable)
+                            <button type="button" wire:click="downloadTimePlan" wire:loading.attr="disabled"
+                                wire:target="downloadTimePlan"
+                                class="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove wire:target="downloadTimePlan"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-blocks class="w-3.5 h-3.5" /> Générer mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="downloadTimePlan">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                        @else
+                            <button type="button" wire:click="downloadTimePlan" wire:loading.attr="disabled"
+                                wire:target="downloadTimePlan"
+                                class="h-9 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove wire:target="downloadTimePlan"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-rotate-3d class="w-3.5 h-3.5" /> Regénérer mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="downloadTimePlan">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                            <button type="button" wire:click="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                wire:loading.attr="disabled"
+                                wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                class="h-9 px-4 rounded-xl bg-green-600 hover:bg-green-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove
+                                    wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-download class="w-3.5 h-3.5" /> Télécharger mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto overscroll-x-contain">

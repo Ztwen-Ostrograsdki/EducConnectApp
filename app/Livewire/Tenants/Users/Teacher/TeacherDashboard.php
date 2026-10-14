@@ -2,12 +2,18 @@
 
 namespace App\Livewire\Tenants\Users\Teacher;
 
+use App\Helpers\Support\TenantStorage;
+use App\Jobs\JobToGeneratePrintableTimePlans;
 use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
+use App\Models\GeneratedDocument;
 use App\Models\Mark;
 use App\Models\SchoolYear;
 use App\Models\TimePlanSlot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -215,10 +221,149 @@ class TeacherDashboard extends Component
     }
 
 
-    public function downloadTimePlan()
+    /**
+     * Génère le PDF de l’emploi du temps de l’enseignant connecté
+     * (sans passer par le manager d’impression).
+     */
+    public function downloadTimePlan(): void
     {
+        $teacher = $this->teacher;
+        $year = $this->activeYear;
+
+        if (!$teacher) {
+            $this->notification()->error(
+                title: 'Profil enseignant introuvable',
+                description: 'Impossible de générer l’emploi du temps.',
+            );
+            return;
+        }
+
+        if (!$year) {
+            $this->notification()->error(
+                title: 'Année scolaire absente',
+                description: 'Aucune année scolaire active n’a été trouvée.',
+            );
+            return;
+        }
+
+        if ($this->teacherSlots->isEmpty()) {
+            $this->notification()->info(
+                title: 'Aucun créneau',
+                description: 'Votre emploi du temps ne contient aucun créneau pour l’année en cours.',
+            );
+            return;
+        }
+
+        $fullName = method_exists($teacher, 'getFullName')
+            ? $teacher->getFullName()
+            : ($teacher->user?->getFullName() ?? 'enseignant');
+
+        $docTitle = 'EDT-' . Str::slug($fullName) . '-' . ($year->slug ?? $year->id);
+
+        try {
+            if($this->myTimePlanIsDownloadable){
+
+                $this->deleteDocument($this->myTimePlanIsDownloadable);
+            }
+
+            JobToGeneratePrintableTimePlans::dispatch(
+                tenantId: tenant('id'),
+                notifiableId: (int) auth('tenant')->id(),
+                mode: 'teachers',
+                school_year_id: (int) $year->id,
+                docTitle: $docTitle,
+                config: [
+                    'teacher_ids' => [(int) $teacher->id],
+                ],
+            );
+
+            $this->notification()->success(
+                title: 'Génération lancée',
+                description: 'Votre emploi du temps est en cours de génération. Vous serez notifié dès qu’il sera prêt.',
+            );
+        } catch (\Throwable $th) {
+            $this->notification()->error(
+            title: 'ERREUR',
+                description: "Une erreur s'est produitre lors de la génération de votre emploi du temps!",
+            );
+        }
+
         
     }
+
+
+    #[Computed]
+    public function myTimePlanIsDownloadable() : ?int
+    {
+        $doc =  GeneratedDocument::ofType('time_plan')
+            ->forUser(auth('tenant')->id())
+            ->where('school_year_id', $this->activeYear->id)
+            ->where('for_teacher_id', $this->teacher->id)->first();
+
+        return $doc ? $doc->id : null;
+    }
+
+
+     /**
+     * Retourne une réponse de téléchargement de fichier directement depuis
+     * l'action Livewire — supporté nativement depuis Livewire 3.
+     */
+    public function trackDownload(int $documentId)
+    {
+        $doc = GeneratedDocument::where('id', $documentId)
+            ->where('user_id', auth('tenant')->user()->id)
+            ->first();
+
+        if (! $doc || ! File::exists($doc->path)) {
+            $this->notification()->error(
+                title: 'Document introuvable',
+                description: 'Le fichier a peut-être déjà été supprimé du serveur.',
+            );
+            return;
+        }
+
+        $doc->recordDownload();
+
+        $this->notification()->info(title: 'Téléchargement de votre emploi du temps en cours ...');
+
+        return response()->download($doc->path, $doc->filename);
+
+
+    }
+
+
+    public function deleteDocument(int $documentId): void
+    {
+        $doc = GeneratedDocument::where('id', $documentId)
+            ->where('user_id', auth('tenant')->user()->id)
+            ->first();
+
+        if (! $doc) {
+            return;
+        }
+
+        TenantStorage::delete($this->relativePathFromAbsolute($doc->path));
+
+        $doc->delete();
+
+        unset($this->myTimePlanIsDownloadable);
+
+    }
+
+
+    /**
+     * TenantStorage::delete() attend un chemin relatif au disque 'public',
+     * alors que GeneratedDocument::path stocke un chemin absolu (issu de
+     * PDFFactory::outputPath()). On reconvertit ici.
+     */
+    protected function relativePathFromAbsolute(string $absolutePath): string
+    {
+        $absolutePath = str_replace('\\', '/', $absolutePath);
+        $storageRoot  = str_replace('\\', '/', Storage::disk('public')->path(''));
+
+        return ltrim(Str::after($absolutePath, $storageRoot), '/');
+    }
+
 
 
 

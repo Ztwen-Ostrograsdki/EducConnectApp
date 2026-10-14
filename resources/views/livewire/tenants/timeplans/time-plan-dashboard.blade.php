@@ -684,7 +684,22 @@
                                                             </div>
 
                                                             <p class="mt-0.5 truncate text-xs text-slate-400">
-                                                                {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                                @if ($slot->teacher)
+                                                                    <a class="hover:underline hover:underline-offset-2 hover:text-sky-500"
+                                                                        wire:navigate
+                                                                        href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $slot->teacher->uuid]) }}">
+                                                                        {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                                    </a>
+                                                                @else
+                                                                    <a class="text-slate-400" href="#">
+                                                                        Enseignant indisponible
+                                                                    </a>
+                                                                @endif
+                                                                <a class="hover:underline hover:underline-offset-2 hover:text-shadow-sky-500"
+                                                                    wire:navigate
+                                                                    href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $slot->teacher->uuid]) }}">
+                                                                    {{ trim($slot->teacher?->getFullName() ?? '') ?: 'Enseignant non disponible' }}
+                                                                </a>
                                                             </p>
 
                                                             @if ($slot->label)

@@ -22,7 +22,7 @@
 
 </head>
 
-<body>
+<body class="font-mono">
     {{-- ===================== PAGE LOADER ===================== --}}
     <div id="page-loader"
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0a0e17] transition-opacity duration-500">

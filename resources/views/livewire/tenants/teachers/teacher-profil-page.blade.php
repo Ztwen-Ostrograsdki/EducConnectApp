@@ -580,7 +580,17 @@
                                                                 @if ($isAp)
                                                                     {{ $slot->label ?: 'Animation pédagogique' }}
                                                                 @else
-                                                                    {{ $slot->timePlan?->classe?->name ?? ($slot->classeSubjectOfSchoolYear?->classe?->name ?? 'Classe') }}
+                                                                    @if ($slot->timePlan?->classe || $slot->classeSubjectOfSchoolYear)
+                                                                        <a class="hover:underline hover:underline-offset-2 hover:text-sky-500"
+                                                                            wire:navigate
+                                                                            href="{{ route('tenant.classe.profil', ['classe_slug' => $slot->timePlan->classe->slug]) }}">
+                                                                            {{ trim($slot->timePlan?->classe?->name ?? '') ?: 'Classe non renseignée' }}
+                                                                        </a>
+                                                                    @else
+                                                                        <a class="text-slate-400" href="#">
+                                                                            Classe indisponible
+                                                                        </a>
+                                                                    @endif
                                                                 @endif
                                                             </p>
 

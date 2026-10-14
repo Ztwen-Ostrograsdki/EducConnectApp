@@ -138,7 +138,8 @@
 
                 @if ($this->principal)
                     <div class="space-y-3">
-                        <h4 class="text-base font-semibold text-white">
+                        <h4 class="flex items-center gap-2 text-base font-semibold text-white">
+                            <x-lucide-user-cog class="w-3.5 h-3.5 text-slate-500" />
                             {{ $this->principal->getFullName() }}
                         </h4>
 

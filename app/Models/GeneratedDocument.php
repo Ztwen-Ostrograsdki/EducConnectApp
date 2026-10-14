@@ -44,6 +44,7 @@ class GeneratedDocument extends Model
         'for_teachers'  => 'boolean',
         'downloaded_count'        => 'integer',
         'for_student_id'        => 'integer',
+        'for_teacher_id'        => 'integer',
     ];
 
     // ─── Relations ────────────────────────────────────────────────────
