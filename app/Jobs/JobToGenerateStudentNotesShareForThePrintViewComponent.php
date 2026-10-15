@@ -168,6 +168,8 @@ class JobToGenerateStudentNotesShareForThePrintViewComponent implements ShouldQu
             'eventName'  => 'NotesSharePDFCompletedSuccessfullyLiveEvent',
             'period'     => $this->period,
             'schoolYear' => $schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -186,6 +188,7 @@ class JobToGenerateStudentNotesShareForThePrintViewComponent implements ShouldQu
                 'space_url' => $this->space_url
             ],
             receiverIds: self::getReceiversIds(),
+            repeatHeader: false
         );
     }
 

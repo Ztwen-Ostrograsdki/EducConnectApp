@@ -107,6 +107,8 @@ class ClassesPrintableListComponent extends Component
             'allClasses'   => count($rows),
             'pdf_title'    => $schoolYearId ? ClassePrintQuery::resolveDocTitle($config, $schoolYearId) : 'Liste des classes',
             'tableColumns' => $this->tableColumns,
+            'repeatHeader'  => 0,
+            'isPdf'    => 0,
         ]);
     }
 }

@@ -205,6 +205,8 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
             'target'          => 'students',
             'eventName'       => 'StudentsPDFCompletedSuccessfullyLiveEvent',
             'tableColumns'    => $tableColumns,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -228,6 +230,7 @@ class JobToGeneratePrintableStudentsDataForThePrintViewComponent implements Shou
                 'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
                                                $this->config['promotionInGroups'] : null,
             ],
+            repeatHeader: false,
         );
     }
 }

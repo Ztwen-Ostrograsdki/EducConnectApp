@@ -183,6 +183,14 @@
             </div>
 
         </section>
+        <section class="w-full my-2 rounded-2xl border border-white/5 bg-slate-900/60 backdrop-blur-sm p-4 sm:p-5">
+            <a wire:navigate href="{{ route('tenant.documents.page') }}"
+                class="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                <span class="inline-flex items-center gap-1.5">
+                    <x-lucide-file class="w-3.5 h-3.5" /> Aller à page des documents
+                </span>
+            </a>
+        </section>
 
         {{-- Bouton d'action en haut --}}
         <section class="mb-6 flex items-center justify-end">

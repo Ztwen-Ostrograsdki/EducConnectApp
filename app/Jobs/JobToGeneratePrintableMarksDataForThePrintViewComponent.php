@@ -130,6 +130,8 @@ class JobToGeneratePrintableMarksDataForThePrintViewComponent implements ShouldQ
             'tableColumns'    => $tableColumns,
             'period'          => $this->period,
             'schoolYear'      => $this->schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -153,6 +155,7 @@ class JobToGeneratePrintableMarksDataForThePrintViewComponent implements ShouldQ
                 'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
                                                $this->config['promotionInGroups'] : null,
             ],
+            repeatHeader: false,
         );
     }
 }

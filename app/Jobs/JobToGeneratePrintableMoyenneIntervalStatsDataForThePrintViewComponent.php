@@ -89,6 +89,8 @@ class JobToGeneratePrintableMoyenneIntervalStatsDataForThePrintViewComponent imp
             'eventName'      => 'MoyenneStatsPDFCompletedSuccessfullyLiveEvent',
             'period'         => $this->period,
             'schoolYear'     => $this->schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -115,6 +117,7 @@ class JobToGeneratePrintableMoyenneIntervalStatsDataForThePrintViewComponent imp
                 'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
                                                $this->config['promotionInGroups'] : null,
             ],
+            repeatHeader: false,
         );
     }
 }

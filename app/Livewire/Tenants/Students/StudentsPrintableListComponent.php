@@ -178,6 +178,8 @@ class StudentsPrintableListComponent extends Component
             'printed_at'   => now()->isoFormat('dddd D MMMM YYYY [à] HH:mm'),
             'allStudents'  => count($rows),
             'tableColumns' => $columns,
+            'repeatHeader'  => 0,
+            'isPdf'    => 0,
         ]);
     }
 }

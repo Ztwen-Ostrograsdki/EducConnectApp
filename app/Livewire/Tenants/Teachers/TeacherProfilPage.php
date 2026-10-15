@@ -7,7 +7,6 @@ use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Livewire\Tenants\ActionsTraits\UsersActions;
 use App\Models\SchoolYear;
 use App\Models\Teacher;
-use App\Models\TimePlanSlot;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -59,6 +58,13 @@ class TeacherProfilPage extends Component
     public function activeYear(): ?SchoolYear
     {
         return SchoolYear::current()->first();
+    }
+    
+    
+    #[Computed]
+    public function teacherHoursByClasse(): array
+    {
+        return $this->teacher->hoursByClasse();
     }
 
     #[Computed]

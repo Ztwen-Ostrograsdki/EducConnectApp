@@ -2,14 +2,11 @@
 
 namespace App\Livewire\Tenants\Reports;
 
-use App\Helpers\Support\TenantStorage;
+use App\Livewire\Tenants\ActionsTraits\DocumentActionsTrait;
 use App\Models\Filiar;
 use App\Models\GeneratedDocument;
 use App\Models\Promotion;
 use App\Models\Serial;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -24,7 +21,7 @@ use WireUi\Traits\WireUiActions;
 class MarksDiagnosticForTeachersPrintableDocumentsPage extends Component
 {
 
-    use WireUiActions, WithPagination;
+    use WireUiActions, WithPagination, DocumentActionsTrait;
 
     public string $search = '';
 
@@ -71,6 +68,7 @@ class MarksDiagnosticForTeachersPrintableDocumentsPage extends Component
     public function reloaddata()
     {
         $this->counter++;
+        $this->refreshDocumentsList();
     }
 
 
@@ -108,93 +106,17 @@ class MarksDiagnosticForTeachersPrintableDocumentsPage extends Component
             ->paginate(9);
     }
 
+
+
+    
     /**
-     * Retourne une réponse de téléchargement de fichier directement depuis
-     * l'action Livewire — supporté nativement depuis Livewire 3.
+     * Compatibilité avec l’ancien événement SweetAlert de cette page.
      */
-    public function trackDownload(int $documentId)
+    #[On('ConfirmToDeleteDoc')]
+    public function deleteDocumentLegacy(int $documentId): void
     {
-        $doc = GeneratedDocument::where('id', $documentId)
-            ->where('user_id', auth('tenant')->user()->id)
-            ->first();
-
-        if (! $doc || ! File::exists($doc->path)) {
-            $this->notification()->error(
-                title: 'Document introuvable',
-                description: 'Le fichier a peut-être déjà été supprimé du serveur.',
-            );
-            unset($this->documents);
-            return;
-        }
-
-        $doc->recordDownload();
-
-        unset($this->documents);
-
-        $this->notification()->info(title: 'Téléchargement du document en cours ...');
-
-        return response()->download($doc->path, $doc->filename);
-
-
+        $this->deleteDocument($documentId);
     }
-
-    public function confirmDelete(int $documentId): void
-    {
-        $this->dispatch('swal', [
-            'title'              => 'Supprimer ce document ?',
-            'description'        => 'Cette action est irréversible. Le fichier sera définitivement supprimé du serveur.',
-            'icon'               => 'question',
-            'showCancelButton'   => true,
-            'confirmButtonText'  => 'Oui, supprimer le doc',
-            'cancelButtonText'   => 'Annuler',
-            'confirmButtonColor' => '#a855f7',
-            'cancelButtonColor'  => '#475569',
-            'onConfirmed'        => 'ConfirmToDeleteDoc',
-            'onConfirmedParams'  => ['documentId' => $documentId],
-        ]);
-
-    }
-
-    #[On("ConfirmToDeleteDoc")]
-    public function deleteDocument(int $documentId): void
-    {
-        $doc = GeneratedDocument::where('id', $documentId)
-            ->where('user_id', auth('tenant')->user()->id)
-            ->first();
-
-        if (! $doc) {
-            $this->notification()->error(title: 'Document introuvable ou déjà supprimé.');
-            return;
-        }
-
-        TenantStorage::delete($this->relativePathFromAbsolute($doc->path));
-
-        $doc->delete();
-
-        unset($this->documents);
-
-        if ($this->documents->currentPage() > 1 && $this->documents->isEmpty()) {
-            $this->setPage($this->documents->currentPage() - 1);
-            unset($this->documents); // <-- indispensable : force le recalcul avec la nouvelle page
-        }
-
-        $this->notification()->success(title: 'Document supprimé avec succès.');
-    }
-
-    /**
-     * TenantStorage::delete() attend un chemin relatif au disque 'public',
-     * alors que GeneratedDocument::path stocke un chemin absolu (issu de
-     * PDFFactory::outputPath()). On reconvertit ici.
-     */
-    protected function relativePathFromAbsolute(string $absolutePath): string
-    {
-        $absolutePath = str_replace('\\', '/', $absolutePath);
-        $storageRoot  = str_replace('\\', '/', Storage::disk('public')->path(''));
-
-        return ltrim(Str::after($absolutePath, $storageRoot), '/');
-    }
-
-
 
     public function initiator(?string $filiar_slug = null, ?string $promotion_slug = null, ?string $promotionsGrouped = null, ?string $serial_slug = null)
     {

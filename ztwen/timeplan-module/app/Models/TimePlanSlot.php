@@ -34,6 +34,16 @@ class TimePlanSlot extends Model
     {
         return $this->classeSubjectOfSchoolYear?->teacher;
     }
+    
+    public function getTeacherNameAttribute(): ?string
+    {
+        if($this->teacher){
+
+            return $this->teacher->name . ' ' . str()->substr($this->teacher->prenames, 1, 1);
+        }
+
+        return "Prof Iconn.";
+    }
 
     public function getSubjectAttribute(): ?Subject
     {

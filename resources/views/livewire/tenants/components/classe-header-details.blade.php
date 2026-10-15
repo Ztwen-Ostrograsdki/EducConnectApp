@@ -217,6 +217,15 @@
             {{-- Boutons d'action --}}
             <div class="flex flex-wrap gap-2">
                 <a wire:navigate
+                    href="{{ route('tenant.teacher.classe.timeplan', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium
+                          bg-purple-500/15 text-purple-400 border border-purple-500/25
+                          hover:bg-purple-500 hover:text-white hover:border-purple-500
+                          transition-all duration-200">
+                    <x-lucide-calendar class="w-4 h-4" />
+                    Emploi du temps de {{ $classe->code }}
+                </a>
+                <a wire:navigate
                     href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $classe->slug, 'subject_slug' => $subject->slug]) }}"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium
                           bg-sky-500/15 text-sky-400 border border-sky-500/25
@@ -233,7 +242,7 @@
                           hover:bg-emerald-500 hover:text-white hover:border-emerald-500
                           transition-all duration-200">
                     <x-lucide-file-text class="w-4 h-4" />
-                    Notes de classe
+                    Notes de la classe de {{ $classe->code }}
                 </a>
 
                 @if (

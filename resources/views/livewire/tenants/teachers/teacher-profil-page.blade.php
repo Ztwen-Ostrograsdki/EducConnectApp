@@ -262,7 +262,7 @@
         {{-- ════════════════ KPIs ════════════════ --}}
         <section>
             <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
-                @foreach ([['Classes', __zero($this->teacher?->getTeacherClassesCountForThisSchoolYear()), 'text-indigo-400', 'indigo'], ['Heures/Sem.', '---', 'text-emerald-400', 'emerald'], ['Notes publiées', '---', 'text-amber-400', 'amber'], ['Présence', '---', 'text-sky-400', 'sky']] as $kpi)
+                @foreach ([['Classes', __zero($this->teacher?->getTeacherClassesCountForThisSchoolYear()), 'text-indigo-400', 'indigo'], ['Heures/Sem.', array_sum($this->teacherHoursByClasse()), 'text-emerald-400', 'emerald'], ['Notes publiées', '---', 'text-amber-400', 'amber'], ['Présence', '---', 'text-sky-400', 'sky']] as $kpi)
                     <div
                         class="rounded-xl bg-[#0f1523] border border-white/[0.05] p-4 sm:p-5 hover:border-{{ $kpi[3] }}-500/20 transition-colors">
                         <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">
@@ -320,11 +320,23 @@
                                         </p>
                                     </div>
 
-                                    <div class="flex items-center gap-2 text-[11px] text-slate-500">
+                                    <div
+                                        class="flex items-center gap-2 font-mono uppercase text-[13px] text-slate-500">
                                         <span
-                                            class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">86
+                                            class="hidden px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">86
                                             notes</span>
-                                        <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5">4h</span>
+                                        <span title="Heures exécutées par semaine dans la classe"
+                                            class="px-2 py-0.5 text-slate-300 rounded-md bg-white/5 border border-white/5">
+                                            @php
+                                                $hours = $this->teacherHoursByClasse[$kls->classe->id];
+                                            @endphp
+
+                                            @if (isset($hours))
+                                                <span>{{ $hours }}H</span>
+                                            @else
+                                                <span>{{ 00 }}H</span>
+                                            @endif / Sem.
+                                        </span>
                                     </div>
 
                                     <div class="flex items-center gap-1.5 shrink-0">
@@ -363,8 +375,8 @@
                 {{-- Emploi du temps enseignant --}}
                 @php
                     $days = $this->weekDays();
-                    $timeColPx = 112; // largeur colonne Horaire
-                    $dayColPx = 168; // largeur fixe de chaque jour (à ajuster)
+                    $timeColPx = 112;
+                    $dayColPx = 168;
                     $tableWidth = $timeColPx + count($days) * $dayColPx;
                 @endphp
 
@@ -406,14 +418,14 @@
                                 <tr class="border-b border-white/[0.06]">
                                     <th
                                         class="sticky left-0 z-20 bg-[#0c101c] px-2 py-3 text-center
-                               text-[11px] font-bold uppercase tracking-wider text-slate-500 border-r border-white/[0.06]">
+                                               text-[11px] font-bold uppercase tracking-wider text-slate-500 border-r border-white/[0.06]">
                                         Horaire
                                     </th>
                                     @foreach ($days as $day => $dayName)
                                         @php $isTodayColumn = (int) $day === (int) now()->dayOfWeekIso; @endphp
                                         <th
                                             class="px-2 py-3 text-center text-sm font-semibold border-r border-white/[0.05] last:border-r-0
-                                   {{ $isTodayColumn ? 'text-cyan-300 bg-cyan-500/10' : 'text-indigo-300 bg-white/[0.02]' }}">
+                                                   {{ $isTodayColumn ? 'text-cyan-300 bg-cyan-500/10' : 'text-indigo-300 bg-white/[0.02]' }}">
                                             <span class="inline-flex items-center justify-center gap-1.5">
                                                 {{ $dayName }}
                                                 @if ($isTodayColumn)
@@ -430,14 +442,13 @@
                                 @foreach ($this->scheduleRows() as $row)
                                     @if ($row['type'] === 'break')
                                         <tr class="border-b border-white/[0.05]">
-                                            {{-- Fond opaque sur le td, teinte dans le div interne --}}
                                             <td
                                                 class="sticky left-0 z-10 bg-[#0c101c] p-0 border-r border-white/[0.06]">
                                                 <div
                                                     class="px-2 py-2 text-center {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
                                                     <span
                                                         class="inline-flex flex-col items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide
-                                               {{ $row['variant'] === 'lunch' ? 'text-amber-400/90' : 'text-sky-400/90' }}">
+                                                               {{ $row['variant'] === 'lunch' ? 'text-amber-400/90' : 'text-sky-400/90' }}">
                                                         <x-lucide-coffee class="w-3.5 h-3.5" />
                                                         {{ $row['label'] }}
                                                     </span>
@@ -447,19 +458,19 @@
                                             @foreach ($days as $day => $dayName)
                                                 <td
                                                     class="px-1 py-1.5 border-r border-white/[0.05] last:border-r-0
-                                           {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
+                                                           {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
                                                     <div
                                                         class="h-8 rounded-lg border border-dashed flex items-center justify-center text-[10px] font-medium
-                                               {{ $row['variant'] === 'lunch'
-                                                   ? 'border-amber-500/20 bg-amber-500/5 text-amber-500/70'
-                                                   : 'border-sky-500/20 bg-sky-500/5 text-sky-500/70' }}">
+                                                               {{ $row['variant'] === 'lunch'
+                                                                   ? 'border-amber-500/20 bg-amber-500/5 text-amber-500/70'
+                                                                   : 'border-sky-500/20 bg-sky-500/5 text-sky-500/70' }}">
                                                         {{ $row['label'] }}
                                                     </div>
                                                 </td>
                                             @endforeach
                                         </tr>
                                     @else
-                                        <tr class="border-b border-white/[0.05]"
+                                        <tr class="border-b border-white/[0.05] h-20" style="height:5rem"
                                             wire:key="teacher-row-{{ $row['start'] }}">
                                             <td
                                                 class="sticky left-0 z-10 bg-[#0c101c] px-2 py-2 text-center border-r border-white/[0.06] align-middle">
@@ -480,29 +491,38 @@
                                                     $span = $slot ? $this->slotContiguousSpan($slot, $row['start']) : 1;
                                                     $isLive = $slot ? $this->isSlotLive($slot) : false;
                                                     $planId = $slot?->time_plan_id;
+                                                    $isAp = $slot ? (bool) ($slot->is_ap ?? false) : false;
+                                                    $slotDuration = null;
+                                                    if ($slot && !empty($slot->starts_at) && !empty($slot->ends_at)) {
+                                                        $slotDuration = \Illuminate\Support\Carbon::parse(
+                                                            $slot->starts_at,
+                                                        )->diffInHours(
+                                                            \Illuminate\Support\Carbon::parse($slot->ends_at),
+                                                            true,
+                                                        );
+                                                        // Affichage propre (ex. 2 ou 2.5)
+                                                        $slotDuration =
+                                                            fmod($slotDuration, 1.0) === 0.0
+                                                                ? (int) $slotDuration
+                                                                : round($slotDuration, 1);
+                                                    }
                                                 @endphp
 
                                                 @if ($covered)
-                                                    {{-- absorbé par rowspan --}}
                                                 @elseif ($slot)
-                                                    @php
-                                                        $minH = max(72, $span * 72);
-                                                        $isAp = (bool) ($slot->is_ap ?? false);
-                                                    @endphp
                                                     <td rowspan="{{ $span }}"
-                                                        class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                        class="relative p-1 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                        style="height: calc({{ $span }} * 5rem); vertical-align: top;"
                                                         wire:key="teacher-slot-{{ $slot->id }}">
                                                         <div @class([
-                                                            'relative h-full rounded-xl p-2.5 flex flex-col gap-1.5 transition-all border',
+                                                            'absolute inset-1 rounded-xl p-2 flex flex-col gap-1 transition-all border overflow-hidden',
                                                             'border-cyan-400/80 bg-cyan-500/15 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/30' =>
                                                                 $isLive && !$isAp,
                                                             'border-violet-400/80 bg-violet-500/15 shadow-lg shadow-violet-500/20 ring-2 ring-violet-400/30' =>
                                                                 $isLive && $isAp,
                                                             'border-indigo-500/25 bg-indigo-500/10' => !$isLive && !$isAp,
                                                             'border-violet-500/30 bg-violet-500/10' => !$isLive && $isAp,
-                                                        ])
-                                                            style="min-height: {{ $minH }}px;">
-
+                                                        ])>
                                                             @if ($isLive)
                                                                 <div class="absolute -top-2 right-2 z-10">
                                                                     <span
@@ -515,17 +535,15 @@
                                                             @endif
 
                                                             @if ($isAp)
-                                                                <div class="absolute top-1.5 right-1.5">
+                                                                <div class="absolute top-1.5 right-1.5 z-10">
                                                                     <span
                                                                         class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide bg-violet-500/20 text-violet-300 border border-violet-500/30">
                                                                         AP
                                                                     </span>
                                                                 </div>
-                                                            @endif
-
-                                                            @if ($planId && !$isAp && !$slot->timePlan?->archived)
+                                                            @elseif ($planId && !$slot->timePlan?->archived)
                                                                 <div @class([
-                                                                    'absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-70 hover:opacity-100',
+                                                                    'absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-70 hover:opacity-100 z-10',
                                                                     'mt-3' => $isLive,
                                                                 ])>
                                                                     <button type="button"
@@ -576,25 +594,26 @@
                                                                 </p>
                                                             </div>
 
-                                                            <p class="text-[11px] text-slate-400 truncate">
+                                                            <div class="flex items-center gap-1.5 min-w-0">
+                                                                <x-lucide-school
+                                                                    class="w-3.5 h-3.5 text-slate-500 shrink-0" />
                                                                 @if ($isAp)
-                                                                    {{ $slot->label ?: 'Animation pédagogique' }}
+                                                                    <p class="text-[11px] text-slate-400 truncate">
+                                                                        {{ $slot->label ?: 'Animation pédagogique' }}
+                                                                    </p>
+                                                                @elseif ($slot->timePlan?->classe?->slug)
+                                                                    <a class="text-[11px] text-slate-400 hover:text-sky-400 truncate transition-colors"
+                                                                        wire:navigate
+                                                                        href="{{ route('tenant.classe.profil', ['classe_slug' => $slot->timePlan->classe->slug]) }}">
+                                                                        {{ $slot->timePlan->classe->name }}
+                                                                    </a>
                                                                 @else
-                                                                    @if ($slot->timePlan?->classe || $slot->classeSubjectOfSchoolYear)
-                                                                        <a class="hover:underline hover:underline-offset-2 hover:text-sky-500"
-                                                                            wire:navigate
-                                                                            href="{{ route('tenant.classe.profil', ['classe_slug' => $slot->timePlan->classe->slug]) }}">
-                                                                            {{ trim($slot->timePlan?->classe?->name ?? '') ?: 'Classe non renseignée' }}
-                                                                        </a>
-                                                                    @else
-                                                                        <a class="text-slate-400" href="#">
-                                                                            Classe indisponible
-                                                                        </a>
-                                                                    @endif
+                                                                    <p class="text-[11px] text-slate-500 truncate">
+                                                                        Classe indisponible</p>
                                                                 @endif
-                                                            </p>
+                                                            </div>
 
-                                                            <div class="pt-1 mt-auto">
+                                                            <div class="pt-1 mt-auto space-y-0.5">
                                                                 <div @class([
                                                                     'flex items-center gap-1.5 font-mono text-xs',
                                                                     'text-violet-300' => $isAp,
@@ -606,14 +625,23 @@
                                                                     <span class="opacity-50">–</span>
                                                                     <span>{{ $slot->end }}</span>
                                                                 </div>
+                                                                <div @class([
+                                                                    'flex items-center gap-1.5 font-mono text-[11px]',
+                                                                    'text-violet-400/80' => $isAp,
+                                                                    'text-cyan-400/80' => $isLive && !$isAp,
+                                                                    'text-orange-500/80' => !$isLive && !$isAp,
+                                                                ])>
+                                                                    <x-lucide-hourglass class="w-3 h-3 shrink-0" />
+                                                                    <span>{{ $slotDuration ?? '—' }}H de cours</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                 @else
-                                                    <td class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                    <td class="p-1 border-r border-white/[0.05] last:border-r-0 align-top h-20"
                                                         wire:key="teacher-empty-{{ $day }}-{{ $row['start'] }}">
                                                         <div
-                                                            class="h-[72px] rounded-xl bg-white/[0.015] border border-white/[0.03]">
+                                                            class="h-full min-h-[4.5rem] rounded-xl bg-white/[0.015] border border-white/[0.03]">
                                                         </div>
                                                     </td>
                                                 @endif

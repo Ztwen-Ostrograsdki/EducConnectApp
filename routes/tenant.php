@@ -109,6 +109,7 @@ use App\Livewire\Tenants\TimePlans\TimePlanPrintableDocumentsPage;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintableListComponent;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintsManagerComponent;
 use App\Livewire\Tenants\UpdateProfilePhoto;
+use App\Livewire\Tenants\UserDownloadableDocumentsPage;
 use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
@@ -120,7 +121,9 @@ use App\Livewire\Tenants\Users\Pp\PrincipalClasseTutorsComponent;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksManagerComponent;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksViewer;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseStudentsViewer;
+use App\Livewire\Tenants\Users\Teacher\TeacherClasseTimePlan;
 use App\Livewire\Tenants\Users\Teacher\TeacherDashboard;
+use App\Livewire\Tenants\Users\Teacher\TeacherTimePlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -415,6 +418,8 @@ Route::middleware([
 
             Route::get('/mon-profil', MyProfilPage::class)->name('tenant.my.profil');
 
+            Route::get('/documents/telechargeable', UserDownloadableDocumentsPage::class)->name('tenant.documents.page');
+
             Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
             // ESPACE ENSEIGNANT
@@ -436,6 +441,8 @@ Route::middleware([
                     ->middleware(['tenant.classe.is.active.and.not.locked', 'tenant.module:marks_management']);
                 
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/liste-apprenants', TeacherClasseStudentsViewer::class)->name('classe.students');
+
+                Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/emploi-du-temps', TeacherClasseTimePlan::class)->name('classe.timeplan');
 
                 // ── ESPACE PP ─────────────────────────────────────────────────────
                 Route::middleware('teacher.is.classe.principal')->prefix('espace-pp')->group(function () {

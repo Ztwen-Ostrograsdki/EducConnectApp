@@ -18,23 +18,9 @@
             </p>
         </header>
 
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <a wire:navigate href="{{ route('tenant.timeplans.print.manager') }}"
-                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 hover:bg-cyan-500/25 transition-all inline-flex items-center gap-1.5">
-                <x-lucide-printer class="w-3.5 h-3.5" />
-                Générer de documents
-            </a>
-            <a wire:navigate href="{{ route('tenant.timeplans.dashboard') }}"
-                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-green-700/5 text-slate-300 border border-green-700/10 hover:bg-green-700/60 transition-all inline-flex items-center gap-1.5">
-                <x-lucide-calendar-range class="w-3.5 h-3.5" />
-                Tableau des Emplois du temps
-            </a>
-            <a href="{{ route('tenant.timeplans.print.preview') }}"
-                class="h-9 px-3.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-all inline-flex items-center gap-1.5">
-                <x-lucide-calendar-range class="w-3.5 h-3.5" />
-                Aperçu des documents
-            </a>
-        </div>
+        <section class="mb-6">
+            @livewire('tenants.components.printable-documents-component')
+        </section>
 
         {{-- Filtres --}}
         <section

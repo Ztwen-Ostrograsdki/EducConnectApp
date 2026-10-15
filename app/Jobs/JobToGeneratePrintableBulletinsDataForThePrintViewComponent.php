@@ -97,6 +97,8 @@ class JobToGeneratePrintableBulletinsDataForThePrintViewComponent implements Sho
             'eventName'   => 'BulletinsPDFCompletedSuccessfullyLiveEvent',
             'period'      => $this->period,
             'schoolYear'  => $this->schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -123,6 +125,7 @@ class JobToGeneratePrintableBulletinsDataForThePrintViewComponent implements Sho
                                                $this->config['promotionInGroups'] : null,
             ],
             paginable: false,
+            repeatHeader: false,
         );
     }
 }

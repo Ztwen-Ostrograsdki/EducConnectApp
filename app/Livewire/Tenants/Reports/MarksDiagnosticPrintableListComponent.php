@@ -47,6 +47,8 @@ class MarksDiagnosticPrintableListComponent extends Component
             'tableColumns' => $this->tableColumns,
             'period'       => $period,
             'schoolYear'   => $schoolYear,
+            'repeatHeader'  => 0,
+            'isPdf'    => 0,
         ]);
     }
 }

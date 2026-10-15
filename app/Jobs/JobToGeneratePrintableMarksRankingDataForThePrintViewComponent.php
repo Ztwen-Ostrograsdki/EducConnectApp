@@ -137,6 +137,8 @@ class JobToGeneratePrintableMarksRankingDataForThePrintViewComponent implements 
             'tableColumns'    => $tableColumns,
             'period'          => $this->period,
             'schoolYear'      => $this->schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -148,6 +150,7 @@ class JobToGeneratePrintableMarksRankingDataForThePrintViewComponent implements 
             documentType:    'marks_ranking_list',
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
+            repeatHeader: false,
         );
     }
 }

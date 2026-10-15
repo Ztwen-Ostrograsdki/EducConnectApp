@@ -1,0 +1,620 @@
+<div class="w-full overflow-x-hidden">
+
+    {{-- ===================================================== --}}
+    {{-- GLOBAL CONTAINER --}}
+    {{-- ===================================================== --}}
+    <div class="mx-auto
+                w-full
+                max-w-[1850px]
+                mb-28">
+
+        {{-- ===================================================== --}}
+        {{-- HEADER --}}
+        {{-- ===================================================== --}}
+        <section class="mb-6">
+
+            <div
+                class="rounded-3xl
+                        border border-slate-800
+                        bg-slate-900
+                        overflow-hidden">
+
+                <div class="p-4 sm:p-6 xl:p-8">
+
+                    <div class="flex flex-col xl:flex-row gap-6 xl:gap-8">
+
+                        {{-- LEFT --}}
+                        <div class="flex flex-col sm:flex-row gap-5 flex-1 min-w-0">
+
+                            {{-- AVATAR --}}
+                            <div class="flex justify-center sm:block shrink-0 relative">
+
+                                <img src="{{ $this->user->profil_photo_url }}" alt=""
+                                    class="w-40 h-40
+                               rounded-full
+                               object-cover
+                               border-4
+                               border-slate-700">
+
+                                <a title="Editer ma photo de profil" href="{{ route('tenant.update.profil.photo') }}"
+                                    class="absolute bottom-2 right-2
+                               w-12 h-12 rounded-full
+                               bg-indigo-800/75 hover:bg-indigo-500 hover:text-black
+                               flex items-center justify-center">
+                                    <x-lucide-camera class="w-5 h-5" />
+                                </a>
+
+                            </div>
+
+                            {{-- INFOS --}}
+                            <div class="flex-1 min-w-0">
+
+                                <div class="flex flex-col gap-4">
+
+                                    {{-- TOP --}}
+                                    <div class="min-w-0">
+
+                                        <div class="flex flex-wrap items-center gap-2">
+
+                                            <h1
+                                                class="text-2xl sm:text-3xl
+                                                       font-bold
+                                                       break-words">
+
+                                                {{ $this->teacher->getFullName(true) }}
+
+                                            </h1>
+
+                                            <span
+                                                class="px-3 py-1 rounded-full
+                                                         bg-indigo-500/10
+                                                         text-indigo-400
+                                                         text-xs shrink-0">
+
+                                                Enseignant
+
+                                            </span>
+
+                                        </div>
+
+                                        <p class="mt-2 text-slate-400 text-sm">
+
+                                            ID : {{ $this->teacher->identifiant }}
+
+                                        </p>
+
+                                    </div>
+
+                                    {{-- GRID INFOS --}}
+                                    <div
+                                        class="grid
+                                                grid-cols-2
+                                                lg:grid-cols-3
+                                                gap-3">
+
+                                        <div class="rounded-2xl bg-slate-950 p-3">
+
+                                            <p class="text-xs text-slate-500">
+                                                Téléphone
+                                            </p>
+
+                                            <h4 class="mt-1 font-medium truncate">
+                                                {{ $this->user->contacts }}
+                                            </h4>
+
+                                        </div>
+
+                                        <div class="rounded-2xl bg-slate-950 p-3">
+
+                                            <p class="text-xs text-slate-500">
+                                                Email
+                                            </p>
+
+                                            <h4 class="mt-1 font-medium">
+                                                {{ $this->user->email }}
+                                            </h4>
+
+                                        </div>
+
+                                        <div class="rounded-2xl bg-slate-950 p-3">
+
+                                            <p class="text-xs text-slate-500">
+                                                Statut
+                                            </p>
+
+                                            <h4 class="mt-1 font-medium text-emerald-400 text-sm">
+                                                <div
+                                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full @if (!$this->teacher->blocked) text-emerald-400 @else  text-red-400 @endif">
+
+                                                    <x-lucide-circle-check class="w-4 h-4" />
+
+                                                    @if (!$this->teacher->blocked)
+                                                        Compte actif
+                                                    @else
+                                                        Compte bloqué
+                                                    @endif
+
+                                                </div>
+                                            </h4>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="rounded-2xl border border-white/5 bg-slate-900/60 backdrop-blur-sm p-4 sm:p-5 my-4">
+
+                {{-- Header --}}
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                    <p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+                        Mes Matière(s) · Spécialité(s)
+                    </p>
+                </div>
+
+                {{-- Badges --}}
+                <div class="flex flex-wrap gap-2">
+                    @forelse ($this->teacher->getYearlySubjects() as $yearly_subject)
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium
+                         bg-indigo-500/10 text-indigo-300 border border-indigo-500/20
+                         hover:bg-indigo-500/20 hover:border-indigo-500/40 hover:text-indigo-200
+                         cursor-pointer transition-all duration-200 hover:scale-[1.03]">
+                            <x-lucide-book-open class="w-3.5 h-3.5 opacity-70" />
+                            {{ $yearly_subject->subject->name }}
+                        </span>
+                    @empty
+                        <div class="w-full py-6 text-center">
+                            <p class="text-sm text-orange-500/70 italic font-mono">
+                                Matières et spécialités non spécifiées
+                            </p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+        </section>
+
+        {{-- Bouton d'action en haut --}}
+        <section class="mb-6 flex items-center justify-end">
+            @if (auth('tenant')->user()->canManageCoef(tenant('id')))
+                <a wire:navigate href="{{ route('tenant.subjects.coefs.manage') }}"
+                    class="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl 
+                  bg-emerald-500/15 text-emerald-400 border border-emerald-500/30
+                  hover:bg-emerald-500 hover:text-white hover:border-emerald-500
+                  transition-all duration-300 text-sm font-medium shadow-lg shadow-emerald-500/10">
+                    <x-lucide-plus class="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    <span>Ajouter un coéf</span>
+                </a>
+            @endif
+        </section>
+
+        {{-- Conteneur principal --}}
+        <section class="space-y-6">
+            <div
+                class="rounded-3xl border border-white/5 bg-gradient-to-br from-slate-900/80 to-slate-950/80 
+                backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+
+                {{-- HEADER --}}
+                <div class="relative px-6 py-5 sm:px-8 sm:py-6 border-b border-white/5">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-transparent to-transparent">
+                    </div>
+
+                    <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                                Mes classes
+                            </h2>
+                            <p class="mt-1 text-sm text-slate-400">
+                                Classes assignées pour
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded-md 
+                                     bg-orange-500/15 text-orange-400 font-medium text-xs">
+                                    {{ $this->activeYear->slug }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- CONTENU --}}
+                <div class="p-4 sm:p-6">
+
+                    @if (count($this->classes))
+
+                        {{-- Version Cards (moderne) --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            @foreach ($this->classes as $kls)
+                                @php
+                                    $counts = $this->teachersMarksCount[$kls->classe_id] ?? 0;
+
+                                @endphp
+                                <div
+                                    class="group relative rounded-2xl border border-white/5 
+                                    bg-slate-900/60 hover:bg-slate-800/80 
+                                    hover:border-white/10 transition-all duration-300
+                                    hover:shadow-xl hover:shadow-black/30 overflow-hidden">
+
+                                    {{-- Accent bar --}}
+                                    <div
+                                        class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-orange-500 to-amber-600 
+                                        opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    </div>
+
+                                    <div class="p-5">
+                                        {{-- Header de la card --}}
+                                        <div class="flex items-start justify-between gap-3 mb-4">
+                                            <div class="min-w-0">
+                                                <a wire:navigate
+                                                    href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
+                                                    class="block group/link">
+                                                    <h3
+                                                        class="font-semibold text-white group-hover/link:text-lime-400 
+                                                       transition-colors truncate">
+                                                        {{ $kls->classe?->name }}
+                                                    </h3>
+                                                    <p class="text-xs text-amber-500/80 mt-0.5">
+                                                        {{ $kls->classe?->speciality() }}
+                                                    </p>
+                                                </a>
+                                            </div>
+
+                                            <span
+                                                class="shrink-0 text-xs font-mono text-slate-500 
+                                                 bg-slate-800/80 px-2 py-1 rounded-lg">
+                                                #{{ $loop->iteration }}
+                                            </span>
+                                        </div>
+
+                                        {{-- Infos --}}
+                                        <div class="flex flex-wrap items-center gap-2 mb-5">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg 
+                                                 bg-slate-800 text-slate-300 text-xs font-medium">
+                                                <x-lucide-book-open class="w-3.5 h-3.5 text-sky-400" />
+                                                {{ $kls->subject?->code ?? $kls->subject?->name }}
+                                            </span>
+
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg 
+                                                 bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+                                                <x-lucide-check-circle class="w-3.5 h-3.5" />
+                                                {{ __zero($counts && isset($counts[$kls->subject->id]) ? $counts[$kls->subject->id] : 00) }}
+                                                notes
+                                            </span>
+
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg 
+                                                 bg-violet-500/10 text-violet-400 text-xs font-medium">
+                                                <x-lucide-clock class="w-3.5 h-3.5" />
+                                                4h / sem
+                                            </span>
+                                        </div>
+
+                                        {{-- Actions --}}
+                                        <div class="flex flex-wrap gap-2">
+                                            <a wire:navigate
+                                                href="{{ route('tenant.teacher.classe.students', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+                                              bg-sky-500/15 text-sky-400 border border-sky-500/25
+                                              hover:bg-sky-500 hover:text-white hover:border-sky-500
+                                              transition-all duration-200">
+                                                <x-lucide-users class="w-3.5 h-3.5" />
+                                                Classe
+                                            </a>
+
+                                            <a wire:navigate
+                                                href="{{ route('tenant.teacher.classe.marks', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+                                              bg-emerald-500/15 text-emerald-400 border border-emerald-500/25
+                                              hover:bg-emerald-500 hover:text-white hover:border-emerald-500
+                                              transition-all duration-200">
+                                                <x-lucide-file-text class="w-3.5 h-3.5" />
+                                                Notes
+                                            </a>
+
+                                            @if (
+                                                $this->activeYear &&
+                                                    $this->activeYear->active_period &&
+                                                    $kls->classe->is_active &&
+                                                    !$kls->classe->is_locked &&
+                                                    auth('tenant')->user()->teacher->canAccessIntoClasse($kls->classe->id))
+                                                <a wire:navigate
+                                                    href="{{ route('tenant.teacher.classe.marks.manager', ['classe_slug' => $kls->classe->slug, 'subject_slug' => $kls->subject->slug]) }}"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium
+                                                  bg-blue-500/15 text-blue-400 border border-blue-500/25
+                                                  hover:bg-blue-500 hover:text-white hover:border-blue-500
+                                                  transition-all duration-200">
+                                                    <x-lucide-pen-line class="w-3.5 h-3.5" />
+                                                    Insérer
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Empty state --}}
+                        <div class="py-16 text-center">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 rounded-2xl 
+                                bg-orange-500/10 mb-4">
+                                <x-lucide-school class="w-8 h-8 text-orange-500" />
+                            </div>
+                            <p class="text-slate-400 text-lg font-medium">Aucune classe assignée</p>
+                            <p class="text-slate-500 text-sm mt-1">Les classes apparaîtront ici une fois assignées.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </section>
+
+        <section class="my-3 mx-auto flex items-center w-full">
+            {{-- Emploi du temps enseignant --}}
+            @php
+                $days = $this->weekDays();
+                $timeColPx = 180; // largeur colonne Horaire
+                $dayColPx = 184; // largeur fixe de chaque jour (à ajuster)
+                $tableWidth = $timeColPx + count($days) * $dayColPx;
+            @endphp
+
+            <div
+                class="min-w-0 w-full rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/10">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-white/[0.05]">
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">Mon Emploi du temps de l'année scolaire
+                            {{ $this->activeYear?->slug ?? '—' }}</h2>
+                        <p class="text-sm text-slate-500 mt-0.5 font-mono">
+                            Grille 07h–19h · année {{ $this->activeYear?->slug ?? '—' }}
+                            · {{ $this->teacherSlots->count() }} créneau(x)
+                            · <span
+                                class="uppercase text-orange-500 animate-pulse font-bold font-mono">{{ $this->teacher->teacherExecutingHours() }}
+                                Heure(s) cumulée(s)</span>
+                        </p>
+                    </div>
+                    <div class="inline-flex items-center gap-2 justify-end">
+                        @if (!$this->myTimePlanIsDownloadable)
+                            <button type="button" wire:click="downloadTimePlan" wire:loading.attr="disabled"
+                                wire:target="downloadTimePlan"
+                                class="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove wire:target="downloadTimePlan"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-blocks class="w-3.5 h-3.5" /> Générer mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="downloadTimePlan">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                        @else
+                            <button type="button" wire:click="downloadTimePlan" wire:loading.attr="disabled"
+                                wire:target="downloadTimePlan"
+                                class="h-9 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove wire:target="downloadTimePlan"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-rotate-3d class="w-3.5 h-3.5" /> Regénérer mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="downloadTimePlan">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                            <button type="button" wire:click="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                wire:loading.attr="disabled"
+                                wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                class="h-9 px-4 rounded-xl bg-green-600 hover:bg-green-500 text-xs font-semibold text-white transition-all inline-flex items-center gap-1.5 shrink-0 disabled:opacity-60">
+                                <span wire:loading.remove
+                                    wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-download class="w-3.5 h-3.5" /> Télécharger mon emploi en PDF
+                                </span>
+                                <span wire:loading wire:target="trackDownload({{ $this->myTimePlanIsDownloadable }})">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto overscroll-x-contain">
+                    <table class="table-fixed border-collapse text-left text-xs"
+                        style="width: {{ $tableWidth }}px; min-width: {{ $tableWidth }}px;">
+                        <colgroup>
+                            <col style="width: {{ $timeColPx }}px">
+                            @foreach ($days as $day => $dayName)
+                                <col style="width: {{ $dayColPx }}px">
+                            @endforeach
+                        </colgroup>
+
+                        <thead>
+                            <tr class="border-b border-white/[0.06]">
+                                <th
+                                    class="sticky left-0 z-20 bg-[#0c101c] px-2 py-3 text-center
+                               text-[11px] font-bold uppercase tracking-wider text-slate-500 border-r border-white/[0.06]">
+                                    Horaire
+                                </th>
+                                @foreach ($days as $day => $dayName)
+                                    @php $isTodayColumn = (int) $day === (int) now()->dayOfWeekIso; @endphp
+                                    <th
+                                        class="px-2 py-3 text-center text-sm font-semibold border-r border-white/[0.05] last:border-r-0
+                                   {{ $isTodayColumn ? 'text-cyan-300 bg-cyan-500/10' : 'text-indigo-300 bg-white/[0.02]' }}">
+                                        <span class="inline-flex items-center justify-center gap-1.5">
+                                            {{ $dayName }}
+                                            @if ($isTodayColumn)
+                                                <span
+                                                    class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                                            @endif
+                                        </span>
+                                    </th>
+                                @endforeach
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($this->scheduleRows() as $row)
+                                @if ($row['type'] === 'break')
+                                    <tr class="border-b border-white/[0.05]">
+                                        {{-- Fond opaque sur le td, teinte dans le div interne --}}
+                                        <td class="sticky left-0 z-10 bg-[#0c101c] p-0 border-r border-white/[0.06]">
+                                            <div
+                                                class="px-2 py-2 text-center {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
+                                                <span
+                                                    class="inline-flex flex-col items-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide
+                                               {{ $row['variant'] === 'lunch' ? 'text-amber-400/90' : 'text-sky-400/90' }}">
+                                                    <x-lucide-coffee class="w-3.5 h-3.5" />
+                                                    {{ $row['label'] }}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        @foreach ($days as $day => $dayName)
+                                            <td
+                                                class="px-1 py-1.5 border-r border-white/[0.05] last:border-r-0
+                                           {{ $row['variant'] === 'lunch' ? 'bg-amber-500/5' : 'bg-sky-500/5' }}">
+                                                <div
+                                                    class="h-8 rounded-lg border border-dashed flex items-center justify-center text-[10px] font-medium
+                                               {{ $row['variant'] === 'lunch'
+                                                   ? 'border-amber-500/20 bg-amber-500/5 text-amber-500/70'
+                                                   : 'border-sky-500/20 bg-sky-500/5 text-sky-500/70' }}">
+                                                    {{ $row['label'] }}
+                                                </div>
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @else
+                                    <tr class="border-b border-white/[0.05]"
+                                        wire:key="teacher-row-{{ $row['start'] }}">
+                                        <td
+                                            class="sticky left-0 z-10 bg-[#0c101c] px-2 py-2 text-center border-r border-white/[0.06] align-middle">
+                                            <span class="font-mono text-xs font-bold text-slate-400 whitespace-nowrap">
+                                                {{ \Illuminate\Support\Carbon::parse($row['start'])->format('H\hi') }}
+                                                <span class="text-slate-600">–</span>
+                                                {{ \Illuminate\Support\Carbon::parse($row['end'])->format('H\hi') }}
+                                            </span>
+                                        </td>
+
+                                        @foreach ($days as $day => $dayName)
+                                            @php
+                                                $covered = $this->isCellCoveredBySpanTeacher($day, $row['start']);
+                                                $slot = $covered
+                                                    ? null
+                                                    : $this->slotFragmentAtTeacher($day, $row['start']);
+                                                $span = $slot ? $this->slotContiguousSpan($slot, $row['start']) : 1;
+                                                $isLive = $slot ? $this->isSlotLive($slot) : false;
+                                                $planId = $slot?->time_plan_id;
+                                            @endphp
+
+                                            @if ($covered)
+                                                {{-- absorbé par rowspan --}}
+                                            @elseif ($slot)
+                                                @php
+                                                    $minH = max(79, $span * 79);
+                                                    $isAp = (bool) ($slot->is_ap ?? false);
+                                                @endphp
+                                                <td rowspan="{{ $span }}"
+                                                    class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                    wire:key="teacher-slot-{{ $slot->id }}">
+                                                    <div @class([
+                                                        'relative h-full rounded-xl p-2.5 flex flex-col gap-1.5 transition-all border',
+                                                        'border-cyan-400/80 bg-cyan-500/15 shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/30' =>
+                                                            $isLive && !$isAp,
+                                                        'border-violet-400/80 bg-violet-500/15 shadow-lg shadow-violet-500/20 ring-2 ring-violet-400/30' =>
+                                                            $isLive && $isAp,
+                                                        'border-indigo-500/25 bg-indigo-500/10' => !$isLive && !$isAp,
+                                                        'border-violet-500/30 bg-violet-500/10' => !$isLive && $isAp,
+                                                    ])
+                                                        style="min-height: {{ $minH }}px;">
+
+                                                        @if ($isLive)
+                                                            <div class="absolute -top-2 right-2 z-10">
+                                                                <span
+                                                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide {{ $isAp ? 'bg-violet-500' : 'bg-cyan-500' }} text-white shadow-md animate-pulse">
+                                                                    <span
+                                                                        class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                                                                    En cours
+                                                                </span>
+                                                            </div>
+                                                        @endif
+
+                                                        @if ($isAp)
+                                                            <div class="absolute top-1.5 right-1.5">
+                                                                <span
+                                                                    class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                                                                    AP
+                                                                </span>
+                                                            </div>
+                                                        @endif
+
+                                                        <div
+                                                            class="flex items-start gap-1.5 {{ $isAp ? 'pr-10' : 'pr-6' }}">
+                                                            <x-lucide-book-open @class([
+                                                                'w-3.5 h-3.5 shrink-0 mt-0.5',
+                                                                'text-violet-300' => $isAp,
+                                                                'text-cyan-300' => $isLive && !$isAp,
+                                                                'text-indigo-300' => !$isLive && !$isAp,
+                                                            ]) />
+                                                            <p class="font-semibold leading-5 text-white text-sm">
+                                                                {{ $slot->subject?->code ?? ($slot->subject?->name ?? ($slot->label ?? 'Cours')) }}
+                                                            </p>
+                                                        </div>
+
+                                                        @if ($isAp)
+                                                            <p class="text-[11px] text-slate-400 truncate">
+                                                                {{ $slot->label ?: 'Animation pédagogique' }}
+                                                            </p>
+                                                        @else
+                                                            <p class="text-[11px] text-slate-400 truncate">
+                                                                {{ $slot->timePlan?->classe?->name ?? ($slot->classeSubjectOfSchoolYear?->classe?->name ?? 'Classe') }}
+                                                            </p>
+                                                            <p
+                                                                class="text-lg text-sky-600 font-bold uppercase font-mono truncate">
+                                                                {{ $slot->timePlan?->classe?->code ?? ($slot->classeSubjectOfSchoolYear?->classe?->code ?? 'Classe') }}
+                                                            </p>
+                                                        @endif
+
+                                                        <div class="pt-1 mt-auto">
+                                                            <div @class([
+                                                                'flex items-center gap-1.5 font-mono text-xs',
+                                                                'text-violet-300' => $isAp,
+                                                                'text-cyan-300' => $isLive && !$isAp,
+                                                                'text-orange-400' => !$isLive && !$isAp,
+                                                            ])>
+                                                                <x-lucide-clock class="w-3.5 h-3.5 shrink-0" />
+                                                                <span>{{ $slot->start }}</span>
+                                                                <span class="opacity-50">–</span>
+                                                                <span>{{ $slot->end }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            @else
+                                                <td class="p-1.5 border-r border-white/[0.05] last:border-r-0 align-top"
+                                                    wire:key="teacher-empty-{{ $day }}-{{ $row['start'] }}">
+                                                    <div
+                                                        class="h-[72px] rounded-xl bg-white/[0.015] border border-white/[0.03]">
+                                                    </div>
+                                                </td>
+                                            @endif
+                                        @endforeach
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+

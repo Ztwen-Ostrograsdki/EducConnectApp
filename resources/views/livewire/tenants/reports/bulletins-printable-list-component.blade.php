@@ -17,21 +17,24 @@
 
         <div class="bulletin-page {{ $i > 0 ? 'page-break' : '' }}">
 
-            {{-- ═══ EN-TÊTE OFFICIEL COMPACT ═══ --}}
+            {{-- ═══ BANDEAU RÉPUBLIQUE (image) ═══ --}}
+            @unless (($repeatHeader ?? false) && ($isPdf ?? false))
+                <div class="doc-banner">
+                    <img src="{{ $isPdf ?? false
+                        ? tenancy()->tenant?->header_image_data_uri ?? tenancy()->tenant?->header_image_url
+                        : tenancy()->tenant?->header_image_url ?? tenancy()->tenant?->header_image_data_uri }}"
+                        alt="En-tête établissement">
+                </div>
+            @endunless
+
+            {{-- ═══ EN-TÊTE DOCUMENT ═══ --}}
             <div class="bulletin-header">
-                <div class="bh-left">
-                    <p class="bh-country">République du Bénin</p>
-                    <p class="bh-ministry">Min. Enseign. Technique et de la Formation Professionnelle</p>
-                </div>
-                <div class="bh-center">
-                    <h1 class="bh-school">{{ tenancy()->tenant->school_name }}</h1>
-                    <p class="bh-year">Année scolaire {{ $schoolYear?->slug }}</p>
-                </div>
-                <div class="bh-right">
+                <div class="bh-center" style="flex:1;text-align:center;">
                     <p class="bh-badge">Bulletin — {{ $schoolYear?->periodLabel() }} {{ $period }}</p>
                     @if ($b['isLastPeriod'])
                         <p class="bh-badge-sub">Résultats annuels inclus</p>
                     @endif
+                    <p class="bh-year">Année scolaire {{ $schoolYear?->slug }}</p>
                 </div>
             </div>
 
@@ -244,6 +247,26 @@
 
     .print-wrapper {
         width: 100%;
+    }
+
+    .doc-banner {
+        width: 100%;
+        margin: 0 0 3mm 0;
+        line-height: 0;
+        font-size: 0;
+        text-align: center;
+    }
+
+    .doc-banner img {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        height: auto;
+        max-height: 42mm;
+        object-fit: contain;
+        object-position: center center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .bulletin-page {

@@ -6,9 +6,18 @@ use App\Models\Tenant;
 use App\Tools\CentralTools;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
+if (! function_exists('__check_route')) {
+    function __check_route(string $routeName) : bool
+    {
+        if(Route::has($routeName)) return true;
+
+        return false;
+    }
+}
 if (! function_exists('format_price_fcfa')) {
     function format_price_fcfa(string|float $amount)
     {

@@ -46,6 +46,8 @@ class BulletinsPrintableListComponent extends Component
             'pdf_title'  => $pdf_title,
             'period'     => $period,
             'schoolYear' => $schoolYear,
+            'repeatHeader'  => 0,
+            'isPdf'    => 0,
         ]);
     }
 }

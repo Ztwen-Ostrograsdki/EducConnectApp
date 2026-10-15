@@ -147,6 +147,8 @@ class TeachersPrintableListComponent extends Component
             'allTeachers'  => count($rows),
             'pdf_title'    => $pdf_title,
             'tableColumns' => $this->tableColumns,
+            'repeatHeader'  => 0,
+            'isPdf'    => 0,
         ]);
     }
 }

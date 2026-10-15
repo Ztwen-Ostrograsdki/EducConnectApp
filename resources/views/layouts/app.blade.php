@@ -183,13 +183,6 @@
                                 @endforeach
                             @endif
 
-                            @if ($currentTenant?->timetableAble())
-                                <a data-sidebar-item href="#" class="s-link">
-                                    <div class="s-icon">🗓️</div>
-                                    <span class="s-label">Mon Emploi du temps</span>
-                                </a>
-                            @endif
-
                             @if (auth('tenant')->user()->canManageCoef(tenant('id')))
                                 <a data-sidebar-item href="{{ route('tenant.subjects.coefs.manage') }}"
                                     class="s-link {{ request()->routeIs('tenant.subjects.coefs.manage') ? 'active' : '' }}">

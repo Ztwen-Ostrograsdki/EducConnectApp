@@ -1,10 +1,16 @@
 <div class="print-wrapper">
 
+    {{-- ═══ BANDEAU RÉPUBLIQUE (image) ═══ --}}
+    @unless (($repeatHeader ?? false) && ($isPdf ?? false))
+        <div class="doc-banner">
+            <img src="{{ $isPdf ?? false
+                ? tenancy()->tenant?->header_image_data_uri ?? tenancy()->tenant?->header_image_url
+                : tenancy()->tenant?->header_image_url ?? tenancy()->tenant?->header_image_data_uri }}"
+                alt="En-tête établissement">
+        </div>
+    @endunless
     <div class="official-banner">
         <div class="official-banner-content">
-            <span class="official-country">République du Bénin</span>
-            <span class="official-ministry">Ministère de l'Enseignement Technique et de la Formation
-                Professionnelle</span>
             <span class="official-flag">
                 <span class="flag-green"></span><span class="flag-yellow"></span><span class="flag-red"></span>
             </span>
@@ -12,32 +18,6 @@
     </div>
 
     <header class="doc-header">
-        <div class="header-band">
-            <div class="school-logo">
-                <span class="logo-initials">{{ str()->initials(tenancy()->tenant->school_name) }}</span>
-                <div class="logo-dot"></div>
-            </div>
-            <div class="school-identity">
-                <h1 class="school-name">{{ tenancy()->tenant->school_name }}</h1>
-                <p class="school-subtitle">Enseignement {{ tenancy()->tenant->enseignement_type }}</p>
-                <p class="school-meta">
-                    {{ $schoolYear?->periodLabel() }} {{ $period }}
-                    &nbsp;•&nbsp;
-                    Établissement : <strong>{{ tenant('school_type') ?? 'Lycée Example' }}</strong>
-                </p>
-            </div>
-            <div class="doc-stamp">
-                <span class="stamp-label">Document officiel</span>
-                <span class="stamp-date">{{ $printed_at }}</span>
-            </div>
-        </div>
-
-        <div class="header-rule">
-            <div class="rule-navy"></div>
-            <div class="rule-gold"></div>
-            <div class="rule-light"></div>
-        </div>
-
         @if ($pdf_title)
             <div class="doc-title-block">
                 <h4 class="doc-title">{{ $pdf_title }}</h4>
@@ -132,6 +112,26 @@
         margin: 0 auto;
         padding: 2rem 2.5rem 1.5rem;
         background: var(--white);
+    }
+
+    .doc-banner {
+        width: 100%;
+        margin: 0 0 3mm 0;
+        line-height: 0;
+        font-size: 0;
+        text-align: center;
+    }
+
+    .doc-banner img {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        height: auto;
+        max-height: 42mm;
+        object-fit: contain;
+        object-position: center center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .official-banner {

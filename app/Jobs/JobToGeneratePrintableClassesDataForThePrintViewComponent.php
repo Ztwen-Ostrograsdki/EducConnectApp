@@ -109,6 +109,8 @@ class JobToGeneratePrintableClassesDataForThePrintViewComponent implements Shoul
             'target'          => 'classes',
             'eventName'       => 'ClassesPDFCompletedSuccessfullyLiveEvent',
             'tableColumns'    => $tableColumns,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -131,6 +133,7 @@ class JobToGeneratePrintableClassesDataForThePrintViewComponent implements Shoul
                 'promotionsGrouped'         => isset($this->config['promotionInGroups']) ? 
                                                $this->config['promotionInGroups'] : null,
             ],
+            repeatHeader: false,
         );
     }
 }

@@ -24,9 +24,6 @@ class ClassePlanPage extends Component
 
     // Formulaire créneau (requis par TimePlanActions)
     public bool $showSlotForm = false;
-    public ?int $slotId = null;
-    public ?int $slotFormPlanId = null;
-    public ?int $assignment_id = null;
     public int $day_of_week = 1;
     public string $starts_at = '08:00';
     public string $ends_at = '10:00';

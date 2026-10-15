@@ -8,7 +8,6 @@ use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Models\GeneratedDocument;
 use App\Models\Mark;
 use App\Models\SchoolYear;
-use App\Models\TimePlanSlot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -18,7 +17,6 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
-
 
 class TeacherDashboard extends Component
 {
@@ -363,15 +361,6 @@ class TeacherDashboard extends Component
 
         return ltrim(Str::after($absolutePath, $storageRoot), '/');
     }
-
-
-
-
-
-
-
-
-
 
     public function render()
     {

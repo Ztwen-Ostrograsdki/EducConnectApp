@@ -97,6 +97,8 @@ class JobToGeneratePrintableMarksDiagnosticDataForThePrintViewComponent implemen
             'tableColumns' => $tableColumns,
             'period'       => $this->period,
             'schoolYear'   => $this->schoolYear,
+            'isPdf'           => true,
+            'repeatHeader'    => false,
         ];
 
         PDFFactory::dispatch(
@@ -108,6 +110,7 @@ class JobToGeneratePrintableMarksDiagnosticDataForThePrintViewComponent implemen
             documentType:    'marks_diagnostic_list',
             tenantId:        $this->tenantId,
             notifiableId:    $this->notifiableId,
+            repeatHeader: false,
         );
     }
 }

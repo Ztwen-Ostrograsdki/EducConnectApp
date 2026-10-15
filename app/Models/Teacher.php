@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Teacher extends Model
 {
@@ -548,6 +549,67 @@ class Teacher extends Model
 
             $hours += $slot->duration;
 
+        }
+
+        return $hours;
+    }
+
+    /**
+     * Heures de cours (emploi du temps) par classe pour une année scolaire.
+     *
+     * @return array<int, int|null>  [ classe_id => heures (>= 0) | null si aucun créneau ]
+     */
+    public function hoursByClasse(?int $schoolYearId = null): array
+    {
+        $schoolYearId ??= SchoolYear::current()->value('id');
+
+        if (!$schoolYearId) {
+            return [];
+        }
+
+        // Classes où l’enseignant intervient (affectations actives)
+        $classeIds = ClasseSubjectOfSchoolYear::query()
+            ->where('teacher_id', $this->id)
+            ->where('school_year_id', $schoolYearId)
+            ->current()
+            ->distinct()
+            ->pluck('classe_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        if ($classeIds === []) {
+            return [];
+        }
+
+        // Initialisation : null = aucun créneau pour cette classe
+        $hours = array_fill_keys($classeIds, null);
+
+        // Créneaux de l’enseignant sur l’année, groupés par classe
+        $slots = TimePlanSlot::query()
+            ->whereHas('timePlan', fn ($q) => $q
+                ->where('school_year_id', $schoolYearId)
+                ->whereIn('classe_id', $classeIds)
+            )
+            ->whereHas('classeSubjectOfSchoolYear', fn ($q) => $q
+                ->where('teacher_id', $this->id)
+                ->whereNull('ended_at')
+                ->where('is_active', true)
+            )
+            ->with('timePlan:id,classe_id')
+            ->get(['id', 'time_plan_id', 'starts_at', 'ends_at']);
+
+        foreach ($slots as $slot) {
+            $classeId = (int) $slot->timePlan?->classe_id;
+
+            if (! array_key_exists($classeId, $hours)) {
+                continue;
+            }
+
+            $duration = (int) round(
+                Carbon::parse($slot->starts_at)->diffInHours(Carbon::parse($slot->ends_at), true)
+            );
+
+            $hours[$classeId] = ($hours[$classeId] ?? 0) + max(0, $duration);
         }
 
         return $hours;
