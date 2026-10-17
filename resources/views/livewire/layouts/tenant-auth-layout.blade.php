@@ -132,6 +132,7 @@
             <nav class="s-nav">
                 <div class="s-section">
                     <div class="s-section-label">Général</div>
+
                     @if ($currentTenant?->activeSubscription)
                         <a wire:navigate data-sidebar-item href="{{ route('tenant.dashboard') }}"
                             class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
@@ -150,6 +151,13 @@
                             <div class="s-icon">📊</div><span class="s-label cursor-not-allowed">Dashboard</span>
                         </span>
                     @endif
+                    <a wire:navigate href="{{ route('tenant.guide.help') }}"
+                        class="s-link animate-pulse {{ request()->routeIs('tenant.guide.help') ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-road class="w-4 h-4 text-orange-500" />
+                        </div>
+                        <span class="s-label text-orange-500">Guide - Aide </span>
+                    </a>
                     <div class="s-acc" id="acc-personnels">
                         <div class="s-acc-trigger" onclick="toggleAcc('acc-personnels')">
                             <div class="s-icon">

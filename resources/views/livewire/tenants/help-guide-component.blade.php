@@ -32,7 +32,7 @@
                         </p>
 
                         <h1
-                            class="text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-[2.5rem] lg:leading-tight">
+                            class="text-xl font-bold tracking-tight text-white md:text-2xl lg:text-[1.5rem] lg:leading-tight">
                             Mettre en route votre
                             <span
                                 class="bg-gradient-to-r from-indigo-300 via-violet-300 to-cyan-300 bg-clip-text text-transparent">établissement</span>
@@ -64,302 +64,13 @@
             </div>
         </section>
 
-        @php
-            $colorMap = [
-                'indigo' => [
-                    'border' => 'border-indigo-500/25',
-                    'borderHover' => 'hover:border-indigo-400/50',
-                    'bg' => 'bg-indigo-500/5',
-                    'bgIcon' => 'bg-indigo-500/15',
-                    'text' => 'text-indigo-300',
-                    'ring' => 'ring-indigo-500/20',
-                    'shadow' => 'hover:shadow-indigo-500/10',
-                    'accent' => 'from-indigo-500/20',
-                    'btn' => 'text-indigo-300 hover:text-indigo-200',
-                    'btnBg' => 'bg-indigo-500/10 border-indigo-500/25 hover:bg-indigo-500/20',
-                    'navHover' => 'hover:bg-indigo-500/10 hover:text-indigo-200',
-                    'navIconHover' =>
-                        'group-hover:border-indigo-500/40 group-hover:bg-indigo-500/15 group-hover:text-indigo-300',
-                    'chip' =>
-                        'border-indigo-500/25 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 hover:border-indigo-500/40',
-                ],
-                'violet' => [
-                    'border' => 'border-violet-500/25',
-                    'borderHover' => 'hover:border-violet-400/50',
-                    'bg' => 'bg-violet-500/5',
-                    'bgIcon' => 'bg-violet-500/15',
-                    'text' => 'text-violet-300',
-                    'ring' => 'ring-violet-500/20',
-                    'shadow' => 'hover:shadow-violet-500/10',
-                    'accent' => 'from-violet-500/20',
-                    'btn' => 'text-violet-300 hover:text-violet-200',
-                    'btnBg' => 'bg-violet-500/10 border-violet-500/25 hover:bg-violet-500/20',
-                    'navHover' => 'hover:bg-violet-500/10 hover:text-violet-200',
-                    'navIconHover' =>
-                        'group-hover:border-violet-500/40 group-hover:bg-violet-500/15 group-hover:text-violet-300',
-                    'chip' =>
-                        'border-violet-500/25 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 hover:border-violet-500/40',
-                ],
-                'fuchsia' => [
-                    'border' => 'border-fuchsia-500/25',
-                    'borderHover' => 'hover:border-fuchsia-400/50',
-                    'bg' => 'bg-fuchsia-500/5',
-                    'bgIcon' => 'bg-fuchsia-500/15',
-                    'text' => 'text-fuchsia-300',
-                    'ring' => 'ring-fuchsia-500/20',
-                    'shadow' => 'hover:shadow-fuchsia-500/10',
-                    'accent' => 'from-fuchsia-500/20',
-                    'btn' => 'text-fuchsia-300 hover:text-fuchsia-200',
-                    'btnBg' => 'bg-fuchsia-500/10 border-fuchsia-500/25 hover:bg-fuchsia-500/20',
-                    'navHover' => 'hover:bg-fuchsia-500/10 hover:text-fuchsia-200',
-                    'navIconHover' =>
-                        'group-hover:border-fuchsia-500/40 group-hover:bg-fuchsia-500/15 group-hover:text-fuchsia-300',
-                    'chip' =>
-                        'border-fuchsia-500/25 bg-fuchsia-500/10 text-fuchsia-300 hover:bg-fuchsia-500/20 hover:border-fuchsia-500/40',
-                ],
-                'rose' => [
-                    'border' => 'border-rose-500/25',
-                    'borderHover' => 'hover:border-rose-400/50',
-                    'bg' => 'bg-rose-500/5',
-                    'bgIcon' => 'bg-rose-500/15',
-                    'text' => 'text-rose-300',
-                    'ring' => 'ring-rose-500/20',
-                    'shadow' => 'hover:shadow-rose-500/10',
-                    'accent' => 'from-rose-500/20',
-                    'btn' => 'text-rose-300 hover:text-rose-200',
-                    'btnBg' => 'bg-rose-500/10 border-rose-500/25 hover:bg-rose-500/20',
-                    'navHover' => 'hover:bg-rose-500/10 hover:text-rose-200',
-                    'navIconHover' =>
-                        'group-hover:border-rose-500/40 group-hover:bg-rose-500/15 group-hover:text-rose-300',
-                    'chip' =>
-                        'border-rose-500/25 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 hover:border-rose-500/40',
-                ],
-                'orange' => [
-                    'border' => 'border-orange-500/25',
-                    'borderHover' => 'hover:border-orange-400/50',
-                    'bg' => 'bg-orange-500/5',
-                    'bgIcon' => 'bg-orange-500/15',
-                    'text' => 'text-orange-300',
-                    'ring' => 'ring-orange-500/20',
-                    'shadow' => 'hover:shadow-orange-500/10',
-                    'accent' => 'from-orange-500/20',
-                    'btn' => 'text-orange-300 hover:text-orange-200',
-                    'btnBg' => 'bg-orange-500/10 border-orange-500/25 hover:bg-orange-500/20',
-                    'navHover' => 'hover:bg-orange-500/10 hover:text-orange-200',
-                    'navIconHover' =>
-                        'group-hover:border-orange-500/40 group-hover:bg-orange-500/15 group-hover:text-orange-300',
-                    'chip' =>
-                        'border-orange-500/25 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 hover:border-orange-500/40',
-                ],
-                'amber' => [
-                    'border' => 'border-amber-500/25',
-                    'borderHover' => 'hover:border-amber-400/50',
-                    'bg' => 'bg-amber-500/5',
-                    'bgIcon' => 'bg-amber-500/15',
-                    'text' => 'text-amber-300',
-                    'ring' => 'ring-amber-500/20',
-                    'shadow' => 'hover:shadow-amber-500/10',
-                    'accent' => 'from-amber-500/20',
-                    'btn' => 'text-amber-300 hover:text-amber-200',
-                    'btnBg' => 'bg-amber-500/10 border-amber-500/25 hover:bg-amber-500/20',
-                    'navHover' => 'hover:bg-amber-500/10 hover:text-amber-200',
-                    'navIconHover' =>
-                        'group-hover:border-amber-500/40 group-hover:bg-amber-500/15 group-hover:text-amber-300',
-                    'chip' =>
-                        'border-amber-500/25 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/40',
-                ],
-                'lime' => [
-                    'border' => 'border-lime-500/25',
-                    'borderHover' => 'hover:border-lime-400/50',
-                    'bg' => 'bg-lime-500/5',
-                    'bgIcon' => 'bg-lime-500/15',
-                    'text' => 'text-lime-300',
-                    'ring' => 'ring-lime-500/20',
-                    'shadow' => 'hover:shadow-lime-500/10',
-                    'accent' => 'from-lime-500/20',
-                    'btn' => 'text-lime-300 hover:text-lime-200',
-                    'btnBg' => 'bg-lime-500/10 border-lime-500/25 hover:bg-lime-500/20',
-                    'navHover' => 'hover:bg-lime-500/10 hover:text-lime-200',
-                    'navIconHover' =>
-                        'group-hover:border-lime-500/40 group-hover:bg-lime-500/15 group-hover:text-lime-300',
-                    'chip' =>
-                        'border-lime-500/25 bg-lime-500/10 text-lime-300 hover:bg-lime-500/20 hover:border-lime-500/40',
-                ],
-                'emerald' => [
-                    'border' => 'border-emerald-500/25',
-                    'borderHover' => 'hover:border-emerald-400/50',
-                    'bg' => 'bg-emerald-500/5',
-                    'bgIcon' => 'bg-emerald-500/15',
-                    'text' => 'text-emerald-300',
-                    'ring' => 'ring-emerald-500/20',
-                    'shadow' => 'hover:shadow-emerald-500/10',
-                    'accent' => 'from-emerald-500/20',
-                    'btn' => 'text-emerald-300 hover:text-emerald-200',
-                    'btnBg' => 'bg-emerald-500/10 border-emerald-500/25 hover:bg-emerald-500/20',
-                    'navHover' => 'hover:bg-emerald-500/10 hover:text-emerald-200',
-                    'navIconHover' =>
-                        'group-hover:border-emerald-500/40 group-hover:bg-emerald-500/15 group-hover:text-emerald-300',
-                    'chip' =>
-                        'border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-500/40',
-                ],
-                'teal' => [
-                    'border' => 'border-teal-500/25',
-                    'borderHover' => 'hover:border-teal-400/50',
-                    'bg' => 'bg-teal-500/5',
-                    'bgIcon' => 'bg-teal-500/15',
-                    'text' => 'text-teal-300',
-                    'ring' => 'ring-teal-500/20',
-                    'shadow' => 'hover:shadow-teal-500/10',
-                    'accent' => 'from-teal-500/20',
-                    'btn' => 'text-teal-300 hover:text-teal-200',
-                    'btnBg' => 'bg-teal-500/10 border-teal-500/25 hover:bg-teal-500/20',
-                    'navHover' => 'hover:bg-teal-500/10 hover:text-teal-200',
-                    'navIconHover' =>
-                        'group-hover:border-teal-500/40 group-hover:bg-teal-500/15 group-hover:text-teal-300',
-                    'chip' =>
-                        'border-teal-500/25 bg-teal-500/10 text-teal-300 hover:bg-teal-500/20 hover:border-teal-500/40',
-                ],
-                'cyan' => [
-                    'border' => 'border-cyan-500/25',
-                    'borderHover' => 'hover:border-cyan-400/50',
-                    'bg' => 'bg-cyan-500/5',
-                    'bgIcon' => 'bg-cyan-500/15',
-                    'text' => 'text-cyan-300',
-                    'ring' => 'ring-cyan-500/20',
-                    'shadow' => 'hover:shadow-cyan-500/10',
-                    'accent' => 'from-cyan-500/20',
-                    'btn' => 'text-cyan-300 hover:text-cyan-200',
-                    'btnBg' => 'bg-cyan-500/10 border-cyan-500/25 hover:bg-cyan-500/20',
-                    'navHover' => 'hover:bg-cyan-500/10 hover:text-cyan-200',
-                    'navIconHover' =>
-                        'group-hover:border-cyan-500/40 group-hover:bg-cyan-500/15 group-hover:text-cyan-300',
-                    'chip' =>
-                        'border-cyan-500/25 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-500/40',
-                ],
-                'sky' => [
-                    'border' => 'border-sky-500/25',
-                    'borderHover' => 'hover:border-sky-400/50',
-                    'bg' => 'bg-sky-500/5',
-                    'bgIcon' => 'bg-sky-500/15',
-                    'text' => 'text-sky-300',
-                    'ring' => 'ring-sky-500/20',
-                    'shadow' => 'hover:shadow-sky-500/10',
-                    'accent' => 'from-sky-500/20',
-                    'btn' => 'text-sky-300 hover:text-sky-200',
-                    'btnBg' => 'bg-sky-500/10 border-sky-500/25 hover:bg-sky-500/20',
-                    'navHover' => 'hover:bg-sky-500/10 hover:text-sky-200',
-                    'navIconHover' =>
-                        'group-hover:border-sky-500/40 group-hover:bg-sky-500/15 group-hover:text-sky-300',
-                    'chip' =>
-                        'border-sky-500/25 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 hover:border-sky-500/40',
-                ],
-                'blue' => [
-                    'border' => 'border-blue-500/25',
-                    'borderHover' => 'hover:border-blue-400/50',
-                    'bg' => 'bg-blue-500/5',
-                    'bgIcon' => 'bg-blue-500/15',
-                    'text' => 'text-blue-300',
-                    'ring' => 'ring-blue-500/20',
-                    'shadow' => 'hover:shadow-blue-500/10',
-                    'accent' => 'from-blue-500/20',
-                    'btn' => 'text-blue-300 hover:text-blue-200',
-                    'btnBg' => 'bg-blue-500/10 border-blue-500/25 hover:bg-blue-500/20',
-                    'navHover' => 'hover:bg-blue-500/10 hover:text-blue-200',
-                    'navIconHover' =>
-                        'group-hover:border-blue-500/40 group-hover:bg-blue-500/15 group-hover:text-blue-300',
-                    'chip' =>
-                        'border-blue-500/25 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 hover:border-blue-500/40',
-                ],
-                'purple' => [
-                    'border' => 'border-purple-500/25',
-                    'borderHover' => 'hover:border-purple-400/50',
-                    'bg' => 'bg-purple-500/5',
-                    'bgIcon' => 'bg-purple-500/15',
-                    'text' => 'text-purple-300',
-                    'ring' => 'ring-purple-500/20',
-                    'shadow' => 'hover:shadow-purple-500/10',
-                    'accent' => 'from-purple-500/20',
-                    'btn' => 'text-purple-300 hover:text-purple-200',
-                    'btnBg' => 'bg-purple-500/10 border-purple-500/25 hover:bg-purple-500/20',
-                    'navHover' => 'hover:bg-purple-500/10 hover:text-purple-200',
-                    'navIconHover' =>
-                        'group-hover:border-purple-500/40 group-hover:bg-purple-500/15 group-hover:text-purple-300',
-                    'chip' =>
-                        'border-purple-500/25 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 hover:border-purple-500/40',
-                ],
-                'pink' => [
-                    'border' => 'border-pink-500/25',
-                    'borderHover' => 'hover:border-pink-400/50',
-                    'bg' => 'bg-pink-500/5',
-                    'bgIcon' => 'bg-pink-500/15',
-                    'text' => 'text-pink-300',
-                    'ring' => 'ring-pink-500/20',
-                    'shadow' => 'hover:shadow-pink-500/10',
-                    'accent' => 'from-pink-500/20',
-                    'btn' => 'text-pink-300 hover:text-pink-200',
-                    'btnBg' => 'bg-pink-500/10 border-pink-500/25 hover:bg-pink-500/20',
-                    'navHover' => 'hover:bg-pink-500/10 hover:text-pink-200',
-                    'navIconHover' =>
-                        'group-hover:border-pink-500/40 group-hover:bg-pink-500/15 group-hover:text-pink-300',
-                    'chip' =>
-                        'border-pink-500/25 bg-pink-500/10 text-pink-300 hover:bg-pink-500/20 hover:border-pink-500/40',
-                ],
-                'red' => [
-                    'border' => 'border-red-500/25',
-                    'borderHover' => 'hover:border-red-400/50',
-                    'bg' => 'bg-red-500/5',
-                    'bgIcon' => 'bg-red-500/15',
-                    'text' => 'text-red-300',
-                    'ring' => 'ring-red-500/20',
-                    'shadow' => 'hover:shadow-red-500/10',
-                    'accent' => 'from-red-500/20',
-                    'btn' => 'text-red-300 hover:text-red-200',
-                    'btnBg' => 'bg-red-500/10 border-red-500/25 hover:bg-red-500/20',
-                    'navHover' => 'hover:bg-red-500/10 hover:text-red-200',
-                    'navIconHover' =>
-                        'group-hover:border-red-500/40 group-hover:bg-red-500/15 group-hover:text-red-300',
-                    'chip' =>
-                        'border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:border-red-500/40',
-                ],
-                'yellow' => [
-                    'border' => 'border-yellow-500/25',
-                    'borderHover' => 'hover:border-yellow-400/50',
-                    'bg' => 'bg-yellow-500/5',
-                    'bgIcon' => 'bg-yellow-500/15',
-                    'text' => 'text-yellow-300',
-                    'ring' => 'ring-yellow-500/20',
-                    'shadow' => 'hover:shadow-yellow-500/10',
-                    'accent' => 'from-yellow-500/20',
-                    'btn' => 'text-yellow-300 hover:text-yellow-200',
-                    'btnBg' => 'bg-yellow-500/10 border-yellow-500/25 hover:bg-yellow-500/20',
-                    'navHover' => 'hover:bg-yellow-500/10 hover:text-yellow-200',
-                    'navIconHover' =>
-                        'group-hover:border-yellow-500/40 group-hover:bg-yellow-500/15 group-hover:text-yellow-300',
-                    'chip' =>
-                        'border-yellow-500/25 bg-yellow-500/10 text-yellow-300 hover:bg-yellow-500/20 hover:border-yellow-500/40',
-                ],
-            ];
-            $badgeStyles = [
-                'obligatoire' => 'bg-rose-500/15 text-rose-300 border-rose-500/25',
-                'recommande' => 'bg-amber-500/15 text-amber-300 border-amber-500/25',
-                'optionnel' => 'bg-sky-500/15 text-sky-300 border-sky-500/25',
-                'avance' => 'bg-violet-500/15 text-violet-300 border-violet-500/25',
-            ];
-            $badgeLabels = [
-                'obligatoire' => 'Obligatoire',
-                'recommande' => 'Recommandé',
-                'optionnel' => 'Optionnel',
-                'avance' => 'Avancé',
-            ];
-        @endphp
-
         {{-- ===================================================== --}}
         {{-- MOBILE TOC --}}
         {{-- ===================================================== --}}
         <section class="mb-6 lg:hidden">
             <div class="flex gap-2 overflow-x-auto pb-2">
                 @foreach ($this->sections as $section)
-                    @php $cm = $colorMap[$section['color'] ?? 'indigo'] ?? $colorMap['indigo']; @endphp
+                    @php $cm = $this->colorMap[$section['color'] ?? 'indigo'] ?? $this->colorMap['indigo']; @endphp
                     <a href="#{{ $section['id'] }}"
                         class="shrink-0 inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200 active:scale-95 whitespace-nowrap {{ $cm['chip'] }}">
                         <x-dynamic-component :component="'lucide-' . $section['icon']" class="h-3.5 w-3.5" />
@@ -370,98 +81,14 @@
         </section>
 
         {{-- ===================================================== --}}
-        {{-- MAIN : sidebar sticky (fixe seulement quand le scroll la masquerait) --}}
+        {{-- MAIN : sidebar + contenu (pas de fixation) --}}
         {{-- ===================================================== --}}
         <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
 
-            {{--
-                SIDEBAR desktop — sticky intelligent :
-                1. Reste dans le flux sous le hero (ne masque ni header ni hero)
-                2. Passe en fixed uniquement quand le scroll la ferait sortir du viewport
-                3. Revient dans le flux en remontant
-            --}}
-            <aside class="relative hidden w-[250px] shrink-0 self-start lg:block" x-data="{
-                isFixed: false,
-                topOffset: 16,
-                naturalTop: 0,
-            
-                measure() {
-                    const panel = this.$refs.panel;
-                    if (!panel || this.isFixed) return;
-                    this.naturalTop = window.scrollY + panel.getBoundingClientRect().top;
-                },
-            
-                pin() {
-                    const panel = this.$refs.panel;
-                    const spacer = this.$refs.spacer;
-                    if (!panel || !spacer || this.isFixed) return;
-            
-                    // 1. Mesurer pendant que le panneau est encore dans le flux
-                    const r = panel.getBoundingClientRect();
-                    const h = panel.offsetHeight;
-            
-                    // 2. Tout appliquer en synchrone (même frame) pour éviter le flash
-                    spacer.style.height = h + 'px';
-                    panel.style.position = 'fixed';
-                    panel.style.top = this.topOffset + 'px';
-                    panel.style.left = r.left + 'px';
-                    panel.style.width = r.width + 'px';
-                    panel.style.right = 'auto';
-            
-                    this.isFixed = true;
-                },
-            
-                unpin() {
-                    const panel = this.$refs.panel;
-                    const spacer = this.$refs.spacer;
-                    if (!panel || !spacer || !this.isFixed) return;
-            
-                    // Tout retirer en synchrone
-                    panel.style.position = '';
-                    panel.style.top = '';
-                    panel.style.left = '';
-                    panel.style.width = '';
-                    panel.style.right = '';
-                    spacer.style.height = '0px';
-            
-                    this.isFixed = false;
-                    // Recalcule la position naturelle après retour dans le flux
-                    requestAnimationFrame(() => this.measure());
-                },
-            
-                onScroll() {
-                    if (!this.$refs.panel) return;
-                    const shouldFix = window.scrollY + this.topOffset >= this.naturalTop;
-                    if (shouldFix) this.pin();
-                    else this.unpin();
-                },
-            
-                onResize() {
-                    const panel = this.$refs.panel;
-                    const spacer = this.$refs.spacer;
-                    if (!panel || !spacer) return;
-            
-                    if (this.isFixed) {
-                        const r = spacer.getBoundingClientRect();
-                        panel.style.left = r.left + 'px';
-                        panel.style.width = r.width + 'px';
-                    } else {
-                        this.measure();
-                        this.onScroll();
-                    }
-                }
-            }"
-                x-init="$nextTick(() => {
-                    measure();
-                    onScroll();
-                })" @scroll.window.passive="onScroll()" @resize.window.passive="onResize()">
-
-                {{-- Spacer : hauteur gérée en JS (synchrone avec pin/unpin) --}}
-                <div x-ref="spacer" class="w-full" style="height:0px" aria-hidden="true"></div>
-
-                {{-- Panneau : relative par défaut ; position fixed appliquée en JS --}}
-                <div x-ref="panel"
-                    class="relative z-20 w-full flex max-h-[calc(100vh-2rem)] flex-col overflow-y-auto overscroll-contain rounded-2xl border border-slate-800/80 bg-slate-900/95 p-3 shadow-xl shadow-black/20 backdrop-blur-md">
+            {{-- SIDEBAR desktop — dans le flux normal, sans sticky/fixed --}}
+            <aside class="hidden w-[250px] shrink-0 self-start lg:block">
+                <div
+                    class="rounded-2xl border border-slate-800/80 bg-slate-900/95 p-3 shadow-xl shadow-black/20 backdrop-blur-md">
 
                     <p class="mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
                         Mise en route
@@ -469,7 +96,7 @@
                     <nav class="mb-5 flex flex-col gap-0.5">
                         @foreach ($this->sections as $section)
                             @continue($section['order'] > 10)
-                            @php $cm = $colorMap[$section['color'] ?? 'indigo'] ?? $colorMap['indigo']; @endphp
+                            @php $cm = $this->colorMap[$section['color'] ?? 'indigo'] ?? $this->colorMap['indigo']; @endphp
                             <a href="#{{ $section['id'] }}"
                                 class="group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-slate-400 transition-all duration-200 {{ $cm['navHover'] }}">
                                 <span
@@ -487,7 +114,7 @@
                     <nav class="flex flex-col gap-0.5">
                         @foreach ($this->sections as $section)
                             @continue($section['order'] <= 10)
-                            @php $cm = $colorMap[$section['color'] ?? 'indigo'] ?? $colorMap['indigo']; @endphp
+                            @php $cm = $this->colorMap[$section['color'] ?? 'indigo'] ?? $this->colorMap['indigo']; @endphp
                             <a href="#{{ $section['id'] }}"
                                 class="group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-slate-400 transition-all duration-200 {{ $cm['navHover'] }}">
                                 <span
@@ -523,7 +150,7 @@
                             @continue($section['order'] > 10)
                             @php
                                 $c = $section['color'] ?? 'indigo';
-                                $cm = $colorMap[$c] ?? $colorMap['indigo'];
+                                $cm = $this->colorMap[$c] ?? $this->colorMap['indigo'];
                             @endphp
 
                             <article id="{{ $section['id'] }}"
@@ -553,8 +180,8 @@
                                                 {{ $section['title'] }}
                                             </h3>
                                             <span
-                                                class="rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $badgeStyles[$section['badge']] ?? '' }}">
-                                                {{ $badgeLabels[$section['badge']] ?? '' }}
+                                                class="rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $this->badgeStyles[$section['badge']] ?? '' }}">
+                                                {{ $this->badgeLabels[$section['badge']] ?? '' }}
                                             </span>
                                         </div>
 
@@ -622,7 +249,7 @@
                             @continue($section['order'] <= 10)
                             @php
                                 $c = $section['color'] ?? 'indigo';
-                                $cm = $colorMap[$c] ?? $colorMap['indigo'];
+                                $cm = $this->colorMap[$c] ?? $this->colorMap['indigo'];
                             @endphp
 
                             <article id="{{ $section['id'] }}"
@@ -643,8 +270,8 @@
                                                 {{ $section['title'] }}
                                             </h3>
                                             <span
-                                                class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $badgeStyles[$section['badge']] ?? '' }}">
-                                                {{ $badgeLabels[$section['badge']] ?? '' }}
+                                                class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $this->badgeStyles[$section['badge']] ?? '' }}">
+                                                {{ $this->badgeLabels[$section['badge']] ?? '' }}
                                             </span>
                                         </div>
                                         <p class="mt-1.5 text-sm leading-relaxed text-slate-400 italic">
@@ -699,7 +326,7 @@
         @php
             $section = $this->modalSection;
             $c = $section['color'] ?? 'indigo';
-            $cm = $colorMap[$c] ?? $colorMap['indigo'];
+            $cm = $this->colorMap[$c] ?? $this->colorMap['indigo'];
         @endphp
 
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" x-data="{ show: true }"
@@ -736,8 +363,8 @@
                                     {{ $section['title'] }}
                                 </h2>
                                 <span
-                                    class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $badgeStyles[$section['badge']] ?? '' }}">
-                                    {{ $badgeLabels[$section['badge']] ?? '' }}
+                                    class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide {{ $this->badgeStyles[$section['badge']] ?? '' }}">
+                                    {{ $this->badgeLabels[$section['badge']] ?? '' }}
                                 </span>
                             </div>
                             <p class="text-sm leading-relaxed text-slate-400 italic">
