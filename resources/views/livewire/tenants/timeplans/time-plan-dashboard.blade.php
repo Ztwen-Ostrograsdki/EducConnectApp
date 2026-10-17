@@ -28,6 +28,26 @@
                 </span>
             </button>
         </div>
+        <div class="w-full">
+            <h5 class="flex items-center gap-2 text-orange-500 text-trebuchet text-sm">
+                <x-lucide-info class="w-5 h-5" />
+                <span>
+                    Il vous ai recommandé de définir en premier lieu les heures d'AP de chaque atelier avant de
+                    renseiller les créneaux de cours de chaque classe!
+
+                    <br>
+                    <span class="text-slate-300">
+                        Pour définir les heures d'AP, allez dans la section
+                        <a wire:navigate href="{{ route('tenant.subject.manage.aptime') }}"
+                            class="hover:underline underline-offset-4 text-sky-500 bg-sky-600/45 hover:bg-sky-600 p-1 rounded-xl inline-flex items-center hover:text-sky-950 gap-x-2">
+                            <span class="">Matières </span>
+                            <x-lucide-arrow-right class="w-4 h-w-4" />
+                            <span> puis dans gérer les AP</span>
+                        </a>
+                    </span>
+                </span>
+            </h5>
+        </div>
 
         {{-- ========== FILTRES ========== --}}
         <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 space-y-3">
@@ -107,7 +127,8 @@
                                    px-3 text-sm text-white focus:border-cyan-500/50 focus:outline-none transition-all">
                             <option value="">Toutes les promotions</option>
                             @foreach ($this->promotions as $promo)
-                                <option value="{{ $promo->id }}">{{ $promo->name }} ({{ $promo->code }})</option>
+                                <option value="{{ $promo->id }}">{{ $promo->name }} ({{ $promo->code }})
+                                </option>
                             @endforeach
                         </select>
                     @elseif ($filterBy === 'serial')

@@ -29,17 +29,22 @@ class ManageFiliarChiefsComponent extends Component
 
     protected ?SchoolYear $activeSchoolYear = null;
 
-    public function mount(string $filiar_slug): void
+    public function mount(?string $filiar_slug = null): void
     {
-        if (! $filiar_slug) abort(404);
 
-        $filiar = Filiar::withTrashed()->where('slug', $filiar_slug)->first();
+        if($filiar_slug){
 
-        if (! $filiar) abort(404);
+            $filiar = Filiar::withTrashed()->where('slug', $filiar_slug)->first();
 
-        $this->filiar = $filiar;
+            if (! $filiar) abort(404);
 
-        $this->loadCurrentChiefs();
+            $this->filiar = $filiar;
+
+            $this->loadCurrentChiefs();
+
+
+        }
+        
     }
 
     protected function activeSchoolYear(): ?SchoolYear
@@ -64,6 +69,19 @@ class ManageFiliarChiefsComponent extends Component
         $this->principalId = $chiefs->firstWhere('is_master', true)?->teacher_id;
         $this->adjointId = $chiefs->firstWhere('is_master', false)?->teacher_id;
     }
+
+    #[Computed]
+    public function filiars()
+    {
+        if (!$this->filiar) {
+            return Filiar::where('is_active', true)
+                ->orderBy('users.name')
+                ->get();
+        }
+
+        return collect();
+    }
+
 
     #[Computed]
     public function teachers()

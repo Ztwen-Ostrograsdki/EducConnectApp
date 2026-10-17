@@ -270,19 +270,24 @@
                             @endforeach
                         </div>
 
-                        {{-- <div class="s-section">
+                        <div class="s-section">
                             <div class="s-section-label">Les emplois du temps</div>
                             @foreach ($children as $child_rel)
-                                <a wire:navigate data-sidebar-item href="#" class="s-link">
+                                <a wire:navigate data-sidebar-item
+                                    href="{{ route('tenant.parent.space.timeplan', ['student_uuid' => $child_rel->student->uuid]) }}"
+                                    class="s-link {{ request()->routeIs('tenant.parent.space.timeplan') &&
+                                    request()->route('student_uuid') === $child_rel->student->uuid
+                                        ? 'active'
+                                        : '' }}">
                                     <div class="s-icon">
-                                        <x-lucide-file class="h-3 w-3" />
+                                        <x-lucide-calendar-days class="h-3 w-3 text-sky-400" />
                                     </div>
                                     <span class="s-label truncate">
                                         Emploi de {{ $child_rel->student->getFullName() }}
                                     </span>
                                 </a>
                             @endforeach
-                        </div> --}}
+                        </div>
 
                         @if ($currentTenant?->pdfBulletinsAble())
                             <div class="s-section">

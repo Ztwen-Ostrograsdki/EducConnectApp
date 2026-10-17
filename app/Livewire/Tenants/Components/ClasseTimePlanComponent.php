@@ -5,6 +5,7 @@ namespace App\Livewire\Tenants\Components;
 use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Models\Classe;
 use App\Models\SchoolYear;
+use App\Models\Student;
 use App\Models\TimePlan;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -19,6 +20,7 @@ class ClasseTimePlanComponent extends Component
 
     public ?string $classe_slug = '';
     public ?int $classeId;
+    public ?Student $student = null;
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata(): void

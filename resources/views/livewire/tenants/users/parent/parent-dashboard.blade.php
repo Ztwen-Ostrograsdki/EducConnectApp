@@ -170,11 +170,11 @@
                                         </a>
 
                                         {{-- Droite : boutons d'actions centrés verticalement --}}
-                                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                                        <div class="flex flex-wrap items-center gap-2 shrink-0 ">
                                             @if (tenant('tutors_can_download_bulletin'))
                                                 @if (!$this->hasCurrentBulletin($student->id))
                                                     <button wire:click='generateStudentBulletin({{ $student->id }})'
-                                                        class="py-2 px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                        class="py-2  px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 text-xs font-medium transition-all  items-center justify-center hidden">
                                                         <span class="inline-flex items-center">
                                                             <span class="inline-flex items-center gap-x-2">
                                                                 <x-lucide-blocks class="w-4 h-4" />
@@ -189,7 +189,7 @@
                                                     </button>
                                                 @else
                                                     <button wire:click='generateStudentBulletin({{ $student->id }})'
-                                                        class="py-2 px-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                        class="py-2 px-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 text-xs font-medium transition-all hidden items-center justify-center">
                                                         <span class="inline-flex items-center">
                                                             <span class="inline-flex items-center gap-x-2">
                                                                 <span wire:loading.remove
@@ -254,6 +254,11 @@
                                                 href="{{ route('tenant.parent.space.marks', ['student_uuid' => $student->uuid]) }}"
                                                 class="py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-xs font-medium transition-all inline-flex items-center justify-center">
                                                 Notes
+                                            </a>
+                                            <a wire:navigate
+                                                href="{{ route('tenant.parent.space.timeplan', ['student_uuid' => $student->uuid]) }}"
+                                                class="py-2 px-3 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 border border-slate-500/20 text-slate-300 text-xs font-medium transition-all inline-flex items-center justify-center">
+                                                Emploi du temps
                                             </a>
                                         </div>
                                     </div>

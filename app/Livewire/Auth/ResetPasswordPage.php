@@ -3,8 +3,6 @@
 namespace App\Livewire\Auth;
 
 use App\Models\PasswordTokenForReset;
-use Illuminate\Foundation\Http\Attributes\RedirectToRoute;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Component;

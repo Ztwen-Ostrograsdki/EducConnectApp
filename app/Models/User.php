@@ -28,30 +28,56 @@ class User extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
-        'name',
-        'prenames',
-        'job_name',
-        'country',
-        'city',
-        'department',
+        
         'email',
         'password',
         'profil_photo',
         'school_name',
         'school_devise',
-        'contacts',
+        
         'is_super_admin',
         'tenant_id',
         'email_verified_at',
         'uuid',
-        'adresse',
+        
         'logged_count',
         'cannot_edit_classes',
         'blocked',
-        'birth_date',
-        'birth_place',
-        'gender',
+        
         'credentials_sent',
+
+        //Details état civil - administratif - Editable
+
+        'name',
+        'prenames',
+        'job_name', //Profession
+        'country',
+        'city',
+        'department',
+        'contacts',
+        'adresse',
+        'birth_date', //Date de naissance
+        'birth_place', //Lieu de naissance
+        'gender',
+
+
+        'matricule_number',
+        'ID_card_numder',
+        'ID_card_type',
+        'ID_card_delivery_place',
+        'ID_card_expired_date',
+        'first_take_job_date',
+        'academic_graduate',
+        'professionnal_graduate',
+        'body',
+        'current_grade',
+        'current_index',
+        'official_status',
+        'payed_grade',
+        'payed_index',
+        'marital_status',
+        'observations',
+        'references_of_recrutement',
     ];
 
 

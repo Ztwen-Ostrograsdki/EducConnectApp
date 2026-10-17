@@ -718,6 +718,14 @@
                         </span>
                     @endif
 
+                    <a wire:navigate href="{{ route('tenant.guide.help') }}"
+                        class="s-link {{ request()->routeIs('tenant.guide.help') ? 'active' : '' }}">
+                        <div class="s-icon">
+                            <x-lucide-road class="w-4 h-4" />
+                        </div>
+                        <span class="s-label">Guide - Aide </span>
+                    </a>
+
                     <a wire:navigate href="{{ route('tenant.notifications.center') }}"
                         class="s-link {{ request()->routeIs('tenant.notifications.center') ? 'active' : '' }}">
                         <div class="s-icon">🔔</div><span class="s-label">
@@ -808,8 +816,13 @@
                                 <div class="dd-title">{{ Auth::guard('tenant')->user()?->name ?? '' }}</div>
                                 <div class="dd-sub">{{ Auth::guard('tenant')->user()?->email ?? '' }}</div>
                             </div>
-                            <a wire:navigate href="{{ route('tenant.my.profil') }}" class="dd-item">👤 Mon
-                                profil</a>
+                            <a wire:navigate href="{{ route('tenant.my.profil') }}"
+                                class="s-link {{ request()->routeIs('tenant.my.profil') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-user-cog class="h-3 w-3" />
+                                </div>
+                                <span class="s-label">Mon profil</span>
+                            </a>
                             <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
                                 class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
                                 <div class="s-icon">
@@ -817,9 +830,20 @@
                                 </div>
                                 <span class="s-label">Laisser un Commentaire</span>
                             </a>
-                            <a wire:navigate href="{{ route('tenant.settings') }}" class="dd-item">⚙️ Paramètres du
-                                compte</a>
-                            <a href="#" class="dd-item">❓ Support</a>
+                            <a wire:navigate href="{{ route('tenant.settings') }}"
+                                class="s-link {{ request()->routeIs('tenant.settings') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-settings class="h-3 w-3" />
+                                </div>
+                                <span class="s-label">Paramètres</span>
+                            </a>
+                            <a wire:navigate href="{{ route('tenant.guide.help') }}"
+                                class="s-link {{ request()->routeIs('tenant.guide.help') ? 'active' : '' }}">
+                                <div class="s-icon">
+                                    <x-lucide-road class="h-3 w-3" />
+                                </div>
+                                <span class="s-label">Support - Aide</span>
+                            </a>
                             <div class="dd-sep"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

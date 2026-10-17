@@ -11,10 +11,25 @@
                     Emploi du temps
                     <span class="text-slate-500 font-normal">·</span>
                     {{ $this->classe->name }}
+                    @if ($student)
+                        <span
+                            class="inline-flex items-center gap-x-0.5 underline underline-offset-4 decoration-double decoration-amber-500">
+                            <span class="">· Apprenant : </span>
+                            <span class="font-normal text-amber-500">{{ $student->getFullName() }}</span>
+                        </span>
+                    @endif
                 </h2>
-                <p class="mt-1 text-sm text-slate-500">
-                    Consultez et gérez les cours prévus pour cette classe
-                </p>
+                @if (auth('tenant')->user()->hasRole('directeur'))
+                    <p class="mt-1 text-sm text-slate-500">
+                        Consultez et gérez les cours de cette classe pour l'année scolaire
+                        {{ $this->timePlan->schoolYear?->slug }}
+                    </p>
+                @else
+                    <p class="mt-1 text-sm text-slate-500">
+                        Consultez les cours prévus pour cette classe pour l'année scolaire
+                        {{ $this->timePlan->schoolYear?->slug }}
+                    </p>
+                @endif
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
@@ -126,7 +141,6 @@
                     <div>
                         <h3 class="text-sm font-semibold text-white">Planning hebdomadaire</h3>
                         <p class="text-[11px] text-slate-500">
-                            Grille 07h–19h · récréation après 09h–10h · pause déjeuner 13h–14h
                             · le créneau en cours est mis en évidence
                         </p>
                     </div>

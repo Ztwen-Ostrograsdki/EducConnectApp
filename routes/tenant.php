@@ -30,6 +30,7 @@ use App\Livewire\Tenants\Filiars\ManageFiliarChiefsComponent;
 use App\Livewire\Tenants\Filiars\ManageFiliarComponent;
 use App\Livewire\Tenants\Galleries\CreateGalleryComponent;
 use App\Livewire\Tenants\Galleries\ManageGalleriesComponent;
+use App\Livewire\Tenants\HelpGuideComponent;
 use App\Livewire\Tenants\HomePage;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\CreateTutors;
@@ -40,7 +41,6 @@ use App\Livewire\Tenants\Parents\TutorsCreationMonitorComponent;
 use App\Livewire\Tenants\Personnels\CreatePersonnels;
 use App\Livewire\Tenants\Personnels\EditPersonnel;
 use App\Livewire\Tenants\Personnels\ManagePersonnelProfilPhotoComponent;
-use App\Livewire\Tenants\Personnels\PersonnelFormComponent;
 use App\Livewire\Tenants\Personnels\PersonnelsPage;
 use App\Livewire\Tenants\ProfilPhotoManagerByDirectorComponent;
 use App\Livewire\Tenants\Promotions\CreatePromotionComponent;
@@ -109,12 +109,14 @@ use App\Livewire\Tenants\TimePlans\TimePlanPrintableDocumentsPage;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintableListComponent;
 use App\Livewire\Tenants\TimePlans\TimePlanPrintsManagerComponent;
 use App\Livewire\Tenants\UpdateProfilePhoto;
+use App\Livewire\Tenants\UpdateUserProfilePage;
 use App\Livewire\Tenants\UserDownloadableDocumentsPage;
 use App\Livewire\Tenants\Users\AccountsDashboard;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsBulletinViewer;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsMarksViewer;
+use App\Livewire\Tenants\Users\Parent\ParentStudentTimePlanViewer;
 use App\Livewire\Tenants\Users\Pp\PrincipalClasseStudentsMarksComponent;
 use App\Livewire\Tenants\Users\Pp\PrincipalClasseTeachersComponent;
 use App\Livewire\Tenants\Users\Pp\PrincipalClasseTutorsComponent;
@@ -123,7 +125,6 @@ use App\Livewire\Tenants\Users\Teacher\TeacherClasseMarksViewer;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseStudentsViewer;
 use App\Livewire\Tenants\Users\Teacher\TeacherClasseTimePlan;
 use App\Livewire\Tenants\Users\Teacher\TeacherDashboard;
-use App\Livewire\Tenants\Users\Teacher\TeacherTimePlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -190,6 +191,8 @@ Route::middleware([
             
             Route::get('/galleries', ManageGalleriesComponent::class)->name('galleries.index')->middleware(['tenant.has.active.subscription']);
 
+            Route::get('/guide-prise-en-mains', HelpGuideComponent::class)->name('guide.help');
+
         });
 
         Route::middleware(['role:directeur', 'tenant.has.active.schoolYear', 'tenant.has.active.subscription'])->prefix('administration')->name('tenant.')->group(function () {
@@ -234,7 +237,7 @@ Route::middleware([
             Route::get('/matieres/{subject_slug}/AE/edition', ManageSubjectChiefsComponent::class)->name('subject.edit.ae');
             Route::get('/matieres/les-heures-ap/{subject_slug?}', ManageSubjectAPTimeComponent::class)->name('subject.manage.aptime');
 
-            // FILIRES
+            // FILIERES
             Route::get('/filiars/portail-des-filiars', FiliarsPortal::class)->name('filiars.portal');
 
             Route::get('/filieres/details-filiere/{filiar_slug}', FiliarProfil::class)->name('filiar.profil');
@@ -244,7 +247,8 @@ Route::middleware([
 
             Route::get('/filieres/nouvelle-filiere', CreateFiliarComponent::class)->name('filiar.create');
             Route::get('/filieres/{filiar_slug}/edition', ManageFiliarComponent::class)->name('filiar.edit');
-            Route::get('/filieres/{filiar_slug}/AE/edition', ManageFiliarChiefsComponent::class)->name('filiar.edit.ca');
+            
+            Route::get('/filieres/{filiar_slug?}/AE/edition', ManageFiliarChiefsComponent::class)->name('filiar.edit.ca');
             
             // SERIES
             Route::get('/series/portail-des-series', SerialsPortal::class)->name('serials.portal');
@@ -411,6 +415,8 @@ Route::middleware([
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
 
+        Route::get('/profil/mise-a-jour-donnees', UpdateUserProfilePage::class)->name('tenant.update.user.data');
+
         //TESTIMONIALS
         Route::get('/opinions/ajout', CreateTestimonialComponent::class)->name('tenant.testimonials.create')->middleware(['tenant.has.active.subscription']);
 
@@ -472,6 +478,11 @@ Route::middleware([
                 Route::get('/mon-espace-parent/{student_uuid}/bulletin-de-notes-enfant', ParentStudentsBulletinViewer::class)
                     ->name('tenant.parent.space.bulletin')
                     ->middleware('tenant.module:pdf_bulletins');
+
+                Route::get('/mon-espace-parent/{student_uuid}/emploi-du-temps-enfant',
+                ParentStudentTimePlanViewer::class)
+                    ->name('tenant.parent.space.timeplan')
+                    ->middleware('tenant.module:timetable');
             });
 
             // ── Élève ─────────────────────────────────────────────────────
