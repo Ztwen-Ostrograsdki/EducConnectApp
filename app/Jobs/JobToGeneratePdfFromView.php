@@ -358,23 +358,4 @@ class JobToGeneratePdfFromView implements ShouldQueue
         return PDFFactory::resolvePublicUrl($this->outputPath);
     }
     
-
-    private function resolveCompiledCssPath(): ?string
-    {
-        $manifestPath = public_path('build/manifest.json');
-
-        if (! File::exists($manifestPath)) {
-            return null;
-        }
-
-        $manifest = json_decode(File::get($manifestPath), true);
-
-        $entry = $manifest['resources/css/app.css'] ?? null;
-
-        if (! $entry || ! isset($entry['file'])) {
-            return null;
-        }
-
-        return public_path('build/' . $entry['file']);
-    }
 }
