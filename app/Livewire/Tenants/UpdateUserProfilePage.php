@@ -235,10 +235,13 @@ class UpdateUserProfilePage extends Component
 
     public function render()
     {
-         /**@var \App\Models\User */
+         /** @var \App\Models\User $user */
         $user = auth('tenant')->user();
 
-        return view('livewire.tenants.update-user-profile-page')->layout($user->getDashboardLayout());
+        $view = view('livewire.tenants.update-user-profile-page');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
 
     }
 }

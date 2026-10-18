@@ -7,7 +7,6 @@ use App\Models\GeneratedDocument;
 use App\Models\SchoolYear;
 use App\Models\Teacher;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -15,7 +14,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
-#[Layout('livewire.layouts.tenant-auth-layout')]
 #[Title('Documents téléchargeables')]
 class UserDownloadableDocumentsPage extends Component
 {
@@ -238,6 +236,13 @@ class UserDownloadableDocumentsPage extends Component
 
     public function render()
     {
-        return view('livewire.tenants.user-downloadable-documents-page');
+        /** @var \App\Models\User $user */
+        $user = auth('tenant')->user();
+
+        $view = view('livewire.tenants.user-downloadable-documents-page');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
+
     }
 }

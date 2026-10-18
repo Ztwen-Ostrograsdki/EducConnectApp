@@ -21,6 +21,7 @@ use App\Livewire\Tenants\Classes\MarkRankingPrintsManagerComponent;
 use App\Livewire\Tenants\Classes\MarksRankingPrintableDocumentsPage;
 use App\Livewire\Tenants\Classes\MigrateStudentsToClassesComponent;
 use App\Livewire\Tenants\Components\MaintenancePage;
+use App\Livewire\Tenants\Epreuves\ManageEpreuves;
 use App\Livewire\Tenants\Filiars\CreateFiliarComponent;
 use App\Livewire\Tenants\Filiars\FiliarProfil;
 use App\Livewire\Tenants\Filiars\FiliarsPortal;
@@ -59,6 +60,7 @@ use App\Livewire\Tenants\Schoolyears\CreateSchoolYear;
 use App\Livewire\Tenants\Schoolyears\ManageSchoolYearComponent;
 use App\Livewire\Tenants\Schoolyears\SchoolYearProfil;
 use App\Livewire\Tenants\Schoolyears\SchoolYearsPortal;
+use App\Livewire\Tenants\SendEpreuvesComponent;
 use App\Livewire\Tenants\Serials\CreateSerialComponent;
 use App\Livewire\Tenants\Serials\ManageSerialComponent;
 use App\Livewire\Tenants\Serials\SerialProfil;
@@ -112,6 +114,7 @@ use App\Livewire\Tenants\UpdateProfilePhoto;
 use App\Livewire\Tenants\UpdateUserProfilePage;
 use App\Livewire\Tenants\UserDownloadableDocumentsPage;
 use App\Livewire\Tenants\Users\AccountsDashboard;
+use App\Livewire\Tenants\Users\MyEpreuvesComponent;
 use App\Livewire\Tenants\Users\NotificationsPage;
 use App\Livewire\Tenants\Users\Parent\ParentDashboard;
 use App\Livewire\Tenants\Users\Parent\ParentStudentsBulletinViewer;
@@ -411,11 +414,15 @@ Route::middleware([
             
             Route::get('/mise-a-jour-informations/apprenant/{studentUuid}', StudentDataManagerByDirectorComponent::class)->name('director.manage.student.data');
 
+            Route::get('/les-epreuves/gestion', ManageEpreuves::class)->name('director.manage.epreuves');
+
         });
 
         Route::get('/centre-de-notifications', NotificationsPage::class)->name('tenant.notifications.center');
 
         Route::get('/profil/mise-a-jour-donnees', UpdateUserProfilePage::class)->name('tenant.update.user.data');
+        
+        Route::get('/envoie-des-epreuves', SendEpreuvesComponent::class)->name('tenant.send.epreuves');
 
         //TESTIMONIALS
         Route::get('/opinions/ajout', CreateTestimonialComponent::class)->name('tenant.testimonials.create')->middleware(['tenant.has.active.subscription']);
@@ -428,6 +435,8 @@ Route::middleware([
 
             Route::get('/mon-profil/editer-photo-profil', UpdateProfilePhoto::class)->name('tenant.update.profil.photo');
 
+            Route::get('/mon-espace-mes-epreuves', MyEpreuvesComponent::class)->name('tenant.my.epreuves');
+            
             // ESPACE ENSEIGNANT
             Route::middleware([
                 'role:enseignant',
@@ -437,7 +446,7 @@ Route::middleware([
             ])->name('tenant.teacher.')->group(function () {
                 
                 Route::get('/mon-espace-enseignant', TeacherDashboard::class)->name('my.dashboard');
-                
+
                 Route::get('/mon-espace-enseignant/{classe_slug}/{subject_slug}/les-notes', TeacherClasseMarksViewer::class)
                     ->name('classe.marks')
                     ->middleware('tenant.module:marks_management');

@@ -135,6 +135,20 @@
                             </div>
                             <span class="s-label">Mon profil</span>
                         </a>
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.send.epreuves') }}"
+                            class="s-link {{ request()->routeIs('tenant.send.epreuves') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-upload class="h-3 w-3" />
+                            </div>
+                            <span class="s-label">Envoyer épreuves</span>
+                        </a>
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.my.epreuves') }}"
+                            class="s-link {{ request()->routeIs('tenant.my.epreuves') ? 'active' : '' }}">
+                            <div class="s-icon">
+                                <x-lucide-files class="h-3 w-3" />
+                            </div>
+                            <span class="s-label">Mes épreuves</span>
+                        </a>
                         <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
                             class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
                             <div class="s-icon">

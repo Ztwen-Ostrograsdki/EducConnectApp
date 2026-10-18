@@ -126,17 +126,6 @@ class StudentDataManagerByDirectorComponent extends Component
         return Str::upper(Str::ascii($value ?? ''));
     }
 
-    public function render()
-    {
-        $genders = config('app.genders');
-
-        $departments = BeninData::getDepartments();
-
-        $countries = ['BENIN' => 'BENIN'];
-
-        return view('livewire.tenants.student-data-manager-by-director-component', compact('countries', 'departments', 'genders'))->layout(auth('tenant')->user()->getDashboardLayout());
-    }
-
     public function updatedDepartment(?string $department)
     {
         if($department){
@@ -246,6 +235,25 @@ class StudentDataManagerByDirectorComponent extends Component
 
         $this->resetErrorBag();
 
+    }
+
+
+    public function render()
+    {
+        $genders = config('app.genders');
+
+        $departments = BeninData::getDepartments();
+
+        $countries = ['BENIN' => 'BENIN'];
+
+        /** @var \App\Models\User $user */
+        $user = auth('tenant')->user();
+
+        $view = view('livewire.tenants.student-data-manager-by-director-component')->with('genders', $genders)->with('departments', $departments)->with('countries', $countries);
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
+        
     }
     
 

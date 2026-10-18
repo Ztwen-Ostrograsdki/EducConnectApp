@@ -177,11 +177,12 @@ class ProfilPhotoManagerByDirectorComponent extends Component
 
     public function render()
     {
-        /** @var \App\Models\User $user **/
+        /** @var \App\Models\User $user */
         $user = auth('tenant')->user();
 
-        
-        
-        return view('livewire.tenants.profil-photo-manager-by-director-component')->layout($user->getDashboardLayout());
+        $view = view('livewire.tenants.profil-photo-manager-by-director-component');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
     }
 }

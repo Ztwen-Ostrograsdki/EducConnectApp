@@ -68,7 +68,10 @@ class MyProfilPage extends Component
     {
         /** @var \App\Models\User $user */
         $user = auth('tenant')->user();
-        
-        return view('livewire.tenants.my-profil-page', compact('user'))->layout($user->getDashboardLayout());
+
+        $view = view('livewire.tenants.my-profil-page');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
     }
 }

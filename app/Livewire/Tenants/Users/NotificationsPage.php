@@ -161,7 +161,10 @@ class NotificationsPage extends Component
         /** @var \App\Models\User $user */
         $user = auth('tenant')->user();
 
-        return view('livewire.tenants.users.notifications-page')
-        ->layout($user->getDashboardLayout());
+        $view = view('livewire.tenants.users.notifications-page');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
+
     }
 }

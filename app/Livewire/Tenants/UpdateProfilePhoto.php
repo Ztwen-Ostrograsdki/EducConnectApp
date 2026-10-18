@@ -29,7 +29,8 @@ class UpdateProfilePhoto extends Component
             ],
         ]);
 
-        $user = Auth::guard('tenant')->user();
+        /**@var \App\Models\User */
+        $user = auth('tenant')->user();
 
         TenantStorage::delete(
             $user->profile_photo
@@ -116,9 +117,13 @@ class UpdateProfilePhoto extends Component
 
     public function render()
     {
-        /**@var \App\Models\User */
+        /** @var \App\Models\User $user */
         $user = auth('tenant')->user();
 
-        return view('livewire.tenants.update-profile-photo')->layout($user->getDashboardLayout());
+        $view = view('livewire.tenants.update-profile-photo');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
+
     }
 }
