@@ -166,7 +166,8 @@
                     </a>
 
                     {{-- Classe --}}
-                    <a href="{{ route('tenant.student.manage.classe', ['student_uuid' => $student_uuid]) }}"
+                    <a wire:navigate
+                        href="{{ route('tenant.student.manage.classe', ['student_uuid' => $student_uuid]) }}"
                         class="flex items-center gap-2.5 h-11 px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/20 text-amber-400 text-xs font-medium transition-all active:scale-[0.97]">
                         <x-lucide-school class="w-4 h-4 shrink-0" />
                         <span class="truncate">{{ $this->currentClasse ? 'Changer classe' : 'Définir classe' }}</span>

@@ -141,7 +141,8 @@
                                         </span>
                                     </div>
 
-                                    <a href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                                    <a wire:navigate
+                                        href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
                                         class="flex gap-3 min-w-0 flex-1 group">
                                         <img src="{{ $student->profil_photo_url }}" alt=""
                                             class="w-12 h-12 rounded-xl object-cover ring-2 ring-white/10 group-hover:ring-violet-500/40 transition-all shrink-0">
@@ -242,20 +243,24 @@
                                 <div
                                     class="xl:w-[140px] shrink-0 border-t xl:border-t-0 xl:border-l border-white/5 pt-3 xl:pt-0 xl:pl-4 flex flex-col gap-2">
                                     @if ($student->checkIfStudentNotLeavedYet())
-                                        <button wire:click="markStudentAsLeaved({{ $student->id }})"
+                                        <button
+                                            title="Marquer l'apprenant {{ $student->getFullName() }} comme ayant abandoné"
+                                            wire:click="markStudentAsLeaved({{ $student->id }})"
                                             wire:loading.attr="disabled"
                                             wire:target="markStudentAsLeaved({{ $student->id }})"
                                             class="h-8 px-3 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50">
                                             <span wire:loading.remove
                                                 wire:target="markStudentAsLeaved({{ $student->id }})">
-                                                Abandonné
+                                                Marquer Abd.
                                             </span>
                                             <span wire:loading wire:target="markStudentAsLeaved({{ $student->id }})">
                                                 <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
                                             </span>
                                         </button>
                                     @else
-                                        <button wire:click="reinsertIntoClasseAsActive({{ $student->id }})"
+                                        <button
+                                            title="Réinsérer l'apprenant {{ $student->getFullName() }} dans cette classe"
+                                            wire:click="reinsertIntoClasseAsActive({{ $student->id }})"
                                             wire:loading.attr="disabled"
                                             wire:target="reinsertIntoClasseAsActive({{ $student->id }})"
                                             class="h-8 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50">

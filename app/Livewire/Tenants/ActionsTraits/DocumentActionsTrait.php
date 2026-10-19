@@ -2,14 +2,10 @@
 
 namespace App\Livewire\Tenants\ActionsTraits;
 
-
-use App\Helpers\Support\TenantStorage;
 use App\Models\GeneratedDocument;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\On;
-use WireUi\Traits\WireUiActions;
+use Livewire\WithPagination;
 
 /**
  * Actions métier communes sur GeneratedDocument (téléchargement, suppression,
@@ -26,8 +22,13 @@ use WireUi\Traits\WireUiActions;
  * - findOwnedDocument()        → règles d’accès propriétaire (delete / toggle)
  * - documentDeleteConfirmedEvent() → nom d’événement swal (si besoin)
  */
+/**
+ * @property-read LengthAwarePaginator $documents
+ */
 trait DocumentActionsTrait
 {
+    use HandlesTenantStoredFiles, WithPagination;
+
     /**
      * Nom de l’événement Livewire déclenché après confirmation SweetAlert.
      * Surcharger si la page doit coexister avec un autre handler de suppression.
@@ -91,7 +92,7 @@ trait DocumentActionsTrait
     {
         $doc = $this->findDocumentForDownload($documentId);
 
-        if (! $doc || ! File::exists($doc->path)) {
+        if (! $doc || ! $this->storedFileExists($doc->path)) {
             $this->notification()->error(
                 title: 'Document introuvable',
                 description: 'Le fichier a peut-être déjà été supprimé du serveur.',
@@ -106,7 +107,7 @@ trait DocumentActionsTrait
 
         $this->notification()->info(title: 'Téléchargement du document en cours …');
 
-        return response()->download($doc->path, $doc->filename);
+        return $this->downloadStoredFile($doc->path, $doc->filename);
     }
 
     /**
@@ -130,9 +131,6 @@ trait DocumentActionsTrait
 
     /**
      * Suppression effective (fichier + enregistrement DB).
-     * Écoute l’événement standard ; les pages avec un ancien nom d’événement
-     * peuvent aussi appeler deleteDocument() directement ou surcharger
-     * documentDeleteConfirmedEvent().
      */
     #[On('ConfirmToDeleteGeneratedDoc')]
     public function deleteDocument(int $documentId): void
@@ -148,9 +146,7 @@ trait DocumentActionsTrait
             return;
         }
 
-        if ($doc->path && File::exists($doc->path)) {
-            TenantStorage::delete($this->relativePathFromAbsolute($doc->path));
-        }
+        $this->deleteStoredFile($doc->path);
 
         $doc->delete();
 
@@ -193,17 +189,5 @@ trait DocumentActionsTrait
                 ? 'Les utilisateurs autorisés pourront télécharger ce document.'
                 : 'Seul vous pouvez télécharger ce document.',
         );
-    }
-
-    /**
-     * TenantStorage::delete() attend un chemin relatif au disque public ;
-     * GeneratedDocument::path stocke souvent un chemin absolu.
-     */
-    protected function relativePathFromAbsolute(string $absolutePath): string
-    {
-        $absolutePath = str_replace('\\', '/', $absolutePath);
-        $storageRoot  = str_replace('\\', '/', Storage::disk('public')->path(''));
-
-        return ltrim(Str::after($absolutePath, $storageRoot), '/');
     }
 }

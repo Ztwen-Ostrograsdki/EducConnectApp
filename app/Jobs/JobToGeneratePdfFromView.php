@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\AnyErrorEvent;
 use App\Events\DataUpdatedEvent;
-use App\Helpers\Support\ImageHelper;
 use App\Jobs\JobToShareDocumentToSomeone;
 use App\Models\GeneratedDocument;
 use App\Models\SchoolYear;
@@ -20,49 +19,42 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
-use Laravel\Reverb\Loggers\Log;
 use Spatie\Browsershot\Browsershot;
-
-use function Illuminate\Log\log;
 
 #[Timeout(300)]
 class JobToGeneratePdfFromView implements ShouldQueue
 {
     use Queueable, Batchable, Dispatchable, InteractsWithQueue, SerializesModels;
 
-    public int $tries   = 2;
+    public int $tries = 2;
 
     /**
-     * @param string               $view       Nom de la vue Blade à rendre
-     * @param array<string, mixed> $data       Données passées à la vue
-     * @param string               $outputPath Chemin absolu du fichier PDF généré
-     * @param array<string, mixed> $options    Options Browsershot (format, orientation, margins…)
-     * @param string|null          $tenantId   Si non null, initialise le contexte tenant avant rendu
-     * @param string|null          $notifiable FQCN du modèle notifiable (ex: App\Models\User)
-     * @param int|null             $notifiableId ID du modèle à notifier
-     * @param string|null          $notification FQCN de la notification à envoyer
+     * @param  string                $view         Nom de la vue Blade à rendre
+     * @param  array<string, mixed>  $data         Données passées à la vue
+     * @param  string                $outputPath   Chemin relatif du fichier PDF (disk public)
+     * @param  array<string, mixed>  $options      Options Browsershot (format, orientation, margins…)
+     * @param  string|null           $tenantId     Si non null, initialise le contexte tenant avant rendu
+     * @param  string|null           $notifiable   FQCN du modèle notifiable (ex: App\Models\User)
+     * @param  int|null              $notifiableId ID du modèle à notifier
+     * @param  string|null           $notification FQCN de la notification à envoyer
      */
     public function __construct(
-        public readonly string  $view,
-        public readonly array   $data,
-        public readonly string  $outputPath,
-        public readonly array   $options         = [],
-        public readonly ?string $tenantId        = null,
-        public readonly ?int    $notifiableId    = null,
-        public readonly ?string $notifiable      = null,
-        public readonly ?string $notification    = null,
-        public readonly ?array  $docDBInfos      = null,
-        public readonly  bool   $paginable       = true,
-        public readonly ?array  $receiverIds     = null,
-        public readonly  bool   $repeatHeader    = false,
-        
+        public readonly string $view,
+        public readonly array $data,
+        public readonly string $outputPath,
+        public readonly array $options = [],
+        public readonly ?string $tenantId = null,
+        public readonly ?int $notifiableId = null,
+        public readonly ?string $notifiable = null,
+        public readonly ?string $notification = null,
+        public readonly ?array $docDBInfos = null,
+        public readonly bool $paginable = true,
+        public readonly ?array $receiverIds = null,
+        public readonly bool $repeatHeader = false,
     ) {}
-
 
     public function handle(): void
     {
-        
-
         if ($this->tenantId) {
             tenancy()->initialize($this->tenantId);
         }
@@ -75,34 +67,34 @@ class JobToGeneratePdfFromView implements ShouldQueue
             $html = $this->ensureUtf8HtmlDocument($html);
 
             Carbon::setLocale('fr');
-            $now = Carbon::now('Africa/Abidjan');
+            $now  = Carbon::now('Africa/Abidjan');
             $name = env('APP_NAME');
 
-            $formattedDate = 'Générée et imprimée sur la plateforme ' . $name . ' le '
+            $formattedDate = 'Générée et imprimée avec le logitiel web ' . $name . ' le '
                 . $now->isoFormat('dddd D MMMM YYYY')
                 . ' à '
                 . $now->isoFormat('HH\H mm\min ss\s');
 
-            $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimée sur la plateforme ' . $name;
+            $header_title = $this->data['pdf_title'] ?? 'Document ' . ' Généré et imprimé avec le logitiel web ' . $name;
 
             $banner = ($this->repeatHeader && $this->tenantId)
-                        ? tenant()?->header_image_data_uri
-                        : null;
+                ? tenant()?->header_image_data_uri
+                : null;
 
-            if($this->paginable){
-
+            if ($this->paginable) {
                 $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
-                . $header_title . ' | '
-                . $formattedDate
-                . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
-                . '</div>';
-            }
-            else{
-
+                    . $header_title . ' | '
+                    . $formattedDate
+                    . ' | Page <span class="pageNumber"></span> / <span class="totalPages"></span>'
+                    . '</div>';
+            } else {
                 $footerHtml = '<div style="font-size:10px; width:100%; text-align:center; color:black;">'
-                . $formattedDate
-                . '</div>';
+                    . $formattedDate
+                    . '</div>';
             }
+
+            // Header vide par défaut : évite date + titre "Document" de Chromium
+            $emptyHeaderHtml = '<div style="font-size:0;height:0;margin:0;padding:0;line-height:0;overflow:hidden;"></div>';
 
             $browsershot = Browsershot::html($html)
                 ->setNodeBinary(config('browsershot.node_binary'))
@@ -115,6 +107,7 @@ class JobToGeneratePdfFromView implements ShouldQueue
                 ->emulateMedia('screen')
                 ->margins(15, 15, 15, 15)
                 ->showBrowserHeaderAndFooter()
+                ->headerHtml($emptyHeaderHtml)
                 ->footerHtml($footerHtml)
                 ->waitUntilNetworkIdle();
 
@@ -123,39 +116,45 @@ class JobToGeneratePdfFromView implements ShouldQueue
             }
 
             if ($this->repeatHeader && $banner) {
-                
                 $bannerHeightMm = 28; // hauteur réservée au bandeau
 
                 $browsershot
-                    ->showBrowserHeaderAndFooter()
                     ->headerHtml(
-                        '<div style="width:100%;margin:0;padding:0;font-size:0;-webkit-print-color-adjust:exact;">'
-                        . '<img src="' . $banner . '" style="display:block;width:100%;height:auto;max-height:' . $bannerHeightMm . 'mm;">'
+                        '<style>#header, #footer { padding: 0 !important; margin: 0 !important; }</style>'
+                        . '<div style="width:100%;margin:0;padding:0;font-size:0;line-height:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'
+                        . '<img src="' . $banner . '" style="display:block;width:100%;height:auto;max-height:' . $bannerHeightMm . 'mm;margin:0;padding:0;border:0;">'
                         . '</div>'
                     )
-                    ->margins($bannerHeightMm + 8, 10, 10, 10, 'mm'); // haut, droite, bas, gauche
+                    // Haut = bandeau + 2mm (réduit l'espace inutile avant l'image / le contenu)
+                    ->margins($bannerHeightMm + 2, 10, 10, 10, 'mm');
             }
 
             $this->applyOptions($browsershot);
 
-            $browsershot->save($this->outputPath);
+            // Écriture disque : chemin absolu ; stockage DB : chemin relatif ($this->outputPath)
+            $absolutePath = PDFFactory::absolutePath($this->outputPath);
+
+            $dir = dirname($absolutePath);
+            if (! File::isDirectory($dir)) {
+                File::makeDirectory($dir, 0755, true);
+            }
+
+            $browsershot->save($absolutePath);
 
             $this->robotNotifyer();
-        }
-        catch (\Throwable $th){
+        } catch (\Throwable $th) {
             broadcast(new AnyErrorEvent('error', $th->getMessage(), $this->tenantId, $this->notifiableId));
             $this->fail($th->getMessage());
+
             return;
-        }
-        finally {
+        } finally {
             if ($this->tenantId) {
                 tenancy()->end();
             }
         }
     }
 
-
-     /**
+    /**
      * Enveloppe le HTML rendu dans un document complet avec charset UTF-8
      * si ce n’est pas déjà le cas (les vues Livewire renvoient souvent un fragment).
      */
@@ -229,73 +228,50 @@ class JobToGeneratePdfFromView implements ShouldQueue
      */
     private function robotNotifyer(): void
     {
-        if (! $this->notifiableId) return;
+        if (! $this->notifiableId) {
+            return;
+        }
 
         $user = User::find($this->notifiableId);
 
         $activeYear = SchoolYear::current()?->first();
 
-        $url  = $this->resolvePublicUrl();
+        $url = $this->resolvePublicUrl();
+
+        // Chemin relatif en base (cohérent avec TenantStorage / téléchargements)
+        $relativePath = $this->outputPath;
+        $absolutePath = PDFFactory::absolutePath($relativePath);
 
         $docDBInfos = $this->docDBInfos;
 
-        if($docDBInfos){
-
+        if ($docDBInfos) {
             GeneratedDocument::create([
                 'type'                   => $this->options['document_type'] ?? 'document',
-                'filename'               => basename($this->outputPath),
+                'filename'               => basename($relativePath),
                 'school_year_id'         => $activeYear?->id ?? null,
                 'school_year_slug'       => $activeYear?->slug ?? null,
-                'path'                   => $this->outputPath,
+                'path'                   => $relativePath,
                 'url'                    => $url,
                 'user_id'                => $this->notifiableId,
-
-                
-                'classe_id'              => isset($docDBInfos['classe_id']) ?
-                                                   $docDBInfos['classe_id'] : 
-                                                   null,
-                'filiar_id'              => isset($docDBInfos['filiar_id']) ? 
-                                                   $docDBInfos['filiar_id'] : 
-                                                   null,
-                'for_student_id'         => isset($docDBInfos['for_student_id']) ?
-                                                   $docDBInfos['for_student_id'] : 
-                                                   null,
-
-                'period'                 => isset($docDBInfos['period']) ?
-                                                   $docDBInfos['period'] : 
-                                                   null,
-                'for_parent_id'          => isset($docDBInfos['for_parent_id']) ? 
-                                                   $docDBInfos['for_parent_id'] : 
-                                                   null,
-               'for_parents'             => isset($docDBInfos['for_parents']) ? 
-                                                   $docDBInfos['for_parents'] : 
-                                                   false,
-                'serial_id'              => isset($docDBInfos['serial_id']) ? 
-                                                   $docDBInfos['serial_id'] : 
-                                                   null,
-                'for_teacher_id'         => isset($docDBInfos['for_teacher_id']) ?
-                                                   $docDBInfos['for_teacher_id'] : 
-                                                   null,
-                'for_teachers'           => isset($docDBInfos['for_teachers']) ?
-                                                   $docDBInfos['for_teachers'] : 
-                                                   false,
-                'promotion_id'           => isset($docDBInfos['promotion_id']) ? 
-                                                   $docDBInfos['promotion_id'] : 
-                                                   null,
-                'promotionsGrouped'      => isset($docDBInfos['promotionsGrouped']) ? 
-                                                   $docDBInfos['promotionsGrouped'] : 
-                                                   null,
-                                                   
+                'classe_id'              => $docDBInfos['classe_id'] ?? null,
+                'filiar_id'              => $docDBInfos['filiar_id'] ?? null,
+                'for_student_id'         => $docDBInfos['for_student_id'] ?? null,
+                'period'                 => $docDBInfos['period'] ?? null,
+                'for_parent_id'          => $docDBInfos['for_parent_id'] ?? null,
+                'for_parents'            => $docDBInfos['for_parents'] ?? false,
+                'serial_id'              => $docDBInfos['serial_id'] ?? null,
+                'for_teacher_id'         => $docDBInfos['for_teacher_id'] ?? null,
+                'for_teachers'           => $docDBInfos['for_teachers'] ?? false,
+                'promotion_id'           => $docDBInfos['promotion_id'] ?? null,
+                'promotionsGrouped'      => $docDBInfos['promotionsGrouped'] ?? null,
                 'tenant_id'              => $this->tenantId,
                 'downloadable_by_others' => $this->options['downloadable_by_others'] ?? false,
             ]);
-        }
-        else{
-
+        } else {
             GeneratedDocument::create([
                 'type'                   => $this->options['document_type'] ?? 'document',
-                'filename'               => basename($this->outputPath),
-                'path'                   => $this->outputPath,
+                'filename'               => basename($relativePath),
+                'path'                   => $relativePath,
                 'url'                    => $url,
                 'user_id'                => $this->notifiableId,
                 'tenant_id'              => $this->tenantId,
@@ -306,40 +282,26 @@ class JobToGeneratePdfFromView implements ShouldQueue
         }
 
         $user?->notify(new PDFIsReady(
-            title:     "PDF EST PRÊT",
-            message:   "Votre document a été bien généré et est à présent prêt!",
-            type:      "success",
-            url:       $url,
-            tenantId:  $this->tenantId,
+            title: 'PDF EST PRÊT',
+            message: 'Votre document a été bien généré et est à présent prêt!',
+            type: 'success',
+            url: $url,
+            tenantId: $this->tenantId,
             userEmail: $user->email,
             target: $this->data['target'],
             eventName: $this->data['eventName'],
         ));
 
-        if($this->receiverIds){
+        if ($this->receiverIds) {
+            $title = $this->docDBInfos['title_for_sendable_document']
+                ?? basename($relativePath);
 
-            if(isset($this->docDBInfos['title_for_sendable_document'])){
+            $space_url = $this->docDBInfos['space_url'] ?? null;
 
-                $title = $this->docDBInfos['title_for_sendable_document'];
-            }
-            else{
-
-                $title = basename($this->outputPath);
-            }
-
-            if(isset($this->docDBInfos['space_url'])){
-
-                $space_url = $this->docDBInfos['space_url'];
-            }
-            else{
-
-                $space_url = null;
-            }
-
-            //Send Doc by mail
+            // Partage : chemin absolu pour lecture fichier côté job destinataire
             JobToShareDocumentToSomeone::dispatch(
                 tenantId: $this->tenantId,
-                file_path: $this->outputPath,
+                file_path: $absolutePath,
                 receiverIds: $this->receiverIds,
                 title: $title,
                 space_url: $space_url,
@@ -347,15 +309,13 @@ class JobToGeneratePdfFromView implements ShouldQueue
         }
 
         broadcast(new DataUpdatedEvent($this->tenantId));
-
     }
 
     /**
-     * Résout l'URL publique à partir du chemin de stockage.
+     * Résout l'URL publique à partir du chemin de stockage (relatif ou absolu).
      */
     private function resolvePublicUrl(): string
     {
         return PDFFactory::resolvePublicUrl($this->outputPath);
     }
-    
 }

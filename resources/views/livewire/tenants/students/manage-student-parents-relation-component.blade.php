@@ -1,308 +1,401 @@
-<div class="space-y-6" wire:key="link-parent-student-{{ $student->id }}">
+<div class="min-h-screen bg-[#070a12] text-slate-100" wire:key="link-parent-student-{{ $student->id }}">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-    {{-- En-tête apprenant --}}
-    <div class="rounded-xl border w-full flex items-center justify-between border-slate-800 bg-slate-900/60 p-5">
-        <div>
-            <p class="text-sm text-slate-400">Gestion des parents / tuteurs de l'apprenant(e)</p>
-            <h2 class="text-2xl font-bold text-white">
-                {{ $student->getFullName() }}
-            </h2>
-        </div>
-        <a wire:navigate
-            class="rounded-2xl p-2 bg-indigo-600/35 text-white hover:text-black hover:bg-indigo-500 active:scale-95 flex items-center gap-2 px-5 text-sm"
-            href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}">
-            <x-lucide-user class="w-4 h-4 " />
-            <span>
-                <span class="md:inline-flex hidden">Aller à la page</span>
-                profil</span>
-        </a>
-    </div>
-
-    {{-- Barre de recherche unique, multi-colonnes --}}
-    <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
-        <div class="relative">
-            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104 4a7.5 7.5 0 0012.65 12.65z" />
-            </svg>
-
-            <input type="text" wire:model.live.debounce.400ms="searchQuery"
-                placeholder="Rechercher un parent par nom, prénoms, email ou téléphone..."
-                class="w-full rounded-2xl border-slate-700 bg-slate-800 py-4 pl-10 pr-10 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-indigo-500">
-
-            <div wire:loading wire:target="searchQuery" class="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg class="h-4 w-4 animate-spin text-indigo-400" viewBox="0 0 24 24" fill="none">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                        stroke-width="4" />
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
+        {{-- ========== HEADER ========== --}}
+        <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-400/80 mb-1">
+                        Vie scolaire
+                    </p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight truncate">
+                        {{ $student->getFullName() }}
+                    </h1>
+                    <p class="mt-1 text-sm text-slate-500">
+                        Parents / tuteurs de l’apprenant
+                    </p>
+                </div>
+                <a wire:navigate href="{{ route('tenant.student.profil', ['student_uuid' => $student->uuid]) }}"
+                    class="inline-flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-medium
+                          bg-indigo-500/15 text-indigo-400 border border-indigo-500/25
+                          hover:bg-indigo-500 hover:text-white hover:border-indigo-500
+                          transition-all shrink-0">
+                    <x-lucide-user class="w-3.5 h-3.5" />
+                    Profil apprenant
+                </a>
             </div>
-        </div>
+        </section>
 
-        {{-- Résultats --}}
-        @if (count($searchResults) > 0)
-            <ul class="mt-3 divide-y divide-slate-800 rounded-lg border border-slate-800">
-                @foreach ($searchResults as $result)
-                    <li wire:key="result-{{ $result['id'] }}"
-                        class="flex items-center justify-between gap-3 px-4 py-3 {{ $result['already_linked'] || $result['already_pending'] ? 'opacity-50' : 'hover:bg-slate-800/60' }}">
-                        <div>
-                            <p class="text-sm font-medium text-slate-200">{{ $result['fullName'] }}</p>
-                            <p class="text-xs text-slate-500">
-                                {{ $result['email'] ?? '—' }} · {{ $result['phone'] ?? '—' }}
-                            </p>
-                        </div>
-
-                        @if ($result['already_linked'])
-                            <span class="rounded-full bg-slate-700 px-3 py-1 text-xs text-slate-300">
-                                Déjà lié
-                            </span>
-                        @elseif ($result['already_pending'])
-                            <span class="rounded-full bg-amber-900/40 px-3 py-1 text-xs text-amber-300">
-                                En attente
-                            </span>
-                        @else
-                            <button type="button" wire:click="selectTutor({{ $result['id'] }})"
-                                wire:loading.attr="disabled" wire:target="selectTutor({{ $result['id'] }})"
-                                class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-50">
-                                <span wire:loading.remove wire:target="selectTutor({{ $result['id'] }})">Ajouter</span>
-                                <span wire:loading wire:target="selectTutor({{ $result['id'] }})">...</span>
-                            </button>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-        @elseif (mb_strlen(trim($searchQuery)) >= 2)
-            <p class="mt-3 text-sm text-slate-500">Aucun parent trouvé.</p>
-        @endif
-    </div>
-
-    {{-- Tableau des sélections en attente de validation --}}
-    @if (count($pendingSelections) > 0)
-        <div x-data x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-            class="rounded-xl border border-indigo-800/50 bg-indigo-950/20 p-5 space-y-4 w-full">
-
-            <div class="flex items-center justify-between w-full">
-                <h3 class="text-sm font-semibold text-indigo-300">
-                    Sélections en attente ({{ count($pendingSelections) }})
-                </h3>
-
-                <button type="button" wire:click="validateAll" wire:loading.attr="disabled" wire:target="validateAll"
-                    class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 disabled:opacity-50">
-                    <svg wire:loading wire:target="validateAll" class="h-4 w-4 animate-spin" viewBox="0 0 24 24"
-                        fill="none">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4" />
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                    </svg>
-                    Valider tout
-                </button>
+        {{-- ========== RECHERCHE ========== --}}
+        <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-3">
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-1.5 h-1.5 rounded-full bg-violet-400"></div>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Rechercher un parent
+                </h2>
             </div>
 
-            <div class="overflow-x-auto rounded-lg border border-slate-800 w-full">
-                <table class="w-full divide-y divide-slate-800 text-sm">
-                    <thead class="bg-slate-900/60">
-                        <tr class="text-left text-xs uppercase tracking-wide text-slate-500">
-                            <th class="px-4 py-3">Parent</th>
-                            <th class="px-4 py-3">Lien de parenté</th>
-                            <th class="px-4 py-3 text-center">Contact principal</th>
-                            <th class="px-4 py-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800">
-                        @foreach ($pendingSelections as $tutorId => $selection)
-                            <tr wire:key="pending-{{ $tutorId }}" class="bg-slate-900/30">
-                                <td class="px-4 py-3 align-top">
-                                    <p class="font-medium text-slate-200">{{ $selection['data']['fullName'] }}</p>
-                                    <p class="text-xs text-slate-500">
-                                        {{ $selection['data']['email'] ?? '—' }} ·
-                                        {{ $selection['data']['phone'] ?? '—' }}
-                                    </p>
-                                </td>
+            <div class="relative">
+                <x-lucide-search
+                    class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input type="text" wire:model.live.debounce.400ms="searchQuery"
+                    placeholder="Nom, prénoms, email ou téléphone…"
+                    class="w-full h-11 rounded-xl border border-white/[0.08] bg-[#070a12]
+                              pl-10 pr-10 text-sm text-white placeholder:text-slate-600
+                              focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20
+                              outline-none transition-all" />
+                <div wire:loading wire:target="searchQuery" class="absolute right-3.5 top-1/2 -translate-y-1/2">
+                    <x-lucide-loader-2 class="w-4 h-4 text-violet-400 animate-spin" />
+                </div>
+            </div>
 
-                                <td class="px-4 py-3 align-top">
-                                    <select wire:model="pendingSelections.{{ $tutorId }}.parentRelation"
-                                        class="w-full rounded-xl border-slate-700 bg-slate-800 text-sm text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2 px-2">
-                                        <option value="">-- Sélectionner --</option>
-                                        @foreach ($relationTypes as $value => $label)
-                                            <option value="{{ $value }}">{{ $label }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
+            @if (count($searchResults) > 0)
+                <ul class="mt-2 divide-y divide-white/[0.04] rounded-xl border border-white/[0.06] overflow-hidden">
+                    @foreach ($searchResults as $result)
+                        <li wire:key="result-{{ $result['id'] }}"
+                            class="flex items-center justify-between gap-3 px-4 py-3
+                                   {{ $result['already_linked'] || $result['already_pending'] ? 'opacity-50' : 'hover:bg-white/[0.02]' }} transition-colors">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-white truncate">{{ $result['fullName'] }}</p>
+                                <p class="text-xs text-slate-500 truncate">
+                                    {{ $result['email'] ?? '—' }} · {{ $result['phone'] ?? '—' }}
+                                </p>
+                            </div>
 
-                                <td class="px-4 py-3 align-top text-center">
-                                    <label class="inline-flex cursor-pointer items-center">
-                                        <span class="relative inline-flex shrink-0 items-center">
+                            @if ($result['already_linked'])
+                                <span
+                                    class="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium
+                                             bg-white/[0.04] text-slate-400 border border-white/[0.06]">
+                                    Déjà lié
+                                </span>
+                            @elseif ($result['already_pending'])
+                                <span
+                                    class="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium
+                                             bg-amber-500/15 text-amber-400 border border-amber-500/25">
+                                    En attente
+                                </span>
+                            @else
+                                <button type="button" wire:click="selectTutor({{ $result['id'] }})"
+                                    wire:loading.attr="disabled" wire:target="selectTutor({{ $result['id'] }})"
+                                    class="shrink-0 inline-flex items-center gap-1 h-8 px-3 rounded-lg text-[11px] font-medium
+                                               bg-violet-500/15 text-violet-400 border border-violet-500/25
+                                               hover:bg-violet-500 hover:text-white hover:border-violet-500
+                                               transition-all disabled:opacity-50">
+                                    <span wire:loading.remove wire:target="selectTutor({{ $result['id'] }})">
+                                        Ajouter
+                                    </span>
+                                    <span wire:loading wire:target="selectTutor({{ $result['id'] }})">
+                                        <x-lucide-loader-2 class="w-3 h-3 animate-spin" />
+                                    </span>
+                                </button>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            @elseif (mb_strlen(trim($searchQuery)) >= 2)
+                <p class="text-sm text-slate-500 text-center py-3">Aucun parent trouvé</p>
+            @endif
+        </section>
+
+        {{-- ========== SÉLECTIONS EN ATTENTE ========== --}}
+        @if (count($pendingSelections) > 0)
+            <section class="rounded-2xl border border-violet-500/20 bg-violet-500/[0.04] p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-violet-400"></div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                            En attente
+                            <span class="text-violet-400 font-mono ml-1">{{ count($pendingSelections) }}</span>
+                        </h2>
+                    </div>
+                    <button type="button" wire:click="validateAll" wire:loading.attr="disabled"
+                        wire:target="validateAll"
+                        class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-medium
+                                   bg-emerald-500 hover:bg-emerald-400 text-white
+                                   shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50">
+                        <span wire:loading.remove wire:target="validateAll" class="inline-flex items-center gap-1.5">
+                            <x-lucide-check-check class="w-3.5 h-3.5" />
+                            Valider tout
+                        </span>
+                        <span wire:loading wire:target="validateAll">
+                            <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                        </span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-white/[0.06]">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-white/[0.05]">
+                                <th
+                                    class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Parent</th>
+                                <th
+                                    class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Lien</th>
+                                <th
+                                    class="px-4 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Principal</th>
+                                <th
+                                    class="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/[0.04]">
+                            @foreach ($pendingSelections as $tutorId => $selection)
+                                <tr wire:key="pending-{{ $tutorId }}"
+                                    class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-4 py-3">
+                                        <p class="font-medium text-white text-sm">{{ $selection['data']['fullName'] }}
+                                        </p>
+                                        <p class="text-xs text-slate-500">
+                                            {{ $selection['data']['email'] ?? '—' }} ·
+                                            {{ $selection['data']['phone'] ?? '—' }}
+                                        </p>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <select wire:model="pendingSelections.{{ $tutorId }}.parentRelation"
+                                            class="w-full h-9 rounded-lg border border-white/[0.08] bg-[#070a12]
+                                                       px-2 text-xs text-white
+                                                       focus:border-violet-500/50 focus:outline-none transition-all">
+                                            <option value="">— Sélectionner —</option>
+                                            @foreach ($relationTypes as $value => $label)
+                                                <option value="{{ $value }}">{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <label class="inline-flex cursor-pointer items-center">
                                             <input type="checkbox"
                                                 wire:model="pendingSelections.{{ $tutorId }}.isPrimaryContact"
-                                                class="peer sr-only">
-                                            <span
-                                                class="h-6 w-11 rounded-full bg-slate-600 transition-colors duration-200 peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-500/50 peer-focus:ring-offset-2 peer-focus:ring-offset-slate-900"></span>
-                                            <span
-                                                class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-5"></span>
-                                        </span>
-                                    </label>
-                                </td>
+                                                class="sr-only peer" />
+                                            <div
+                                                class="relative h-6 w-11 rounded-full bg-slate-700
+                                                        peer-checked:bg-violet-500 transition-colors">
+                                                <div
+                                                    class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow
+                                                            transition-transform peer-checked:translate-x-5">
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            <button type="button" wire:click="validateSingle({{ $tutorId }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="validateSingle({{ $tutorId }})"
+                                                class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
+                                                           bg-violet-500/15 text-violet-400 border border-violet-500/25
+                                                           hover:bg-violet-500 hover:text-white hover:border-violet-500
+                                                           transition-all disabled:opacity-50">
+                                                <span wire:loading.remove
+                                                    wire:target="validateSingle({{ $tutorId }})">
+                                                    Valider
+                                                </span>
+                                                <span wire:loading wire:target="validateSingle({{ $tutorId }})">
+                                                    <x-lucide-loader-2 class="w-3 h-3 animate-spin" />
+                                                </span>
+                                            </button>
+                                            <button type="button" wire:click="removePending({{ $tutorId }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="removePending({{ $tutorId }})"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg
+                                                           bg-white/[0.04] text-slate-500 border border-white/[0.06]
+                                                           hover:bg-rose-500/15 hover:text-rose-400 hover:border-rose-500/25
+                                                           transition-all disabled:opacity-50">
+                                                <x-lucide-x class="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        @endif
 
-                                <td class="px-4 py-3 align-top">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button type="button" wire:click="validateSingle({{ $tutorId }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="validateSingle({{ $tutorId }})"
-                                            class="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-50">
-                                            <svg wire:loading wire:target="validateSingle({{ $tutorId }})"
-                                                class="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4" />
-                                                <path class="opacity-75" fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                                            </svg>
-                                            Valider
-                                        </button>
+        {{-- ========== PARENTS LIÉS ========== --}}
+        <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+            <div class="px-5 py-4 border-b border-white/[0.05] flex items-center gap-2">
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Parents liés
+                    <span class="text-amber-400 font-mono ml-1">{{ $this->linkedRelations->count() }}</span>
+                </h2>
+            </div>
 
-                                        <button type="button" wire:click="removePending({{ $tutorId }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="removePending({{ $tutorId }})"
-                                            class="rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-400 hover:bg-slate-800 hover:text-red-400 disabled:opacity-50">
-                                            Retirer
-                                        </button>
+            <div class="divide-y divide-white/[0.04]">
+                @forelse ($this->linkedRelations as $relation)
+                    <div wire:key="linked-{{ $relation->id }}" class="p-4 sm:p-5">
+                        @if ($editingRelationId === $relation->id)
+                            {{-- Édition inline --}}
+                            <div class="rounded-xl border border-violet-500/20 bg-violet-500/[0.04] p-4 space-y-4">
+                                <p class="text-sm font-semibold text-white">
+                                    {{ $relation->tutor->getFullName() }}
+                                </p>
+
+                                <div class="grid gap-3 sm:grid-cols-2">
+                                    <div>
+                                        <label
+                                            class="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
+                                            <x-lucide-link class="w-3.5 h-3.5 text-violet-400" />
+                                            Lien de parenté
+                                        </label>
+                                        <select wire:model="editParentRelation"
+                                            class="w-full h-10 rounded-xl border border-white/[0.08] bg-[#070a12]
+                                                       px-3 text-sm text-white
+                                                       focus:border-violet-500/50 focus:outline-none transition-all">
+                                            <option value="">— Sélectionner —</option>
+                                            @foreach ($relationTypes as $value => $label)
+                                                <option value="{{ $label }}">{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('editParentRelation')
+                                            <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
+                                        @enderror
                                     </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
 
-    {{-- Liste des parents déjà liés --}}
-    <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-        <h3 class="mb-3 text-lg font-semibold text-amber-600 border-b uppercase pb-2">
-            Parents / tuteurs liés <span class="font-mono">({{ $this->linkedRelations->count() }})</span>
-        </h3>
+                                    <div class="flex flex-col gap-2 justify-end">
+                                        <label
+                                            class="flex items-center justify-between gap-3 cursor-pointer
+                                                      rounded-xl border border-white/[0.06] bg-[#070a12]/60 px-3 py-2.5">
+                                            <span class="text-xs text-slate-300">Contact principal</span>
+                                            <div class="relative shrink-0">
+                                                <input type="checkbox" wire:model="editIsPrimaryContact"
+                                                    class="sr-only peer" />
+                                                <div
+                                                    class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-violet-500 transition-colors">
+                                                </div>
+                                                <div
+                                                    class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow
+                                                            transition-transform peer-checked:translate-x-4">
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <label
+                                            class="flex items-center justify-between gap-3 cursor-pointer
+                                                      rounded-xl border border-white/[0.06] bg-[#070a12]/60 px-3 py-2.5">
+                                            <span class="text-xs text-slate-300">Accès actif</span>
+                                            <div class="relative shrink-0">
+                                                <input type="checkbox" wire:model="editIsActive"
+                                                    class="sr-only peer" />
+                                                <div
+                                                    class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors">
+                                                </div>
+                                                <div
+                                                    class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow
+                                                            transition-transform peer-checked:translate-x-4">
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
 
-        @forelse ($this->linkedRelations as $relation)
-            <div wire:key="linked-{{ $relation->id }}" class="border-b border-slate-800 py-3 last:border-b-0">
-
-                @if ($editingRelationId === $relation->id)
-                    {{-- Formulaire d'édition inline --}}
-                    <div x-data x-transition:enter="transition ease-out duration-150"
-                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                        class="rounded-lg border border-indigo-800/50 bg-indigo-950/30 p-4 space-y-3">
-
-                        <p class="text-sm font-semibold text-white">{{ $relation->tutor->getFullName() }}</p>
-
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            <div>
-                                <label class="mb-1 block text-xs text-slate-400">Lien de parenté</label>
-                                <select wire:model="editParentRelation"
-                                    class="w-full rounded-xl border-slate-700 bg-slate-800 text-sm text-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2 px-2">
-                                    <option value="">-- Sélectionner --</option>
-                                    @foreach ($relationTypes as $value => $label)
-                                        <option value="{{ $label }}">{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                                @error('editParentRelation')
-                                    <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
-                                @enderror
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" wire:click="cancelEdit"
+                                        class="h-9 px-3 rounded-xl text-xs font-medium
+                                                   border border-white/[0.08] text-slate-400
+                                                   hover:bg-white/[0.06] hover:text-white transition-all">
+                                        Annuler
+                                    </button>
+                                    <button type="button" wire:click="updateRelation" wire:loading.attr="disabled"
+                                        wire:target="updateRelation"
+                                        class="inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-medium
+                                                   bg-violet-500 hover:bg-violet-400 text-white
+                                                   transition-all disabled:opacity-50">
+                                        <span wire:loading.remove wire:target="updateRelation"
+                                            class="inline-flex items-center gap-1.5">
+                                            <x-lucide-check class="w-3.5 h-3.5" />
+                                            Enregistrer
+                                        </span>
+                                        <span wire:loading wire:target="updateRelation">
+                                            <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
+                        @else
+                            {{-- Affichage standard --}}
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                <a wire:navigate
+                                    href="{{ route('tenant.parent.profil', ['parent_uuid' => $relation->tutor->uuid]) }}"
+                                    class="flex-1 min-w-0 group rounded-xl p-2 -m-2
+                                          hover:bg-white/[0.03] transition-colors">
+                                    <p
+                                        class="text-sm font-medium text-white group-hover:text-sky-400 transition-colors truncate">
+                                        {{ $relation->tutor->getFullName() }}
+                                    </p>
+                                    <div class="mt-1 flex flex-wrap items-center gap-1.5 text-xs">
+                                        <span class="text-slate-500">
+                                            {{ $relationTypes[$relation->parent_relation] ?? $relation->parent_relation }}
+                                        </span>
+                                        @if ($relation->is_primary_contact)
+                                            <span
+                                                class="px-1.5 py-0.5 rounded text-[10px] font-medium
+                                                         bg-violet-500/15 text-violet-400 border border-violet-500/20">
+                                                Principal
+                                            </span>
+                                        @endif
+                                        @if ($relation->locked)
+                                            <span
+                                                class="px-1.5 py-0.5 rounded text-[10px] font-medium
+                                                         bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                                                Verrouillé
+                                            </span>
+                                        @elseif (!$relation->is_active)
+                                            <span
+                                                class="px-1.5 py-0.5 rounded text-[10px] font-medium
+                                                         bg-rose-500/15 text-rose-400 border border-rose-500/20">
+                                                Inactif
+                                            </span>
+                                        @else
+                                            <span
+                                                class="px-1.5 py-0.5 rounded text-[10px] font-medium
+                                                         bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                                                Actif
+                                            </span>
+                                        @endif
+                                    </div>
+                                </a>
 
-                            <div class="flex flex-col justify-center gap-2">
-                                <label
-                                    class="flex items-center justify-between rounded-xl border border-slate-700/60 bg-slate-800/40 px-3 py-2">
-                                    <span class="text-xs text-slate-300">Contact principal</span>
-                                    <span class="relative inline-flex shrink-0 items-center">
-                                        <input type="checkbox" wire:model="editIsPrimaryContact"
-                                            class="peer sr-only">
-                                        <span
-                                            class="h-5 w-9 rounded-full bg-slate-600 transition-colors duration-200 peer-checked:bg-indigo-600"></span>
-                                        <span
-                                            class="absolute left-1 top-1 h-3 w-3 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-4"></span>
-                                    </span>
-                                </label>
-
-                                <label
-                                    class="flex items-center justify-between rounded-xl border border-slate-700/60 bg-slate-800/40 px-3 py-2">
-                                    <span class="text-xs text-slate-300">Accès actif</span>
-                                    <span class="relative inline-flex shrink-0 items-center">
-                                        <input type="checkbox" wire:model="editIsActive" class="peer sr-only">
-                                        <span
-                                            class="h-5 w-9 rounded-full bg-slate-600 transition-colors duration-200 peer-checked:bg-emerald-600"></span>
-                                        <span
-                                            class="absolute left-1 top-1 h-3 w-3 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-4"></span>
-                                    </span>
-                                </label>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button type="button" wire:click="startEdit({{ $relation->id }})"
+                                        wire:loading.attr="disabled" wire:target="startEdit({{ $relation->id }})"
+                                        @if ($relation->locked) disabled @endif
+                                        class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
+                                                   bg-indigo-500/15 text-indigo-400 border border-indigo-500/25
+                                                   hover:bg-indigo-500 hover:text-white hover:border-indigo-500
+                                                   transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                                        <x-lucide-pencil class="w-3.5 h-3.5" />
+                                        Éditer
+                                    </button>
+                                    <button type="button" wire:click="confirmDeleteRelation({{ $relation->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="confirmDeleteRelation({{ $relation->id }})"
+                                        @if ($relation->locked) disabled @endif
+                                        class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
+                                                   bg-rose-500/15 text-rose-400 border border-rose-500/25
+                                                   hover:bg-rose-500 hover:text-white hover:border-rose-500
+                                                   transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                                        <x-lucide-user-x class="w-3.5 h-3.5" />
+                                        Délier
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="flex gap-2 pt-1 justify-end">
-                            <button type="button" wire:click="updateRelation" wire:loading.attr="disabled"
-                                wire:target="updateRelation"
-                                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-50 px-4 py-3 active:scale-95">
-                                <svg wire:loading wire:target="updateRelation" class="h-3 w-3 animate-spin"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4" />
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                                </svg>
-                                Enregistrer
-                            </button>
-                            <button type="button" wire:click="cancelEdit"
-                                class="rounded-lg border border-slate-700 px-4 py-3 text-xs text-slate-300 hover:bg-slate-800 active:scale-95">
-                                Annuler
-                            </button>
-                        </div>
+                        @endif
                     </div>
-                @else
-                    {{-- Affichage standard de la ligne --}}
-                    <div class="grid grid-cols-9 items-center justify-between gap-3 w-full">
-                        <a wire:navigate
-                            href="{{ route('tenant.parent.profil', ['parent_uuid' => $relation->tutor->uuid]) }}"
-                            class="group active:scale-95 rounded-2xl p-2 hover:bg-green-700/25 col-span-5">
-                            <p class="text-sm text-slate-200 ">
-                                {{ $relation->tutor->getFullName() }}
-                            </p>
-                            <p class="text-xs text-slate-500">
-                                {{ $relationTypes[$relation->parent_relation] ?? $relation->parent_relation }}
-                                @if ($relation->is_primary_contact)
-                                    · <span class="text-indigo-400">Contact principal</span>
-                                @endif
-                                @if ($relation->locked)
-                                    · <span class="text-amber-400">Verrouillé</span>
-                                @elseif (!$relation->is_active)
-                                    · <span class="text-red-400">Inactif</span>
-                                @else
-                                    · <span class="text-emerald-400">Actif</span>
-                                @endif
-                            </p>
-                        </a>
-
-                        <div class="flex items-center justify-end gap-2 col-span-4 text-center">
-                            <button type="button" wire:click="startEdit({{ $relation->id }})"
-                                wire:loading.attr="disabled" wire:target="startEdit({{ $relation->id }})"
-                                @if ($relation->locked) disabled @endif
-                                class="rounded-lg  px-6 py-3.5 active:scale-95 text-xs text-white hover:text-black bg-indigo-600/40 hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40 flex items-center gap-x-2 w-1/2 justify-center">
-                                <x-lucide-user-pen class="w-4 h-4" />
-                                <span>Éditer</span>
-                            </button>
-
-                            <button type="button" wire:click="confirmDeleteRelation({{ $relation->id }})"
-                                wire:loading.attr="disabled" wire:target="confirmDeleteRelation({{ $relation->id }})"
-                                @if ($relation->locked) disabled @endif
-                                class="rounded-lg bg-red-500/30 px-6 py-3.5 text-white active:scale-95 text-xs hover:text-black  hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40 flex items-center gap-x-2 w-1/2 justify-center">
-                                <x-lucide-user-x class="w-4 h-4" />
-                                <span>Délier</span>
-                            </button>
+                @empty
+                    <div class="py-12 text-center">
+                        <div
+                            class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.04] mb-3">
+                            <x-lucide-users class="w-6 h-6 text-slate-600" />
                         </div>
+                        <p class="text-sm text-slate-500">Aucun parent lié pour l’instant</p>
                     </div>
-                @endif
+                @endforelse
             </div>
-        @empty
-            <p class="text-sm text-slate-500">Aucun parent lié pour l'instant.</p>
-        @endforelse
+        </section>
+
     </div>
 </div>
-

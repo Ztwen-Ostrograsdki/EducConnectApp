@@ -136,8 +136,15 @@
                         class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium
                               bg-emerald-500/15 text-emerald-400 border border-emerald-500/25
                               hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all">
+                        <x-lucide-blocks class="w-3.5 h-3.5" />
+                        Gérer Prof / matière
+                    </a>
+                    <a wire:navigate href="{{ route('tenant.classe.respos', ['classe_slug' => $classe->slug]) }}"
+                        class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium
+                              bg-purple-500/15 text-purple-400 border border-purple-500/25
+                              hover:bg-purple-500 hover:text-white hover:border-purple-500 transition-all">
                         <x-lucide-book-user class="w-3.5 h-3.5" />
-                        Prof / matière
+                        Gérer PP & Respos.
                     </a>
                     <a wire:navigate
                         href="{{ route('tenant.classe.migrate.students', ['classe_slug' => $classe->slug]) }}"

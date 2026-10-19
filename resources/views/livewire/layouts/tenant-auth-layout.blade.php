@@ -559,7 +559,7 @@
                                     <span class="s-acc-arrow">▶</span>
                                 </div>
                                 <div class="s-acc-content">
-                                    <a href="{{ route('tenant.parents.portal') }}"
+                                    <a wire:navigate href="{{ route('tenant.parents.portal') }}"
                                         class="s-link {{ request()->routeIs('tenant.parents.portal') ? 'active' : '' }}">
                                         <div class="s-icon">👨‍👩‍👧</div><span class="s-label">Dashboard</span>
                                     </a>

@@ -1,14 +1,5 @@
 <div class="min-h-screen bg-[#070a12] text-slate-100">
 
-    {{-- Loading overlay --}}
-    <div wire:loading wire:target="period,subject_slug"
-        class="fixed inset-0 z-[200] flex items-center justify-center bg-[#070a12]/70 backdrop-blur-sm">
-        <div class="flex flex-col items-center gap-3 text-slate-400">
-            <x-lucide-loader-2 class="w-8 h-8 text-indigo-400 animate-spin" />
-            <span class="text-sm font-medium">Chargement…</span>
-        </div>
-    </div>
-
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
 
         {{-- ========== HEADER ========== --}}
@@ -91,8 +82,17 @@
             </div>
         </div>
 
+        <div wire:loading wire:target="period,subject_slug"
+            class="flex w-full items-center justify-center bg-[#070a12]/70">
+            <div class="flex flex-col items-center gap-3 text-slate-400">
+                <x-lucide-loader-2 class="w-4 h-4 text-indigo-400 animate-spin" />
+                <span class="text-sm font-medium text-indigo-600">Chargement…</span>
+            </div>
+        </div>
+
         {{-- ========== TABLEAU ========== --}}
-        <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+        <div wire:loading.class='opacity-20' wire:target="period,subject_slug"
+            class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
 
             {{-- Header table --}}
             <div class="px-5 sm:px-6 py-4 border-b border-white/[0.05]">
@@ -331,3 +331,4 @@
 
     </div>
 </div>
+

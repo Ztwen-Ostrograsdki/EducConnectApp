@@ -7,6 +7,7 @@ use App\Livewire\Tenants\ActionsTraits\TimePlanActions;
 use App\Livewire\Tenants\ActionsTraits\UsersActions;
 use App\Models\SchoolYear;
 use App\Models\Teacher;
+use App\Services\TeachersServices\TeacherTimePlanService;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -39,15 +40,22 @@ class TeacherProfilPage extends Component
     public string $slot_label = '';
     public string $slot_notes = '';
 
+    protected TeacherTimePlanService $teacherTimePlan;
+
+    public function boot(TeacherTimePlanService $teacherTimePlan): void
+    {
+        $this->teacherTimePlan = $teacherTimePlan;
+    }
+
     public function mount(string $teacher_uuid)
     {
-        if (!$teacher_uuid) {
+        if (! $teacher_uuid) {
             return abort(404);
         }
 
         $teacher = Teacher::withTrashed()->where('uuid', $teacher_uuid)->first();
 
-        if (!$teacher) {
+        if (! $teacher) {
             return abort(404);
         }
 
@@ -59,8 +67,7 @@ class TeacherProfilPage extends Component
     {
         return SchoolYear::current()->first();
     }
-    
-    
+
     #[Computed]
     public function teacherHoursByClasse(): array
     {
@@ -70,13 +77,13 @@ class TeacherProfilPage extends Component
     #[Computed]
     public function teacher()
     {
-        if (!$this->teacher_uuid) {
+        if (! $this->teacher_uuid) {
             return abort(404);
         }
 
         $teacher = Teacher::withTrashed()->where('uuid', $this->teacher_uuid)->first();
 
-        if (!$teacher) {
+        if (! $teacher) {
             return abort(404);
         }
 
@@ -86,7 +93,7 @@ class TeacherProfilPage extends Component
     #[Computed]
     public function user()
     {
-        if (!$this->teacher_uuid || !$this->teacher) {
+        if (! $this->teacher_uuid || ! $this->teacher) {
             return abort(404);
         }
 
@@ -99,7 +106,7 @@ class TeacherProfilPage extends Component
     #[Computed]
     public function teacherSlots(): Collection
     {
-        if (!$this->teacher || !$this->activeYear) {
+        if (! $this->teacher || ! $this->activeYear) {
             return collect();
         }
 
@@ -110,7 +117,7 @@ class TeacherProfilPage extends Component
     #[Computed]
     public function teacherSlotsByDay(): Collection
     {
-        return $this->slotsByDayFromSlots($this->teacherSlots);
+        return $this->teacherTimePlan->groupSlotsByDay($this->teacherSlots);
     }
 
     /**
@@ -120,7 +127,7 @@ class TeacherProfilPage extends Component
     #[Computed]
     public function assignments(): Collection
     {
-        if (!$this->teacher || !$this->activeYear) {
+        if (! $this->teacher || ! $this->activeYear) {
             return collect();
         }
 
@@ -129,90 +136,22 @@ class TeacherProfilPage extends Component
 
     public function slotFragmentAtTeacher(int $day, string $rowStart): ?object
     {
-        $daySlots = $this->teacherSlotsByDay[$day] ?? collect();
-
-        $starting = $daySlots->first(
-            fn (object $slot) => $this->normalizeTime((string) $slot->starts_at) === $rowStart
+        return $this->teacherTimePlan->slotFragmentAt(
+            $this->teacherSlotsByDay,
+            $day,
+            $rowStart,
+            $this->scheduleRows(),
         );
-
-        if ($starting) {
-            return $starting;
-        }
-
-        $idx = $this->scheduleHourIndex($rowStart);
-        if ($idx <= 0) {
-            return null;
-        }
-
-        $rows = $this->scheduleRows();
-        $prev = $rows[$idx - 1] ?? null;
-        if (!$prev || ($prev['type'] ?? '') !== 'break') {
-            return null;
-        }
-
-        return $daySlots->first(function (object $slot) use ($rowStart) {
-            $slotStart = $this->normalizeTime((string) $slot->starts_at);
-            $slotEnd = $this->normalizeTime((string) $slot->ends_at);
-
-            return $slotStart < $rowStart && $slotEnd > $rowStart;
-        });
     }
 
     public function isCellCoveredBySpanTeacher(int $day, string $rowStart): bool
     {
-        $idx = $this->scheduleHourIndex($rowStart);
-        if ($idx < 0) {
-            return false;
-        }
-
-        $rows = $this->scheduleRows();
-        $daySlots = $this->teacherSlotsByDay[$day] ?? collect();
-
-        foreach ($daySlots as $slot) {
-            $slotStart = $this->normalizeTime((string) $slot->starts_at);
-            $slotEnd = $this->normalizeTime((string) $slot->ends_at);
-
-            if (!($slotStart < $rowStart && $slotEnd > $rowStart)) {
-                continue;
-            }
-
-            $fragmentStartIdx = $this->scheduleHourIndex($slotStart);
-            if ($fragmentStartIdx < 0) {
-                foreach ($rows as $i => $row) {
-                    if (($row['type'] ?? '') === 'hour' && $row['start'] < $slotEnd && $row['end'] > $slotStart) {
-                        $fragmentStartIdx = $i;
-                        break;
-                    }
-                }
-            }
-
-            if ($fragmentStartIdx < 0) {
-                continue;
-            }
-
-            $blockedByBreak = false;
-            for ($i = $fragmentStartIdx; $i < $idx; $i++) {
-                if (($rows[$i]['type'] ?? '') === 'break') {
-                    $blockedByBreak = true;
-                    $fragmentStartIdx = $i + 1;
-                }
-            }
-
-            if ($blockedByBreak) {
-                if (
-                    $fragmentStartIdx < $idx
-                    && ($rows[$fragmentStartIdx]['type'] ?? '') === 'hour'
-                    && $rows[$fragmentStartIdx]['start'] < $rowStart
-                ) {
-                    return true;
-                }
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return $this->teacherTimePlan->isCellCoveredBySpan(
+            $this->teacherSlotsByDay,
+            $day,
+            $rowStart,
+            $this->scheduleRows(),
+        );
     }
 
     #[On('DataUpdatedEventLiveEvent')]

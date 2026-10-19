@@ -54,17 +54,16 @@
 
             </div>
         </section>
-
-        <section class="relative min-h-[280px]">
-            <div wire:loading.flex
-                wire:target="search, deleteDocument, trackDownload, toggleOthersVisibility, confirmDelete, gotoPage, resetPage, nextPage, previousPage, scope"
-                class="absolute inset-0 z-20 items-center justify-center rounded-2xl bg-[#070b14]/70 backdrop-blur-sm">
-                <div class="flex flex-col items-center gap-3">
-                    <div class="w-9 h-9 rounded-full border-2 border-amber-500/30 border-t-amber-400 animate-spin">
-                    </div>
-                    <span class="text-xs font-mono text-slate-400 tracking-wide">Chargement…</span>
+        <div wire:loading.flex
+            wire:target="search, deleteDocument, trackDownload, toggleOthersVisibility, confirmDelete, gotoPage, resetPage, nextPage, previousPage, scope"
+            class="z-20 items-center justify-center rounded-2xl bg-[#070b14]/70 backdrop-blur-sm">
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-3.5 h-3.5 rounded-full border-2 border-amber-500/30 border-t-amber-400 animate-spin">
                 </div>
+                <span class="text-xs font-mono text-slate-400 tracking-wide">Chargement…</span>
             </div>
+        </div>
+        <section class="relative min-h-[280px]">
 
             <div wire:loading.class="opacity-40 pointer-events-none"
                 wire:target="search, deleteDocument, trackDownload, toggleOthersVisibility, confirmDelete, gotoPage, resetPage, nextPage, previousPage, scope"

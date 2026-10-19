@@ -2,14 +2,9 @@
 
 namespace App\Livewire\Tenants\ActionsTraits;
 
-use App\Helpers\Support\TenantStorage;
 use App\Models\Epreuve;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Livewire\Attributes\On;
-use WireUi\Traits\WireUiActions;
 
 /**
  * Actions métier communes sur Epreuve (téléchargement, suppression,
@@ -33,7 +28,8 @@ use WireUi\Traits\WireUiActions;
  */
 trait EpreuveActionsTrait
 {
-	Use WireUiActions;
+    use HandlesTenantStoredFiles;
+
     /** @var array<int> IDs sélectionnés pour actions de masse */
     // public array $selected = []; // à déclarer dans le composant hôte si besoin
 
@@ -128,20 +124,7 @@ trait EpreuveActionsTrait
     {
         $epreuve = $this->findEpreuveForDownload($epreuveId);
 
-        if (! $epreuve || ! $epreuve->path) {
-            $this->notification()->error(
-                title: 'Épreuve introuvable',
-                description: 'Le fichier a peut-être déjà été supprimé du serveur.',
-            );
-            $this->refreshEpreuvesList();
-
-            return;
-        }
-
-        // TenantStorage::store renvoie un chemin relatif → on résout en absolu
-        $absolutePath = $this->absolutePath($epreuve->path);
-
-        if (! File::exists($absolutePath)) {
+        if (! $epreuve || ! $this->storedFileExists($epreuve->path)) {
             $this->notification()->error(
                 title: 'Épreuve introuvable',
                 description: 'Le fichier a peut-être déjà été supprimé du serveur.',
@@ -156,7 +139,7 @@ trait EpreuveActionsTrait
 
         $this->notification()->info(title: 'Téléchargement de l\'épreuve en cours …');
 
-        return response()->download($absolutePath, $epreuve->filename);
+        return $this->downloadStoredFile($epreuve->path, $epreuve->filename);
     }
 
     // ─── Suppression individuelle ─────────────────────────────────────
@@ -620,59 +603,8 @@ trait EpreuveActionsTrait
                 continue;
             }
 
-            if ($epreuve->path) {
-                $this->deleteStoredFile($epreuve->path);
-            }
-
+            $this->deleteStoredFile($epreuve->path);
             $epreuve->delete();
-        }
-    }
-
-    /**
-     * Résout un chemin stocké (relatif TenantStorage OU absolu) en chemin absolu disque.
-     */
-    protected function absolutePath(string $path): string
-    {
-        $path = str_replace('\\', '/', $path);
-
-        // Déjà absolu (Unix ou Windows)
-        if (str_starts_with($path, '/') || preg_match('/^[A-Za-z]:\//', $path)) {
-            return $path;
-        }
-
-        // Relatif au disque public (valeur renvoyée par TenantStorage::store)
-        return Storage::disk('public')->path($path);
-    }
-
-    /**
-     * Chemin relatif attendu par TenantStorage::delete().
-     */
-    protected function relativePathFromStored(string $path): string
-    {
-        $path = str_replace('\\', '/', $path);
-
-        // Déjà relatif
-        if (! str_starts_with($path, '/') && ! preg_match('/^[A-Za-z]:\//', $path)) {
-            return ltrim($path, '/');
-        }
-
-        $storageRoot = str_replace('\\', '/', Storage::disk('public')->path(''));
-
-        return ltrim(Str::after($path, $storageRoot), '/');
-    }
-
-    /**
-     * Supprime le fichier physique via TenantStorage (chemin relatif).
-     */
-    protected function deleteStoredFile(string $path): void
-    {
-        try {
-            $relative = $this->relativePathFromStored($path);
-            if ($relative !== '') {
-                TenantStorage::delete($relative);
-            }
-        } catch (\Throwable) {
-            // Fichier déjà absent ou chemin invalide — on continue la suppression DB
         }
     }
 }

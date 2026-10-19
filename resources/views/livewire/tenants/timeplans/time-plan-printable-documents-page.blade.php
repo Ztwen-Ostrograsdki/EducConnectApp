@@ -17,11 +17,9 @@
                 — téléchargement et suppression.
             </p>
         </header>
-
         <section class="mb-6">
             @livewire('tenants.components.printable-documents-component')
         </section>
-
         {{-- Filtres --}}
         <section
             class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20 mb-6">
@@ -53,11 +51,11 @@
             </div>
         </section>
 
-        <section class="my-2 mx-auto flex items-center w-full p-2">
+        <section class="my-2 mx-auto flex items-center justify-center w-full p-2">
             <div wire:loading.flex wire:target="trackDownload, confirmDelete, deleteDocument, search, scope"
-                class="items-center justify-center bg-[#070b14]/80 backdrop-blur-sm">
-                <div class="flex flex-col items-center gap-4">
-                    <div class="w-8 h-8 rounded-full border-2 border-orange-500/30 border-t-orange-400 animate-spin">
+                class="items-center w-full justify-center bg-[#070b14]/80 backdrop-blur-sm">
+                <div class="flex flex-col w-full justify-center items-center gap-4">
+                    <div class="w-4 h-4 rounded-full border-2 border-sky-500/30 border-t-sky-400 animate-spin">
                     </div>
                     <span class="text-sm font-mono text-slate-400 tracking-wide">Chargement…</span>
                 </div>

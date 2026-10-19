@@ -1,4 +1,7 @@
 @php
+
+    $user = auth('tenant')->user();
+
     $v = function ($value, string $fallback = 'Non renseigné') {
         if ($value === null || $value === '' || (is_string($value) && trim($value) === '')) {
             return $fallback;
