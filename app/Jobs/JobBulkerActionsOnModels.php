@@ -62,8 +62,6 @@ class JobBulkerActionsOnModels implements ShouldQueue
 
             tenancy()->initialize($this->tenantId);
 
-            $tenant = tenancy()->tenant;
-
             $director = User::first();
 
             if(!$director){

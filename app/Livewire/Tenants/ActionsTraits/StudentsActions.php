@@ -7,15 +7,354 @@ use App\Jobs\JobBulkerActionsOnModels;
 use App\Jobs\JobToGenerateStudentNotesShareForThePrintViewComponent;
 use App\Models\SchoolYear;
 use App\Models\Student;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
+
+/**
+ * @property-read LengthAwarePaginator $students
+ */
 trait StudentsActions{
 
 	use WithPagination, WireUiActions;
 
+    /** @var array<int> IDs des apprenants sélectionnés pour actions en masse */
+    public array $selectedStudents = [];
+
     // public ?Classe $classe;
+
+    // ─── Sélection multiple ───────────────────────────────────────────
+
+    public function toggleSelectStudent(int $studentId): void
+    {
+        if (in_array($studentId, $this->selectedStudents, true)) {
+            $this->selectedStudents = array_values(array_filter(
+                $this->selectedStudents,
+                fn ($id) => (int) $id !== $studentId
+            ));
+        } else {
+            $this->selectedStudents[] = $studentId;
+        }
+    }
+
+    public function selectAllOnPage(): void
+    {
+        $pageIds = $this->students->getCollection()->pluck('id')->map(fn ($id) => (int) $id)->toArray();
+
+        $this->selectedStudents = array_values(array_unique(array_merge(
+            $this->selectedStudents,
+            $pageIds
+        )));
+    }
+
+    public function deselectAllOnPage(): void
+    {
+        $pageIds = $this->students->getCollection()->pluck('id')->map(fn ($id) => (int) $id)->toArray();
+
+        $this->selectedStudents = array_values(array_filter(
+            $this->selectedStudents,
+            fn ($id) => ! in_array((int) $id, $pageIds, true)
+        ));
+    }
+
+    public function clearSelection(): void
+    {
+        $this->selectedStudents = [];
+    }
+
+    public function isStudentSelected(int $studentId): bool
+    {
+        return in_array($studentId, $this->selectedStudents, true);
+    }
+
+    public function areAllOnPageSelected(): bool
+    {
+        $pageIds = $this->students->getCollection()->pluck('id')->map(fn ($id) => (int) $id)->toArray();
+
+        if (empty($pageIds)) {
+            return false;
+        }
+
+        foreach ($pageIds as $id) {
+            if (! in_array($id, $this->selectedStudents, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function toggleSelectAllOnPage(): void
+    {
+        if ($this->areAllOnPageSelected()) {
+            $this->deselectAllOnPage();
+        } else {
+            $this->selectAllOnPage();
+        }
+    }
+
+    protected function ensureSelectionNotEmpty(): bool
+    {
+        if (empty($this->selectedStudents)) {
+            $this->notification()->warning(
+                title: 'Aucune sélection',
+                description: 'Sélectionnez au moins un apprenant pour exécuter cette action.',
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // ─── Actions en masse sur la sélection ────────────────────────────
+
+    public function bulkDeleteStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $count = count($this->selectedStudents);
+
+        $this->dispatch('swal', [
+            'title'              => "Supprimer {$count} apprenant(s) ?",
+            'text'               => 'Les apprenants sélectionnés seront envoyés à la corbeille.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmBulkDeleteStudents',
+        ]);
+    }
+
+    #[On('ConfirmBulkDeleteStudents')]
+    public function onConfirmBulkDeleteStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $ids = array_map('intval', $this->selectedStudents);
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'delete',
+            options: [],
+            withTrashedDeleted: false,
+            taskTitle: 'SUPPRESSION EN MASSE (CORBEILLE) DES APPRENANTS SÉLECTIONNÉS'
+        );
+
+        $this->notification()->success(
+            title: 'Suppression lancée',
+            description: count($ids) . ' apprenant(s) envoyé(s) à la corbeille.',
+        );
+
+        $this->clearSelection();
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function bulkForceDeleteStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $count = count($this->selectedStudents);
+
+        $this->dispatch('swal', [
+            'title'              => "Supprimer définitivement {$count} apprenant(s) ?",
+            'text'               => 'Cette action est irréversible. Les apprenants seront définitivement supprimés.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, supprimer définitivement',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#ef4444',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmBulkForceDeleteStudents',
+        ]);
+    }
+
+    #[On('ConfirmBulkForceDeleteStudents')]
+    public function onConfirmBulkForceDeleteStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $ids = array_map('intval', $this->selectedStudents);
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'forceDelete',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: 'SUPPRESSION DÉFINITIVE EN MASSE DES APPRENANTS SÉLECTIONNÉS'
+        );
+
+        $this->notification()->success(
+            title: 'Suppression définitive lancée',
+            description: count($ids) . ' apprenant(s) seront définitivement supprimé(s).',
+        );
+
+        $this->clearSelection();
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function bulkRestoreStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $count = count($this->selectedStudents);
+
+        $this->dispatch('swal', [
+            'title'              => "Restaurer {$count} apprenant(s) ?",
+            'text'               => 'Les apprenants sélectionnés seront retirés de la corbeille.',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, restaurer',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#10b981',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmBulkRestoreStudents',
+        ]);
+    }
+
+    #[On('ConfirmBulkRestoreStudents')]
+    public function onConfirmBulkRestoreStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $ids = array_map('intval', $this->selectedStudents);
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'restore',
+            options: [],
+            withTrashedDeleted: true,
+            taskTitle: 'RESTAURATION EN MASSE DES APPRENANTS SÉLECTIONNÉS'
+        );
+
+        $this->notification()->success(
+            title: 'Restauration lancée',
+            description: count($ids) . ' apprenant(s) seront restauré(s).',
+        );
+
+        $this->clearSelection();
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function bulkActivateStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $count = count($this->selectedStudents);
+
+        $this->dispatch('swal', [
+            'title'              => "Réactiver {$count} apprenant(s) ?",
+            'text'               => 'Les apprenants sélectionnés seront à nouveau actifs.',
+            'icon'               => 'question',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, réactiver',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#10b981',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmBulkActivateStudents',
+        ]);
+    }
+
+    #[On('ConfirmBulkActivateStudents')]
+    public function onConfirmBulkActivateStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $ids = array_map('intval', $this->selectedStudents);
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'update',
+            options: ['is_active' => true],
+            withTrashedDeleted: false,
+            taskTitle: 'RÉACTIVATION EN MASSE DES APPRENANTS SÉLECTIONNÉS'
+        );
+
+        $this->notification()->success(
+            title: 'Réactivation lancée',
+            description: count($ids) . ' apprenant(s) seront réactivé(s).',
+        );
+
+        $this->clearSelection();
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+    public function bulkDeactivateStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $count = count($this->selectedStudents);
+
+        $this->dispatch('swal', [
+            'title'              => "Désactiver {$count} apprenant(s) ?",
+            'text'               => 'Les apprenants sélectionnés ne seront plus accessibles dans les classes.',
+            'icon'               => 'warning',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, désactiver',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#f59e0b',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmBulkDeactivateStudents',
+        ]);
+    }
+
+    #[On('ConfirmBulkDeactivateStudents')]
+    public function onConfirmBulkDeactivateStudents(): void
+    {
+        if (! $this->ensureSelectionNotEmpty()) {
+            return;
+        }
+
+        $ids = array_map('intval', $this->selectedStudents);
+
+        JobBulkerActionsOnModels::dispatch(
+            tenantId: tenant('id'),
+            model: Student::class,
+            ids: $ids,
+            method: 'update',
+            options: ['is_active' => false],
+            withTrashedDeleted: false,
+            taskTitle: 'DÉSACTIVATION EN MASSE DES APPRENANTS SÉLECTIONNÉS'
+        );
+
+        $this->notification()->success(
+            title: 'Désactivation lancée',
+            description: count($ids) . ' apprenant(s) seront désactivé(s).',
+        );
+
+        $this->clearSelection();
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
     
     public function markStudentAsLeaved(int $studentId): void
     {

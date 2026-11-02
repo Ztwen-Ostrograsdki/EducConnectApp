@@ -1,18 +1,5 @@
 <div class="w-full overflow-x-hidden bg-[#0b0f19] min-h-screen">
 
-    {{-- Global loading --}}
-    <div wire:loading
-        wire:target="gender,status,department,city,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,previousPage,nextPage,gotoPage"
-        class="fixed inset-0 z-[200] flex items-center justify-center bg-[#0b0f19]/70">
-        <div class="flex flex-col items-center gap-3 text-slate-400">
-            <svg class="animate-spin w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            <span class="text-sm font-mono">Chargement…</span>
-        </div>
-    </div>
-
     <div class="mx-auto w-full max-w-[1850px] px-4 sm:px-6 lg:px-8 py-8">
 
         {{-- ===================== HEADER ===================== --}}
@@ -181,33 +168,120 @@
             </div>
         </section>
 
-        {{-- ===================== BULK ===================== --}}
+        {{-- ===================== BULK (sélection) ===================== --}}
         <section class="mb-6">
-            <div class="flex flex-wrap gap-2">
-                <button wire:click="reactivateStudents" wire:loading.attr="disabled" wire:target="reactivateStudents"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all disabled:opacity-50">
-                    <span wire:loading.remove wire:target="reactivateStudents"
-                        class="inline-flex items-center gap-1.5">
-                        <x-lucide-lock-keyhole-open class="w-3.5 h-3.5" /> Réactiver les apprenants
-                    </span>
-                    <span wire:loading wire:target="reactivateStudents" class="inline-flex items-center gap-1.5">
-                        <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" /> …
-                    </span>
-                </button>
-                <button wire:click="restoreStudents" wire:loading.attr="disabled" wire:target="restoreStudents"
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-50">
-                    <span wire:loading.remove wire:target="restoreStudents" class="inline-flex items-center gap-1.5">
-                        <x-lucide-recycle class="w-3.5 h-3.5" /> Restaurer les apprenants
-                    </span>
-                    <span wire:loading wire:target="restoreStudents" class="inline-flex items-center gap-1.5">
-                        <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" /> …
-                    </span>
-                </button>
+            <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-white/5 bg-[#121826] px-4 py-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <button type="button" wire:click="toggleSelectAllOnPage"
+                        class="h-9 px-3 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition-all inline-flex items-center gap-2">
+                        <span
+                            class="inline-flex h-4 w-4 items-center justify-center rounded border {{ $this->areAllOnPageSelected() ? 'bg-violet-600 border-violet-500' : 'border-white/30 bg-transparent' }}">
+                            @if ($this->areAllOnPageSelected())
+                                <x-lucide-check class="w-3 h-3 text-white" />
+                            @endif
+                        </span>
+                        {{ $this->areAllOnPageSelected() ? 'Tout désélectionner (page)' : 'Tout sélectionner (page)' }}
+                    </button>
+
+                    @if (count($selectedStudents))
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/25 text-xs font-medium">
+                            {{ count($selectedStudents) }} sélectionné(s)
+                        </span>
+                        <button type="button" wire:click="clearSelection"
+                            class="h-8 px-2.5 rounded-lg text-xs text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
+                            Effacer la sélection
+                        </button>
+                    @else
+                        <span class="text-xs text-slate-500">Sélectionnez des apprenants pour des actions en
+                            masse</span>
+                    @endif
+                </div>
+
+                @if (count($selectedStudents))
+                    <div class="flex flex-wrap gap-2">
+                        <button wire:click="bulkActivateStudents" wire:loading.attr="disabled"
+                            wire:target="bulkActivateStudents,ConfirmBulkActivateStudents"
+                            class="h-9 px-3 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                            <span wire:loading.remove wire:target="bulkActivateStudents,ConfirmBulkActivateStudents"
+                                class="inline-flex items-center gap-1.5">
+                                <x-lucide-user-check class="w-3.5 h-3.5" /> Activer
+                            </span>
+                            <span wire:loading wire:target="bulkActivateStudents,ConfirmBulkActivateStudents">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="bulkDeactivateStudents" wire:loading.attr="disabled"
+                            wire:target="bulkDeactivateStudents,ConfirmBulkDeactivateStudents"
+                            class="h-9 px-3 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20 transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                            <span wire:loading.remove
+                                wire:target="bulkDeactivateStudents,ConfirmBulkDeactivateStudents"
+                                class="inline-flex items-center gap-1.5">
+                                <x-lucide-user-x class="w-3.5 h-3.5" /> Désactiver
+                            </span>
+                            <span wire:loading wire:target="bulkDeactivateStudents,ConfirmBulkDeactivateStudents">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="bulkRestoreStudents" wire:loading.attr="disabled"
+                            wire:target="bulkRestoreStudents,ConfirmBulkRestoreStudents"
+                            class="h-9 px-3 rounded-lg text-xs font-medium bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                            <span wire:loading.remove wire:target="bulkRestoreStudents,ConfirmBulkRestoreStudents"
+                                class="inline-flex items-center gap-1.5">
+                                <x-lucide-recycle class="w-3.5 h-3.5" /> Restaurer
+                            </span>
+                            <span wire:loading wire:target="bulkRestoreStudents,ConfirmBulkRestoreStudents">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="bulkDeleteStudents" wire:loading.attr="disabled"
+                            wire:target="bulkDeleteStudents,ConfirmBulkDeleteStudents"
+                            class="h-9 px-3 rounded-lg text-xs font-medium bg-orange-500/15 text-orange-300 border border-orange-500/25 hover:bg-orange-500/25 transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                            <span wire:loading.remove wire:target="bulkDeleteStudents,ConfirmBulkDeleteStudents"
+                                class="inline-flex items-center gap-1.5">
+                                <x-lucide-trash class="w-3.5 h-3.5" /> Corbeille
+                            </span>
+                            <span wire:loading wire:target="bulkDeleteStudents,ConfirmBulkDeleteStudents">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                            </span>
+                        </button>
+
+                        <button wire:click="bulkForceDeleteStudents" wire:loading.attr="disabled"
+                            wire:target="bulkForceDeleteStudents,ConfirmBulkForceDeleteStudents"
+                            class="h-9 px-3 rounded-lg text-xs font-medium bg-red-500/20 text-red-200 border border-red-500/30 hover:bg-red-500/30 transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                            <span wire:loading.remove
+                                wire:target="bulkForceDeleteStudents,ConfirmBulkForceDeleteStudents"
+                                class="inline-flex items-center gap-1.5">
+                                <x-lucide-trash-2 class="w-3.5 h-3.5" /> Suppr. déf.
+                            </span>
+                            <span wire:loading wire:target="bulkForceDeleteStudents,ConfirmBulkForceDeleteStudents">
+                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                            </span>
+                        </button>
+                    </div>
+                @endif
             </div>
         </section>
 
         {{-- ===================== LIST ===================== --}}
         <section class="relative mb-16" wire:loading.class="opacity-40" wire:target="search">
+            <div wire:loading
+                wire:target="gender,status,department,city,clearFilters,subject_id,classe_id,promotion_id,filiar_id,forceDeleteTeachers,previousPage,nextPage,gotoPage"
+                class="relative w-full flex items-center justify-center bg-[#0b0f19]/70">
+                <div class="flex flex-col items-center gap-3 text-slate-400 my-2">
+                    <svg class="animate-spin w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    <span class="text-sm font-mono">Chargement…</span>
+                </div>
+            </div>
+
             @if (count($this->students))
                 <div class="space-y-4">
                     @foreach ($this->students as $student)
@@ -216,12 +290,26 @@
                         @endphp
 
                         <article wire:key="liste-apprenants-{{ $student->id }}"
-                            class="rounded-2xl bg-[#121826] border border-white/5 hover:border-violet-500/20 transition-all overflow-hidden">
+                            class="rounded-2xl bg-[#121826] border transition-all overflow-hidden {{ in_array($student->id, $selectedStudents, true) ? 'border-violet-500/40 ring-1 ring-violet-500/20' : 'border-white/5 hover:border-violet-500/20' }}">
                             <div class="p-5 sm:p-6">
                                 <div class="flex flex-col xl:flex-row gap-6">
 
-                                    {{-- N° + IDENTITY --}}
-                                    <div class="flex items-center gap-4 min-w-0 xl:w-[320px] shrink-0">
+                                    {{-- Sélection + N° + IDENTITY --}}
+                                    <div class="flex items-center gap-3 min-w-0 xl:w-[360px] shrink-0">
+                                        <button type="button" wire:click="toggleSelectStudent({{ $student->id }})"
+                                            class="shrink-0 h-9 w-9 rounded-xl border flex items-center justify-center transition-all
+                                                {{ in_array($student->id, $selectedStudents, true)
+                                                    ? 'bg-violet-600 border-violet-500 text-white'
+                                                    : 'bg-[#0b0f19] border-white/15 text-slate-500 hover:border-violet-500/40 hover:text-violet-300' }}"
+                                            title="{{ in_array($student->id, $selectedStudents, true) ? 'Désélectionner' : 'Sélectionner' }}">
+                                            @if (in_array($student->id, $selectedStudents, true))
+                                                <x-lucide-check class="w-4 h-4" />
+                                            @else
+                                                <span
+                                                    class="w-3.5 h-3.5 rounded border border-current opacity-60"></span>
+                                            @endif
+                                        </button>
+
                                         <div class="flex items-start pt-1">
                                             <span
                                                 class="inline-flex items-center justify-center px-2 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 text-violet-300 text-xs font-bold tabular-nums">
@@ -294,7 +382,7 @@
                                             wire:click="{{ $student->is_active ? 'desactivateStudent(' . $student->id . ')' : 'activateStudent(' . $student->id . ')' }}"
                                             wire:loading.attr="disabled"
                                             wire:target="activateStudent({{ $student->id }}), desactivateStudent({{ $student->id }})"
-                                            class="h-9 px-3 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50
+                                            class="h-9 px-3 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 hidden
                                                        {{ $student->is_active
                                                            ? 'bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-300'
                                                            : 'bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300' }}">
@@ -320,7 +408,7 @@
                                             class="h-9 px-3 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50
                                                        {{ $student->deleted_at
                                                            ? 'bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 text-violet-300'
-                                                           : 'bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300' }}">
+                                                           : 'bg-orange-700/40 hover:bg-orange-500/80 border border-orange-500/20 text-orange-300 hover:text-black' }}">
                                             <span wire:loading.remove
                                                 wire:target="deleteStudent({{ $student->id }}), restoreStudent({{ $student->id }})"
                                                 class="inline-flex items-center gap-1.5">
@@ -336,22 +424,19 @@
                                             </span>
                                         </button>
 
-                                        @if ($student->deleted_at)
-                                            <button wire:click="forceDeleteStudent({{ $student->id }})"
-                                                wire:loading.attr="disabled"
+                                        <button wire:click="forceDeleteStudent({{ $student->id }})"
+                                            wire:loading.attr="disabled"
+                                            wire:target="forceDeleteStudent({{ $student->id }})"
+                                            class="h-9 px-3 rounded-lg bg-red-500/60 hover:bg-red-500/80 hover:text-black border border-red-500/20 text-red-200 text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50">
+                                            <span wire:loading.remove
                                                 wire:target="forceDeleteStudent({{ $student->id }})"
-                                                class="h-9 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-all disabled:opacity-50">
-                                                <span wire:loading.remove
-                                                    wire:target="forceDeleteStudent({{ $student->id }})"
-                                                    class="inline-flex items-center gap-1.5">
-                                                    <x-lucide-trash-2 class="w-3.5 h-3.5" /> Suppr. déf.
-                                                </span>
-                                                <span wire:loading
-                                                    wire:target="forceDeleteStudent({{ $student->id }})">
-                                                    <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
-                                                </span>
-                                            </button>
-                                        @endif
+                                                class="inline-flex items-center gap-1.5">
+                                                <x-lucide-trash-2 class="w-3.5 h-3.5" /> Suppr. déf.
+                                            </span>
+                                            <span wire:loading wire:target="forceDeleteStudent({{ $student->id }})">
+                                                <x-lucide-refresh-ccw class="w-3.5 h-3.5 animate-spin" />
+                                            </span>
+                                        </button>
                                     </div>
 
                                 </div>

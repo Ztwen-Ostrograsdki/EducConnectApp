@@ -13,8 +13,6 @@ use App\Models\Serial;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Services\DashboardCounterService;
-use App\Services\PDFFactory;
-use App\Services\StudentsServices\StudentPrintColumns;
 use App\Services\StudentsServices\StudentPrintQuery;
 use App\Services\StudentsServices\StudentPrintSessionConfig;
 use App\Tools\BeninData;
@@ -396,12 +394,6 @@ class StudentsPortal extends Component
     }
 
 
-    public function render()
-    {
-        return view('livewire.tenants.Students.Students-portal');
-    }
-
-
     public function trackDownload(int $documentId)
     {
         $doc = GeneratedDocument::where('id', $documentId)
@@ -426,22 +418,18 @@ class StudentsPortal extends Component
         ->select('students.*')
         ->withTrashed()
         ->when($this->search, function (Builder $query) {
-            $query->where('email', 'like', "%{$this->search}%");
-            $query->orwhere('name', 'like', "%{$this->search}%");
-            $query->orwhere('prenames', 'like', "%{$this->search}%");
-            $query->orwhere('contacts', 'like', "%{$this->search}%");
-            $query->orwhere('adresse', 'like', "%{$this->search}%");
-            $query->orwhere('city', 'like', "%{$this->search}%");
-            $query->orwhere('department', 'like', "%{$this->search}%");
-            $query->orwhere('country', 'like', "%{$this->search}%");
-            $query->orwhere('educMaster', 'like', "%{$this->search}%");
-            $query->orwhere('gender', 'like', "%{$this->search}%");
-            $query->orwhere('birth_date', 'like', "%{$this->search}%");
-            $query->orwhere('birth_place', 'like', "%{$this->search}%");
-            $query->orwhere('father_full_name', 'like', "%{$this->search}%");
-            $query->orwhere('mother_full_name', 'like', "%{$this->search}%");
-            $query->orwhere('matricule', 'like', "%{$this->search}%");
-            $query->orwhere('status', 'like', "%{$this->search}%");
+            $columns = [
+                'email', 'name', 'prenames', 'contacts', 'adresse',
+                'city', 'department', 'country', 'educMaster', 'gender',
+                'birth_date', 'birth_place', 'father_full_name',
+                'mother_full_name', 'matricule', 'status'
+            ];
+
+            $query->where(function ($q) use ($columns) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'like', "%{$this->search}%");
+                }
+            });
         })
         ->when($this->city, function (Builder $query) {
             $query->where('city', $this->city);
@@ -537,6 +525,11 @@ class StudentsPortal extends Component
         ->orderBy('students.name')
         ->orderBy('students.prenames');
         
+    }
+
+    public function render()
+    {
+        return view('livewire.tenants.Students.Students-portal');
     }
     
 }
