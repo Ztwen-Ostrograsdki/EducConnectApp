@@ -290,7 +290,8 @@ tr:hover {
     color: red !important;
 }
 
-.text-trebuchet {
+.text-trebuchet,
+.font-trebuchet {
     font-family:
         "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
         Arial, sans-serif !important;

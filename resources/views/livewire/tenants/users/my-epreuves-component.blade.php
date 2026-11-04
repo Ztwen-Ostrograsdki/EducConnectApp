@@ -1,9 +1,7 @@
-<div class="min-h-screen bg-[#070b14] text-slate-100" wire:key="my-epreuves">
-    <div class="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6">
-
-        {{-- Header --}}
+<div class="min-h-screen bg-[#070b14] text-slate-100" wire:key="my-epreuves mb-32">
+    <div class="mx-auto max-w-7xl space-y-6 py-3">
         <header
-            class="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-slate-900 via-[#0c1525] to-[#0a1220] px-6 py-7 shadow-2xl shadow-black/40">
+            class="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-slate-900 via-[#0c1525] to-[#0a1220] px-3 py-4 shadow-2xl shadow-black/40">
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
                 <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-indigo-500/15 blur-3xl"></div>
                 <div class="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl"></div>
@@ -15,12 +13,12 @@
                         <x-lucide-history class="h-6 w-6 text-indigo-400" />
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight text-white">Mes épreuves envoyées</h1>
+                        <h1 class="sm:text-xl text-lg font-bold tracking-tight text-white">Mes épreuves envoyées</h1>
                         <p class="mt-1 text-sm text-slate-400">Historique de vos envois. Filtrez par année, période,
                             classe…</p>
                     </div>
                 </div>
-                <a href="{{ route('tenant.send.epreuves') }}"
+                <a wire:navigate href="{{ route('tenant.send.epreuves') }}"
                     class="inline-flex items-center gap-2 self-start rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-cyan-600/20 transition hover:bg-cyan-500">
                     <x-lucide-upload-cloud class="h-4 w-4" />
                     Nouvel envoi
@@ -86,15 +84,40 @@
         @endif
 
         {{-- Table --}}
-        <section class="overflow-hidden rounded-2xl border border-white/5 bg-[#0c1220] shadow-xl shadow-black/30">
-            <div class="overflow-x-auto">
+        <div wire:loading
+            wire:target="gender,status,classe_id,filiar_id,city,promotion_id,subject_id,type,school_year_id,clearFilters,period,search,previousPage,nextPage,gotoPage,toggleSelectAll"
+            class="relative inset-0 z-20 flex w-full items-center justify-center rounded-2xl my-3">
+            <div class="flex justify-center w-full items-center gap-3 text-slate-400">
+                <svg class="animate-spin w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                <span class="text-sm font-mono">Chargement…</span>
+            </div>
+        </div>
+
+        <section class="overflow-hidden rounded-2xl border border-white/5 bg-[#0c1220] shadow-xl shadow-black/30"
+            wire:loading.class='opacity-25'
+            wire:target="gender,status,classe_id,filiar_id,city,promotion_id,subject_id,type,school_year_id,clearFilters,period,search,previousPage,nextPage,gotoPage,selected,toggleSelectAll">
+
+            <div class="overflow-x-auto font-trebuchet">
                 <table class="min-w-full divide-y divide-white/5 text-sm w-full">
                     <thead class="bg-[#080e1a] w-full">
                         <tr>
+                            {{-- Checkbox "Tout sélectionner" (header) --}}
                             <th class="px-4 py-3 text-left">
-                                <input type="checkbox" wire:click="toggleSelectAll"
-                                    class="rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/40" />
+                                <label class="group relative flex cursor-pointer items-center justify-center">
+                                    <input type="checkbox" wire:click="toggleSelectAll" class="peer sr-only" />
+                                    <div
+                                        class="flex h-[18px] w-[18px] items-center justify-center rounded-[6px] border border-slate-600/70 bg-slate-800/50 transition-all duration-200 ease-out group-hover:border-cyan-500/40 group-hover:bg-slate-700/60  peer-checked:border-cyan-400 peer-checked:bg-gradient-to-br peer-checked:from-cyan-500 peer-checked:to-cyan-600  peer-focus-visible:ring-2 peer-focus-visible:ring-cyan-400/50  peer-checked:[&>svg]:opacity-100 peer-checked:[&>svg]:scale-100">
+                                        <x-lucide-check
+                                            class="h-3 w-3 text-white opacity-0 scale-50 transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                                            stroke-width="3" />
+                                    </div>
+                                </label>
                             </th>
+
                             <th
                                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Fichier</th>
@@ -115,13 +138,25 @@
                                 Actions</th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-white/5">
                         @forelse ($this->epreuves as $epreuve)
                             <tr wire:key="my-epreuve-{{ $epreuve->id }}" class="transition hover:bg-white/[0.03]">
+
+                                {{-- Checkbox de sélection --}}
                                 <td class="px-4 py-3">
-                                    <input type="checkbox" wire:model.live="selected" value="{{ $epreuve->id }}"
-                                        class="rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/40" />
+                                    <label class="group relative flex cursor-pointer items-center justify-center">
+                                        <input type="checkbox" wire:model.live="selected" value="{{ $epreuve->id }}"
+                                            class="peer sr-only" />
+                                        <div
+                                            class="flex h-[18px] w-[18px] items-center justify-center rounded-[6px] border border-slate-600/70 bg-slate-800/50 transition-all duration-200 ease-out group-hover:border-cyan-500/40 group-hover:bg-slate-700/60 peer-checked:border-cyan-400 peer-checked:bg-gradient-to-br peer-checked:from-cyan-500 peer-checked:to-cyan-600 peer-focus-visible:ring-2 peer-focus-visible:ring-cyan-400/50 peer-checked:[&>svg]:opacity-100 peer-checked:[&>svg]:scale-100">
+                                            <x-lucide-check
+                                                class="h-3 w-3 text-white opacity-0 scale-50 transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                                                stroke-width="3" />
+                                        </div>
+                                    </label>
                                 </td>
+
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-3">
                                         <div
@@ -131,18 +166,36 @@
                                         <div class="min-w-0">
                                             <p class="truncate font-medium text-slate-200"
                                                 title="{{ $epreuve->filename }}">{{ $epreuve->filename }}</p>
-                                            <p class="text-xs text-slate-500">Lot #{{ $epreuve->lot ?? '—' }} ·
-                                                {{ $epreuve->downloaded_count }} dl</p>
+                                            <p class="text-xs items-center gap-x-1 text-slate-500">Lot
+                                                #{{ $epreuve->lot ?? '—' }} ·
+
+                                                <span class="text-xs inline-flex items-center gap-x-1 text-slate-500">
+                                                    {{ $epreuve->downloaded_count }}
+                                                    <x-lucide-download class="w-3 h-3" />
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </td>
+
                                 <td class="px-4 py-3">
                                     <div class="space-y-0.5 text-xs text-slate-400">
-                                        <p>{{ $epreuve->classe?->name ?? ($epreuve->classe_name ?? '—') }}</p>
-                                        <p>{{ $epreuve->subject?->name ?? '—' }} · {{ $epreuve->filiar?->name ?? '—' }}
+                                        <p>
+                                            @if ($epreuve->classe)
+                                                <p>{{ $epreuve->classe->code ? $epreuve->classe->code : $epreuve->classe_name }}
+                                                </p>
+                                            @endif
+                                        </p>
+                                        <p>
+                                            @if ($epreuve->subject)
+                                                <p>{{ $epreuve->subject->code ? $epreuve->subject->code : $epreuve->subject->name }}
+                                                </p>
+                                            @elseif($epreuve->filiar)
+                                            @endif
                                         </p>
                                     </div>
                                 </td>
+
                                 <td class="px-4 py-3">
                                     <div class="space-y-0.5 text-xs">
                                         <p class="text-slate-300">
@@ -150,6 +203,7 @@
                                         <p class="text-slate-500">{{ $epreuve->type }}</p>
                                     </div>
                                 </td>
+
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap gap-1">
                                         @if ($epreuve->published)
@@ -172,9 +226,11 @@
                                         @endif
                                     </div>
                                 </td>
+
                                 <td class="px-4 py-3 text-xs text-slate-400">
                                     {{ $epreuve->created_at?->format('d/m/Y H:i') }}
                                 </td>
+
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-end gap-1">
                                         <button wire:click="trackDownload({{ $epreuve->id }})"

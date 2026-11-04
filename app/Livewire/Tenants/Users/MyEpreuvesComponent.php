@@ -133,7 +133,7 @@ class MyEpreuvesComponent extends Component
     {
         $query = Epreuve::query()
             ->ownedBy(auth('tenant')->id())
-            ->with(['subject:id,name', 'classe:id,name', 'filiar:id,name', 'promotion:id,name', 'schoolYear:id,slug,min_year,max_year'])
+            ->with(['subject:id,name,code', 'classe:id,name,code', 'filiar:id,name,code', 'promotion:id,name', 'schoolYear:id,slug,min_year,max_year'])
             ->latest();
 
         if ($this->school_year_id) {
