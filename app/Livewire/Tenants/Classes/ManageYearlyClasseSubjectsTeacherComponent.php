@@ -9,6 +9,7 @@ use App\Models\SchoolYear;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherYearlySubject;
+use App\Models\TimePlanSlot;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -74,6 +75,11 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
     {
         return Subject::where('is_active', true)
             ->where('level', $this->classe->level)
+            ->when($this->classe->is_new_system, fn($q) =>
+                $q->where(fn($q) =>
+                    $q->where('is_module', true)
+                )
+            )
             ->where('name', '<>', 'conduite')
             ->where('name', '<>', 'Conduite')
             ->where('code', '<>', 'conduite')
@@ -235,7 +241,7 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
 
     public function removeLink(int $linkId): void
     {
-        $link = ClasseSubjectOfSchoolYear::with(['subject', 'teacher.user'])->findOrFail($linkId);
+        $link = ClasseSubjectOfSchoolYear::with(['subject', 'teacher.user', 'classe'])->findOrFail($linkId);
 
         if($link->started_at->gt(now()->subWeeks(2))){
             
@@ -248,15 +254,29 @@ class ManageYearlyClasseSubjectsTeacherComponent extends Component
         }
         else{
 
-            $link->delete();
+            try {
+                TimePlanSlot::query()
+                ->where('classe_subject_of_school_year_id', $linkId)
+                ->delete();
+
+                $link->delete();
+
+            } catch (\Throwable $th) {
+                $this->notification()->warning(
+                    title: 'Echec du retrait de classe',
+                    description: "{$link->classe?->name} n'a pas été retiré au prof « {$link->teacher?->getFullName()} ».",
+                );
+            }
+
+            
         }
 
         
         broadcast(new DataUpdatedEvent(tenant('id')));
 
         $this->notification()->warning(
-            title: 'Lien retiré',
-            description: "{$link->teacher?->user?->name} retiré de « {$link->subject?->name} ».",
+            title: 'Classe retirée au prof',
+            description: "{$link->teacher?->getFullName()} retiré de la classe « {$link->classe?->code} ».",
         );
 
         unset($this->assignedLinks);

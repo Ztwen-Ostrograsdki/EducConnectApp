@@ -156,12 +156,12 @@
                             </div>
                             <span class="s-label">Mes épreuves</span>
                         </a>
-                        <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.testimonials.create') }}"
                             class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
                             <div class="s-icon">
                                 <x-lucide-info class="h-3 w-3" />
                             </div>
-                            <span class="s-label">Donner son avis</span>
+                            <span class="s-label">Donner un avis</span>
                         </a>
                     </div>
 
@@ -431,12 +431,12 @@
                                     </div>
                                     <span class="s-label">Mon profil</span>
                                 </a>
-                                <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                                <a wire:navigate data-sidebar-item href="{{ route('tenant.testimonials.create') }}"
                                     class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
                                     <div class="s-icon">
                                         <x-lucide-info class="h-3 w-3" />
                                     </div>
-                                    <span class="s-label">Laisser un Commentaire</span>
+                                    <span class="s-label">Laisser un comm.</span>
                                 </a>
                                 <a wire:navigate href="{{ route('tenant.documents.page') }}"
                                     class="s-link {{ request()->routeIs('tenant.documents.page') ? 'active' : '' }}">

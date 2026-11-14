@@ -25,6 +25,7 @@ class ManageSubjectComponent extends Component
     public ?string $description = '';
     public ?string $type        = 'scientifique';
     public bool   $is_active   = true;
+    public bool   $is_module   = true;
     public string $previewSlug = '';
     public string $subject_slug = '';
 
@@ -44,6 +45,7 @@ class ManageSubjectComponent extends Component
         $this->description = $subject->description ?? '';
         $this->type        = $subject->type;
         $this->is_active   = $subject->is_active;
+        $this->is_module   = $subject->is_module;
         $this->previewSlug = $subject->slug;
     }
 
@@ -68,6 +70,7 @@ class ManageSubjectComponent extends Component
                 'description' => 'nullable|string|max:255',
                 'type'        => ['required', Rule::in($validTypes)],
                 'is_active'   => 'boolean',
+                'is_module'   => 'boolean',
             ]);
 
             $done = $this->subject->update([
@@ -78,6 +81,7 @@ class ManageSubjectComponent extends Component
                 'type'        => $this->type,
                 'level'       => tenant('level'),
                 'is_active'   => $this->is_active,
+                'is_module'   => $this->is_module,
             ]);
 
 
@@ -90,7 +94,7 @@ class ManageSubjectComponent extends Component
 
                 broadcast(new DataUpdatedEvent(tenant('id')));
 
-                $this->redirect(route('tenant.subject.profil', ['subject_slug' => $this->subject_slug]), navigate: true);
+                redirect()->back();
 
             }
 

@@ -62,6 +62,9 @@ class CreateTestimonialComponent extends Component
         /** @var \App\Models\User $user **/
         $user = auth('tenant')->user();
         
-        return view('livewire.tenants.testimonials.create-testimonial-component')->layout($user->getDashboardLayout());
+        $view = view('livewire.tenants.testimonials.create-testimonial-component');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
     }
 }

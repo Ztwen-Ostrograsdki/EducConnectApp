@@ -33,6 +33,7 @@ use App\Livewire\Tenants\Galleries\CreateGalleryComponent;
 use App\Livewire\Tenants\Galleries\ManageGalleriesComponent;
 use App\Livewire\Tenants\HelpGuideComponent;
 use App\Livewire\Tenants\HomePage;
+use App\Livewire\Tenants\Modules\ManageModuleSkillsComponent;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\CreateTutors;
 use App\Livewire\Tenants\Parents\ManageParentsStudentsRelationComponent;
@@ -68,6 +69,7 @@ use App\Livewire\Tenants\Serials\SerialsPortal;
 use App\Livewire\Tenants\Serials\SerialStudentsListComponent;
 use App\Livewire\Tenants\Serials\SerialTeachersListComponent;
 use App\Livewire\Tenants\SettingsComponent;
+use App\Livewire\Tenants\Skills\ManageSkillsComponent;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsManagerComponent;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableDocumentPage;
 use App\Livewire\Tenants\Stats\MoyenneIntervalStatsPrintableListComponent;
@@ -234,6 +236,13 @@ Route::middleware([
             Route::get('/matieres/portail-des-matieres', SubjectsPortal::class)->name('subjects.portal');
 
             Route::get('/matieres/details-matiere/{subject_slug}', SubjectProfil::class)->name('subject.profil');
+
+            Route::get('/modules-competences', ManageModuleSkillsComponent::class)
+                ->name('modules.skills.manage');
+
+            Route::get('/competences', ManageSkillsComponent::class)
+                ->name('skills.manage');
+
 
             Route::get('/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');
             Route::get('/matieres/{subject_slug}/edition', ManageSubjectComponent::class)->name('subject.edit');

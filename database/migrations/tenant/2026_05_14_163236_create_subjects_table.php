@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('code')->nullable();                 // ex: MATH
             $table->string('description')->nullable()->default(null);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_module')->default(false);
             $table->timestamps();
             $table->softDeletes();
 

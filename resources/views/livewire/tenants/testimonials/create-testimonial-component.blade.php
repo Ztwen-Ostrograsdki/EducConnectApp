@@ -1,4 +1,4 @@
-<div class="max-w-6xl mx-auto py-12 px-4 sm:px-6">
+<div class="w-full mx-auto py-12">
     <div
         class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#141b2d] to-[#0b0f17] border border-white/10 p-8 sm:p-10 shadow-2xl shadow-black/40">
         <!-- Accent Glow -->
@@ -32,8 +32,8 @@
 
                     <div class="relative group">
                         <textarea wire:model="content" rows="5" placeholder="Décrivez votre expérience en quelques lignes..."
-                            style="font-family: cursive, monospace"
-                            class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 text-sm text-slate-400 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all resize-none shadow-inner"></textarea>
+                            style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, monospace"
+                            class=" w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 text-sm text-slate-400 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all resize-none shadow-inner"></textarea>
                     </div>
 
                     @error('content')

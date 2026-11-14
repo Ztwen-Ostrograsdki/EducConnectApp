@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-[#070a12] text-slate-100">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8 font-trebuchet">
 
         {{-- ========== HEADER ========== --}}
         <div class="flex items-start gap-4">
@@ -21,6 +21,43 @@
                 </p>
             </div>
         </div>
+
+        <section class="space-y-4">
+            <div class="flex items-center gap-2">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Options
+                </h2>
+            </div>
+
+            <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
+                    <span class="inline-flex items-center gap-2.5 text-sm text-slate-300">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20
+                                     flex items-center justify-center shrink-0">
+                            <x-lucide-power class="w-4 h-4 text-orange-400" />
+                        </span>
+                        <span class="inline-flex flex-col gap-1">
+                            Cette matière est un module ?
+                            <p class="text-sm text-slate-500">Cocher oui si cette matière est uniquement disponible pour
+                                les
+                                nouveaux métiers</p>
+                        </span>
+                    </span>
+
+                    <div class="relative shrink-0">
+                        <input type="checkbox" wire:model="is_module" class="sr-only peer" />
+                        <div class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-orange-500 transition-colors">
+                        </div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow
+                                    transition-transform peer-checked:translate-x-5">
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </section>
 
         {{-- ========== IDENTITÉ ========== --}}
         <section class="space-y-4">
@@ -105,38 +142,6 @@
                         <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
-        </section>
-
-        {{-- ========== OPTIONS ========== --}}
-        <section class="space-y-4">
-            <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Options
-                </h2>
-            </div>
-
-            <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-                <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-                    <span class="inline-flex items-center gap-2.5 text-sm text-slate-300">
-                        <span
-                            class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20
-                                     flex items-center justify-center shrink-0">
-                            <x-lucide-power class="w-4 h-4 text-indigo-400" />
-                        </span>
-                        Matière active
-                    </span>
-                    <div class="relative shrink-0">
-                        <input type="checkbox" wire:model="is_active" class="sr-only peer" />
-                        <div class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-indigo-500 transition-colors">
-                        </div>
-                        <div
-                            class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow
-                                    transition-transform peer-checked:translate-x-5">
-                        </div>
-                    </div>
-                </label>
             </div>
         </section>
 

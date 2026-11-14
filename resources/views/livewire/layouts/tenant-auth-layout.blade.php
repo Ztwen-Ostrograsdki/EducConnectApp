@@ -138,12 +138,12 @@
                             class="s-link {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                             <div class="s-icon">📊</div><span class="s-label">Dashboard</span>
                         </a>
-                        <a onclick="Livewire.dispatch('open-testimonial-modal')" data-sidebar-item href="#"
+                        <a wire:navigate data-sidebar-item href="{{ route('tenant.testimonials.create') }}"
                             class="s-link {{ request()->routeIs('tenant.testimonials.create') ? 'active' : '' }}">
                             <div class="s-icon">
                                 <x-lucide-info class="h-3 w-3" />
                             </div>
-                            <span class="s-label">Laiser un comm.</span>
+                            <span class="s-label">Laisser un comm.</span>
                         </a>
                     @else
                         <span title="Vous ne pouvez pas accéder à cette page car vous n'avez aucun abonnement actf"
@@ -427,6 +427,35 @@
                                         <span class="s-label">
                                             Gérer AP
                                         </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- MODULES / COMPÉTENCES (nouveaux métiers) --}}
+                            <div class="s-acc" id="acc-modules">
+                                <div class="s-acc-trigger" onclick="toggleAcc('acc-modules')">
+                                    <div class="s-icon">
+                                        <x-lucide-layers class="w-3 h-3" />
+                                    </div>
+                                    <span class="s-label">Modules & Compétences</span>
+                                    <span class="s-acc-arrow">▶</span>
+                                </div>
+                                <div class="s-acc-content">
+                                    <a wire:navigate href="{{ route('tenant.modules.skills.manage') }}"
+                                        class="s-link {{ request()->routeIs('tenant.modules.skills.manage') ? 'active' : '' }}"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">
+                                            <x-lucide-link class="w-3 h-3" />
+                                        </div>
+                                        <span class="s-label">Lier compétences aux modules</span>
+                                    </a>
+                                    <a wire:navigate href="{{ route('tenant.skills.manage') }}"
+                                        class="s-link {{ request()->routeIs('tenant.skills.manage') ? 'active' : '' }}"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">
+                                            <x-lucide-brain-circuit class="w-3 h-3" />
+                                        </div>
+                                        <span class="s-label">Gestion des compétences</span>
                                     </a>
                                 </div>
                             </div>

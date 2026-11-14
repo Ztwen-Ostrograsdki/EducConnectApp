@@ -22,7 +22,7 @@ class CreateSubjectComponent extends Component
     public string $code        = '';
     public string $description = '';
     public string $type        = 'scientifique';
-    public bool   $is_active   = true;
+    public bool   $is_module   = false;
     public string $previewSlug = '';
 
     public function updatedName(string $value): void
@@ -43,7 +43,7 @@ class CreateSubjectComponent extends Component
                 'code'        => 'nullable|string|max:20',
                 'description' => 'nullable|string|max:255',
                 'type'        => ['required', Rule::in($validTypes)],
-                'is_active'   => 'boolean',
+                'is_module'   => 'boolean',
             ]);
 
             $Subject = Subject::create([
@@ -53,8 +53,9 @@ class CreateSubjectComponent extends Component
                 'code'        => $this->code ?? Str::slug($this->name),
                 'description' => $this->description ?: null,
                 'type'        => $this->type,
-                'level'          => tenant('level'),
-                'is_active'   => $this->is_active,
+                'level'       => tenant('level'),
+                'is_active'   => true,
+                'is_module'   => $this->is_module,
             ]);
 
             if($Subject){

@@ -31,9 +31,18 @@ class SubjectsPortal extends Component
 
     public ?string $is_active = 'actives';
 
+    public ?string $system = 'all';
+
     public ?string $type = null;
 
     public ?string $school_year_selected;
+
+
+    public array $systems = [
+        'all' => "Toutes les matières modules ou non",
+        'modules' => "Les modules",
+        'default' => "Toutes les matières non modules",
+    ];
 
     public function mount()
     {
@@ -46,13 +55,18 @@ class SubjectsPortal extends Component
 
             $this->is_active = session('subjects_is_active_selected');
         }
+        
+        if(session()->has('subjects_system_selected')){
+
+            $this->system = session('subjects_system_selected');
+        }
     }
 
     public function clearFilters()
     {
-        $this->reset('search', 'type', 'is_active');
+        $this->reset('search', 'type', 'is_active', 'system');
 
-        session()->forget('subjects_type_seleteted');
+        session()->forget('subjects_system_seleteted');
 
     }
 
@@ -91,6 +105,10 @@ class SubjectsPortal extends Component
     {
         session()->put('subjects_is_active_selected', $this->is_active);
     }
+    public function updatedSystem(?string $value)
+    {
+        session()->put('subjects_system_selected', $this->system);
+    }
 
     public function updatingSearch()
     {
@@ -115,6 +133,15 @@ class SubjectsPortal extends Component
                         )
                         ->when($this->is_active && $this->is_active === 'desactives', fn($qa) =>
                             $qa->where('is_active', false)
+                        )
+                        ->when($this->system && $this->system === 'modules', fn($qa) =>
+                            $qa->where('is_module', true)
+                        )
+                        ->when($this->system && $this->system === 'default', fn($qa) =>
+                            $qa->where('is_module', false)
+                        )
+                        ->when($this->system && $this->system === 'all', fn($qa) =>
+                            $qa->where('is_module', false)->orWhere('is_module', true)
                         )
                         ->when($this->is_active && $this->is_active === 'corbeille', fn($qa) =>
                             $qa->whereNotNull('deleted_at')

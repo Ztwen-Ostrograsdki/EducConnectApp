@@ -66,6 +66,12 @@
                             <option value="corbeille">Corbeille ({{ __zero($this->trashedsSubjects) }})</option>
                         </select>
 
+                        <select wire:model.live="system"
+                            class="h-10 min-w-[180px] rounded-lg bg-[#0b0f19] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40">
+                            @foreach ($systems as $sysk => $sys)
+                                <option value="{{ $sysk }}">{{ $sys }}</option>
+                            @endforeach
+                        </select>
                         <select wire:model.live="type"
                             class="h-10 min-w-[180px] rounded-lg bg-[#0b0f19] border border-white/10 px-3 text-xs text-slate-300 focus:outline-none focus:border-violet-500/40">
                             <option value="">Tous types de matières</option>
@@ -82,7 +88,7 @@
         <section class="mb-6">
             <div class="flex flex-wrap gap-2">
                 <a wire:navigate href="{{ route('tenant.subject.manage.aptime') }}"
-                    class="px-3.5 inline-flex items-center rounded-lg text-xs font-medium bg-orange-500/10 text-orange-300 border border-orange-500/20 hover:bg-orange-500/60 transition-all">
+                    class="px-3.5 inline-flex items-center rounded-lg text-xs font-medium bg-orange-500/10 text-orange-300 border border-orange-500/20 hover:bg-orange-500/60 transition-all py-2.5">
                     <span class="inline-flex items-center">
                         <span class="inline-flex items-center gap-2">
                             <x-lucide-calendar-days class="w-4 h-4" />
@@ -90,12 +96,21 @@
                         </span>
                     </span>
                 </a>
+                <a wire:navigate href="{{ route('tenant.skills.manage') }}"
+                    class="px-3.5 inline-flex items-center rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/60 transition-all py-2.5">
+                    <span class="inline-flex items-center">
+                        <span class="inline-flex items-center gap-2">
+                            <x-lucide-brain-circuit class="h-4 w-4" />
+                            Gérer les compétences
+                        </span>
+                    </span>
+                </a>
                 <button
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
+                    class="h-9 px-3.5 hidden rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
                     Imprimer PDF
                 </button>
                 <button
-                    class="h-9 px-3.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
+                    class="h-9 px-3.5 hidden rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
                     Exporter Excel
                 </button>
 
@@ -136,7 +151,7 @@
         {{-- ===================== LIST ===================== --}}
         <section class="relative mb-16">
             <div wire:loading
-                wire:target="clearFilters,is_active,type,activateSubject,activateUnactivesSubjects,restoreTrashedsSubjects,desactivateSubject,deleteSubject,forceDeleteSubject,search,previousPage,nextPage,gotoPage"
+                wire:target="clearFilters,is_active,system,type,activateSubject,activateUnactivesSubjects,restoreTrashedsSubjects,desactivateSubject,deleteSubject,forceDeleteSubject,search,previousPage,nextPage,gotoPage"
                 class="absolute inset-0 z-20 flex items-center justify-center bg-[#0b0f19]/70 rounded-2xl">
                 <div class="flex flex-col items-center gap-3 text-slate-400">
                     <svg class="animate-spin w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24">
@@ -182,9 +197,20 @@
                                                     {{ $subject->name }}
                                                 </h3>
                                                 <p
-                                                    class="mt-0.5 text-xs font-mono text-slate-500 uppercase group-hover:text-violet-400/70">
-                                                    {{ $subject->code }}
+                                                    class="mt-0.5 text-xs font-mono text-slate-500 uppercase group-hover:text-violet-400/70 gap-2 inline-flex items-center">
+
+                                                    <p
+                                                        class="mt-0.5 text-xs p-0.5 px-3 inline-flex font-mono rounded-2xl bg-gray-700/35  text-gray-400 uppercase ">
+                                                        {{ $subject->code }}
+                                                    </p>
+                                                    @if ($subject->is_module)
+                                                        <p
+                                                            class="mt-0.5 text-xs p-0.5 px-3 inline-flex font-mono rounded-2xl bg-green-700/35  text-green-400 uppercase ">
+                                                            Module
+                                                        </p>
+                                                    @endif
                                                 </p>
+
                                             </a>
 
                                             <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-400">
