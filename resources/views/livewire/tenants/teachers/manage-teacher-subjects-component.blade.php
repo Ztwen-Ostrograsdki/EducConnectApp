@@ -240,13 +240,13 @@
                                 <x-lucide-loader-2 class="w-3.5 h-3.5 text-indigo-400 animate-spin" />
                             </div>
                         </div>
-                        <select wire:model.live="subjectLevel"
+                        <select wire:model.live="subjectSystem"
                             class="h-10 px-3 rounded-xl border border-white/[0.08] bg-[#070a12]
                                        text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition-all">
                             <option value="">Tous niveaux</option>
-                            <option value="primaire">Primaire</option>
-                            <option value="secondaire">Secondaire</option>
-                            <option value="superieur">Supérieur</option>
+                            @foreach ($systems as $sk => $sys)
+                                <option value="{{ $sk }}">{{ $sys }}</option>
+                            @endforeach
                         </select>
                         <select wire:model.live="subjectType"
                             class="h-10 px-3 rounded-xl border border-white/[0.08] bg-[#070a12]
@@ -260,7 +260,7 @@
                 </div>
 
                 <div class="divide-y divide-white/[0.04]" wire:loading.class="opacity-50"
-                    wire:target="subjectSearch, subjectLevel, subjectType, previousPage, nextPage, gotoPage">
+                    wire:target="subjectSearch, subjectLevel,subjectSystem, subjectType, previousPage, nextPage, gotoPage">
 
                     @forelse ($this->availableSubjects as $subject)
                         @php $linked = $this->isLinked($subject->id); @endphp
@@ -280,6 +280,10 @@
                                     class="text-sm font-medium truncate
                                           {{ $linked ? 'text-emerald-300' : 'text-white' }}">
                                     {{ $subject->name }}
+                                    @if ($subject->is_module)
+                                        <span
+                                            class="rounded-2xl mx-2 py-1 px-3 bg-green-600/40 text-green-400 text-sm">Module</span>
+                                    @endif
                                 </p>
                                 <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                                     <span

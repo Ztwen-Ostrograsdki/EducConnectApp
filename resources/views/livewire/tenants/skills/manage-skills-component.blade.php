@@ -283,7 +283,6 @@
 
                                         <div class="min-w-0 flex-1">
                                             <div class="flex items-start gap-3">
-
                                                 <div class="min-w-0">
                                                     {{-- Checkbox --}}
                                                     <div class="inline-flex items-center gap-2">

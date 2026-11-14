@@ -14,7 +14,7 @@ use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
 #[Layout('livewire.layouts.tenant-auth-layout')]
-#[Title('Modules & Compétences')]
+#[Title('Modules et Compétences')]
 class ManageModuleSkillsComponent extends Component
 {
     use ModuleActionsTrait;
@@ -50,6 +50,16 @@ class ManageModuleSkillsComponent extends Component
     public function updatedSearchModules(): void
     {
         //
+    }
+
+    public function mount()
+    {
+        if(session()->has('selected_module') && session('selected_module')){
+
+            $this->selectedModuleId = session('selected_module');
+
+            $this->updatedSelectedModuleId();
+        }
     }
 
     #[Computed]
@@ -127,6 +137,8 @@ class ManageModuleSkillsComponent extends Component
     {
         $this->selectedModuleId = $moduleId;
         $this->updatedSelectedModuleId();
+
+        session()->put('selected_module', $moduleId);
     }
 
     public function linkSelectedSkill(): void

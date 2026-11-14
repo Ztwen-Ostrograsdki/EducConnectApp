@@ -30,6 +30,13 @@ class ManageTeacherSubjectsComponent extends Component
     public string $subjectSearch = '';
     public string $subjectLevel  = '';
     public string $subjectType   = '';
+    public string $subjectSystem = 'all';
+
+    public array $systems = [
+        'all' => "Toutes les matières y compris les modules",
+        'modules' => "Les modules",
+        'default' => "Les matières non modules"
+    ];
 
     public function mount(?string $teacher_uuid = null): void
     {
@@ -55,6 +62,7 @@ class ManageTeacherSubjectsComponent extends Component
     public function updatedSubjectSearch(): void { $this->resetPage(); }
     public function updatedSubjectLevel(): void  { $this->resetPage(); }
     public function updatedSubjectType(): void   { $this->resetPage(); }
+    public function updatedSubjectSystem(): void   { $this->resetPage(); }
 
     // ─── Sélection prof ───────────────────────────────────────────────
 
@@ -142,6 +150,9 @@ class ManageTeacherSubjectsComponent extends Component
             )
             ->when($this->subjectLevel, fn($q) => $q->where('level', $this->subjectLevel))
             ->when($this->subjectType,  fn($q) => $q->where('type', $this->subjectType))
+            ->when($this->subjectSystem && $this->subjectSystem == 'modules',  fn($q) => $q->where('is_module', true))
+            ->when($this->subjectSystem && $this->subjectSystem == 'default',  fn($q) => $q->where('is_module', false))
+            ->when($this->subjectSystem && $this->subjectSystem == 'all',  fn($q) => $q->where('is_module', false)->orWhere('is_module', true))
             ->orderBy('name')
             ->paginate(12);
     }
