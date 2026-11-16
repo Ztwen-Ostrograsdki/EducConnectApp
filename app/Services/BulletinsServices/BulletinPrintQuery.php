@@ -30,6 +30,11 @@ class BulletinPrintQuery
             $query->whereHas('promotion', fn ($q) => $q->where('name', $config['promotionInGroups']));
         }
 
+        // Filtre système de classe : new_system | default_system | both
+        if (! empty($config['systemOfClasse']) && $config['systemOfClasse'] !== 'both') {
+            $query->where('is_new_system', $config['systemOfClasse'] === 'new_system');
+        }
+
         return $query->orderBy('name');
     }
 

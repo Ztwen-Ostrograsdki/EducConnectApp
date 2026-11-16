@@ -29,11 +29,18 @@ class BulletinsPrintsManagerComponent extends Component
     public ?int $period = null;
 
     public string $leavesStatus = 'onlyActives';
+    public string $systemOfClasse = 'both';
 
     public array $leavesStatuses = [
         'onlyActives' => "Seulement apprenants actifs",
         'onlyLeaves'  => "Seulement apprenants abandons",
         'withLeaves'  => "Tous, abandons inclus",
+    ];
+
+    public array $systemOfClasseOptions = [
+        'both'            => "Tous les systèmes (ancien + nouveau)",
+        'new_system'      => "Nouveau système uniquement",
+        'default_system'  => "Ancien système uniquement",
     ];
 
     public function mount(): void
@@ -47,6 +54,7 @@ class BulletinsPrintsManagerComponent extends Component
         if (session()->has('print_bulletins_promotions_grouped_selected')) $this->promotionInGroups = session('print_bulletins_promotions_grouped_selected');
         if (session()->has('print_bulletins_leaves_status'))       $this->leavesStatus = session('print_bulletins_leaves_status');
         if (session()->has('print_bulletins_period_selected'))       $this->period = session('print_bulletins_period_selected');
+        if (session()->has('print_bulletins_system_of_classe'))    $this->systemOfClasse = session('print_bulletins_system_of_classe');
 
     }
 
@@ -76,8 +84,16 @@ class BulletinsPrintsManagerComponent extends Component
     #[Computed]
     public function classes()
     {
-        return Classe::where('school_year_id', $this->activeYear?->id)
-            ->where('is_active', true)->orderBy('name')->get();
+        $query = Classe::where('school_year_id', $this->activeYear?->id)
+            ->where('is_active', true);
+
+        if ($this->systemOfClasse === 'new_system') {
+            $query->where('is_new_system', true);
+        } elseif ($this->systemOfClasse === 'default_system') {
+            $query->where('is_new_system', false);
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     #[Computed]
@@ -95,6 +111,7 @@ class BulletinsPrintsManagerComponent extends Component
             "promotion_id"      => $this->promotion_id,
             "promotionInGroups" => $this->promotionInGroups,
             "leavesConfig"      => $this->leavesStatus,
+            "systemOfClasse"    => $this->systemOfClasse,
         ];
     }
 
@@ -122,6 +139,7 @@ class BulletinsPrintsManagerComponent extends Component
 
     public function updatedPeriod(?string $value): void { session()->put('print_bulletins_period_selected', $value); }
     public function updatedLeavesStatus(?string $value): void { session()->put('print_bulletins_leaves_status', $value); }
+    public function updatedSystemOfClasse(?string $value): void { session()->put('print_bulletins_system_of_classe', $value); }
 
     public function updatedClasseId(?string $value): void
     {
@@ -172,13 +190,14 @@ class BulletinsPrintsManagerComponent extends Component
     {
         session()->forget([
             'print_bulletins_classe_selected', 'print_bulletins_filiar_selected', 'print_bulletins_serial_selected',
-            'print_bulletins_promotion_selected', 'print_bulletins_promotions_grouped_selected'
-            , 'print_bulletins_leaves_status', 'print_bulletins_period_selected',
+            'print_bulletins_promotion_selected', 'print_bulletins_promotions_grouped_selected',
+            'print_bulletins_leaves_status', 'print_bulletins_period_selected', 'print_bulletins_system_of_classe',
         ]);
 
         $this->reset('classe_id', 'filiar_id', 'serial_id', 'promotion_id', 'promotionInGroups');
 
         $this->leavesStatus = 'onlyActives';
+        $this->systemOfClasse = 'both';
         $this->period = $this->activeYear?->active_period;
     }
 

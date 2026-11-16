@@ -23,6 +23,7 @@ class BulletinsPrintableListComponent extends Component
             "promotionInGroups" => session('print_bulletins_promotions_grouped_selected'),
             "level"             => session('print_bulletins_level_selected'),
             "leavesConfig"      => session('print_bulletins_leaves_status', 'onlyActives'),
+            "systemOfClasse"    => session('print_bulletins_system_of_classe', 'both'),
         ];
     }
 

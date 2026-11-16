@@ -179,6 +179,30 @@
                 </div>
             </section>
 
+            {{-- ═══ 3b. SYSTÈME DE CLASSE ═══ --}}
+            <section
+                class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">
+                <div class="px-6 py-4 border-b border-white/[0.06] flex items-center gap-3">
+                    <div
+                        class="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/25">
+                        <span class="text-lg">🏫</span>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-white">Système de classe</h2>
+                        <p class="text-[11px] text-slate-500">Nouveau système, ancien système ou les deux</p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <select wire:model.live="systemOfClasse"
+                        class="w-full sm:w-1/2 h-12 rounded-xl bg-[#070b14] border border-white/10 px-4 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 transition-all">
+                        @foreach ($systemOfClasseOptions as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </section>
+
             {{-- ═══ 4. COMPTEUR + TITRE ═══ --}}
             <section
                 class="rounded-2xl bg-[#0f1523] border border-white/[0.06] overflow-hidden shadow-xl shadow-black/20">

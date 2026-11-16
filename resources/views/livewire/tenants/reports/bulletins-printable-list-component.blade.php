@@ -29,13 +29,18 @@
 
             {{-- ═══ EN-TÊTE DOCUMENT ═══ --}}
             <div class="bulletin-header">
-                <div class="bh-center" style="flex:1;text-align:center;">
-                    <p class="bh-badge">Bulletin — {{ $schoolYear?->periodLabel() }} {{ $period }}</p>
+                <div class="bh-photo">
+                    <img src="{{ $student->profil_photo_url ?? asset('images/default-avatar.jpg') }}"
+                        alt="Photo de {{ $student->getFullName() }}" class="student-photo">
+                </div>
+                <div class="bh-center">
+                    <p class="bh-badge">Bulletin de notes du {{ $schoolYear?->periodLabel() }} {{ $period }}</p>
                     @if ($b['isLastPeriod'])
                         <p class="bh-badge-sub">Résultats annuels inclus</p>
                     @endif
                     <p class="bh-year">Année scolaire {{ $schoolYear?->slug }}</p>
                 </div>
+                <div class="bh-photo-spacer"></div>
             </div>
 
             <div class="bulletin-rule"></div>
@@ -289,9 +294,34 @@
     .bulletin-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: center;
+        gap: 12px;
         padding-bottom: 6px;
+    }
+
+    .bh-photo {
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .bh-photo-spacer {
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+        visibility: hidden;
+    }
+
+    .student-photo {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        display: block;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .bh-left {
@@ -313,7 +343,7 @@
     }
 
     .bh-center {
-        flex: 1.4;
+        flex: 1;
         text-align: center;
     }
 
