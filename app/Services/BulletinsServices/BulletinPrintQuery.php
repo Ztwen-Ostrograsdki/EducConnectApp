@@ -4,6 +4,7 @@ namespace App\Services\BulletinsServices;
 
 use App\Models\Classe;
 use App\Models\ClasseSubjectOfSchoolYear;
+use App\Models\SchoolYear;
 use App\Models\Student;
 use App\Models\YearlyClasseStudent;
 use App\Services\ClassesServices\ClasseEffectifsService;
@@ -97,8 +98,12 @@ class BulletinPrintQuery
     /**
      * Génère la donnée complète d'un bulletin pour chaque élève du scope,
      * classe par classe. Retourne un array de "bulletins" prêts pour la vue.
+     *
+     * Chaque bulletin porte une clé 'type' :
+     *  - 'default'    : système classique (notes, moyennes, rangs)
+     *  - 'new_system' : classes nouveaux métiers (modules validés / non validés)
      */
-    public static function getBulletinsData(array $config, int $schoolYearId, int $period, \App\Models\SchoolYear $schoolYear): array
+    public static function getBulletinsData(array $config, int $schoolYearId, int $period, SchoolYear $schoolYear): array
     {
         $devoirsType = tenant()->devoirs_type ?? 'devoir1-devoir2';
         $markColumns = self::markColumns($devoirsType);
@@ -113,12 +118,36 @@ class BulletinPrintQuery
 
             $effectifs = app(ClasseEffectifsService::class)->getEffectifs($classe->id);
 
-            $yearlyClasseData = $isLastPeriod
+            $isNewSystem = (bool) $classe->is_new_system;
+
+            // Nouveau système : modules et seuils chargés UNE fois par classe
+            $nsModules    = $isNewSystem ? NewSystemBulletinService::modulesOfClasse($classe, $schoolYearId) : null;
+            $nsThresholds = $isNewSystem ? NewSystemBulletinService::thresholdsForClasse($classe) : [];
+
+            $yearlyClasseData = ($isLastPeriod && ! $isNewSystem)
                 ? app(ClasseYearlyAveragesCacheService::class)->get($classe->id, $schoolYearId)
                 : null;
 
             foreach (self::studentsQuery($classe, $config)->cursor() as $student) {
 
+                // ─── Classes nouveaux métiers ───
+                if ($isNewSystem) {
+                    $bulletins[] = NewSystemBulletinService::build(
+                        $classe,
+                        $student,
+                        $period,
+                        $schoolYearId,
+                        $isLastPeriod,
+                        $nsModules,
+                        $nsThresholds,
+                        $effectifs
+                    );
+
+                    unset($student);
+                    continue;
+                }
+
+                // ─── Système classique ───
                 $subjectsDetail = self::subjectsDetailForStudent($classe, $student, $period, $schoolYearId, $markColumns);
 
                 $termAverage = app(ClasseAveragesCacheService::class)->forStudent(
@@ -144,6 +173,7 @@ class BulletinPrintQuery
                 }
 
                 $bulletins[] = [
+                    'type'                 => 'default',
                     'student'              => $student,
                     'classe'               => $classe,
                     'effectifs'            => $effectifs,
@@ -216,7 +246,7 @@ class BulletinPrintQuery
         );
 
         if (! empty($config['student_id'])) {
-            
+
             $query->where('id', $config['student_id']);
 
             return $query->orderBy('name')->orderBy('prenames');
@@ -229,8 +259,8 @@ class BulletinPrintQuery
             'onlyActives' => $query->whereDoesntHave('yearlyStudentsLeaves', fn ($q) =>
                 $q->where('school_year_id', $classe->school_year_id)->where('classe_id', $classe->id)->whereNull('ended_at')
             ),
-            
-			'withLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
+
+            'withLeaves' => $query->whereHas('yearlyStudentsLeaves', fn ($q) =>
                 $q->where('school_year_id', $classe->school_year_id)
                   ->where('classe_id', $classe->id)
                   ->whereNull('ended_at')),

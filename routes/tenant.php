@@ -33,6 +33,7 @@ use App\Livewire\Tenants\Galleries\CreateGalleryComponent;
 use App\Livewire\Tenants\Galleries\ManageGalleriesComponent;
 use App\Livewire\Tenants\HelpGuideComponent;
 use App\Livewire\Tenants\HomePage;
+use App\Livewire\Tenants\Modules\ManageModuleClasseValidationsComponent;
 use App\Livewire\Tenants\Modules\ManageModuleSkillsComponent;
 use App\Livewire\Tenants\MyProfilPage;
 use App\Livewire\Tenants\Parents\CreateTutors;
@@ -242,6 +243,8 @@ Route::middleware([
 
             Route::get('/competences', ManageSkillsComponent::class)
                 ->name('skills.manage');
+
+            Route::get('/modules-seuils-validation', ManageModuleClasseValidationsComponent::class)->name('modules.validations.manage');
 
 
             Route::get('/matieres/nouvelle-matiere', CreateSubjectComponent::class)->name('subject.create');

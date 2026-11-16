@@ -457,6 +457,14 @@
                                         </div>
                                         <span class="s-label">Gestion des compétences</span>
                                     </a>
+                                    <a wire:navigate href="{{ route('tenant.modules.validations.manage') }}"
+                                        class="s-link {{ request()->routeIs('tenant.modules.validations.manage') ? 'active' : '' }}"
+                                        style="font-size:.78rem;">
+                                        <div class="s-icon" style="font-size:.72rem;">
+                                            <x-lucide-sliders-horizontal class="w-3 h-3" />
+                                        </div>
+                                        <span class="s-label">Gestion des seuils - modules</span>
+                                    </a>
                                 </div>
                             </div>
 

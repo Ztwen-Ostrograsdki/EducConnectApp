@@ -56,6 +56,7 @@ class CreateTenantsTable extends Migration
             $table->integer('stage')->default(1);
             $table->string('logo')->nullable();
             $table->timestamp('date_expiration_abonnement')->nullable();
+            $table->boolean('free_access')->default(false);
 
             $table->unsignedBigInteger('request_id')->nullable()->default(null);
 

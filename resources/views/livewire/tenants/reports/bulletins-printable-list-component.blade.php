@@ -73,142 +73,151 @@
                 </div>
             </div>
 
-            {{-- ═══ TABLEAU DES MATIÈRES ═══ --}}
-            <table class="bulletin-table">
-                <thead>
-                    <tr>
-                        <th class="col-subject">Matière</th>
-                        <th>Coef</th>
-                        <th>Moy Int</th>
-                        @foreach ($b['devoirColumns'] as $type => $label)
-                            <th>{{ $label }}</th>
-                        @endforeach
-                        <th>Moy</th>
-                        <th>Moy×Coef</th>
-                        <th>Rang</th>
-                        <th class="col-teacher">Professeur</th>
-                        <th class="col-mention">Mention</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($b['subjectsDetail'] as $row)
-                        <tr>
-                            <td class="col-subject">{{ $row['subjectName'] }}</td>
-                            <td class="td-center">{{ $row['coefficient'] ?? '—' }}</td>
-                            <td class="td-center">
-                                {{ $row['moy_interro'] !== null ? number_format($row['moy_interro'], 2) : '—' }}</td>
-                            @foreach ($b['devoirColumns'] as $type => $label)
-                                <td class="td-center">
-                                    {{ $row['marks'][$type] !== null ? number_format($row['marks'][$type], 2) : '—' }}
-                                </td>
-                            @endforeach
-                            <td class="td-center cell-bold">
-                                {{ $row['moy'] !== null ? number_format($row['moy'], 2) : '—' }}</td>
-                            <td class="td-center">
-                                {{ $row['moy_coef'] !== null ? number_format($row['moy_coef'], 2) : '—' }}</td>
-                            <td class="td-center">{{ $row['rank'] ?? '—' }}</td>
-                            <td class="col-teacher">{{ $row['teacherName'] }}</td>
-                            <td class="col-mention">{{ $row['mention'] ?? '—' }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2" class="tf-label">Moyenne générale</td>
-                        <td colspan="2" class="tf-value">{{ $term['moyenne'] ?? '—' }}</td>
-                        <td class="tf-label">Rang</td>
-                        <td class="tf-value">{{ $term['rank'] ?? '—' }} / {{ $term['total'] ?? '—' }}</td>
-                        <td class="tf-label">Mention</td>
-                        <td colspan="3" class="tf-value">{{ $term['mention'] ?? '—' }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            {{-- ═══ SYNTHÈSE PÉRIODE (classe) ═══ --}}
-            <div class="synth-strip">
-                <div class="synth-item">
-                    <span class="synth-label">Plus forte moyenne</span>
-                    <span class="synth-value synth-good">{{ $term['premier']['moyenne'] ?? '—' }}</span>
-                </div>
-                <div class="synth-item">
-                    <span class="synth-label">Plus faible moyenne</span>
-                    <span class="synth-value synth-bad">{{ $term['dernier']['moyenne'] ?? '—' }}</span>
-                </div>
-                <div class="synth-item">
-                    <span class="synth-label">Réussite classe</span>
-                    <span
-                        class="synth-value">{{ ($term['class_success_rate'] ?? null) !== null ? $term['class_success_rate'] . '%' : '—' }}</span>
-                </div>
-                <div class="synth-item">
-                    <span class="synth-label">Réussite élève</span>
-                    <span
-                        class="synth-value">{{ ($term['success_percentage'] ?? null) !== null ? $term['success_percentage'] . '%' : '—' }}</span>
-                </div>
-            </div>
-
-            {{-- ═══ RÉCAP PÉRIODES PRÉCÉDENTES (dernière période uniquement) ═══ --}}
-            @if ($b['isLastPeriod'] && !empty($b['previousPeriodsRecap']))
-                <table class="recap-table">
+            @if (($b['type'] ?? 'default') === 'new_system')
+                @include('livewire.tenants.reports.bulletins-new-system-section', [
+                    'b' => $b,
+                    'schoolYear' => $schoolYear,
+                ])
+            @else
+                {{-- ═══ TABLEAU DES MATIÈRES ═══ --}}
+                <table class="bulletin-table">
                     <thead>
                         <tr>
-                            <th class="col-subject">{{ $schoolYear?->periodLabel() }} précédent(s)</th>
-                            <th>Moyenne</th>
+                            <th class="col-subject">Matière</th>
+                            <th>Coef</th>
+                            <th>Moy Int</th>
+                            @foreach ($b['devoirColumns'] as $type => $label)
+                                <th>{{ $label }}</th>
+                            @endforeach
+                            <th>Moy</th>
+                            <th>Moy×Coef</th>
                             <th>Rang</th>
+                            <th class="col-teacher">Professeur</th>
+                            <th class="col-mention">Mention</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($b['previousPeriodsRecap'] as $p => $entry)
+                        @foreach ($b['subjectsDetail'] as $row)
                             <tr>
-                                <td class="col-subject">{{ $schoolYear?->periodLabel() }} {{ $p }}</td>
-                                <td class="td-center">{{ $entry['moyenne'] ?? '—' }}</td>
-                                <td class="td-center">{{ $entry['rank'] ?? '—' }} / {{ $entry['total'] ?? '—' }}</td>
+                                <td class="col-subject">{{ $row['subjectName'] }}</td>
+                                <td class="td-center">{{ $row['coefficient'] ?? '—' }}</td>
+                                <td class="td-center">
+                                    {{ $row['moy_interro'] !== null ? number_format($row['moy_interro'], 2) : '—' }}
+                                </td>
+                                @foreach ($b['devoirColumns'] as $type => $label)
+                                    <td class="td-center">
+                                        {{ $row['marks'][$type] !== null ? number_format($row['marks'][$type], 2) : '—' }}
+                                    </td>
+                                @endforeach
+                                <td class="td-center cell-bold">
+                                    {{ $row['moy'] !== null ? number_format($row['moy'], 2) : '—' }}</td>
+                                <td class="td-center">
+                                    {{ $row['moy_coef'] !== null ? number_format($row['moy_coef'], 2) : '—' }}</td>
+                                <td class="td-center">{{ $row['rank'] ?? '—' }}</td>
+                                <td class="col-teacher">{{ $row['teacherName'] }}</td>
+                                <td class="col-mention">{{ $row['mention'] ?? '—' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="tf-label">Moyenne générale</td>
+                            <td colspan="2" class="tf-value">{{ $term['moyenne'] ?? '—' }}</td>
+                            <td class="tf-label">Rang</td>
+                            <td class="tf-value">{{ $term['rank'] ?? '—' }} / {{ $term['total'] ?? '—' }}</td>
+                            <td class="tf-label">Mention</td>
+                            <td colspan="3" class="tf-value">{{ $term['mention'] ?? '—' }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
-            @endif
 
-            {{-- ═══ APPRÉCIATION + DÉCISION (dernière période) ═══ --}}
-            <div class="bottom-blocks {{ $b['isLastPeriod'] ? 'has-decision' : '' }}">
-                <div class="block-appreciation">
-                    <p class="block-title">Appréciation</p>
-                    <div class="block-blank-lines">
-                        <div class="blank-line"></div>
-                        <div class="blank-line"></div>
+                {{-- ═══ SYNTHÈSE PÉRIODE (classe) ═══ --}}
+                <div class="synth-strip">
+                    <div class="synth-item">
+                        <span class="synth-label">Plus forte moyenne</span>
+                        <span class="synth-value synth-good">{{ $term['premier']['moyenne'] ?? '—' }}</span>
+                    </div>
+                    <div class="synth-item">
+                        <span class="synth-label">Plus faible moyenne</span>
+                        <span class="synth-value synth-bad">{{ $term['dernier']['moyenne'] ?? '—' }}</span>
+                    </div>
+                    <div class="synth-item">
+                        <span class="synth-label">Réussite classe</span>
+                        <span
+                            class="synth-value">{{ ($term['class_success_rate'] ?? null) !== null ? $term['class_success_rate'] . '%' : '—' }}</span>
+                    </div>
+                    <div class="synth-item">
+                        <span class="synth-label">Réussite élève</span>
+                        <span
+                            class="synth-value">{{ ($term['success_percentage'] ?? null) !== null ? $term['success_percentage'] . '%' : '—' }}</span>
                     </div>
                 </div>
 
-                @if ($b['isLastPeriod'])
-                    <div class="block-decision">
-                        <p class="block-title">Décision du jury</p>
-                        <div class="decision-line">
-                            <span>Décision :</span>
-                            <div class="blank-line-inline"></div>
-                        </div>
-                        <div class="decision-line">
-                            <span>Moy. annuelle :</span>
-                            <span class="decision-value">{{ $b['yearlyAverage']['moy_general'] ?? '—' }}</span>
-                        </div>
-                        <div class="decision-line">
-                            <span>Rang annuel :</span>
-                            <span class="decision-value">{{ $b['yearlyAverage']['rang_general'] ?? '—' }} /
-                                {{ $b['yearlyClasseData']['total'] ?? '—' }}</span>
-                        </div>
-                    </div>
+                {{-- ═══ RÉCAP PÉRIODES PRÉCÉDENTES (dernière période uniquement) ═══ --}}
+                @if ($b['isLastPeriod'] && !empty($b['previousPeriodsRecap']))
+                    <table class="recap-table">
+                        <thead>
+                            <tr>
+                                <th class="col-subject">{{ $schoolYear?->periodLabel() }} précédent(s)</th>
+                                <th>Moyenne</th>
+                                <th>Rang</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($b['previousPeriodsRecap'] as $p => $entry)
+                                <tr>
+                                    <td class="col-subject">{{ $schoolYear?->periodLabel() }} {{ $p }}</td>
+                                    <td class="td-center">{{ $entry['moyenne'] ?? '—' }}</td>
+                                    <td class="td-center">{{ $entry['rank'] ?? '—' }} / {{ $entry['total'] ?? '—' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 @endif
-            </div>
 
-            {{-- ═══ SIGNATURE ═══ --}}
-            <div class="signature-strip">
-                <div class="sig-block" style="text-align: left">
-                    <p class="sig-label">Le Professeur Principal</p>
-                    <div class="sig-space"></div>
+                {{-- ═══ APPRÉCIATION + DÉCISION (dernière période) ═══ --}}
+                <div class="bottom-blocks {{ $b['isLastPeriod'] ? 'has-decision' : '' }}">
+                    <div class="block-appreciation">
+                        <p class="block-title">Appréciation</p>
+                        <div class="block-blank-lines">
+                            <div class="blank-line"></div>
+                            <div class="blank-line"></div>
+                        </div>
+                    </div>
+
+                    @if ($b['isLastPeriod'])
+                        <div class="block-decision">
+                            <p class="block-title">Décision du jury</p>
+                            <div class="decision-line">
+                                <span>Décision :</span>
+                                <div class="blank-line-inline"></div>
+                            </div>
+                            <div class="decision-line">
+                                <span>Moy. annuelle :</span>
+                                <span class="decision-value">{{ $b['yearlyAverage']['moy_general'] ?? '—' }}</span>
+                            </div>
+                            <div class="decision-line">
+                                <span>Rang annuel :</span>
+                                <span class="decision-value">{{ $b['yearlyAverage']['rang_general'] ?? '—' }} /
+                                    {{ $b['yearlyClasseData']['total'] ?? '—' }}</span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <div class="sig-block" style="text-align: right">
-                    <p class="sig-label">Le Directeur</p>
-                    <div class="sig-space"></div>
+
+                {{-- ═══ SIGNATURE ═══ --}}
+                <div class="signature-strip">
+                    <div class="sig-block" style="text-align: left">
+                        <p class="sig-label">Le Professeur Principal</p>
+                        <div class="sig-space"></div>
+                    </div>
+                    <div class="sig-block" style="text-align: right">
+                        <p class="sig-label">Le Directeur</p>
+                        <div class="sig-space"></div>
+                    </div>
                 </div>
-            </div>
+            @endif
 
         </div>
     @endforeach
@@ -640,6 +649,32 @@
 
     .sig-space {
         border-top: 0.5px solid var(--border);
+    }
+
+    .ns-table .col-subject {
+        width: 45%;
+    }
+
+    .ns-table .col-teacher {
+        width: 35%;
+    }
+
+    .ns-table .col-mention {
+        width: 20%;
+        font-weight: 700;
+    }
+
+    .ns-validated {
+        color: var(--green);
+    }
+
+    .ns-not-validated {
+        color: var(--red);
+    }
+
+    .ns-not-graded {
+        color: var(--text-muted);
+        font-style: italic;
     }
 
     @media print {
