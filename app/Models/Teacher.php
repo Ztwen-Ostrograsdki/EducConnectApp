@@ -53,8 +53,8 @@ class Teacher extends Model
     protected static function boot()
     {
         parent::boot();
+
         static::creating(function ($model) {
-            
             
         });
 
@@ -113,8 +113,6 @@ class Teacher extends Model
                 );
             }
         });
-
-
     }
 
 
@@ -613,5 +611,23 @@ class Teacher extends Model
         }
 
         return $hours;
+    }
+
+    // /**
+    //  * Get all yearly subjects for this teacher.
+    //  */
+    // public function yearlySubjects(): HasMany
+    // {
+    //     return $this->hasMany(TeacherYearlySubject::class, 'teacher_id');
+    // }
+
+    public function hasModuleSubjects() : bool
+    {
+        return $this->yearlySubjects()->whereHas('subject', fn($req) => $req->where('subjects.is_module', true))->exists();
+    }
+
+    public function hasDefaultSubjects() : bool
+    {
+        return $this->yearlySubjects()->whereHas('subject', fn($req) => $req->where('subjects.is_module', false))->exists();
     }
 }

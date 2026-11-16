@@ -46,6 +46,104 @@
             @endif
         </section>
 
+        <section class="my-2 flex items-center gap-3">
+            <a title="Assigner des classes maintenant" wire:navigate
+                href="{{ route('tenant.teacher.manage.subjects', ['teacher_uuid' => $this->teacher->uuid]) }}"
+                class="inline-flex items-center gap-1 py-2.5 px-3 rounded-lg text-[11px] font-medium
+                                               bg-indigo-500/15 text-indigo-400 border border-indigo-500/25
+                                               hover:bg-indigo-700/60 hover:text-white hover:border-indigo-500
+                                               transition-all disabled:opacity-40 shrink-0">
+                <span class="inline-flex items-center gap-1">
+                    <x-lucide-pen class="w-3.5 h-3.5" /> Gérer les matières
+                </span>
+            </a>
+        </section>
+
+        {{-- ========== RÉCAPITULATIF ========== --}}
+        @if ($this->allAssignedLinks->isNotEmpty())
+            <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+                <div class="px-5 py-4 border-b border-white/[0.05] flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                        <h2 class=" flex flex-col gap-y-1.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                                Récapitulatif des assignations
+                            </span>
+                            <p class="text-xs font-trebuchet text-green-700">
+                                Liste des classes déjà assignées au prof {{ $this->teacher->getFullName() }}
+                            </p>
+                        </h2>
+                    </div>
+                    <span
+                        class="px-2.5 py-0.5 rounded-md text-[11px] font-bold
+                                 bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
+                        {{ $this->allAssignedLinks->count() }} classe(s)
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-white/[0.05]">
+                                <th
+                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Classe</th>
+                                <th
+                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Matière</th>
+                                <th
+                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Depuis</th>
+                                <th
+                                    class="px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/[0.04]">
+                            @foreach ($this->allAssignedLinks as $link)
+                                <tr wire:key="link-{{ $link->id }}"
+                                    class="hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-5 py-3.5 text-white font-medium">
+                                        <a wire:navigate class="hover:text-sky-700 underline-offset-4 hover:underline"
+                                            href="{{ route('tenant.classe.profil', ['classe_slug' => $link->classe->slug]) }}">
+                                            {{ $link->classe?->name ?? '—' }}
+                                        </a>
+                                    </td>
+                                    <td class="px-5 py-3.5 text-slate-300">
+                                        {{ $link->subject?->name ?? '—' }}
+                                        @if ($link->subject?->code)
+                                            <span class="ml-1.5 text-[11px] font-mono text-slate-600">
+                                                {{ $link->subject->code }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-5 py-3.5 text-xs text-slate-500">
+                                        {{ $link->started_at?->diffForHumans() ?? '—' }}
+                                    </td>
+                                    <td class="px-5 py-3.5 text-center">
+                                        <button wire:click="removeLink({{ $link->id }})"
+                                            wire:loading.attr="disabled" wire:target="removeLink({{ $link->id }})"
+                                            class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
+                                                       bg-rose-500/15 text-rose-400 border border-rose-500/25
+                                                       hover:bg-rose-500 hover:text-white hover:border-rose-500
+                                                       transition-all disabled:opacity-40">
+                                            <span wire:loading.remove wire:target="removeLink({{ $link->id }})"
+                                                class="inline-flex items-center gap-1">
+                                                <x-lucide-x class="w-3.5 h-3.5" /> Retirer
+                                            </span>
+                                            <span wire:loading wire:target="removeLink({{ $link->id }})">
+                                                <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                            </span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        @endif
+
         {{-- ========== DEUX COLONNES ========== --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
@@ -153,7 +251,8 @@
                         <div class="relative shrink-0">
                             <x-lucide-search
                                 class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
-                            <input wire:model.live.debounce.200ms="subjectSearch" type="text" placeholder="Filtrer…"
+                            <input wire:model.live.debounce.200ms="subjectSearch" type="text"
+                                placeholder="Filtrer…"
                                 class="h-9 w-36 rounded-xl border border-white/[0.08] bg-[#070a12]
                                           pl-8 pr-3 text-xs text-white placeholder:text-slate-600
                                           focus:border-indigo-500/50 focus:outline-none transition-all" />
@@ -166,7 +265,11 @@
 
                         <div wire:loading wire:target="selectClasse"
                             class="absolute inset-0 z-10 flex items-center justify-center bg-[#070a12]/60">
-                            <x-lucide-loader-2 class="w-6 h-6 text-indigo-400 animate-spin" />
+                            <span
+                                class="inline-flex items-center justify-center gap-3 text-xs font-trebuchet text-slate-200">
+                                <x-lucide-loader-2 class="w-6 h-6 text-indigo-400 animate-spin" />
+                            </span>
+
                         </div>
 
                         <div wire:loading.remove wire:target="selectClasse">
@@ -259,84 +362,6 @@
                 @endif
             </section>
         </div>
-
-        {{-- ========== RÉCAPITULATIF ========== --}}
-        @if ($this->allAssignedLinks->isNotEmpty())
-            <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-                <div class="px-5 py-4 border-b border-white/[0.05] flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                            Récapitulatif des assignations
-                        </h2>
-                    </div>
-                    <span
-                        class="px-2.5 py-0.5 rounded-md text-[11px] font-bold
-                                 bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
-                        {{ $this->allAssignedLinks->count() }}
-                    </span>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-white/[0.05]">
-                                <th
-                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                    Classe</th>
-                                <th
-                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                    Matière</th>
-                                <th
-                                    class="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                    Depuis</th>
-                                <th
-                                    class="px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                    Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/[0.04]">
-                            @foreach ($this->allAssignedLinks as $link)
-                                <tr wire:key="link-{{ $link->id }}"
-                                    class="hover:bg-white/[0.02] transition-colors">
-                                    <td class="px-5 py-3.5 text-white font-medium">
-                                        {{ $link->classe?->name ?? '—' }}
-                                    </td>
-                                    <td class="px-5 py-3.5 text-slate-300">
-                                        {{ $link->subject?->name ?? '—' }}
-                                        @if ($link->subject?->code)
-                                            <span class="ml-1.5 text-[11px] font-mono text-slate-600">
-                                                {{ $link->subject->code }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-5 py-3.5 text-xs text-slate-500">
-                                        {{ $link->started_at?->diffForHumans() ?? '—' }}
-                                    </td>
-                                    <td class="px-5 py-3.5 text-center">
-                                        <button wire:click="removeLink({{ $link->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="removeLink({{ $link->id }})"
-                                            class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
-                                                       bg-rose-500/15 text-rose-400 border border-rose-500/25
-                                                       hover:bg-rose-500 hover:text-white hover:border-rose-500
-                                                       transition-all disabled:opacity-40">
-                                            <span wire:loading.remove wire:target="removeLink({{ $link->id }})"
-                                                class="inline-flex items-center gap-1">
-                                                <x-lucide-x class="w-3.5 h-3.5" /> Retirer
-                                            </span>
-                                            <span wire:loading wire:target="removeLink({{ $link->id }})">
-                                                <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
-                                            </span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        @endif
 
     </div>
 </div>

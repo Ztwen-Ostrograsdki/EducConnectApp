@@ -178,6 +178,21 @@ class Subject extends Model
         return $query->where('is_module', true);
     }
 
+    public function scopeConduiteless(Builder $query): Builder
+    {
+        return $query->where('name', '<>', 'conduite')
+                     ->where('name', '<>', 'Conduite')
+                     ->where('code', '<>', 'conduite')
+                     ->where('code', '<>', 'cond');
+    } 
+    public function scopeConduite(Builder $query): Builder
+    {
+        return $query->where('name', 'conduite')
+                     ->orWhere('name', 'Conduite')
+                     ->orWhere('code', 'conduite')
+                     ->orWhere('code', 'cond');
+    }
+
     public function scopeByLevel(Builder $query, string $level): Builder
     {
         return $query->where('level', $level);

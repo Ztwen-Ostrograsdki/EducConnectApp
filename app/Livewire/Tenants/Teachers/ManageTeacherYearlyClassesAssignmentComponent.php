@@ -45,6 +45,12 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
         if (!$teacher) return abort(404);
 
         $this->teacher = $teacher;
+
+        if(session()->has('selected_classe_id') && session('selected_classe_id')){
+
+            self::selectClasse((int)session('selected_classe_id'));
+
+        }
     }
 
     public function updatedClasseSearch(): void
@@ -54,9 +60,11 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
 
     public function updatedSelectedClasseId(): void
     {
+        session()->put('selected_classe_id', $this->selectedClasseId);
         $this->subjectSearch = '';
         unset($this->subjectsForSelectedClasse);
         unset($this->teacherYearlySubjects);
+
     }
 
     // ─── Computed ─────────────────────────────────────────────────────
@@ -70,13 +78,29 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
     #[Computed]
     public function classes()
     {
+        $hasModules = $this->teacher->hasModuleSubjects();
+        $hasDefaults = $this->teacher->hasDefaultSubjects();
+
         return Classe::query()
-            ->when($this->classeSearch, fn($q) =>
-                $q->where(fn($q) =>
+            ->when($this->classeSearch, fn ($q) =>
+                $q->where(fn ($q) =>
                     $q->where('name', 'like', '%' . $this->classeSearch . '%')
-                      ->orWhere('slug', 'like', '%' . $this->classeSearch . '%')
+                        ->orWhere('slug', 'like', '%' . $this->classeSearch . '%')
                 )
             )
+            ->when($hasModules || $hasDefaults, function ($query) use ($hasModules, $hasDefaults) {
+                $query->where(function ($q) use ($hasModules, $hasDefaults) {
+                    if ($hasModules) {
+                        $q->where('classes.is_new_system', true);
+                    }
+
+                    if ($hasDefaults) {
+                        $hasModules
+                            ? $q->orWhere('classes.is_new_system', false)
+                            : $q->where('classes.is_new_system', false);
+                    }
+                });
+            })
             ->orderBy('name')
             ->paginate(10);
     }
@@ -95,10 +119,27 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
     #[Computed]
     public function teacherYearlySubjects()
     {
+        return self::teacherYearlySubjectsBy(null, true);
+    }
+
+    public function teacherYearlySubjectsBy(?bool $is_module = false, bool $both = false)
+    {
         if (!$this->activeYear) return collect();
+
+        if($both){
+
+            return TeacherYearlySubject::where('teacher_id', $this->teacher->id)
+                ->where('school_year_id', $this->activeYear->id)
+                ->where('is_active', true)
+                ->with('subject')
+                ->get()
+                ->pluck('subject')
+                ->filter();
+        }
 
         return TeacherYearlySubject::where('teacher_id', $this->teacher->id)
             ->where('school_year_id', $this->activeYear->id)
+            ->whereHas('subject', fn ($q) => $q->where('is_module', $is_module))
             ->where('is_active', true)
             ->with('subject')
             ->get()
@@ -109,30 +150,44 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
     #[Computed]
     public function subjectsForSelectedClasse()
     {
-        if (!$this->selectedClasseId || !$this->activeYear) return collect();
 
-        $activeLinks = ClasseSubjectOfSchoolYear::where('classe_id', $this->selectedClasseId)
+        if (!$this->selectedClasseId || !$this->activeYear) {
+            return collect();
+        }
+
+        $isNewSystem = $this->selectedClasse->is_new_system;
+
+        $activeLinks = ClasseSubjectOfSchoolYear::query()
+            ->where('classe_id', $this->selectedClasseId)
             ->where('school_year_id', $this->activeYear->id)
+            ->whereHas('subject', fn ($q) => $q->where('is_module', $isNewSystem))
             ->whereNull('ended_at')
             ->with('teacher.user')
             ->get()
             ->keyBy('subject_id');
 
-        return $this->teacherYearlySubjects
-            ->when($this->subjectSearch, fn($c) =>
-                $c->filter(fn($s) =>
-                    str_contains(strtolower($s->name), strtolower($this->subjectSearch)) ||
-                    str_contains(strtolower($s->code ?? ''), strtolower($this->subjectSearch))
+        return $this->teacherYearlySubjectsBy($isNewSystem)
+            ->when($this->subjectSearch, fn ($collection) =>
+                $collection->filter(fn ($subject) =>
+                    str_contains(
+                        mb_strtolower($subject->name),
+                        mb_strtolower($this->subjectSearch)
+                    ) ||
+                    str_contains(
+                        mb_strtolower($subject->code ?? ''),
+                        mb_strtolower($this->subjectSearch)
+                    )
                 )
             )
             ->map(function (Subject $subject) use ($activeLinks) {
+
                 $link = $activeLinks->get($subject->id);
 
                 return [
-                    'subject'      => $subject,
-                    'link'         => $link,
-                    'assigned_by_self' => $link && $link->teacher_id === $this->teacher->id,
-                    'taken_by_other'   => $link && $link->teacher_id !== $this->teacher->id,
+                    'subject'         => $subject,
+                    'link'            => $link,
+                    'assigned_by_self' => $link && $link->teacher_id == $this->teacher->id,
+                    'taken_by_other'   => $link && $link->teacher_id != $this->teacher->id,
                 ];
             });
     }
@@ -157,6 +212,8 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
 
     public function selectClasse(int $classeId): void
     {
+        session()->put('selected_classe_id', $classeId);
+
         if ($this->selectedClasseId === $classeId) {
             $this->selectedClasseId = null;
             unset($this->subjectsForSelectedClasse);
@@ -175,6 +232,8 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
     {
         if (!$this->selectedClasseId || !$this->activeYear) return;
 
+        $subject = Subject::find($subjectId);
+
         // Vérification : le prof enseigne bien cette matière
         $teachesSubject = TeacherYearlySubject::where('teacher_id', $this->teacher->id)
             ->where('subject_id', $subjectId)
@@ -188,6 +247,29 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
                 description: 'Ce professeur n\'enseigne pas cette matière cette année.',
             );
             return;
+        }
+
+        if ($teachesSubject) {
+
+            if($this->selectedClasse->is_new_system && !$subject->is_module){
+
+                $this->notification()->error(
+                    title: 'Matière de ce prof incompatible avec cette classe',
+                    description: "La classe {$this->selectedClasse->name} n'accepte que des matières considérées comme modules",
+                );
+
+                return;
+            }
+
+            if(!$this->selectedClasse->is_new_system && $subject->is_module){
+
+                $this->notification()->error(
+                    title: 'Matière de ce prof incompatible avec cette classe',
+                    description: "La classe {$this->selectedClasse->name} n'accepte que des matières non modules",
+                );
+
+                return;
+            }
         }
 
         $existing = ClasseSubjectOfSchoolYear::where('classe_id', $this->selectedClasseId)
@@ -231,6 +313,8 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
             return;
         }
 
+
+
         // ── Cocher : assignation ──────────────────────────────────────
         ClasseSubjectOfSchoolYear::create([
             'classe_id'      => $this->selectedClasseId,
@@ -243,7 +327,6 @@ class ManageTeacherYearlyClassesAssignmentComponent extends Component
 
         broadcast(new DataUpdatedEvent(tenant('id')));
 
-        $subject = Subject::find($subjectId);
         $this->notification()->success(
             title: 'Matière assignée',
             description: "« {$subject?->name} » assignée dans la classe {$this->selectedClasse?->name}.",

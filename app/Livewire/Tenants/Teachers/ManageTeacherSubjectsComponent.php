@@ -52,6 +52,26 @@ class ManageTeacherSubjectsComponent extends Component
                 abort(404);
             }
         }
+
+
+        if(session()->has('selected_teacher_id') && session('selected_teacher_id')){
+
+            $this->teacherId = session('selected_teacher_id');
+            $this->teacherSearch = session('selected_teacher_name');
+
+            $this->showDropdown  = false;
+        }
+
+
+        if(session()->has('selected_system') && session('selected_system')){
+
+            $this->subjectSystem = session('selected_system');
+        }
+
+        if(session()->has('selected_type') && session('selected_type')){
+
+            $this->subjectType = session('selected_type');
+        }
     }
 
     public function updatedTeacherSearch(): void
@@ -59,10 +79,24 @@ class ManageTeacherSubjectsComponent extends Component
         $this->showDropdown = strlen($this->teacherSearch) >= 2;
     }
 
-    public function updatedSubjectSearch(): void { $this->resetPage(); }
-    public function updatedSubjectLevel(): void  { $this->resetPage(); }
-    public function updatedSubjectType(): void   { $this->resetPage(); }
-    public function updatedSubjectSystem(): void   { $this->resetPage(); }
+    public function updatedSubjectSearch(): void { 
+
+
+        $this->resetPage(); 
+    }
+    
+    public function updatedSubjectType(): void   { 
+
+        session()->put('selected_type', $this->subjectType);
+        $this->resetPage(); 
+    }
+
+    public function updatedSubjectSystem(): void   { 
+
+        session()->put('selected_system', $this->subjectSystem);
+
+        $this->resetPage(); 
+    }
 
     // ─── Sélection prof ───────────────────────────────────────────────
 
@@ -70,16 +104,25 @@ class ManageTeacherSubjectsComponent extends Component
     {
         $this->teacherId     = $id;
         $this->teacherSearch = $name;
+        $this->teacher = $this->selectedTeacher;
         $this->showDropdown  = false;
         $this->resetPage();
+
+        session()->put('selected_teacher_id', $id);
+        session()->put('selected_teacher_name', $name);
+        
     }
 
     public function clearTeacher(): void
     {
         $this->teacherId     = null;
+        $this->teacher     = null;
         $this->teacherSearch = '';
         $this->showDropdown  = false;
         $this->resetPage();
+
+        session()->forget('selected_teacher_id');
+        session()->forget('selected_teacher_name');
     }
 
     // ─── Computed ─────────────────────────────────────────────────────
@@ -138,10 +181,7 @@ class ManageTeacherSubjectsComponent extends Component
         $linkedIds = $this->linkedSubjects->pluck('subject_id')->toArray();
 
         return Subject::where('is_active', true)
-            ->where('name', '<>', 'conduite')
-            ->where('name', '<>', 'Conduite')
-            ->where('code', '<>', 'conduite')
-            ->where('code', '<>', 'cond')
+            ->conduiteless()
             ->when($this->subjectSearch, fn($q) =>
                 $q->where(fn($q) =>
                     $q->where('name', 'like', '%'.$this->subjectSearch.'%')
@@ -198,13 +238,13 @@ class ManageTeacherSubjectsComponent extends Component
 
         $subject = Subject::find($subjectId);
 
-        if(!$this->teacher->ensureThatTeacherDoesntHaveClasseWithThisSubject($subjectId)){
+        if(!$this->selectedTeacher->ensureThatTeacherDoesntHaveClasseWithThisSubject($subjectId)){
 
             $this->notification()->send([
                 'icon'        => 'warning',
                 'timeout' => 0,
                 'title'       => "Vous ne pouvez pas retirer cette matière!",
-                'description' => $this->teacher->getFullName() . " enseigne cette matière « {$subject->name} » dans au moins une classe. Pour lui retirer cette matière, vous devez d'abord lui retirer cette ou ces classe(s) concernée(s)!",
+                'description' => $this->selectedTeacher->getFullName() . " enseigne cette matière « {$subject->name} » dans au moins une classe. Pour lui retirer cette matière, vous devez d'abord lui retirer cette ou ces classe(s) concernée(s)!",
             ]);
 
 

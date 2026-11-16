@@ -52,25 +52,35 @@
             </div>
 
             @if ($teacherId)
-                <div class="flex items-center gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3">
-                    <div
-                        class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30
-                                flex items-center justify-center text-sm font-bold text-indigo-300 shrink-0">
-                        {{ strtoupper(substr($this->selectedTeacher?->user?->name ?? '?', 0, 1)) }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-white truncate">
-                            {{ $this->selectedTeacher?->user?->name ?? '—' }}
-                        </p>
-                        <p class="text-xs text-slate-500 truncate">
-                            {{ $this->selectedTeacher?->email }}
-                            · <span class="font-mono">{{ $this->selectedTeacher?->identifiant }}</span>
-                        </p>
-                    </div>
-                    <button wire:click="clearTeacher"
-                        class="w-8 h-8 rounded-lg flex items-center justify-center
-                                   text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all shrink-0">
-                        <x-lucide-x class="w-4 h-4" />
+                <div
+                    class="flex items-center justify-between gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 hover:bg-indigo-600/30">
+                    <a wire:navigate
+                        href="{{ route('tenant.teacher.profil', ['teacher_uuid' => $this->selectedTeacher->uuid]) }}"
+                        class="flex items-center gap-3 group">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30
+                                flex items-center justify-center text-sm font-bold text-indigo-300 shrink-0 group-hover:text-sky-300 group-hover:bg-sky-400/35">
+                            {{ strtoupper(substr($this->selectedTeacher?->getFullName() ?? '?', 0, 1)) }}
+                        </div>
+                        <div class="flex-1 min-w-0 ">
+                            <p class="text-sm font-medium text-white truncate group-hover:text-sky-300">
+                                {{ $this->selectedTeacher?->getFullName() ?? '—' }}
+                            </p>
+                            <p class="text-xs text-slate-500 truncate group-hover:text-orange-400">
+                                {{ $this->selectedTeacher?->email }}
+                                · <span class="font-mono">{{ $this->selectedTeacher?->identifiant }}</span>
+                            </p>
+                        </div>
+                    </a>
+                    <button title="Désélectionner cet enseignant" wire:click="clearTeacher"
+                        class="h-8 rounded-lg flex text-sm bg-gray-400/25 p-2 px-4 items-center justify-center
+                                   text-slate-500 hover:text-rose-400 hover:bg-rose-500/40 transition-all shrink-0">
+                        <span class="inline-flex items-center gap-2">
+                            <span class="inline-flex items-center gap-2">
+                                <span>Désélectionner </span>
+                                <x-lucide-x class="w-4 h-4" />
+                            </span>
+                        </span>
                     </button>
                 </div>
             @else
@@ -95,18 +105,18 @@
                                     bg-[#0c101c] shadow-2xl overflow-hidden">
                             @foreach ($this->teacherResults as $teacher)
                                 <button type="button"
-                                    wire:click="selectTeacher({{ $teacher->id }}, '{{ addslashes($teacher->user?->name ?? $teacher->email) }}')"
+                                    wire:click="selectTeacher({{ $teacher->id }}, '{{ $teacher->getFullName() }}')"
                                     wire:loading.attr="disabled" wire:target="selectTeacher"
                                     class="flex w-full items-center gap-3 px-4 py-3 text-left
                                                hover:bg-white/[0.04] transition-colors">
                                     <div
                                         class="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/[0.08]
                                                 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">
-                                        {{ strtoupper(substr($teacher->user?->name ?? $teacher->email, 0, 1)) }}
+                                        {{ strtoupper(substr($teacher->getFullName(), 0, 2)) }}
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm text-white font-medium truncate">
-                                            {{ $teacher->user?->name ?? '—' }}
+                                            {{ $teacher->getFullName() }}
                                         </p>
                                         <p class="text-xs text-slate-500 truncate">
                                             {{ $teacher->email }} ·
@@ -143,16 +153,33 @@
                             </p>
                         </div>
                     </div>
-                    <span
-                        class="px-2.5 py-0.5 rounded-md text-[11px] font-bold
+
+                    <div class="inline-flex items-center justify-end gap-3">
+                        <a title="Attribuer des classes au prof {{ $this->selectedTeacher->getFullName() }} pour cette année scolaire {{ $this->activeYear->slug }}"
+                            wire:navigate
+                            href="{{ route('tenant.teacher.manage.classes', ['teacher_uuid' => $this->selectedTeacher->uuid]) }}"
+                            wire:loading.attr="disabled"
+                            class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
+                                               bg-indigo-500/15 text-indigo-400 border border-indigo-500/25
+                                               hover:bg-indigo-700/60 hover:text-white hover:border-indigo-500
+                                               transition-all disabled:opacity-40 shrink-0">
+                            <span class="inline-flex items-center gap-1">
+                                <x-lucide-user-plus class="w-3.5 h-3.5" /> Assigner des classes
+                            </span>
+                        </a>
+                        <span
+                            class="px-2.5 py-0.5 rounded-md text-[11px] font-bold
                                  bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                        {{ $this->linkedSubjects->count() }}
-                    </span>
+                            {{ $this->linkedSubjects->count() }}
+                        </span>
+                    </div>
+
                 </div>
 
                 @if ($this->linkedSubjects->isEmpty())
                     <div class="px-5 py-12 text-center">
-                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.04] mb-3">
+                        <div
+                            class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.04] mb-3 font-trebuchet">
                             <x-lucide-book-open class="w-6 h-6 text-slate-600" />
                         </div>
                         <p class="text-sm text-slate-500">Aucune matière assignée</p>
@@ -186,8 +213,11 @@
                                         </span>
                                     </div>
                                 </div>
-                                <button wire:click="unlinkSubject({{ $link->subject_id }})"
-                                    wire:loading.attr="disabled" wire:target="unlinkSubject({{ $link->subject_id }})"
+
+                                <button
+                                    title="Retirer cette matière. Le prof {{ $this->selectedTeacher->getFullName() }} dans ce cas, ne sera plus considéré comme enseignant de cette matière"
+                                    wire:click="unlinkSubject({{ $link->subject_id }})" wire:loading.attr="disabled"
+                                    wire:target="unlinkSubject({{ $link->subject_id }})"
                                     class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[11px] font-medium
                                                bg-rose-500/15 text-rose-400 border border-rose-500/25
                                                hover:bg-rose-500 hover:text-white hover:border-rose-500
@@ -243,7 +273,7 @@
                         <select wire:model.live="subjectSystem"
                             class="h-10 px-3 rounded-xl border border-white/[0.08] bg-[#070a12]
                                        text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition-all">
-                            <option value="">Tous niveaux</option>
+                            <option disabled value="">Sélectionnez la catégorie des matières</option>
                             @foreach ($systems as $sk => $sys)
                                 <option value="{{ $sk }}">{{ $sys }}</option>
                             @endforeach
@@ -280,12 +310,13 @@
                                     class="text-sm font-medium truncate
                                           {{ $linked ? 'text-emerald-300' : 'text-white' }}">
                                     {{ $subject->name }}
-                                    @if ($subject->is_module)
-                                        <span
-                                            class="rounded-2xl mx-2 py-1 px-3 bg-green-600/40 text-green-400 text-sm">Module</span>
-                                    @endif
+
                                 </p>
                                 <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                                    @if ($subject->is_module)
+                                        <span
+                                            class="px-1.5 py-0.5 rounded text-[10px] capitalize bg-green-600/40 text-green-400 animate-pulse">Module</span>
+                                    @endif
                                     <span
                                         class="px-1.5 py-0.5 rounded text-[10px] capitalize
                                                  bg-white/[0.04] text-slate-500 border border-white/[0.06]">
