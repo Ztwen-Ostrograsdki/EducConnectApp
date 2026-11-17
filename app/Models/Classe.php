@@ -307,14 +307,22 @@ class Classe extends Model
 
     public function recentStudentsMigratedsIntoClasse(int $weeks = 1)
     {
-        $school_year_id = $this->school_year_id;
+        $yearId = $this->school_year_id;
+        $since  = now()->subWeeks($weeks);
 
-        return Student::whereHas('yearlyClasseStudents', fn($q) =>
-                            $q->where('school_year_id', $school_year_id)
-                            ->where('classe_id', $this->id)
-                            ->where('created_at', '>=', now()->subMonths(2))
-                        )
-                        ->latest('created_at')->take(5)->get();
+        // Mêmes contraintes pour le filtre ET pour le tri
+        $constraints = fn ($q) => $q
+            ->where($q->qualifyColumn('school_year_id'), $yearId)
+            ->where($q->qualifyColumn('classe_id'), $this->id)
+            ->where($q->qualifyColumn('created_at'), '>=', $since)
+            ->whereNull($q->qualifyColumn('ended_at')); // retire cette ligne si la colonne n'existe pas
+
+        return Student::query()
+            ->whereHas('yearlyClasseStudents', $constraints)
+            ->withMax(['yearlyClasseStudents as migrated_at' => $constraints], 'created_at')
+            ->orderByDesc('migrated_at')
+            ->take(5)
+            ->get();
     }
 
 

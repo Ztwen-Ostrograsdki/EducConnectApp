@@ -201,7 +201,7 @@
                         Nouveau métier
                     </span>
                     <div class="relative shrink-0">
-                        <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
+                        <input type="checkbox" wire:model.live="is_new_system" class="sr-only peer" />
                         <div class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors">
                         </div>
                         <div

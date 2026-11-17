@@ -28,6 +28,7 @@ class ManagePromotionComponent extends Component
     public string $code      = '';
     public string $level     = 'secondaire';
     public int    $order     = 1;
+    public bool   $is_new_system = true;
     public bool   $is_active = true;
     public string $previewSlug = '';
     public ?int $school_year_id;
@@ -64,6 +65,7 @@ class ManagePromotionComponent extends Component
         $this->filiar_id  = $promotion->filiar_id;
         $this->serial_id  = $promotion->serial_id;
         $this->previewSlug = $promotion->slug;
+        $this->is_new_system = $promotion->is_new_system;
     }
 
     public function updatedName(string $value): void
@@ -99,6 +101,11 @@ class ManagePromotionComponent extends Component
             $this->code = ClasseHelpers::getClasseNameFormatted($this->name)['code'] . '' . $this->suffix;
         }
 
+        if($propertyName == 'is_new_system'){
+
+            $this->filiar_id  = $this->promotion->filiar_id;
+        }
+
         $exists = Promotion::whereName($this->name)
                                 ->when($this->serial_id, function($query){
                                     $query->where('serial_id', $this->serial_id);
@@ -129,6 +136,7 @@ class ManagePromotionComponent extends Component
                 'serial_id'      => 'nullable|exists:serials,id',
                 'order'          => 'required|integer|min:1',
                 'is_active'      => 'boolean',
+                'is_new_system'      => 'boolean',
             ]);
 
             $exists = Promotion::whereName($this->name)
@@ -179,6 +187,7 @@ class ManagePromotionComponent extends Component
                 'level'     => $this->level,
                 'order'     => $this->order,
                 'is_active' => $this->is_active,
+                'is_new_system' => $this->is_new_system,
                 'filiar_id' => $this->filiar_id,
                 'serial_id' => $this->serial_id,
             ]);
@@ -209,15 +218,19 @@ class ManagePromotionComponent extends Component
     }
 
     #[Computed]
-    public function filiars()
+    public function promotionInGroups()
     {
-        return Filiar::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
+        return !$this->is_new_system ?
+               config('app.promotionInGroups') :
+               config('app.promotionInGroupsForNewSystem');
     }
 
     #[Computed]
-    public function promotionInGroups()
+    public function filiars()
     {
-        return config('app.promotionInGroups');
+        return Filiar::where('is_active', true)
+        ->when($this->is_new_system, fn($q) => $q->where('is_new_system', true))
+        ->orderBy('name')->get(['id', 'name', 'code']);
     }
     
     public function render()

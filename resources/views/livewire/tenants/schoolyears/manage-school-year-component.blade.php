@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-[#070b14] text-slate-100 p-4 sm:p-6">
 
-    <div class="mx-auto max-w-4xl space-y-6">
+    <div class="mx-auto max-w-4xl space-y-6 font-trebuchet">
 
         {{-- ===================== HEADER ===================== --}}
         <section
@@ -70,6 +70,26 @@
                             @endforeach
                         </select>
                         @error('periode_type')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
+                                <x-lucide-octagon-alert class="h-3.5 w-3.5" />
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                            Format devoirs <span class="text-rose-400">*</span>
+                        </label>
+                        <select wire:model.live="devoirs_type" id="devoirs_type"
+                            class="w-full rounded-xl border border-white/10 bg-[#070b14] px-4 py-3 text-sm text-slate-200 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 transition-all">
+                            <option value="">Sélectionnez le format</option>
+                            @foreach (config('app.devoirs_types') as $dt => $dev)
+                                <option value="{{ $dt }}">{{ ucwords(str_replace('-', ' - ', $dev)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('devoirs_type')
                             <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-400">
                                 <x-lucide-octagon-alert class="h-3.5 w-3.5" />
                                 {{ $message }}
@@ -189,3 +209,4 @@
 
     </div>
 </div>
+

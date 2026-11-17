@@ -205,19 +205,18 @@
                         </div>
                     @endif
                 </div>
-
-                {{-- ═══ SIGNATURE ═══ --}}
-                <div class="signature-strip">
-                    <div class="sig-block" style="text-align: left">
-                        <p class="sig-label">Le Professeur Principal</p>
-                        <div class="sig-space"></div>
-                    </div>
-                    <div class="sig-block" style="text-align: right">
-                        <p class="sig-label">Le Directeur</p>
-                        <div class="sig-space"></div>
-                    </div>
-                </div>
             @endif
+            {{-- ═══ SIGNATURE ═══ --}}
+            <div class="signature-strip">
+                <div class="sig-block" style="text-align: left">
+                    <p class="sig-label">Le Professeur Principal</p>
+                    <div class="sig-space"></div>
+                </div>
+                <div class="sig-block" style="text-align: right">
+                    <p class="sig-label">Le Directeur</p>
+                    <div class="sig-space"></div>
+                </div>
+            </div>
 
         </div>
     @endforeach

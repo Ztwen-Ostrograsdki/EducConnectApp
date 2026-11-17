@@ -32,6 +32,30 @@ class PromotionsPortal extends Component
 
     public int $counterh = 0;
 
+    public string $system = "both";
+
+    public array $systems = [
+        'new_system' => "Les nouveaux métiers",
+        'default_system' => "Les filières classiques",
+        'both' => "Tous les systèmes",
+
+    ];
+
+
+    public function mount()
+    {
+        if(session()->has('promotions_selected_system')){
+
+            $this->system = session('promotions_selected_system');
+        }
+    }
+
+    public function updatedSystem(?string $value)
+    {
+        session()->put('promotions_selected_system', $this->system);
+    }
+
+
 
     #[On('DataUpdatedEventLiveEvent')]
     public function reloaddata()
@@ -61,18 +85,30 @@ class PromotionsPortal extends Component
     public function promotions()
     {
         return Promotion::whereNotNull('name')
-                                ->when($this->search, fn($q) =>
-                                    $q->where('name', 'like', '%'.$this->search.'%')
-                                    ->orWhere('code', 'like', '%'.$this->search.'%')
-                                    ->orWhere('slug', 'like', '%'.$this->search.'%')
-                                )
-                                ->when($this->filiar_id, fn($qf) =>
-                                    $qf->where('filiar_id', $this->filiar_id)
-                                )
-                                ->when($this->serial_id, fn($qs) =>
-                                    $qs->where('serial_id', $this->serial_id)
-                                )
-                                ->orderBy('name')->paginate($this->perPage);
+        ->when($this->search, fn($q) =>
+            $q->where('name', 'like', '%'.$this->search.'%')
+            ->orWhere('code', 'like', '%'.$this->search.'%')
+            ->orWhere('slug', 'like', '%'.$this->search.'%')
+        )
+        ->when($this->filiar_id, fn($qf) =>
+            $qf->where('filiar_id', $this->filiar_id)
+        )
+        ->when($this->serial_id, fn($qs) =>
+            $qs->where('serial_id', $this->serial_id)
+        )
+        ->when($this->system, function ($qs) {
+            match ($this->system) {
+                'new_system' => $qs->whereHas('classes', fn ($q) =>
+                    $q->where('is_new_system', true)
+                )->orWhere('is_new_system', true), 
+                'default_system' => $qs->whereHas('classes', fn ($q) =>
+                    $q->where('is_new_system', false)
+                )->orWhere('is_new_system', false),
+                'both' => $qs->where('is_new_system', true)->orWhere('is_new_system', false),
+                default => $qs->where('is_new_system', true)->orWhere('is_new_system', false),
+            };
+        })
+        ->orderBy('name')->paginate($this->perPage);
     }
     
     #[Computed]

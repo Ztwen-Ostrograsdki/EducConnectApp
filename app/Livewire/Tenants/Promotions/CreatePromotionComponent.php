@@ -75,6 +75,13 @@ class CreatePromotionComponent extends Component
 
             $this->code = ClasseHelpers::getClasseNameFormatted($this->name)['code'] . '' . $this->suffix;
         }
+
+        if($propertyName == 'is_new_system'){
+
+            unset($this->filiars);
+        }
+
+
     }
 
     public function save(): void
@@ -166,7 +173,9 @@ class CreatePromotionComponent extends Component
 
                 broadcast(new DataUpdatedEvent(tenant('id')));
 
-                $this->reset();
+                $this->resetErrorBag();
+
+                $this->reset('name', 'code');
             }
 
         } catch (\Throwable $th) {
@@ -182,7 +191,9 @@ class CreatePromotionComponent extends Component
     #[Computed]
     public function promotionInGroups()
     {
-        return config('app.promotionInGroups');
+        return !$this->is_new_system ?
+               config('app.promotionInGroups') :
+               config('app.promotionInGroupsForNewSystem');
     }
 
 
@@ -195,7 +206,9 @@ class CreatePromotionComponent extends Component
     #[Computed]
     public function filiars()
     {
-        return Filiar::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
+        return Filiar::where('is_active', true)
+        ->when($this->is_new_system, fn($q) => $q->where('is_new_system', true))
+        ->orderBy('name')->get(['id', 'name', 'code']);
     }
 
     

@@ -194,8 +194,8 @@
                 </h2>
             </div>
 
-            <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-                <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
+            <div class="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
+                <label class="flex items-center justify-between gap-4 cursor-pointer select-none group">
                     <span class="inline-flex items-center gap-2.5 text-sm text-slate-300">
                         <span
                             class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20
@@ -207,6 +207,28 @@
                     <div class="relative shrink-0">
                         <input type="checkbox" wire:model="is_active" class="sr-only peer" />
                         <div class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-indigo-500 transition-colors">
+                        </div>
+                        <div
+                            class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow
+                                    transition-transform peer-checked:translate-x-5">
+                        </div>
+                    </div>
+                </label>
+
+                <div class="h-px bg-white/[0.04]"></div>
+
+                <label class="flex items-center justify-between gap-4 cursor-pointer select-none group">
+                    <span class="inline-flex items-center gap-2.5 text-sm text-slate-300">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20
+                                     flex items-center justify-center shrink-0">
+                            <x-lucide-briefcase class="w-4 h-4 text-emerald-400" />
+                        </span>
+                        Nouveau métier
+                    </span>
+                    <div class="relative shrink-0">
+                        <input type="checkbox" wire:model.live="is_new_system" class="sr-only peer" />
+                        <div class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors">
                         </div>
                         <div
                             class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow

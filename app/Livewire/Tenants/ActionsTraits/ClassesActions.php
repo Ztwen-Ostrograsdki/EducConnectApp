@@ -13,6 +13,7 @@ use App\Models\Serial;
 use App\Services\DashboardCounterService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 
@@ -22,27 +23,37 @@ trait ClassesActions{
 	use WithPagination, WireUiActions;
 
     public string $search      = '';
-    public string $promotion   = '';
-    public string $filiar      = '';
-    public string $serial      = '';
     public string $level       = '';
-    public string $system      = '';
     public int    $perPage     = 10;
-    public $status             = 'actives';
+
+
+    #[Session(key: 'classes_portal.filters.promotion')]
+    public string $promotion = '';
+
+    #[Session(key: 'classes_portal.filters.system')]
+    public string $system = '';
+
+    #[Session(key: 'classes_portal.filters.filiar')]
+    public string $filiar = '';
+
+    #[Session(key: 'classes_portal.filters.serial')]
+    public string $serial = '';
+
+    #[Session(key: 'classes_portal.filters.status')]
+    public string $status = 'actives';
 
 
 
     public ?string $targetedClasseUuid = null;
 
 
-
     // Reset pagination quand un filtre change
-    public function updatedSearch(): void    { $this->resetPage(); }
-    public function updatedSystem(): void    { $this->resetPage(); }
-    public function updatedPromotion(): void { $this->resetPage(); }
-    public function updatedFiliar(): void    { $this->resetPage(); }
-    public function updatedSerial(): void    { $this->resetPage(); }
-    public function updatedLevel(): void     { $this->resetPage(); }
+    public function updated($property): void
+    {
+        if (in_array($property, ['search', 'promotion', 'system', 'filiar', 'serial', 'status', 'level', 'perPage'])) {
+            $this->resetPage();
+        }
+    }
 
     public function resetFilters(): void
     {

@@ -67,7 +67,7 @@ class ClasseHelpers{
 
                 $card['root'] = "2";
             }
-            elseif (strlen($name) < 10 && preg_match_all('/Premi/', $name)) {
+            elseif (strlen($name) < 14 && preg_match_all('/premi/', strtolower($name))) {
 
 				$card['code'] = "1ère";
 

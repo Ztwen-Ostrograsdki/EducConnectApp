@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-[#070a12] text-slate-100">
-
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-10">
 
         {{-- ========== HERO ========== --}}
@@ -120,6 +119,15 @@
                 @endforeach
             </select>
 
+            <select wire:model.live="system"
+                class="h-11 sm:col-span-1 rounded-xl bg-[#070a12] border border-white/[0.08]
+                                       px-3 text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition">
+
+                @foreach ($systems as $sk => $sys)
+                    <option value="{{ $sk }}">{{ $sys }}</option>
+                @endforeach
+            </select>
+
             <button wire:click="resetFilters"
                 class="h-11 px-4 rounded-xl text-sm font-medium
                            bg-white/[0.04] border border-white/[0.08] text-slate-400
@@ -131,7 +139,7 @@
         {{-- ========== LISTE ========== --}}
         <section class="relative">
             {{-- Loading --}}
-            <div wire:loading wire:target="serial_id,filiar_id,previousPage,nextPage,resetFilters,gotoPage"
+            <div wire:loading wire:target="serial_id,filiar_id,system,previousPage,nextPage,resetFilters,gotoPage"
                 class="absolute inset-0 z-20 flex items-center justify-center bg-[#070a12]/70 backdrop-blur-sm rounded-2xl">
                 <div class="flex items-center gap-3 text-slate-400">
                     <x-lucide-loader-2 class="w-6 h-6 text-indigo-400 animate-spin" />
@@ -176,18 +184,25 @@
                                                 class="block group/link">
                                                 <h3
                                                     class="font-semibold text-white text-base leading-snug
-                                                           group-hover/link:text-indigo-300 transition-colors">
+                                                           group-hover/link:text-indigo-300 transition-colors underline-offset-4 group-hover:underline">
                                                     {{ $promo->name }}
                                                     <span class="text-indigo-400/80 font-normal">
                                                         {{ $promo->specialityModel()?->code }}
                                                     </span>
                                                 </h3>
                                                 <p
-                                                    class="mt-0.5 text-xs font-mono text-slate-500 uppercase tracking-wide">
-                                                    @if ($promo->code)
-                                                        {{ $promo->code }}
-                                                    @else
-                                                        {{ $promo->name }}-{{ $promo->specialityModel()?->code }}
+                                                    class="text-xs font-mono text-slate-500 mt-1 inline-flex gap-2 items-center">
+                                                    <span class="rounded-lg px-2 py-1 bg-slate-500/40 text-slate-300">
+                                                        @if ($promo->code)
+                                                            {{ $promo->code }}
+                                                        @else
+                                                            {{ $promo->name }}-{{ $promo->specialityModel()?->code }}
+                                                        @endif
+                                                    </span>
+                                                    @if ($promo->is_new_system || $system == 'new_system')
+                                                        <span
+                                                            class="rounded-lg px-2 py-1 bg-green-500/20 text-green-500 animate-pulse">Nouveau
+                                                            métier</span>
                                                     @endif
                                                 </p>
                                             </a>
@@ -231,13 +246,6 @@
                                                 <p class="text-[10px] text-violet-400/60 mt-0.5">profs</p>
                                             </div>
                                         </div>
-
-                                        {{-- Placeholders perf --}}
-                                        <div
-                                            class="hidden sm:flex items-center gap-3 ml-2 text-xs text-slate-600 italic">
-                                            <span>Meilleur · en cours…</span>
-                                            <span>Faible · en cours…</span>
-                                        </div>
                                     </div>
 
                                     {{-- Actions --}}
@@ -255,7 +263,8 @@
                                         <button type="button"
                                             title="{{ $promo->is_active ? 'Fermer' : 'Activer' }} cette promotion"
                                             wire:click="{{ $promo->is_active ? 'closePromotion(' . $promo->id . ')' : 'activatePromotion(' . $promo->id . ')' }}"
-                                            wire:loading.attr="disabled" wire:target="activatePromotion, closePromotion"
+                                            wire:loading.attr="disabled"
+                                            wire:target="activatePromotion, closePromotion"
                                             class="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-medium
                                                        transition-all duration-200 disabled:opacity-50
                                                        {{ $promo->is_active

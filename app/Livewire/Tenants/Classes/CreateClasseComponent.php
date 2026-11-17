@@ -69,19 +69,65 @@ class CreateClasseComponent extends Component
     #[Computed]
     public function promotions()
     {
-        return Promotion::where('is_active', true)->orderBy('order')->get(['id', 'name', 'code']);
+        return Promotion::where('is_active', true)
+        ->when($this->is_new_system, fn($q) => $q->where('is_new_system', $this->is_new_system))
+        ->orderBy('order')->get(['id', 'name', 'code']);
     }
 
     #[Computed]
     public function filiars()
     {
-        return Filiar::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
+        return Filiar::where('is_active', true)
+        ->when($this->is_new_system, fn($q) => $q->where('is_new_system', $this->is_new_system))->orderBy('name')->get(['id', 'name', 'code']);
+    }
+
+    public function updatedIsNewSystem($value)
+    {
+        unset($this->existingClasses);
+
+        $this->reset('filiar_id', 'serial_id', 'promotion_id');
+
+        self::getClasseName();
     }
 
     #[Computed]
     public function serials()
     {
         return Serial::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']);
+    }
+
+    /**
+     * Classes déjà créées pour l'année + la promotion (+ filière / série) sélectionnées.
+     */
+    #[Computed]
+    public function existingClasses()
+    {
+        if (! $this->school_year_id || ! $this->promotion_id) {
+            return collect();
+        }
+
+        return Classe::query()
+            ->withTrashed() // une classe en corbeille bloque aussi l'unicité du nom
+            ->select(['id', 'name', 'code', 'slug', 'effectif_max', 'is_active', 'is_locked', 'deleted_at'])
+            ->withCount('students')
+            ->where('school_year_id', $this->school_year_id)
+            ->where('promotion_id', $this->promotion_id)
+            ->when($this->filiar_id, fn ($q) => $q->where('filiar_id', $this->filiar_id))
+            ->when($this->serial_id, fn ($q) => $q->where('serial_id', $this->serial_id))
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Le nom saisi existe-t-il déjà dans la sélection courante ?
+     */
+    #[Computed]
+    public function nameAlreadyTaken(): bool
+    {
+        return $this->name !== ''
+            && $this->existingClasses->contains(
+                fn ($c) => mb_strtolower($c->name) === mb_strtolower($this->name)
+            );
     }
 
     // ─── Actions ──────────────────────────────────────────────────────
@@ -134,7 +180,12 @@ class CreateClasseComponent extends Component
 
                 broadcast(new DataUpdatedEvent(tenant('id')));
 
-                $this->resetExcept('school_year_id');
+                $this->resetExcept('school_year_id', 'school_year', 'promotion_id', 'is_new_system', 'effectif_max');
+
+                $this->updatedPromotionId($this->promotion_id);
+
+                // Rafraîchit la liste des classes existantes (la nouvelle y apparaît)
+                unset($this->existingClasses, $this->nameAlreadyTaken);
             }
         } catch (\Throwable $th) {
             $this->notification()->error(
@@ -148,13 +199,31 @@ class CreateClasseComponent extends Component
 
     public function updatedPromotionId($promotion_id)
     {
-        $promotion = Promotion::find($this->promotion_id);
+        $promotion = Promotion::find($promotion_id);
+
+        if (! $promotion) {
+            return;
+        }
 
         $this->filiar_id = $promotion->filiar_id;
 
         $this->serial_id = $promotion->serial_id;
 
         $this->getClasseName();
+    }
+
+    public function updatedFiliarId(): void
+    {
+        if ($this->promotion_id) {
+            $this->getClasseName();
+        }
+    }
+
+    public function updatedSerialId(): void
+    {
+        if ($this->promotion_id) {
+            $this->getClasseName();
+        }
     }
 
 

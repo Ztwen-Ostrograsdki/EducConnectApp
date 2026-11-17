@@ -26,6 +26,7 @@ class ManageFiliarComponent extends Component
     public bool   $is_active   = true;
     public string $previewSlug = '';
     public string $filiar_slug = '';
+    public bool   $is_new_system   = false;
 
     public function mount(string $filiar_slug): void
     {
@@ -44,6 +45,7 @@ class ManageFiliarComponent extends Component
         $this->description = $filiar->description ?? '';
         $this->is_active   = $filiar->is_active;
         $this->previewSlug = $filiar->slug;
+        $this->is_new_system = $filiar->is_new_system;
     }
 
     public function updatedName(string $value): void
@@ -64,6 +66,7 @@ class ManageFiliarComponent extends Component
                 'code'        => 'nullable|string|max:20',
                 'description' => 'nullable|string|max:255',
                 'is_active'   => 'boolean',
+                'is_new_system'   => 'boolean',
             ]);
 
             $done = $this->filiar->update([
@@ -72,6 +75,7 @@ class ManageFiliarComponent extends Component
                 'code'        => $this->code ? trim(trim($this->code, '-')) : Str::slug($this->name),
                 'description' => $this->description ?: null,
                 'is_active'   => $this->is_active,
+                'is_new_system'   => $this->is_new_system,
             ]);
 
             if($done){

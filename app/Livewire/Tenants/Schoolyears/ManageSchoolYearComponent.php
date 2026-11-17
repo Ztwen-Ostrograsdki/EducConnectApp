@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
@@ -24,6 +25,9 @@ class ManageSchoolYearComponent extends Component
     public ?string $schoolYear = null;
     public ?string $year_min = null;
     public ?string $year_max = null;
+
+    #[Validate('required|in:devoir1-devoir2,devoir-compo')]
+    public string $devoirs_type = 'devoir1-devoir2';
 
     public string $periode_type = 'Semestre';
     public array $periods = [];
@@ -48,6 +52,7 @@ class ManageSchoolYearComponent extends Component
         }
 
         $this->schoolYear   = $school_year_model->slug;
+        $this->devoirs_type = $school_year_model->devoirs_type;
         $this->year_min     = "{$school_year_model->min_year}-09-01";
         $this->year_max     = "{$school_year_model->max_year}-08-31";
         $this->periode_type = Str::ucfirst($school_year_model->periode_type);
@@ -101,6 +106,7 @@ class ManageSchoolYearComponent extends Component
                 'min_year' => trim($startYear),
                 'max_year' => trim($endYear),
                 'periode_type' => trim($this->periode_type),
+                'devoirs_type' => trim($this->devoirs_type),
                 'periods' => $this->buildPeriodsData(),
             ]);
 

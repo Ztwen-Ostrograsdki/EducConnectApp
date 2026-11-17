@@ -212,6 +212,13 @@ return [
         'Troisième année',
     ],
 
+
+    'promotionInGroupsForNewSystem' => [
+        'Seconde',
+        'Première',
+        'Terminale',
+    ],
+
     'promotions_without_filiars_series' => [
         'sixieme',
         'sixième',

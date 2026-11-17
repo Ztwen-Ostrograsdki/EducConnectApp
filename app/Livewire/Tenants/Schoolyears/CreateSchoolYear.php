@@ -9,6 +9,7 @@ use App\Models\SchoolYear;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
 
@@ -21,6 +22,9 @@ class CreateSchoolYear extends Component
     public ?string $schoolYear = null;
     public ?string $year_min = null;
     public ?string $year_max = null;
+
+    #[Validate('required|in:devoir1-devoir2,devoir-compo')]
+    public string $devoirs_type = 'devoir1-devoir2';
 
     public string $periode_type = 'Semestre';
     public array $periods = [];
@@ -63,6 +67,7 @@ class CreateSchoolYear extends Component
         $this->periods       = $draft['periods']      ?? [];
         $this->year_min      = $draft['year_min']     ?? null;
         $this->year_max      = $draft['year_max']     ?? null;
+        $this->devoirs_type  = $draft['devoirs_type']     ?? 'devoir1-devoir2';
 
         if (empty($this->periods)) {
             $this->initPeriods();
@@ -84,6 +89,7 @@ class CreateSchoolYear extends Component
             'periods'      => $this->periods,
             'year_min'     => $this->year_min,
             'year_max'     => $this->year_max,
+            'devoirs_type' => $this->devoirs_type,
             'saved_at'     => now(),
         ]);
     }
@@ -147,12 +153,15 @@ class CreateSchoolYear extends Component
                 'max_year' => trim($endYear),
                 'periode_type' => trim($this->periode_type),
                 'periods' => $this->buildPeriodsData(), // cast 'array' requis sur le modèle
+                'devoirs_type' => $this->devoirs_type,
                 'locked_for_period' => null,
                 'marks_locked_for_periods' => null,
             ]);
 
             if ($done) {
                 $this->clearDraft();
+
+                $this->reset();
 
                 broadcast(new NewSchoolYearCreated(tenant('id'), $done->slug));
 

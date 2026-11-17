@@ -151,7 +151,7 @@
                         </div>
 
                         <select wire:model.live="is_active"
-                            class="h-11 sm:col-span-2 rounded-xl bg-[#070a12] border border-white/[0.08]
+                            class="h-11 sm:col-span-1 rounded-xl bg-[#070a12] border border-white/[0.08]
                                        px-3 text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition">
                             <option value="">
                                 Toutes ({{ __zero($this->activesFiliars + $this->unActivesFiliars) }})
@@ -166,6 +166,14 @@
                                 Corbeille ({{ __zero($this->trashedsFiliars) }})
                             </option>
                         </select>
+                        <select wire:model.live="system"
+                            class="h-11 sm:col-span-1 rounded-xl bg-[#070a12] border border-white/[0.08]
+                                       px-3 text-sm text-slate-300 focus:border-indigo-500/50 focus:outline-none transition">
+
+                            @foreach ($systems as $sk => $sys)
+                                <option value="{{ $sk }}">{{ $sys }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
@@ -174,7 +182,7 @@
             <div class="relative p-4 sm:p-5">
 
                 {{-- Loading overlay --}}
-                <div wire:loading wire:target="is_active,search,previousPage,nextPage,resetFilters,gotoPage"
+                <div wire:loading wire:target="is_active,search,system,previousPage,nextPage,resetFilters,gotoPage"
                     class="absolute inset-0 z-20 flex items-center justify-center bg-[#070a12]/60 backdrop-blur-sm rounded-b-2xl">
                     <div class="flex items-center gap-3 text-slate-400">
                         <x-lucide-loader-2 class="w-6 h-6 text-indigo-400 animate-spin" />
@@ -184,7 +192,8 @@
 
                 @if (count($this->filiars))
                     {{-- Cards au lieu de table --}}
-                    <div class="space-y-3">
+                    <div class="space-y-3 font-trebuchet">
+
                         @foreach ($this->filiars as $filiar)
                             @php
                                 $details = app(\App\Services\FiliarsServices\FiliarDetailsCacheService::class)->get(
@@ -206,10 +215,10 @@
                                 </div>
 
                                 <div class="p-4 sm:p-5">
-                                    <div class="flex flex-col xl:flex-row xl:items-center gap-4">
+                                    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
 
                                         {{-- Identité --}}
-                                        <div class="flex items-start gap-3 min-w-0 xl:w-[220px] shrink-0">
+                                        <div class="flex items-start gap-3 min-w-0  shrink-0">
                                             <span class="text-xs font-mono text-slate-600 mt-1 shrink-0">
                                                 {{ __zero($this->filiars->firstItem() + $loop->iteration - 1) }}
                                             </span>
@@ -219,67 +228,42 @@
                                                     class="block group/link">
                                                     <h3
                                                         class="font-semibold text-white truncate
-                                                               group-hover/link:text-indigo-300 transition-colors">
+                                                               group-hover/link:text-indigo-300 transition-colors group-hover:underline underline-offset-4">
                                                         {{ $filiar->name }}
                                                     </h3>
-                                                    <p class="text-xs font-mono text-slate-500 mt-0.5">
-                                                        {{ $filiar->code }}
+                                                    <p
+                                                        class="text-xs font-mono text-slate-500 mt-1 inline-flex gap-2 items-center">
+                                                        <span
+                                                            class="rounded-lg px-2 py-1 bg-slate-500/40 text-slate-300">
+                                                            {{ $filiar->code }}</span>
+                                                        @if ($filiar->is_new_system || $system == 'new_system')
+                                                            <span
+                                                                class="rounded-lg px-2 py-1 bg-green-500/20 text-green-500 animate-pulse">Nouveau
+                                                                métier</span>
+                                                        @endif
                                                     </p>
                                                 </a>
                                             </div>
                                         </div>
 
                                         {{-- Effectifs --}}
-                                        <div class="flex items-center gap-3 xl:w-[140px] shrink-0">
+                                        <div class="flex items-center gap-3  shrink-0">
                                             <span
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
                                                          bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                                 <x-lucide-school class="w-3 h-3" />
-                                                {{ __zero($details['classes_count']) }}
+                                                {{ __zero($details['classes_count']) }} classe(s)
                                             </span>
                                             <span
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
                                                          bg-violet-500/10 text-violet-400 border border-violet-500/20">
                                                 <x-lucide-users class="w-3 h-3" />
-                                                {{ __zero($details['students_count']) }}
+                                                {{ __zero($details['students_count']) }} apprenant(s)
                                             </span>
                                         </div>
 
-                                        {{-- Stats élèves --}}
-                                        <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0">
-                                            {{-- Best --}}
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
-                                                    Meilleur</p>
-                                                <p class="text-xs font-medium text-slate-300 truncate">KOUASSI Sarah</p>
-                                                <p class="text-xs text-emerald-400 font-mono">(18.92)</p>
-                                            </div>
-                                            {{-- Worst --}}
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
-                                                    Plus faible</p>
-                                                <p class="text-xs font-medium text-slate-300 truncate">HOUNKPE David</p>
-                                                <p class="text-xs text-rose-400 font-mono">(03.42)</p>
-                                            </div>
-                                            {{-- Youngest --}}
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
-                                                    Plus jeune</p>
-                                                <p class="text-xs font-medium text-slate-300 truncate">ADJOVI Esther
-                                                </p>
-                                                <p class="text-xs text-slate-500">10 ans</p>
-                                            </div>
-                                            {{-- Oldest --}}
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] uppercase tracking-wider text-slate-600 mb-0.5">
-                                                    Plus âgé</p>
-                                                <p class="text-xs font-medium text-slate-300 truncate">AKAKPO Jonas</p>
-                                                <p class="text-xs text-slate-500">19 ans</p>
-                                            </div>
-                                        </div>
-
                                         {{-- Actions --}}
-                                        <div class="flex flex-wrap items-center gap-1.5 xl:justify-end shrink-0">
+                                        <div class="flex flex-wrap items-center gap-1.5 justify-end shrink-0">
                                             <a wire:navigate
                                                 href="{{ route('tenant.filiar.profil', ['filiar_slug' => $filiar->slug]) }}"
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium
@@ -406,3 +390,4 @@
 
     </div>
 </div>
+

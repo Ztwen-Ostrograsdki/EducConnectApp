@@ -142,6 +142,68 @@
                 @endif
             </div>
 
+            {{-- Classes déjà créées pour cette sélection --}}
+            @if ($promotion_id)
+                <div wire:loading.remove wire:target="promotion_id, filiar_id, serial_id"
+                    class="rounded-xl border border-white/[0.06] bg-[#070a12]/60 p-4">
+
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <p
+                            class="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                            <x-lucide-info class="w-3.5 h-3.5 text-sky-400" />
+                            Classes déjà créées pour cette sélection ({{ $school_year }})
+                        </p>
+                        <span class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-sky-500/10 text-sky-400">
+                            {{ $this->existingClasses->count() }}
+                        </span>
+                    </div>
+
+                    @if ($this->existingClasses->isEmpty())
+                        <p class="text-xs text-slate-500">
+                            Aucune classe existante, vous pouvez créer la première.
+                        </p>
+                    @else
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($this->existingClasses as $existing)
+                                <div wire:key="existing-classe-{{ $existing->id }}"
+                                    class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs
+                                           border {{ $existing->trashed()
+                                               ? 'border-rose-500/20 bg-rose-500/10 text-rose-300'
+                                               : 'border-white/[0.08] bg-white/[0.03] text-slate-300' }}">
+                                    <span
+                                        class="font-medium">{{ str()->replace(['-', '_'], ' ', $existing->name) }}</span>
+
+                                    @if ($existing->code)
+                                        <span class="font-mono text-[10px] text-slate-500">{{ $existing->code }}</span>
+                                    @endif
+
+                                    @if ($existing->trashed())
+                                        <span class="text-[10px] text-rose-400">en corbeille</span>
+                                    @else
+                                        <span class="text-[10px] text-slate-500">
+                                            {{ $existing->students_count }}/{{ $existing->effectif_max }}
+                                        </span>
+                                        @unless ($existing->is_active)
+                                            <span class="text-[10px] text-slate-500">inactive</span>
+                                        @endunless
+                                        @if ($existing->is_locked)
+                                            <x-lucide-lock class="w-3 h-3 text-amber-400" />
+                                        @endif
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if ($this->nameAlreadyTaken)
+                        <p class="mt-3 flex items-center gap-1.5 text-xs text-amber-400">
+                            <x-lucide-triangle-alert class="w-3.5 h-3.5" />
+                            Le nom « {{ $name }} » existe déjà pour cette année : la création sera refusée.
+                        </p>
+                    @endif
+                </div>
+            @endif
+
             {{-- Nom + Code + Nouveau métier --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                 <div>
@@ -150,7 +212,7 @@
                         <x-lucide-school class="w-3.5 h-3.5 text-amber-400" />
                         Nom de la classe <span class="text-rose-400">*</span>
                     </label>
-                    <input type="text" wire:model="name" placeholder="ex: Terminale BTP 2"
+                    <input type="text" wire:model.live.debounce.400ms="name" placeholder="ex: Terminale BTP 2"
                         class="w-full h-10 rounded-xl border border-white/[0.08] bg-[#070a12]
                                   px-3 text-sm text-white placeholder:text-slate-600
                                   focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20
@@ -175,21 +237,31 @@
                     @enderror
                 </div>
                 <div class="pb-1">
-                    <label class="inline-flex items-center gap-3 cursor-pointer select-none">
-                        <div class="relative">
-                            <input type="checkbox" wire:model="is_new_system" class="sr-only peer" />
-                            <div
-                                class="h-5 w-9 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors">
-                            </div>
-                            <div
-                                class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow
-                                        transition-transform peer-checked:translate-x-4">
-                            </div>
-                        </div>
-                        <span class="inline-flex items-center gap-1.5 text-sm text-slate-300">
-                            <x-lucide-briefcase class="w-3.5 h-3.5 text-emerald-400" />
+                    <label
+                        class="inline-flex items-start flex-col gap-1 cursor-pointer select-none group hover:shadow-sky-800 shadow-sm rounded-lg transition-shadow p-3">
+                        <span class="inline-flex items-center gap-2.5 text-sm text-slate-300">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20
+                                     flex items-center justify-center shrink-0">
+                                <x-lucide-briefcase class="w-3 h-3 text-emerald-400" />
+                            </span>
                             Nouveau métier
                         </span>
+                        <div
+                            class="rounded-xl border border-white/[0.08] bg-[#070a12]
+                                  px-6 py-2 mt-1.5">
+                            <div class="relative shrink-0 ">
+                                <input type="checkbox" wire:model.live="is_new_system" class="sr-only peer" />
+                                <div
+                                    class="h-6 w-11 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors">
+                                </div>
+                                <div
+                                    class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow
+                                    transition-transform peer-checked:translate-x-5">
+                                </div>
+                            </div>
+                        </div>
+
                     </label>
                     @error('is_new_system')
                         <p class="mt-1 text-xs text-rose-400">{{ $message }}</p>
