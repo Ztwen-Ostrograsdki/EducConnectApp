@@ -221,6 +221,19 @@ class User extends Authenticatable
     }
 
 
+    public function canSeeAverages(string $tenantId) : bool
+    {
+        $tenant = Tenant::firstWhere('id', $tenantId);
+
+        if($this->hasRole('directeur')) return true;
+
+        if($this->hasRole('enseignant') && $tenant->teachers_can_see_students_average) return true;
+
+        if($this->hasRole('tuteur') && $tenant->tutors_can_see_students_average) return true;
+
+        return false;
+    }
+
     public function emailVerified()
     {
         return !is_null($this->email_verified_at);

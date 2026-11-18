@@ -109,6 +109,13 @@ class SettingsComponent extends Component
 
     public bool $is_current_school_year = true;
 
+    public bool $teachers_can_see_students_average = false;
+
+    public bool $tutors_can_see_students_average = false;
+
+    public ?int $mark_updatable_time_delay = 72;
+
+
 
     /**
      * Liste des périodes disponibles selon periode_type.
@@ -136,6 +143,8 @@ class SettingsComponent extends Component
     {
         $school_year = $this->activeYear;
 
+        $tenant = tenancy()->tenant;
+
         if ($school_year) {
             $this->min_average_to_pass = $school_year->min_average_to_pass;
             $this->periode_type = $school_year->periode_type;
@@ -148,6 +157,10 @@ class SettingsComponent extends Component
             $this->yearly_average_is_visible = $school_year->yearly_average_is_visible;
             $this->is_current_school_year = $school_year->is_current_school_year;
             $this->locked_for_period = $school_year->locked_for_period;
+
+            $this->mark_updatable_time_delay = $tenant->mark_updatable_time_delay;
+            $this->tutors_can_see_students_average = $tenant->tutors_can_see_students_average;
+            $this->teachers_can_see_students_average = $tenant->teachers_can_see_students_average;
         }
     }
 
@@ -178,6 +191,7 @@ class SettingsComponent extends Component
     {
         $validated = $this->validate([
             'min_average_to_pass'         => 'nullable|numeric|min:10|max:20',
+            'mark_updatable_time_delay'   => 'integer',
             'periode_type'                => 'required|in:semestre,trimestre',
             'devoirs_type'                => 'required|in:devoir1-devoir2,devoir-compo',
             'active_period'               => 'nullable|integer|min:1|max:' . count($this->periodOptions),
@@ -185,9 +199,13 @@ class SettingsComponent extends Component
             'marks_locked_for_periods'    => 'nullable|array',
             'marks_locked_for_periods.*'  => 'integer|min:1|max:' . count($this->periodOptions),
             'yearly_average_is_visible'   => 'boolean',
+            'teachers_can_see_students_average'   => 'boolean',
+            'tutors_can_see_students_average'   => 'boolean',
         ]);
 
         $schoolYear = $this->activeYear;
+
+        $tenant = tenancy()->tenant;
 
         if (! $schoolYear) {
             $this->addError('periode_type', "Aucune année scolaire active n'a été trouvée.");
@@ -195,6 +213,14 @@ class SettingsComponent extends Component
         }
 
         $schoolYear->update($validated);
+
+        $tenant->update(
+            [
+                'teachers_can_see_students_average' => $this->teachers_can_see_students_average,
+                'tutors_can_see_students_average' => $this->tutors_can_see_students_average,
+                'mark_updatable_time_delay' => $this->mark_updatable_time_delay,
+            ]
+        );
 
         unset($this->activeYear, $this->periodOptions);
 

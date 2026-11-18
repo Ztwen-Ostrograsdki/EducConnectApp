@@ -215,15 +215,18 @@
                                                     class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                                                     {{ $label }}</th>
                                             @endforeach
-                                            <th
-                                                class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                                Moy</th>
-                                            <th
-                                                class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                                Moy.Coef</th>
-                                            <th
-                                                class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                                Rang</th>
+
+                                            @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                                <th
+                                                    class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                    Moy</th>
+                                                <th
+                                                    class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                    Moy.Coef</th>
+                                                <th
+                                                    class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                                    Rang</th>
+                                            @endif
                                             <th
                                                 class="px-3 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                                 Prof.</th>
@@ -248,19 +251,24 @@
                                                     <td class="px-3 py-3.5 text-center font-mono text-slate-300">
                                                         {{ $row['marks'][$type] ?? '—' }}</td>
                                                 @endforeach
-                                                <td class="px-3 py-3.5 text-center font-mono font-semibold text-white">
-                                                    {{ $row['moy'] ?? '—' }}</td>
-                                                <td class="px-3 py-3.5 text-center font-mono text-indigo-300">
-                                                    {{ $row['moy_coef'] ?? '—' }}</td>
-                                                <td class="px-3 py-3.5 text-center font-mono text-slate-500">
-                                                    @if ($row['rank'])
-                                                        {{ $row['rank'] . ($row['rank'] === 1 ? 'er' : 'e') }}
-                                                    @else
-                                                        —
-                                                    @endif
-                                                </td>
+
+                                                @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                                    <td
+                                                        class="px-3 py-3.5 text-center font-mono font-semibold text-white">
+                                                        {{ $row['moy'] ?? '—' }}</td>
+                                                    <td class="px-3 py-3.5 text-center font-mono text-indigo-300">
+                                                        {{ $row['moy_coef'] ?? '—' }}</td>
+                                                    <td class="px-3 py-3.5 text-center font-mono text-slate-500">
+                                                        @if ($row['rank'])
+                                                            {{ $row['rank'] . ($row['rank'] === 1 ? 'er' : 'e') }}
+                                                        @else
+                                                            —
+                                                        @endif
+                                                    </td>
+                                                @endif
                                                 <td class="px-3 py-3.5 text-slate-400 text-xs whitespace-nowrap">
                                                     {{ $row['teacher']->getFullName() }}</td>
+
                                                 <td class="px-4 py-3.5">
                                                     @if (!empty($row['mention']))
                                                         <span
@@ -280,42 +288,45 @@
                                         @endforeach
                                     </tbody>
 
-                                    <tfoot>
-                                        <tr class="bg-[#070b14] border-t border-white/[0.08]">
-                                            <td colspan="2"
-                                                class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
-                                                Moyenne générale :
-                                            </td>
-                                            <td
-                                                class="px-3 py-4 text-center text-xl font-bold text-indigo-400 font-mono">
-                                                {{ $this->termAverage['moyenne'] }}
-                                            </td>
-                                            <td class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
-                                                Total :
-                                            </td>
-                                            <td
-                                                class="px-3 py-4 text-center font-bold text-emerald-400 font-mono text-xl">
-                                                {{ $this->termAverage['sum_moy_coef'] }}
-                                            </td>
-                                            <td class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
-                                                Rang :
-                                            </td>
-                                            <td class="px-3 py-4 text-center text-sm font-bold text-white font-mono">
-                                                {{ $this->termAverage['rank'] }}
-                                                <span class="text-slate-500 font-normal">/
-                                                    {{ $this->termAverage['total'] }}</span>
-                                            </td>
-                                            <td class="px-4 py-4 text-right font-semibold text-slate-400">
-                                                Mention :
-                                            </td>
-                                            <td colspan="2" class="px-4 py-4">
-                                                <span
-                                                    class="inline-flex px-3 py-1 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-lg font-semibold">
-                                                    {{ $this->termAverage['mention'] ?? '...' }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
+                                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                        <tfoot>
+                                            <tr class="bg-[#070b14] border-t border-white/[0.08]">
+                                                <td colspan="2"
+                                                    class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
+                                                    Moyenne générale :
+                                                </td>
+                                                <td
+                                                    class="px-3 py-4 text-center text-xl font-bold text-indigo-400 font-mono">
+                                                    {{ $this->termAverage['moyenne'] }}
+                                                </td>
+                                                <td class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
+                                                    Total :
+                                                </td>
+                                                <td
+                                                    class="px-3 py-4 text-center font-bold text-emerald-400 font-mono text-xl">
+                                                    {{ $this->termAverage['sum_moy_coef'] }}
+                                                </td>
+                                                <td class="px-4 py-4 text-right text-sm font-semibold text-slate-400">
+                                                    Rang :
+                                                </td>
+                                                <td
+                                                    class="px-3 py-4 text-center text-sm font-bold text-white font-mono">
+                                                    {{ $this->termAverage['rank'] }}
+                                                    <span class="text-slate-500 font-normal">/
+                                                        {{ $this->termAverage['total'] }}</span>
+                                                </td>
+                                                <td class="px-4 py-4 text-right font-semibold text-slate-400">
+                                                    Mention :
+                                                </td>
+                                                <td colspan="2" class="px-4 py-4">
+                                                    <span
+                                                        class="inline-flex px-3 py-1 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-lg font-semibold">
+                                                        {{ $this->termAverage['mention'] ?? '...' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    @endif
                                 </table>
                             </div>
                         </div>
@@ -404,34 +415,37 @@
                     @endif
 
                     {{-- ════════════════ OBSERVATIONS ════════════════ --}}
-                    <section class="border-t border-white/[0.06]">
-                        <div class="p-5 ">
-                            <div class="gap-4">
-                                <div class="rounded-2xl bg-[#070b14] border border-white/[0.05] p-5 sm:p-6">
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <span
-                                            class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-sm">⚖️</span>
-                                        <h3 class="text-sm font-semibold text-white">Décision du jury</h3>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-xs text-slate-500">Décision</span>
-                                            @if ($this->termAverage['moyenne'] >= 10)
-                                                <span class="text-sm font-semibold text-emerald-400">Admis</span>
-                                            @else
-                                                <span class="text-sm font-semibold text-red-500">Réfusé</span>
-                                            @endif
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-xs text-slate-500">Mention</span>
+
+                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                        <section class="border-t border-white/[0.06]">
+                            <div class="p-5 ">
+                                <div class="gap-4">
+                                    <div class="rounded-2xl bg-[#070b14] border border-white/[0.05] p-5 sm:p-6">
+                                        <div class="flex items-center gap-2 mb-3">
                                             <span
-                                                class="text-sm font-semibold text-indigo-400">{{ $this->termAverage['mention'] }}</span>
+                                                class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-sm">⚖️</span>
+                                            <h3 class="text-sm font-semibold text-white">Décision du jury</h3>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs text-slate-500">Décision</span>
+                                                @if ($this->termAverage['moyenne'] >= 10)
+                                                    <span class="text-sm font-semibold text-emerald-400">Admis</span>
+                                                @else
+                                                    <span class="text-sm font-semibold text-red-500">Réfusé</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs text-slate-500">Mention</span>
+                                                <span
+                                                    class="text-sm font-semibold text-indigo-400">{{ $this->termAverage['mention'] }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    @endif
                 @endif
             @else
                 <span class="bg-transparent text-slate-600 flex items-center justify-center w-full p-4 my-4">

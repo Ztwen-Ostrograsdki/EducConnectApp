@@ -94,6 +94,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'hide_personnels_on_home_page',
             'background_image',
             'header_image_path',
+
+            'teachers_can_see_students_average',
+            'tutors_can_see_students_average',
+            'mark_updatable_time_delay',
+
         ];
     }
 
@@ -124,6 +129,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'hide_personnels_on_home_page' => false,
         'background_image' => null,
         'header_image_path' => null,
+        'teachers_can_see_students_average' => false,
+        'tutors_can_see_students_average' => false,
+        'mark_updatable_time_delay' => 72,
     ];
 
     /**
@@ -146,6 +154,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'hide_serials_on_home_page' => 'boolean',
         'hide_filiars_on_home_page' => 'boolean',
         'hide_personnels_on_home_page' => 'boolean',
+        'teachers_can_see_students_average' => 'boolean',
+        'tutors_can_see_students_average' => 'boolean',
+        'mark_updatable_time_delay' => 'integer',
     ];
 
     /**

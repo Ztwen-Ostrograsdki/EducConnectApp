@@ -75,6 +75,11 @@ class CreateTenantsTable extends Migration
             $table->boolean('hide_filiars_on_home_page')->default(false);
             $table->boolean('hide_personnels_on_home_page')->default(false);
 
+
+            $table->boolean('teachers_can_see_students_average')->default(false);
+            $table->boolean('tutors_can_see_students_average')->default(false);
+            $table->unsignedBigInteger('mark_updatable_time_delay')->default(72);
+
             $table->softDeletes();
 
             $table->timestamps();

@@ -18,6 +18,33 @@ if (! function_exists('__check_route')) {
         return false;
     }
 }
+if (!function_exists('formatHoursDuration')) {
+    /**
+     * Convertit une durée en heures en texte lisible.
+     * Ex. : 100 => "4 jours 4 heures", 68 => "2 jours 20 heures", 24 => "1 jour"
+     */
+    function formatHoursDuration(int $hours): string
+    {
+        if ($hours <= 0) {
+            return '0 heure';
+        }
+
+        $days = intdiv($hours, 24);
+        $remaining = $hours % 24;
+
+        $parts = [];
+
+        if ($days > 0) {
+            $parts[] = $days . ' ' . ($days > 1 ? 'jours' : 'jour');
+        }
+
+        if ($remaining > 0) {
+            $parts[] = $remaining . ' ' . ($remaining > 1 ? 'heures' : 'heure');
+        }
+
+        return implode(' ', $parts);
+    }
+}
 if (! function_exists('format_price_fcfa')) {
     function format_price_fcfa(string|float $amount)
     {

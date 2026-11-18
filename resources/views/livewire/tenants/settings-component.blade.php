@@ -355,12 +355,78 @@
                                 @enderror
                             </div>
 
+                            <div>
+                                <label class="block tracking-wider text-slate-500 mb-1.5 ">
+                                    <div class="inline-flex flex-col gap-1">
+                                        <span class="text-[11px] font-semibold uppercase">
+                                            Délai maximum en heures pour éditer une note
+                                        </span>
+                                        <p class="text-xs text-orange-500">
+                                            C'est le temps maximum en heures accordé aux enseignants pour modifier une
+                                            note
+                                        </p>
+                                    </div>
+                                </label>
+                                <input type="number" wire:model="mark_updatable_time_delay" min="1"
+                                    class="w-full h-11 rounded-xl bg-[#070b14] border border-white/10 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/50 transition-all">
+                                @error('mark_updatable_time_delay')
+                                    <p class="mt-1 text-[11px] text-rose-400">{{ $message }}</p>
+                                @enderror
+                                <p class="text-xs px-1.5 font-trebuchet text-green-500 mt-1.5">
+                                    <span class="text-slate-400"> Délai maximum actuel accordé : </span>
+                                    <span
+                                        class="underline-offset-4 underline">{{ formatHoursDuration(tenant('mark_updatable_time_delay')) }}</span>
+                                </p>
+                            </div>
+
                             {{-- Toggles --}}
+                            <div x-data="{ visible: $wire.entangle('teachers_can_see_students_average') }"
+                                class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                @click="visible = !visible">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <x-lucide-eye class="w-4 h-4 text-amber-400 shrink-0" />
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-200">Moyennes et moyennes coéfisciées
+                                            pour les enseignants</p>
+                                        <p class="text-[11px] text-slate-500">Afficher les moyennes et moyennes coef.
+                                            sur les détails des notes des apprenants aux enseignants</p>
+                                    </div>
+                                </div>
+
+                                <span class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                    :class="visible ? 'bg-amber-500' : 'bg-slate-700'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                        :class="visible ? 'translate-x-5' : 'translate-x-0'"></span>
+                                </span>
+                            </div>
+
+                            <div x-data="{ visible: $wire.entangle('tutors_can_see_students_average') }"
+                                class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
+                                @click="visible = !visible">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <x-lucide-eye class="w-4 h-4 text-sky-400 shrink-0" />
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-200">Moyennes et moyennes coéfisciées
+                                            pour les parents et tuteurs</p>
+                                        <p class="text-[11px] text-slate-500">Afficher les moyennes et moyennes coef.
+                                            sur les détails des notes des apprenants aux parents et tuteurs</p>
+                                    </div>
+                                </div>
+
+                                <span class="relative h-6 w-11 rounded-full transition-colors duration-200 shrink-0"
+                                    :class="visible ? 'bg-sky-500' : 'bg-slate-700'">
+                                    <span
+                                        class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
+                                        :class="visible ? 'translate-x-5' : 'translate-x-0'"></span>
+                                </span>
+                            </div>
+
                             <div x-data="{ visible: $wire.entangle('yearly_average_is_visible') }"
                                 class="flex items-center justify-between gap-4 rounded-xl bg-[#070b14] border border-white/[0.05] px-4 py-3.5 cursor-pointer"
                                 @click="visible = !visible">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <x-lucide-book-open class="w-4 h-4 text-sky-400 shrink-0" />
+                                    <x-lucide-book-open class="w-4 h-4 text-emerald-400 shrink-0" />
                                     <div>
                                         <p class="text-sm font-medium text-slate-200">Moyenne annuelle visible</p>
                                         <p class="text-[11px] text-slate-500">Afficher la moyenne annuelle sur les

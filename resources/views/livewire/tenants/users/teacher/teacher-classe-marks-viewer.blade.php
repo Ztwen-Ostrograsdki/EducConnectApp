@@ -197,7 +197,13 @@
                                 <td
                                     class="px-3 py-3 text-center font-mono text-xs font-medium
                                            {{ !is_null($row['moy_interro']) ? 'text-indigo-400' : 'text-slate-700' }}">
-                                    {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
+                                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                        {{ !is_null($row['moy_interro']) ? number_format($row['moy_interro'], 2) : '—' }}
+                                    @else
+                                        <span class="text-slate-700 text-center">
+                                            <x-lucide-eye-off class="h-3.5 w-3.5 " />
+                                        </span>
+                                    @endif
                                 </td>
 
                                 @foreach ($this->devoirColumns() as $type => $label)
@@ -214,24 +220,42 @@
                                 <td
                                     class="px-3 py-3 text-center font-mono text-xs font-semibold
                                            {{ !is_null($row['moy']) ? 'text-emerald-400' : 'text-slate-700' }}">
-                                    {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
+                                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                        {{ !is_null($row['moy']) ? number_format($row['moy'], 2) : '—' }}
+                                    @else
+                                        <span class="text-slate-700 text-center">
+                                            <x-lucide-eye-off class="h-3.5 w-3.5 " />
+                                        </span>
+                                    @endif
                                 </td>
 
                                 <td
                                     class="px-3 py-3 text-center font-mono text-xs font-semibold
                                            {{ !is_null($row['moy_coef']) ? 'text-emerald-400' : 'text-slate-700' }}">
-                                    {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
+                                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                        {{ !is_null($row['moy_coef']) ? number_format($row['moy_coef'], 2) : '—' }}
+                                    @else
+                                        <span class="text-slate-700 text-center">
+                                            <x-lucide-eye-off class="h-3.5 w-3.5 " />
+                                        </span>
+                                    @endif
                                 </td>
 
                                 <td class="px-3 py-3 text-center">
-                                    @if ($row['rank'])
-                                        <span
-                                            class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-mono
+                                    @if (auth('tenant')->user()->canSeeAverages(tenant('id')))
+                                        @if ($row['rank'])
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-mono
                                                      bg-white/[0.04] text-slate-300 border border-white/[0.06]">
-                                            #{{ $row['rank'] }}
-                                        </span>
+                                                #{{ $row['rank'] }}
+                                            </span>
+                                        @else
+                                            <span class="text-slate-700">—</span>
+                                        @endif
                                     @else
-                                        <span class="text-slate-700">—</span>
+                                        <span class="text-slate-700 text-center">
+                                            <x-lucide-eye-off class="h-3.5 w-3.5 " />
+                                        </span>
                                     @endif
                                 </td>
 

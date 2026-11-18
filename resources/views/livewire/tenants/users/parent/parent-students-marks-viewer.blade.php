@@ -1,4 +1,4 @@
-<div class="w-full overflow-x-hidden">
+<div class="w-full">
 
     @livewire('tenants.users.parent.parent-students-skills-header-component', ['student' => $this->student])
 
