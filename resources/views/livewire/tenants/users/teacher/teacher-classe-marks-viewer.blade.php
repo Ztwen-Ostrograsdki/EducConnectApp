@@ -37,6 +37,48 @@
         </section>
 
         {{-- ========== TABLEAU ========== --}}
+        <section>
+            @if (!empty($pendingEdits))
+                <div class="mb-4 mt-2 rounded-2xl border border-amber-500/25 bg-amber-500/[0.04] overflow-hidden">
+
+                    <div
+                        class="px-4 py-3.5 border-b border-amber-500/15
+                                flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <h3 class="text-sm font-semibold text-amber-300">
+                            {{ count($pendingEdits) }} modification{{ count($pendingEdits) > 1 ? 's' : '' }} en
+                            attente
+                        </h3>
+                        <div class="flex gap-2">
+                            <button wire:click="cancelAllPendingEdits" wire:loading.attr="disabled"
+                                wire:target="cancelAllPendingEdits"
+                                class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium
+                                           bg-slate-800 text-slate-300
+                                           hover:bg-slate-500 hover:text-black transition-all disabled:opacity-50">
+                                <span wire:loading.remove wire:target="cancelAllPendingEdits">Tout annuler</span>
+                                <span wire:loading wire:target="cancelAllPendingEdits">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                            <button title="Valider les modifications" wire:click="confirmMarksUpdate"
+                                wire:loading.attr="disabled" wire:target="confirmMarksUpdate"
+                                class="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-xs font-medium
+                                           bg-emerald-500/40 hover:bg-emerald-400 text-white
+                                            transition-all disabled:opacity-50 hover:text-black">
+                                <span wire:loading.remove wire:target="confirmMarksUpdate"
+                                    class="inline-flex items-center gap-1.5">
+                                    <x-lucide-check class="w-3.5 h-3.5" />
+                                    Confirmer
+                                </span>
+                                <span wire:loading wire:target="confirmMarksUpdate">
+                                    <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+        </section>
         <section class="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
 
             {{-- Header --}}
@@ -193,9 +235,10 @@
                                     @endif
                                 </td>
 
-                                @if ($showActionsColumn)
+                                @if ($showActionsColumn && isset($row['moy_coef']))
                                     <td class="px-3 py-3 text-center">
-                                        <button wire:click="editStudentMark({{ $student->id }})"
+                                        <button title="Modifier les notes de {{ $student->getFullName() }}"
+                                            wire:click="editStudentMark({{ $student->id }})"
                                             wire:loading.attr="disabled"
                                             wire:target="editStudentMark({{ $student->id }})"
                                             @if (isset($pendingEdits[$student->id])) disabled @endif
@@ -240,9 +283,11 @@
 
                                             <div
                                                 class="rounded-xl bg-rose-500/10 border border-rose-500/20 px-3.5 py-2.5 mb-4 text-xs space-y-1">
-                                                <p class="text-rose-300">Videz un champ pour retirer la note. Notes 0–20
+                                                <p class="text-rose-300">Videz un champ pour retirer la note. Notes
+                                                    0–20
                                                     uniquement.</p>
-                                                <p class="text-amber-400 font-medium">Cliquez sur « Terminer » après vos
+                                                <p class="text-amber-400 font-medium">Cliquez sur « Terminer » après
+                                                    vos
                                                     modifications.</p>
                                             </div>
 
@@ -255,7 +300,8 @@
                                                             {{ $this->markColumns()[$type] ?? $type }}
                                                         </label>
                                                         <input type="text"
-                                                            wire:model="editInputs.{{ $type }}" placeholder="—"
+                                                            wire:model="editInputs.{{ $type }}"
+                                                            placeholder="—"
                                                             class="w-full h-9 rounded-xl bg-[#070a12] border border-white/[0.08]
                                                                       px-3 text-center font-mono text-sm text-slate-200
                                                                       placeholder:text-slate-600
@@ -323,18 +369,18 @@
                             <button wire:click="cancelAllPendingEdits" wire:loading.attr="disabled"
                                 wire:target="cancelAllPendingEdits"
                                 class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium
-                                           bg-white/[0.04] border border-white/[0.08] text-slate-400
-                                           hover:bg-white/[0.08] hover:text-white transition-all disabled:opacity-50">
+                                           bg-slate-800 text-slate-300
+                                           hover:bg-slate-500 hover:text-black transition-all disabled:opacity-50">
                                 <span wire:loading.remove wire:target="cancelAllPendingEdits">Tout annuler</span>
                                 <span wire:loading wire:target="cancelAllPendingEdits">
                                     <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
                                 </span>
                             </button>
-                            <button wire:click="confirmMarksUpdate" wire:loading.attr="disabled"
-                                wire:target="confirmMarksUpdate"
+                            <button title="Valider les modifications" wire:click="confirmMarksUpdate"
+                                wire:loading.attr="disabled" wire:target="confirmMarksUpdate"
                                 class="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-xs font-medium
-                                           bg-emerald-500 hover:bg-emerald-400 text-white
-                                           shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50">
+                                           bg-emerald-500/40 hover:bg-emerald-400 text-white
+                                            transition-all disabled:opacity-50 hover:text-black">
                                 <span wire:loading.remove wire:target="confirmMarksUpdate"
                                     class="inline-flex items-center gap-1.5">
                                     <x-lucide-check class="w-3.5 h-3.5" />

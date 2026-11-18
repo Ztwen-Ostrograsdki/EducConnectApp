@@ -23,20 +23,10 @@ class InitProcessToGrantYearlyAccessToTeachersEvent
         public ?array $excepts = null,
         public ?int    $school_year_id = null,
         public ?string $domain = null,
+        public ?bool $grant_only_teacher_of_next_year = false,
     )
     {
         //
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
-    }
 }

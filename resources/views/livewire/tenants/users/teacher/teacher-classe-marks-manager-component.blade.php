@@ -399,7 +399,8 @@
                                         <td class="px-3 py-2.5">
                                             <div class="flex items-center justify-center gap-1">
                                                 @if ($pending)
-                                                    <button wire:click="editStudentMarks({{ $student->id }})"
+                                                    <button title="Editer les notes de {{ $student->getFullName() }}"
+                                                        wire:click="editStudentMarks({{ $student->id }})"
                                                         wire:loading.attr="disabled"
                                                         wire:target="editStudentMarks({{ $student->id }})"
                                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs
@@ -432,7 +433,8 @@
                                                         </span>
                                                     </button>
                                                 @else
-                                                    <button wire:click="addStudentMarks({{ $student->id }})"
+                                                    <button title="Insérer les notes de {{ $student->getFullName() }}"
+                                                        wire:click="addStudentMarks({{ $student->id }})"
                                                         wire:loading.attr="disabled"
                                                         wire:target="addStudentMarks({{ $student->id }})"
                                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs
@@ -448,7 +450,9 @@
                                                             <x-lucide-loader-2 class="w-3.5 h-3.5 animate-spin" />
                                                         </span>
                                                     </button>
-                                                    <button wire:click="resetStudentInputs({{ $student->id }})"
+                                                    <button
+                                                        title="Vider les notes renseignées de {{ $student->getFullName() }}"
+                                                        wire:click="resetStudentInputs({{ $student->id }})"
                                                         wire:loading.attr="disabled"
                                                         wire:target="resetStudentInputs({{ $student->id }})"
                                                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs

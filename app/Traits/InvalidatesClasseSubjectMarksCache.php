@@ -12,13 +12,19 @@ use Illuminate\Support\Facades\DB;
  * @method static void saved(\Closure|string $callback)
  * @method static void restored(\Closure|string $callback)
  * @method static void deleted(\Closure|string $callback)
+ * @method static void forceDeleted(\Closure|string $callback)
  */
 trait InvalidatesClasseSubjectMarksCache
 {
     protected static function bootInvalidatesClasseSubjectMarksCache(): void
     {
         static::saved(fn ($model) => static::scheduleClasseSubjectMarksCacheInvalidation($model));
+        
         static::deleted(fn ($model) => static::scheduleClasseSubjectMarksCacheInvalidation($model));
+
+        if (method_exists(static::class, 'forceDeleted')) {
+            static::forceDeleted(fn ($model) => static::scheduleClasseSubjectMarksCacheInvalidation($model));
+        }
 
         if (method_exists(static::class, 'restored')) {
             static::restored(fn ($model) => static::scheduleClasseSubjectMarksCacheInvalidation($model));

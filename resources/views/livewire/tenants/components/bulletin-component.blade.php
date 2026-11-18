@@ -7,9 +7,6 @@
                     Aperçue Sommative de notes de <span class="text-sky-500">{{ $student->getFullName() }}</span>
                     - <span class="text-orange-600">{{ session('school_year_selected') }}</span>
                 </h2>
-                <p class="mt-1.5 text-sm text-slate-400">
-                    Détails des notes par {{ $this->activeYear->periodLabel() }} de l’apprenant
-                </p>
             </div>
 
             <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-2 hidden">
@@ -92,54 +89,31 @@
         <div class="border border-white/[0.06] bg-[#0f1523] shadow-xs shadow-purple-700 overflow-hidden">
 
             {{-- ════════════════ HEADER OFFICIEL ════════════════ --}}
-            <header class="relative border-b border-white/[0.06]">
+            <header class="relative border-b border-white/[0.06] flex flex-col w-full">
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-transparent to-emerald-500/5">
                 </div>
 
-                <div class="relative p-5 sm:p-8 lg:p-10">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+                <div class="w-full ">
+                    <img class="w-full opacity-55"
+                        src="{{ tenancy()->tenant?->header_image_data_uri
+                            ? tenancy()->tenant?->header_image_url
+                            : tenancy()->tenant?->header_image_url }}"
+                        alt="En-tête établissement">
+                    <div class="w-full bg-gray-800/30"></div>
+                </div>
 
-                        <div class="text-center lg:text-left order-2 lg:order-1">
-                            <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">
-                                République du Bénin
-                            </p>
-                            <h2 class="mt-2 text-sm sm:text-base font-semibold text-slate-200 leading-snug">
-                                Ministère des Enseignements Secondaire,<br class="hidden sm:block">
-                                Technique et de la Formation Professionnelle
-                            </h2>
-                            <p class="mt-2 text-xs text-slate-500">
-                                Direction Départementale de l’Enseignement
-                            </p>
-                        </div>
-
-                        <div class="flex flex-col items-center order-1 lg:order-2">
-                            <div
-                                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#070b14] border border-white/10 flex items-center justify-center overflow-hidden">
-                                <span class="text-3xl">
-                                    <img src="{{ tenancy()->tenant->logo_url }}" alt="Logo de l'école"
-                                        class="w-full h-full  object-cover">
-                                </span>
-                            </div>
-                            <h1 class="mt-3 text-xl sm:text-2xl font-bold text-white text-center tracking-tight">
-                                {{ tenant('school_name') }}
-                            </h1>
-                            <p class="mt-1 text-xs text-slate-500 text-center italic">
-                                {{ tenant('school_devise') }}
-                            </p>
-                        </div>
-
-                        <div class="text-center lg:text-right order-3">
-                            <p class="text-[10px] uppercase tracking-wider text-slate-500">Année scolaire</p>
-                            <p class="mt-1 text-xl sm:text-2xl font-bold text-indigo-400 font-mono">
-                                {{ $this->activeYear->slug }}
-                            </p>
+                <div class="p-5 ">
+                    <div class="items-start">
+                        <div class="">
                             <div
                                 class="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
                                 <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-                                Bulletin — {{ $this->activeYear->periodLabel() }} {{ $period }}
+                                Détails de notes — {{ $this->activeYear->periodLabel() }} {{ $period }}
                                 @if ($this->isLastPeriod)
                                     <span class="ml-1 text-emerald-300">· Résultats annuels inclus</span>
                                 @endif
+                                <p class="text-[10px] uppercase tracking-wider text-slate-500">Année scolaire
+                                    {{ $this->activeYear->slug }}</p>
                             </div>
                         </div>
                     </div>
@@ -228,7 +202,8 @@
                                         <tr class="bg-[#070b14] border-b border-white/[0.06]">
                                             <th
                                                 class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 sticky left-0 bg-[#070b14]">
-                                                Matière</th>
+                                                {{ $classe->is_new_system ? 'Modules' : 'Matières' }}
+                                            </th>
                                             <th
                                                 class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                                 Coef</th>
@@ -245,13 +220,13 @@
                                                 Moy</th>
                                             <th
                                                 class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                                Moy×Coef</th>
+                                                Moy.Coef</th>
                                             <th
                                                 class="px-3 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                                 Rang</th>
                                             <th
                                                 class="px-3 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                                Professeur</th>
+                                                Prof.</th>
                                             <th
                                                 class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                                 Mention</th>
@@ -269,9 +244,9 @@
                                                     {{ $row['coefficient'] ?? '—' }}</td>
                                                 <td class="px-3 py-3.5 text-center font-mono text-slate-300">
                                                     {{ $row['moy_interro'] ?? '—' }}</td>
-                                                @foreach ($this->devoirColumns() as $type => $label)
+                                                @foreach ($this->devoirColumns as $type => $label)
                                                     <td class="px-3 py-3.5 text-center font-mono text-slate-300">
-                                                        {{ $row['devoirs'][$type] ?? '—' }}</td>
+                                                        {{ $row['marks'][$type] ?? '—' }}</td>
                                                 @endforeach
                                                 <td class="px-3 py-3.5 text-center font-mono font-semibold text-white">
                                                     {{ $row['moy'] ?? '—' }}</td>
@@ -430,22 +405,8 @@
 
                     {{-- ════════════════ OBSERVATIONS ════════════════ --}}
                     <section class="border-t border-white/[0.06]">
-                        <div class="p-5 sm:p-8 lg:p-10">
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-                                <div class="rounded-2xl bg-[#070b14] border border-white/[0.05] p-5 sm:p-6">
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <span
-                                            class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sm">📋</span>
-                                        <h3 class="text-sm font-semibold text-white">Observation générale</h3>
-                                    </div>
-                                    <p class="text-sm text-slate-400 leading-relaxed">
-                                        Élève sérieux et discipliné. Les résultats sont satisfaisants dans l’ensemble.
-                                        Quelques efforts supplémentaires sont attendus en Français afin d’améliorer
-                                        davantage les performances globales.
-                                    </p>
-                                </div>
-
+                        <div class="p-5 ">
+                            <div class="gap-4">
                                 <div class="rounded-2xl bg-[#070b14] border border-white/[0.05] p-5 sm:p-6">
                                     <div class="flex items-center gap-2 mb-3">
                                         <span
@@ -466,27 +427,6 @@
                                             <span
                                                 class="text-sm font-semibold text-indigo-400">{{ $this->termAverage['mention'] }}</span>
                                         </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-xs text-slate-500">Discipline</span>
-                                            <span class="text-sm font-semibold text-slate-200">Très bonne</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="rounded-2xl bg-[#070b14] border border-white/[0.05] p-5 sm:p-6">
-                                    <div class="flex items-center gap-2 mb-4">
-                                        <span
-                                            class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-sm">🔏</span>
-                                        <h3 class="text-sm font-semibold text-white">Signature & cachet</h3>
-                                    </div>
-                                    <div class="flex flex-col items-center">
-                                        <div
-                                            class="w-28 h-28 rounded-full border-2 border-dashed border-indigo-500/30 flex items-center justify-center text-center">
-                                            <span
-                                                class="text-[11px] text-indigo-400/70 leading-tight">Cachet<br>officiel</span>
-                                        </div>
-                                        <p class="mt-4 text-sm font-semibold text-slate-200">Le Directeur</p>
-                                        <p class="text-[11px] text-slate-600 mt-0.5">Signature</p>
                                     </div>
                                 </div>
                             </div>

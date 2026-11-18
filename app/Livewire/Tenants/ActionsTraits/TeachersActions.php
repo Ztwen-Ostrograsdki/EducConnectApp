@@ -708,6 +708,44 @@ trait TeachersActions{
     }
 
 
+    public function giveAccessesToNextSchoolYearTeachers(): void
+    {
+        $this->dispatch('swal', [
+            'title'              => "Accorder l'accès aux enseignants de l'an dernier ?",
+            'text'               => "Les enseignants de l'an dernier veront leur accès rénouvelés pour ". ($this->activeYear?->slug ?? ''),
+            'icon'               => 'info',
+            'showCancelButton'   => true,
+            'confirmButtonText'  => 'Oui, renouveller',
+            'cancelButtonText'   => 'Annuler',
+            'confirmButtonColor' => '#84cc16',
+            'cancelButtonColor'  => '#475569',
+            'onConfirmed'        => 'ConfirmGivingAccessesToNextSchoolYearTeachers',
+        ]);
+    }
+
+    #[On('ConfirmGivingAccessesToNextSchoolYearTeachers')]
+    public function OnConfirmGivingAccessesToNextSchoolYearTeachers(): void
+    {
+        $domain = request()->getSchemeAndHttpHost();
+
+        InitProcessToGrantYearlyAccessToTeachersEvent::dispatch(
+            tenantId: tenant('id'),
+            onlyForSubjects: null,
+            excepts: null,
+            school_year_id: null,
+            domain: $domain,
+            grant_only_teacher_of_next_year: true,
+        );
+       
+        $this->notification()->success(
+            title: "Rénouvellement d'accès lancée",
+            description: "Le processus de Rénouvellement d'accès lancé.",
+        );
+
+        broadcast(new DataUpdatedEvent(tenant('id')));
+    }
+
+
     public function retrieveSubject(int $teacherId, int $subjectId): void
     {
         $this->dispatch('swal', [

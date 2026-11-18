@@ -14,12 +14,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use WireUi\Traits\WireUiActions;
 
+
+#[Title("Edition de ma photo de profil")]
 class TeacherClasseMarksManagerComponent extends Component
 {
     use WireUiActions, WithFileUploads;
@@ -515,11 +518,11 @@ class TeacherClasseMarksManagerComponent extends Component
                 'devoir'  => $this->formatMarksForInput($devoirMarks, $this->devoirTypesForTenant()),
             ];
 
-            $this->notification()->send([
-                'icon'        => 'success',
-                'title'       => 'Notes ajoutées',
-                'description' => "Les notes de {$student->getFullName()} ont été ajoutées à la liste en attente.",
-            ]);
+            // $this->notification()->send([
+            //     'icon'        => 'success',
+            //     'title'       => 'Notes ajoutées',
+            //     'description' => "Les notes de {$student->getFullName()} ont été ajoutées à la liste en attente.",
+            // ]);
 
         } catch (\InvalidArgumentException $e) {
             $this->notification()->send([
@@ -548,10 +551,10 @@ class TeacherClasseMarksManagerComponent extends Component
 
         $this->savePendingMarksToSession();
 
-        $this->notification()->send([
-            'icon'  => 'success',
-            'title' => 'Notes retirées de la liste en attente',
-        ]);
+        // $this->notification()->send([
+        //     'icon'  => 'success',
+        //     'title' => 'Notes retirées de la liste en attente',
+        // ]);
     }
 
     public function resetStudentInputs(int $studentId): void
@@ -986,6 +989,12 @@ class TeacherClasseMarksManagerComponent extends Component
 
     public function render()
     {
-        return view('livewire.tenants.users.teacher.teacher-classe-marks-manager-component');
+        /** @var \App\Models\User $user */
+        $user = auth('tenant')->user();
+
+        $view = view('livewire.tenants.users.teacher.teacher-classe-marks-manager-component');
+
+        /** @disregard P1013 `layout()` est ajoutée à View par Livewire (macro) */
+        return $view->layout($user->getDashboardLayout());
     }
 }

@@ -24,9 +24,18 @@ class ListenToGrantYearlyAccessToTeachers
 
         $query = Teacher::withoutTrashed()->where('status', 'active');
 
-        if(!$event->school_year_id) $schoolYearId = SchoolYear::current()?->first()?->id;
 
-        else $schoolYearId = $event->school_year_id;
+
+        if(!$event->school_year_id){
+
+            $schoolYear = SchoolYear::current()?->first();
+        }
+        else{
+
+            $schoolYear = SchoolYear::find($event->school_year_id);
+        }
+
+        $schoolYearId = $schoolYear->id;
 
         if($event->onlyForSubjects){
 
@@ -44,6 +53,23 @@ class ListenToGrantYearlyAccessToTeachers
 
         if($event->excepts) $query->whereNotIn('teachers.id', $event->excepts);
 
+        if($event->grant_only_teacher_of_next_year){
+
+            $nextYear = SchoolYear::where('max_year', $schoolYear->min_year)->first();
+
+            if($nextYear){
+
+                $query->whereHas('yearlyAccesses', function($q) use ($nextYear){
+
+                    $q->where('school_year_id', $nextYear->id);
+
+                });
+            }
+            else{
+                $query->where('id', '<', 0);
+            }
+        }
+
         $jobs = collect($query->pluck('teachers.id')->toArray())->map(function ($teacherId) use ($tenantId, $event) {
             
             return new JobToCreateYearlyAccessForTeacher(
@@ -51,6 +77,7 @@ class ListenToGrantYearlyAccessToTeachers
                 teacherId:   $teacherId,
                 school_year_id: $event->school_year_id,
                 domain:   $event->domain,
+                grant_only_teacher_of_next_year: $event->grant_only_teacher_of_next_year
             );
         });
 
@@ -75,8 +102,6 @@ class ListenToGrantYearlyAccessToTeachers
                 
             })
             ->finally(function (Batch $batch) use ($tenantId) {
-
-               
                 
             })
             ->allowFailures()

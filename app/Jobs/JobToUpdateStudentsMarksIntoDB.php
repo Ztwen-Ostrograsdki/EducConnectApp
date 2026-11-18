@@ -378,7 +378,8 @@ class JobToUpdateStudentsMarksIntoDB implements ShouldQueue
             ->where('school_year_id', $schoolYearId)
             ->where('period', $this->period)
             ->where('type', $type)
-            ->forceDelete();
+            ->get()
+            ->each->forceDelete();
     }
 
     private function validatedValue(mixed $value, string $type): float

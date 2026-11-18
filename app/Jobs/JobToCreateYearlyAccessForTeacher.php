@@ -37,6 +37,7 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
         public int    $teacherId,
         public ?int    $school_year_id = null,
         public ?string $domain = null,
+        public bool $grant_only_teacher_of_next_year = false
     ) {}
 
     /**
@@ -88,6 +89,24 @@ class JobToCreateYearlyAccessForTeacher implements ShouldQueue
                 $this->fail("Enseignant inexistant ou année scolaire inexistante ou non active!");
 
                 return;
+            }
+
+            if($this->grant_only_teacher_of_next_year){
+
+                $nextYear = SchoolYear::where('max_year', $school_year->min_year)->first();
+
+                if($nextYear){
+
+                    $is_teacher_of_next_year = $teacher->yearlyAccesses()->where('school_year_id', $nextYear->id)->exists();
+
+                    if(!$is_teacher_of_next_year) {
+
+                        $this->fail();
+
+                        return;
+                    }
+                }
+                
             }
 
             if($teacher->hasValidAccessForYear($this->school_year_id)){
